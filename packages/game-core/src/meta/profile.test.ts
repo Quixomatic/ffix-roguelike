@@ -13,18 +13,20 @@ const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
 
 describe("Completion Points", () => {
-  test("a run resets levels to the start level and pays CP: +1/level, +3/boss, +10/win", () => {
+  test("a run resets levels to the start level and pays CP: +1/level, +1/3 wins, +3/boss, +10/win", () => {
     const p = newProfile();
     let run = startRun({ seed: "cp", tier: 0, party: [p.builds.zidane!] });
     run.party[0]!.build.level = 7;
     run.stats.bossKills.push("garland");
+    run.stats.battles = 7;
     run = abandonRun(run);
     const report = applyRunOutcome(p, runOutcome(run), 0);
     const z = report.profile.builds.zidane!;
     expect(z.level).toBe(1);
-    expect(report.points.zidane).toBe(completionPoints(6, 1, false));
+    expect(report.points.zidane).toBe(completionPoints(6, 1, false, 7));
+    expect(report.points.zidane).toBe(6 + 2 + 3);
     // Achievements earned on the way (e.g. "The Journey Begins") can add CP on top.
-    expect(z.points).toBeGreaterThanOrEqual(9);
+    expect(z.points).toBeGreaterThanOrEqual(11);
   });
 
   test("CP buys start levels (cost = current level) and slot unlocks (5, 10, 20, 35)", () => {

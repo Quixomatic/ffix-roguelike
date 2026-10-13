@@ -73,7 +73,7 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
         {tab === "progress" && (
           <div className="flex flex-col gap-3">
             <div className="text-sm opacity-80">
-              Runs earn Completion Points for everyone in the party: +1 per level gained, +3 per boss defeated, +10 for a win. Levels reset every
+              Runs earn Completion Points for everyone in the party: +1 per level gained, +1 per 3 battles won, +3 per boss defeated, +10 for a win. Levels reset every
               run — spend CP here to start stronger.
             </div>
             <div className="ff-window flex items-center justify-between p-3">

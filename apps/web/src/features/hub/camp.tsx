@@ -147,7 +147,7 @@ export function Camp() {
         <div className="ff-title mb-1">How runs work</div>
         Cross three worlds — Cornelia, Baron and the World of Ruin — to the boss castle at the end of each map. You start alone with Zidane;
         companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
-        levels reset and everyone who came earns Completion Points (+1 per level gained, +3 per boss, +10 for a win) — spend them here on a
+        levels reset and everyone who came earns Completion Points (+1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win) — spend them here on a
         higher start level or on unlocking equipment slots (each starts runs with that character's FF9 starter gear, and can hold what they
         find). Gear teaches abilities while equipped; fill their AP to learn them forever. Win a run and all the gear you found is unlocked
         into future runs; banked gil unlocks more from the gear catalog, and achievements unlock the legendary pieces.

@@ -108,9 +108,12 @@ export interface RunReport {
   gearUnlocked: number[];
 }
 
-/** Completion Points for one character at the end of a run. */
-export function completionPoints(levelsGained: number, bossesDefeated: number, won: boolean): number {
-  return levelsGained + bossesDefeated * 3 + (won ? 10 : 0);
+/**
+ * Completion Points for one character at the end of a run: +1 per level gained, +1 per 3 battles won (so a run
+ * that hits a wall still moves you forward), +3 per boss, +10 for a win.
+ */
+export function completionPoints(levelsGained: number, bossesDefeated: number, won: boolean, battlesWon = 0): number {
+  return levelsGained + Math.floor(battlesWon / 3) + bossesDefeated * 3 + (won ? 10 : 0);
 }
 
 /** Fold a finished run into the profile. */
@@ -125,7 +128,7 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
     record.bossKills += outcome.stats.bossKills.length;
     // Levels reset to the start level and become CP. AP (mastered abilities) and the FF9 growth pool are permanent.
     const startLevel = before?.level ?? 1;
-    const earned = completionPoints(Math.max(0, b.level - startLevel), outcome.stats.bossKills.length, outcome.won);
+    const earned = completionPoints(Math.max(0, b.level - startLevel), outcome.stats.bossKills.length, outcome.won, outcome.stats.battles);
     points[b.key] = earned;
     p.builds[b.key] = {
       ...b,

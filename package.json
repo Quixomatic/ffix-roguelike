@@ -19,7 +19,8 @@
     "db:migrate": "turbo run db:migrate -F @ffix-roguelike/db --",
     "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
     "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
-    "auth:generate": "cd apps/server && pnpm run auth:generate"
+    "auth:generate": "cd apps/server && pnpm run auth:generate",
+    "sim": "pnpm -s -F @ffix-roguelike/game-core sim"
   },
   "dependencies": {
     "zod": "catalog:"

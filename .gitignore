@@ -56,3 +56,6 @@ coverage
 .cache
 tmp
 temp
+
+# Local-only docs and plans (design notes, project plan, scratch, etc.)
+.plans/

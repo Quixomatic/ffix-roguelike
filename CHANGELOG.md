@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.19] - 2026-10-13
+
+Server-side simulation tooling, and a Completion Points fix it surfaced.
+
+### Added
+- **`pnpm sim`** — the real game-core engine from the command line, no browser:
+  - `sim battle --party zidane:5,vivi:5 --enemies goblin,wolf` — **interactive** battles: when a hero is ready, type `a e0`, `s fire e1`, `s cura all`, `i potion p1`, `d`/`f`/`c`, `auto` (AI picks this turn), `autoall`, `state`. Commands can be piped or read from `--script` for repeatable scenarios; `--auto` runs it fully on the AI. Prints a live event log and an HP/MP/ATB/Trance table.
+  - `sim balance` — win rate and average fight length for every encounter, elite and boss of a world at several party levels.
+  - `sim run` — one full auto-played run with a stage-by-stage log (`--party`, `--level`, `--slots`, `--seed`).
+  - `sim runs --count N` — multi-run meta progression with a CP-spending strategy (start levels, slots, unlocks, achievements per run).
+
+### Changed
+- **Completion Points now also pay +1 per 3 battles won.** The multi-run sim showed runs 3–10 earning ~0 CP while a party walled at Garland (bought start levels left little to level up), i.e. no progress for several runs. Every run now moves you forward.
+
+### Internal
+- `.plans/` (local, git-ignored) holds the living master plan and feature plans.
+
 ## [0.1.18] - 2026-10-13
 
 Achievements, and a Megabonk-style unlock model: slots and gear are unlocked, not carried.
