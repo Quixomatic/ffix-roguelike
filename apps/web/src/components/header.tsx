@@ -7,6 +7,7 @@ export default function Header() {
   const links = [
     { to: "/play", label: "Camp" },
     { to: "/run", label: "Run" },
+    { to: "/achievements", label: "Achievements" },
     { to: "/battle", label: "Practice" },
   ] as const;
 

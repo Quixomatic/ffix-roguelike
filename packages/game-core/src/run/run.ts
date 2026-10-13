@@ -23,7 +23,8 @@ import {
   gearAbilities,
   expForLevel,
   levelForExp,
-  trimLoadout,
+  slotUnlocked,
+  starterGear,
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
@@ -36,7 +37,7 @@ export class RunError extends Error {}
 export interface GearInstance {
   uid: number;
   itemId: number;
-  /** Brought in from your loadout — always kept. Gear found during a run is only kept if you win. */
+  /** Starter gear the character brought (true) vs gear found during the run (false). */
   secured: boolean;
   holder: { key: string; slot: EquipSlot } | null;
 }
@@ -105,6 +106,8 @@ export interface RunState {
   gil: number;
   phase: RunPhase;
   stats: RunStats;
+  /** Gear the player has unlocked into drop pools (snapshot at run start). */
+  unlockedGear: number[];
 }
 
 export interface StartRunInput {
@@ -114,6 +117,8 @@ export interface StartRunInput {
   party: CharacterBuild[];
   /** Consumables bought at camp (itemId → count), packed on top of the starter kit. */
   supplies?: Record<number, number>;
+  /** Gear unlocked into the drop pool (camp catalog, achievements, won runs). */
+  unlockedGear?: number[];
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -172,7 +177,7 @@ export function startRun(input: StartRunInput): RunState {
     const build = structuredClone(b);
     // Every run starts at the character's start level, with exactly that level's EXP.
     build.exp = expForLevel(build.level);
-    trimLoadout(build);
+    build.equipment = starterGear(build);
     for (const slot of EQUIP_SLOTS) {
       const id = build.equipment[slot];
       if (id != null) gear.push({ uid: uid++, itemId: id, secured: true, holder: { key: build.key, slot } });
@@ -197,6 +202,7 @@ export function startRun(input: StartRunInput): RunState {
     gil: 300,
     phase: { kind: "map" },
     stats: { battles: 0, bossKills: [], eaten: 0, steals: 0 },
+    unlockedGear: [...(input.unlockedGear ?? [])],
   };
 }
 
@@ -243,7 +249,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "boss":
       return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
     case "treasure":
-      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10), gil: rng.int(80, 160) * (run.world + 1) };
+      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10, run.unlockedGear), gil: rng.int(80, 160) * (run.world + 1) };
       return;
     case "shop": {
       const visit = shopStock(rng, run.world, partyKeys(run));
@@ -254,10 +260,10 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
       run.phase = { kind: "synth", name: synthShopName(run.world), recipes: recipesUpTo(WORLDS[run.world]!.synthTier).map((r) => r.id) };
       return;
     case "stiltzkin":
-      run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(rng, run.world, partyKeys(run)), bought: [] };
+      run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(rng, run.world, partyKeys(run), run.unlockedGear), bought: [] };
       return;
     case "chocobo":
-      run.phase = { kind: "chocobo", spots: chocoboSpots(rng, run.world, partyKeys(run)), digsLeft: CHOCOBO_DIGS, dug: [] };
+      run.phase = { kind: "chocobo", spots: chocoboSpots(rng, run.world, partyKeys(run), run.unlockedGear), digsLeft: CHOCOBO_DIGS, dug: [] };
       return;
     case "moogle":
       healParty(run, 100, true);
@@ -323,7 +329,7 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   const summary = applyRewards(next, rewards, final);
   const boss = phase.nodeKind === "boss";
   if (boss) next.stats.bossKills.push(...phase.enemies);
-  const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : 20);
+  const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : 20, next.unlockedGear);
   next.phase = { kind: "rewards", summary, gearChoices, boss };
   next.rng = rng.state;
   return next;
@@ -549,7 +555,7 @@ function applyOutcome(run: RunState, o: EventOutcome, rng: Rng) {
       for (let i = 0; i < o.count; i++) addLoot(run, findItemByName(o.name));
       return;
     case "gear":
-      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 25), gil: 0 };
+      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 25, run.unlockedGear), gil: 0 };
       return;
     case "exp": {
       const alive = run.party.filter((m) => m.hp > 0);
@@ -579,6 +585,7 @@ function assertCanManage(run: RunState) {
 /** Equip a gear instance (or clear the slot with uid = null). */
 export function equip(run: RunState, key: string, slot: EquipSlot, uid: number | null): RunState {
   assertCanManage(run);
+  if (!slotUnlocked(member(run, key).build, slot)) throw new RunError(`${getCharacter(key).name}'s ${slot} slot is locked — unlock it with Completion Points`);
   const next = structuredClone(run);
   const m = member(next, key);
   const current = next.gear.find((g) => g.holder?.key === key && g.holder.slot === slot);
@@ -661,9 +668,8 @@ export function useConsumable(run: RunState, itemId: number, key: string): RunSt
 export interface RunOutcome {
   won: boolean;
   builds: CharacterBuild[];
-  /** Gear to add to the stash: itemId → count. */
-  stash: Record<number, number>;
-  gearLost: number[];
+  /** Gear found this run (item ids, unique). Unlocked into future drop pools if the run was won. */
+  foundGear: number[];
   gilEarned: number;
   stats: RunStats;
   worldReached: number;
@@ -673,27 +679,17 @@ export interface RunOutcome {
 export function runOutcome(run: RunState): RunOutcome {
   if (run.phase.kind !== "over") throw new RunError("The run isn't over");
   const won = run.phase.won;
-  const kept = run.gear.filter((g) => g.secured || won);
-  const lost = run.gear.filter((g) => !(g.secured || won));
   const builds = run.party.map((m) => {
     const b = structuredClone(m.build);
-    for (const slot of EQUIP_SLOTS) b.equipment[slot] = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot)?.itemId ?? null;
-    // Back at camp, gear beyond the loadout budget goes to the stash.
-    for (const slot of trimLoadout(b)) {
-      const inst = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot);
-      if (inst) inst.holder = null;
-    }
-    if (b.equipment.weapon == null) b.equipment.weapon = getCharacter(b.key).defaultEquipment.weapon;
+    // Equipment isn't carried between runs — every run starts with starter gear in unlocked slots.
+    b.equipment = starterGear(b);
     b.supports = b.supports.filter((id) => activeSupports(b).has(id));
     return b;
   });
-  const stash: Record<number, number> = {};
-  for (const g of kept.filter((x) => !x.holder)) stash[g.itemId] = (stash[g.itemId] ?? 0) + 1;
   return {
     won,
     builds,
-    stash,
-    gearLost: lost.map((g) => g.itemId),
+    foundGear: [...new Set(run.gear.filter((g) => !g.secured).map((g) => g.itemId))],
     gilEarned: won ? run.gil : Math.floor(run.gil / 2),
     stats: run.stats,
     worldReached: run.world,

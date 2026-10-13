@@ -54,8 +54,8 @@ export interface CharacterBuild {
   record?: CharacterRecord;
   /** Unspent Completion Points — earned when a run ends, spent before a run on start level or gear slots. */
   points?: number;
-  /** Loadout gear slots bought with Completion Points (0–5). */
-  slots?: number;
+  /** Equipment slots unlocked with Completion Points (the weapon slot is always open). */
+  unlockedSlots?: EquipSlot[];
   /**
    * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
@@ -131,40 +131,35 @@ export interface CharacterRecord {
 export const emptyRecord = (): CharacterRecord => ({ runs: 0, wins: 0, bossKills: 0 });
 
 /**
- * Loadout slots: how many pieces of stash gear a character may pre-equip before a run (in any equipment slot;
- * their FF9 starting weapon is always free). Everyone starts with none; each is bought with Completion Points,
- * because starting a run geared up is a big advantage.
+ * Equipment slots: every character can always use their weapon slot. Body, Head, Arm and Accessory are locked
+ * until unlocked with Completion Points — a locked slot can't hold gear at all, at camp or during a run.
+ * Each unlock costs more than the last; the player chooses which slot to open.
  */
-export const LOADOUT_SLOT_COSTS = [5, 10, 20, 35, 50];
+export const UNLOCKABLE_SLOTS: EquipSlot[] = ["armor", "head", "wrist", "accessory"];
+export const SLOT_UNLOCK_COSTS = [5, 10, 20, 35];
 
-export function loadoutSlots(build: CharacterBuild): number {
-  return Math.min(LOADOUT_SLOT_COSTS.length, build.slots ?? 0);
+export function slotUnlocked(build: CharacterBuild, slot: EquipSlot): boolean {
+  return slot === "weapon" || (build.unlockedSlots ?? []).includes(slot);
 }
 
-/** CP cost of the next loadout slot, or null when all five are owned. */
+/** CP cost of the next slot unlock, or null when all four are open. */
 export function nextSlotCost(build: CharacterBuild): number | null {
-  return LOADOUT_SLOT_COSTS[loadoutSlots(build)] ?? null;
+  return SLOT_UNLOCK_COSTS[(build.unlockedSlots ?? []).length] ?? null;
 }
-
-/** Equipment slots holding loadout gear (the starting weapon doesn't count). */
-export function loadoutUsed(build: CharacterBuild): EquipSlot[] {
-  const starter = getCharacter(build.key).defaultEquipment.weapon;
-  return EQUIP_SLOTS.filter((slot) => build.equipment[slot] != null && !(slot === "weapon" && build.equipment.weapon === starter));
-}
-
-/** Loadout order when trimming over-budget gear: weapon first, then body, head, arm, accessory. */
-export const LOADOUT_PRIORITY: EquipSlot[] = ["weapon", "armor", "head", "wrist", "accessory"];
 
 /**
- * Remove gear beyond the loadout budget (mutates). A removed weapon falls back to the starting weapon.
- * Returns the slots that were emptied.
+ * What a character starts every run wearing: their FF9 starting weapon, plus their FF9 starting gear in each
+ * slot they've unlocked (some characters have no starting piece for a slot — it starts empty but usable).
  */
-export function trimLoadout(build: CharacterBuild): EquipSlot[] {
-  const budget = loadoutSlots(build);
-  const used = LOADOUT_PRIORITY.filter((slot) => loadoutUsed(build).includes(slot));
-  const removed = used.slice(budget);
-  for (const slot of removed) build.equipment[slot] = slot === "weapon" ? getCharacter(build.key).defaultEquipment.weapon : null;
-  return removed;
+export function starterGear(build: CharacterBuild): Equipment {
+  const def = getCharacter(build.key).defaultEquipment;
+  return {
+    weapon: def.weapon,
+    head: slotUnlocked(build, "head") ? def.head : null,
+    wrist: slotUnlocked(build, "wrist") ? def.wrist : null,
+    armor: slotUnlocked(build, "armor") ? def.armor : null,
+    accessory: slotUnlocked(build, "accessory") ? def.accessory : null,
+  };
 }
 
 /** The character's FF9 starting weapon — always free to bring, never counts against the loadout. */
@@ -261,6 +256,15 @@ export function activeSupports(build: CharacterBuild): Set<number> {
     }
   }
   return out;
+}
+
+/** Rough power of a piece of gear (Optimize, best-in-slot, sims). */
+export function gearScore(item: ItemData): number {
+  const b = item.bonus;
+  const stats = b ? (b.speed + b.strength + b.magic + b.spirit) * 3 : 0;
+  if (item.weapon) return item.weapon.power * 4 + stats;
+  const a = item.armor;
+  return (a ? a.defence * 3 + a.magicDefence * 3 + a.evade + a.magicEvade : 0) + stats + item.price / 2000;
 }
 
 export function canEquip(key: string, item: ItemData, slot: EquipSlot): boolean {

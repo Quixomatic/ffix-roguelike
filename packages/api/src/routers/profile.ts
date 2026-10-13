@@ -1,13 +1,4 @@
-import {
-  buyAtCamp,
-  buyLoadoutSlot,
-  equipFromStash,
-  raiseStartLevel,
-  setProfileSupports,
-  synthesizeAtCamp,
-  UNLOCKS,
-  type Profile,
-} from "@ffix-roguelike/game-core";
+import { buySupply, raiseStartLevel, setProfileSupports, unlockGear, unlockSlot, UNLOCKS, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -15,8 +6,6 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../index";
 import { loadProfile, saveProfile } from "../services/profile";
 import { getActiveRun, toTrpcError } from "../services/runs";
-
-const slot = z.enum(["weapon", "head", "wrist", "armor", "accessory"]);
 
 /**
  * Apply a game-core rule to the player's profile and persist it. Loadout/points/shop changes are only allowed
@@ -56,27 +45,22 @@ export const profileRouter = router({
     .input(z.object({ key: z.string() }))
     .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => raiseStartLevel(p, input.key))),
 
-  /** Spend Completion Points on the next loadout gear slot. */
-  buySlot: protectedProcedure
-    .input(z.object({ key: z.string() }))
-    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buyLoadoutSlot(p, input.key))),
-
-  /** Put stash gear into a bought slot (itemId null = unequip). */
-  equip: protectedProcedure
-    .input(z.object({ key: z.string(), slot, itemId: z.number().int().nullable() }))
-    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => equipFromStash(p, input.key, input.slot, input.itemId))),
+  /** Spend Completion Points to unlock an equipment slot for a character. */
+  unlockSlot: protectedProcedure
+    .input(z.object({ key: z.string(), slot: z.enum(["head", "wrist", "armor", "accessory"]) }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => unlockSlot(p, input.key, input.slot))),
 
   setSupports: protectedProcedure
     .input(z.object({ key: z.string(), supports: z.array(z.number().int()).max(64) }))
     .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => setProfileSupports(p, input.key, input.supports))),
 
-  /** Camp shop: buy gear with banked gil (goes to the stash). */
-  buyGear: protectedProcedure
+  /** Gear catalog: unlock a piece of gear into run drop pools with banked gil. */
+  unlockGear: protectedProcedure
     .input(z.object({ itemId: z.number().int() }))
-    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buyAtCamp(p, input.itemId))),
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => unlockGear(p, input.itemId))),
 
-  /** Camp workshop: synthesize from stash gear with banked gil. */
-  synthesize: protectedProcedure
-    .input(z.object({ recipeId: z.number().int().min(0) }))
-    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => synthesizeAtCamp(p, input.recipeId))),
+  /** Supplies: buy a consumable with banked gil, packed into the next run. */
+  buySupply: protectedProcedure
+    .input(z.object({ itemId: z.number().int() }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buySupply(p, input.itemId))),
 });

@@ -2,32 +2,34 @@ import {
   activeSupports,
   apCost,
   availableAbilities,
-  canEquip,
   deriveStats,
   EQUIP_SLOTS,
   gemsMax,
   gemsUsed,
-  getStarterWeapon,
   isMastered,
-  loadoutSlots,
-  loadoutUsed,
-  LOADOUT_SLOT_COSTS,
   nextSlotCost,
+  slotUnlocked,
+  starterGear,
   startLevelCost,
+  UNLOCKABLE_SLOTS,
   type CharacterBuild,
 } from "@ffix-roguelike/game-core";
-import { abilityName, getCharacter, getItem, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
+import { abilityName, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { GearPicker, Paperdoll } from "@/features/gear/paperdoll";
+import { Paperdoll } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
 
 type Tab = "progress" | "gear" | "abilities";
 
-/** Before a run: spend Completion Points, set up the loadout, and choose support abilities. */
-export function CharacterSheet({ build, stash, onClose }: { build: CharacterBuild; stash: Record<number, number>; onClose(): void }) {
+const SLOT_NAME: Record<EquipSlot, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" };
+
+/** Before a run: spend Completion Points (start level, slot unlocks), see starter gear, choose support abilities. */
+export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuild; onClose(): void }) {
+  // Show the character as they'll start a run: starter gear in unlocked slots.
+  const build = { ...saved, equipment: starterGear(saved) };
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("progress");
   const opts = {
@@ -35,8 +37,7 @@ export function CharacterSheet({ build, stash, onClose }: { build: CharacterBuil
     onError: (e: { message: string }) => toast.error(e.message),
   };
   const raise = useMutation(trpc.profile.raiseStartLevel.mutationOptions(opts));
-  const buySlot = useMutation(trpc.profile.buySlot.mutationOptions(opts));
-  const equip = useMutation(trpc.profile.equip.mutationOptions(opts));
+  const unlock = useMutation(trpc.profile.unlockSlot.mutationOptions(opts));
   const supportsM = useMutation(trpc.profile.setSupports.mutationOptions(opts));
 
   const char = getCharacter(build.key);
@@ -88,20 +89,30 @@ export function CharacterSheet({ build, stash, onClose }: { build: CharacterBuil
                 Lv {build.level + 1} — {levelCost} CP
               </button>
             </div>
-            <div className="ff-window flex items-center justify-between p-3">
-              <div>
-                <div className="text-lg">
-                  Gear slots {loadoutSlots(build)}/{LOADOUT_SLOT_COSTS.length}
-                </div>
-                <div className="text-sm opacity-70">Each slot lets {char.name} bring one piece of stash gear into a run.</div>
+            <div className="ff-window flex flex-col gap-2 p-3">
+              <div className="flex items-baseline justify-between">
+                <div className="text-lg">Equipment slots</div>
+                <div className="text-sm opacity-80">{slotCost == null ? "All unlocked" : `Next unlock: ${slotCost} CP`}</div>
               </div>
-              <button
-                className="ff-window px-4 py-1 disabled:opacity-50"
-                disabled={slotCost == null || points < slotCost || buySlot.isPending}
-                onClick={() => buySlot.mutate({ key: build.key })}
-              >
-                {slotCost == null ? "All unlocked" : `New slot — ${slotCost} CP`}
-              </button>
+              <div className="text-sm opacity-70">
+                Unlocking a slot starts every run with {char.name}'s starter gear there, and lets them equip what they find in it.
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {UNLOCKABLE_SLOTS.map((slot) => {
+                  const open = slotUnlocked(build, slot);
+                  return (
+                    <button
+                      key={slot}
+                      className="ff-window px-2 py-1 text-sm disabled:opacity-50 data-[open=true]:bg-none data-[open=true]:bg-[#2a5a2a]"
+                      data-open={open}
+                      disabled={open || slotCost == null || points < slotCost || unlock.isPending}
+                      onClick={() => unlock.mutate({ key: build.key, slot: slot as "head" | "wrist" | "armor" | "accessory" })}
+                    >
+                      {SLOT_NAME[slot]} {open ? "✓" : `— ${slotCost} CP`}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="text-xs opacity-60">
               With {char.name}: {build.record?.runs ?? 0} runs · {build.record?.wins ?? 0} wins · {build.record?.bossKills ?? 0} bosses
@@ -109,7 +120,7 @@ export function CharacterSheet({ build, stash, onClose }: { build: CharacterBuil
           </div>
         )}
 
-        {tab === "gear" && <GearTab build={build} stash={stash} onEquip={(slot, itemId) => equip.mutate({ key: build.key, slot, itemId })} />}
+        {tab === "gear" && <GearTab build={build} />}
 
         {tab === "abilities" && (
           <AbilitiesTab build={build} onToggle={(supports) => supportsM.mutate({ key: build.key, supports })} stones={[gemsUsed(build), gemsMax(build)]} />
@@ -119,45 +130,27 @@ export function CharacterSheet({ build, stash, onClose }: { build: CharacterBuil
   );
 }
 
-function GearTab({
-  build,
-  stash,
-  onEquip,
-}: {
-  build: CharacterBuild;
-  stash: Record<number, number>;
-  onEquip(slot: (typeof EQUIP_SLOTS)[number], itemId: number | null): void;
-}) {
-  const [slot, setSlot] = useState<(typeof EQUIP_SLOTS)[number] | null>(null);
-  const slots = loadoutSlots(build);
-  const used = loadoutUsed(build);
-  const starter = getStarterWeapon(build.key);
-  const full = used.length >= slots;
-  const options = slot ? Object.keys(stash).map(Number).filter((id) => canEquip(build.key, getItem(id), slot)) : [];
-  const current = slot ? build.equipment[slot] : null;
-  const removable = slot != null && current != null && !(slot === "weapon" && current === starter);
+function GearTab({ build }: { build: CharacterBuild }) {
+  const [slot, setSlot] = useState<EquipSlot | null>(null);
+  const name = getCharacter(build.key).name;
   return (
     <Paperdoll
       heroKey={build.key}
-      name={getCharacter(build.key).name}
-      subtitle={`Gear slots ${used.length}/${slots}${slots === 0 ? " — buy one in Progress" : ""}`}
+      name={name}
+      subtitle="Starting gear for every run"
       selected={slot}
       onSelect={setSlot}
-      slots={EQUIP_SLOTS.map((s) => {
-        const id = build.equipment[s];
-        const isStarter = s === "weapon" && id === starter;
-        const filled = id != null && !isStarter;
-        return { slot: s, itemId: id, locked: !filled && full && !(s === "weapon"), note: isStarter ? "starting weapon · free" : filled ? "loadout" : undefined };
-      })}
+      slots={EQUIP_SLOTS.map((s) => ({
+        slot: s,
+        itemId: build.equipment[s],
+        locked: !slotUnlocked(build, s),
+        note: s === "weapon" ? "starting weapon" : slotUnlocked(build, s) ? (build.equipment[s] == null ? "open — fill it in a run" : "starter gear") : "unlock in Progress",
+      }))}
       picker={
         slot && (
-          <GearPicker
-            title={`${slot[0]!.toUpperCase()}${slot.slice(1)} — from your stash`}
-            options={options.map((id) => ({ key: id, itemId: id, caption: <span className="opacity-60">×{stash[id]}</span> }))}
-            onPick={(id) => onEquip(slot, Number(id))}
-            onRemove={removable ? () => onEquip(slot, null) : undefined}
-            empty="No stash gear fits — buy some at the camp shop, or win a run to keep what you find."
-          />
+          <div className="rounded bg-black/25 p-2 text-sm opacity-80">
+            Gear isn't chosen here — {name} starts every run with this, and equips what they find along the way.
+          </div>
         )
       }
     />

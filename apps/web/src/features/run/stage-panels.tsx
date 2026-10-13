@@ -1,4 +1,4 @@
-import { eventById, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, eventById, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -243,9 +243,25 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
       {report && (
         <div className="ff-window flex flex-col gap-1 p-4 text-lg">
           <div className="tabular-nums text-yellow-200">+{Math.round(gil)} gil banked</div>
-          {report.gearLost.length > 0 && (
-            <div className="text-base text-red-300">Left behind (only a win brings found gear home): {report.gearLost.map(itemName).join(", ")}</div>
+          {report.gearUnlocked.length > 0 && (
+            <div className="text-base text-green-300">Unlocked for future runs: {report.gearUnlocked.map(itemName).join(", ")}</div>
           )}
+          {!report.won && report.foundGear.length > 0 && (
+            <div className="text-base text-red-300">Found this run (win to unlock it for good): {report.foundGear.map(itemName).join(", ")}</div>
+          )}
+          {report.achievements.map((id, i) => {
+            const a = achievement(id);
+            if (!a) return null;
+            const reward = [a.reward.gil ? `${a.reward.gil} gil` : "", a.reward.cp ? `+${a.reward.cp} CP${a.reward.cpFor ? "" : " each"}` : "", rewardItemIds(a).length ? `unlocks ${rewardItemIds(a).map(itemName).join(", ")}` : ""]
+              .filter(Boolean)
+              .join(" · ");
+            return (
+              <div key={id} className="ff-pop flex items-baseline gap-2 text-yellow-100" style={{ animationDelay: `${2000 + i * 300}ms` }}>
+                <span>🏆 {a.name}</span>
+                <span className="text-sm opacity-80">{reward}</span>
+              </div>
+            );
+          })}
           {report.newlyUnlocked.map((k, i) => (
             <div key={k} className="ff-pop flex items-center gap-3 text-pink-200" style={{ animationDelay: `${1600 + i * 300}ms` }}>
               <HeroSprite heroKey={k} size={40} /> {name(k)} joined your roster!
@@ -255,7 +271,7 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
         </div>
       )}
 
-      <div className="text-center text-sm opacity-80">Spend Completion Points at camp on a higher start level or more gear slots.</div>
+      <div className="text-center text-sm opacity-80">Spend Completion Points at camp on a higher start level or unlocking equipment slots.</div>
       <Link to="/play" className="ff-window mx-auto px-6 py-2 text-lg">
         Back to camp
       </Link>

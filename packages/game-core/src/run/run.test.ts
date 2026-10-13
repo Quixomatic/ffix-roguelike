@@ -112,18 +112,6 @@ describe("run", () => {
     expect(() => finishBattle(run, [{ tick: 0, command: { actorId: "p0", kind: "attack", targetIds: ["e0"] } }])).toThrow();
   });
 
-  test("unsecured gear is lost on defeat; secured gear is kept", () => {
-    const profile = newProfile();
-    let run = startRun({ seed: "loss", tier: 0, party: [profile.builds.zidane!] });
-    run.gear.push({ uid: 998, itemId: 2, secured: true, holder: null });
-    run.gear.push({ uid: 999, itemId: 3, secured: false, holder: null });
-    run.phase = { kind: "over", won: false };
-    const out = runOutcome(run);
-    expect(out.stash[2]).toBe(1);
-    expect(out.stash[3]).toBeUndefined();
-    expect(out.gearLost).toContain(3);
-  });
-
   test("progress across runs: every run pays Completion Points; levels reset to the start level", () => {
     let profile = newProfile();
     const reached: number[] = [];
@@ -180,16 +168,6 @@ describe("synthesis & selling", () => {
     expect(run.gil).toBeGreaterThan(gil);
   });
 
-  test("camp workshop uses stash + banked gil", async () => {
-    const { synthesizeAtCamp, campRecipes } = await import("../meta/profile");
-    const p = newProfile();
-    const r = campRecipes(p)[0]!;
-    p.gil = r.price;
-    for (const id of r.ingredients) p.stash[id] = (p.stash[id] ?? 0) + 1;
-    const after = synthesizeAtCamp(p, r.id);
-    expect(after.gil).toBe(0);
-    expect(after.stash[r.result]).toBe(1);
-  });
 });
 
 describe("special stages & supplies", () => {

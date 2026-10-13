@@ -2,9 +2,12 @@ import { describe, expect, test } from "bun:test";
 
 import { itemByName } from "@ffix-roguelike/game-data";
 
-import { abandonRun, runOutcome, startRun } from "../run/run";
-import { accrueGrowth, deriveStats, gemsMax, loadoutSlots, newBuild } from "../stats";
-import { applyRunOutcome, buyAtCamp, buyLoadoutSlot, completionPoints, equipFromStash, newProfile, raiseStartLevel } from "./profile";
+import { getItem } from "@ffix-roguelike/game-data";
+
+import { gearPool } from "../run/loot";
+import { abandonRun, equip, runOutcome, startRun } from "../run/run";
+import { accrueGrowth, deriveStats, gemsMax, newBuild } from "../stats";
+import { applyRunOutcome, buySupply, completionPoints, gearCatalog, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -20,20 +23,21 @@ describe("Completion Points", () => {
     const z = report.profile.builds.zidane!;
     expect(z.level).toBe(1);
     expect(report.points.zidane).toBe(completionPoints(6, 1, false));
-    expect(z.points).toBe(9);
+    // Achievements earned on the way (e.g. "The Journey Begins") can add CP on top.
+    expect(z.points).toBeGreaterThanOrEqual(9);
   });
 
-  test("CP buys start levels (cost = current level) and gear slots (5, 10, 20, 35, 50)", () => {
+  test("CP buys start levels (cost = current level) and slot unlocks (5, 10, 20, 35)", () => {
     let p = newProfile();
     p.builds.zidane!.points = 8;
     p = raiseStartLevel(p, "zidane"); // 1 → 2 costs 1
     p = raiseStartLevel(p, "zidane"); // 2 → 3 costs 2
     expect(p.builds.zidane!.level).toBe(3);
     expect(p.builds.zidane!.points).toBe(5);
-    p = buyLoadoutSlot(p, "zidane");
-    expect(loadoutSlots(p.builds.zidane!)).toBe(1);
+    p = unlockSlot(p, "zidane", "armor");
+    expect(p.builds.zidane!.unlockedSlots).toEqual(["armor"]);
     expect(p.builds.zidane!.points).toBe(0);
-    expect(() => buyLoadoutSlot(p, "zidane")).toThrow(/Need 10 CP/);
+    expect(() => unlockSlot(p, "zidane", "head")).toThrow(/Need 10 CP/);
   });
 
   test("the next run starts at the bought start level", () => {
@@ -45,47 +49,57 @@ describe("Completion Points", () => {
   });
 });
 
-describe("loadout slots", () => {
-  test("no gear slots until one is bought; the budget is enforced", () => {
-    let p = newProfile();
-    p.stash[mythril] = 1;
-    p.stash[shirt] = 1;
-    expect(() => equipFromStash(p, "zidane", "weapon", mythril)).toThrow(/No gear slots/);
-    p.builds.zidane!.slots = 1;
-    p = equipFromStash(p, "zidane", "weapon", mythril);
-    expect(p.builds.zidane!.equipment.weapon).toBe(mythril);
-    expect(p.stash[mythril]).toBeUndefined();
-    expect(() => equipFromStash(p, "zidane", "armor", shirt)).toThrow(/full/);
+describe("gear slots & unlocks", () => {
+  test("runs start with FF9 starter gear in unlocked slots only", () => {
+    const p = newProfile();
+    let run = startRun({ seed: "x", tier: 0, party: [p.builds.zidane!] });
+    expect(run.party[0]!.build.equipment.armor).toBeNull();
+    const unlocked = { ...p.builds.zidane!, unlockedSlots: ["armor" as const] };
+    run = startRun({ seed: "x", tier: 0, party: [unlocked] });
+    expect(run.party[0]!.build.equipment.armor).toBe(shirt); // Zidane's FF9 Leather Shirt
+    expect(() => equip(run, "zidane", "head", null)).toThrow(/locked/);
   });
 
-  test("runs only bring loadout gear", () => {
+  test("gear found in a won run is unlocked into the drop pool; a lost run unlocks nothing", () => {
     const p = newProfile();
-    const build = { ...p.builds.zidane!, equipment: { ...p.builds.zidane!.equipment, armor: shirt } };
-    const run = startRun({ seed: "x", tier: 0, party: [build] });
-    expect(run.party[0]!.build.equipment.armor).toBeNull(); // 0 slots → left at camp
-  });
-
-  test("gear found in a run is lost unless the run is won; loadout gear is always kept", () => {
-    const p = newProfile();
-    let run = startRun({ seed: "keep", tier: 0, party: [p.builds.zidane!] });
+    const run = startRun({ seed: "keep", tier: 0, party: [p.builds.zidane!] });
     run.gear.push({ uid: 900, itemId: mythril, secured: false, holder: null });
-    const lost = runOutcome(abandonRun(run));
-    expect(lost.stash[mythril]).toBeUndefined();
-    expect(lost.gearLost).toContain(mythril);
-    run = structuredClone(run);
-    run.phase = { kind: "over", won: true };
-    expect(runOutcome(run).stash[mythril]).toBe(1);
+    const lost = applyRunOutcome(p, runOutcome(abandonRun(run)), 0);
+    expect(lost.profile.gearUnlocked ?? []).not.toContain(mythril);
+    const won = structuredClone(run);
+    won.phase = { kind: "over", won: true };
+    const report = applyRunOutcome(p, runOutcome(won), 0);
+    expect(report.profile.gearUnlocked).toContain(mythril);
+    expect(report.gearUnlocked).toContain(mythril);
+  });
+
+  test("unlocked gear joins its world's drop pool", () => {
+    const p = newProfile();
+    p.stats.bestWorld = 2;
+    // A World of Ruin catalog item Zidane can wear (catalog price = 2× its band price).
+    const rare = gearCatalog(p).find((e) => e.price / 2 >= 4000 && getItem(e.itemId).equippableBy.includes("zidane"))!.itemId;
+    expect(gearPool(2, ["zidane"]).some((i) => i.id === rare)).toBe(false);
+    expect(gearPool(2, ["zidane"], [rare]).some((i) => i.id === rare)).toBe(true);
   });
 });
 
-describe("camp shop", () => {
-  test("buys gear from reached worlds' FF9 shops with banked gil", () => {
-    const p = newProfile();
-    p.gil = 1000;
-    const after = buyAtCamp(p, mythril);
-    expect(after.stash[mythril]).toBe(1);
-    expect(after.gil).toBeLessThan(1000);
-    expect(() => buyAtCamp(p, itemByName("Ultima Weapon").id)).toThrow();
+describe("camp", () => {
+  test("the catalog unlocks gear with banked gil; supplies are bought into the stash", () => {
+    let p = newProfile();
+    const entry = gearCatalog(p)[0]!;
+    p.gil = entry.price + 50;
+    p = unlockGear(p, entry.itemId);
+    expect(p.gearUnlocked).toContain(entry.itemId);
+    expect(gearCatalog(p).some((e) => e.itemId === entry.itemId)).toBe(false);
+    p = buySupply(p, itemByName("Potion").id);
+    expect(p.stash[itemByName("Potion").id]).toBe(1);
+  });
+
+  test("legendary gear is never in the catalog or base pools", () => {
+    const ultima = itemByName("Ultima Weapon").id;
+    expect(gearCatalog(newProfile()).some((e) => e.itemId === ultima)).toBe(false);
+    expect([0, 1, 2].some((w) => gearPool(w, ["zidane"]).some((i) => i.id === ultima))).toBe(false);
+    expect(gearPool(2, ["zidane"], [ultima]).some((i) => i.id === ultima)).toBe(true);
   });
 });
 

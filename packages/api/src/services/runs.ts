@@ -39,7 +39,7 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   const supplies = campSupplies(profile);
   let state: RunState;
   try {
-    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies });
+    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies, unlockedGear: profile.gearUnlocked ?? [] });
   } catch (e) {
     toTrpcError(e);
   }
@@ -120,8 +120,10 @@ async function finalize(tx: Database, userId: string, runId: string, run: RunSta
     newlyUnlocked: report.newlyUnlocked,
     tierUnlocked: report.tierUnlocked,
     gilEarned: outcome.gilEarned,
-    gearLost: outcome.gearLost,
+    foundGear: outcome.foundGear,
     won: outcome.won,
     points: report.points,
+    achievements: report.achievements,
+    gearUnlocked: report.gearUnlocked,
   };
 }

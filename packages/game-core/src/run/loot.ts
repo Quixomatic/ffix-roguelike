@@ -4,11 +4,19 @@ import { findItem, items, itemByName, shops, synthesis, type ItemData, type Synt
 import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
 import { WORLDS } from "../content/worlds";
+import { LEGENDARY_ITEMS } from "../meta/achievements";
 import type { Rng } from "../rng";
 
 const GEAR_KINDS = new Set(["weapon", "wrist", "head", "armor", "accessory"]);
 
 export const isGear = (item: ItemData) => GEAR_KINDS.has(item.kind) && !item.effect;
+
+/**
+ * Price used for loot bands and unlock costs. FF9 lists never-sold rarities (Ribbon, Genji gear, Pumice…) at a
+ * token 2 gil; treat those as late-game treasure instead.
+ */
+export const RARE_PRICE = 20000;
+export const effectivePrice = (item: ItemData) => (item.price < 10 ? RARE_PRICE : item.price);
 
 /** Rough threat of a group: sum of level × HP multiplier. Used to order encounters by difficulty. */
 function threat(group: string[]): number {
@@ -63,15 +71,31 @@ export function battleRewards(rng: Rng, enemyIds: string[], tier: number, state?
   return { exp, ap, gil: gil + (state?.gilBonus ?? 0), items: [...drops, ...(state?.stolen ?? [])] };
 }
 
-/** Gear that fits the world's price band and that someone in the party can wear. */
-export function gearPool(world: number, partyKeys: string[]): ItemData[] {
+/** Gear stocked by the world's real FF9 shops — always in the drop pool, no unlock needed. */
+export function baseGear(world: number): Set<number> {
+  const w = WORLDS[world]!;
+  return new Set(w.shops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? []).filter((id) => !LEGENDARY_ITEMS.has(id)));
+}
+
+/**
+ * Gear that can drop in a world: its shops' stock, plus any gear the player has unlocked (camp catalog,
+ * achievements, or found in a won run) that fits the world's price band — and that someone in the party can wear.
+ */
+export function gearPool(world: number, partyKeys: string[], unlocked: readonly number[] = []): ItemData[] {
   const [lo, hi] = WORLDS[world]!.gearPrice;
-  return items.filter((i) => isGear(i) && i.price >= lo && i.price <= hi && i.equippableBy.some((k) => partyKeys.includes(k)));
+  const base = baseGear(world);
+  const extra = new Set(unlocked);
+  return items.filter(
+    (i) =>
+      isGear(i) &&
+      i.equippableBy.some((k) => partyKeys.includes(k)) &&
+      (base.has(i.id) || (extra.has(i.id) && effectivePrice(i) >= lo && effectivePrice(i) <= hi)),
+  );
 }
 
 /** Pick `count` distinct gear items, weighted toward the cheaper end (better gear is rarer). */
-export function rollGear(rng: Rng, world: number, partyKeys: string[], count: number, bonus = 0): number[] {
-  const pool = gearPool(Math.min(WORLDS.length - 1, world + (bonus > 0 && rng.chance(bonus) ? 1 : 0)), partyKeys);
+export function rollGear(rng: Rng, world: number, partyKeys: string[], count: number, bonus = 0, unlocked: readonly number[] = []): number[] {
+  const pool = gearPool(Math.min(WORLDS.length - 1, world + (bonus > 0 && rng.chance(bonus) ? 1 : 0)), partyKeys, unlocked);
   const out: number[] = [];
   const [lo, hi] = WORLDS[world]!.gearPrice;
   for (let i = 0; i < count && pool.length; i++) {
@@ -103,7 +127,7 @@ export function shopStock(rng: Rng, world: number, partyKeys: string[]): ShopVis
   const ids = [...new Set([...(store?.items ?? []), ...shop.items])];
   const stock = ids
     .map((id) => findItem(id))
-    .filter((i): i is ItemData => !!i && i.price > 0)
+    .filter((i): i is ItemData => !!i && i.price > 0 && !LEGENDARY_ITEMS.has(i.id))
     // Only gear someone in the party can use (consumables always).
     .filter((i) => i.kind === "item" || i.equippableBy.some((k) => partyKeys.includes(k)))
     .map((i) => ({ itemId: i.id, price: i.price }));

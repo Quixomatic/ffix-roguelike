@@ -1,4 +1,4 @@
-import { campSupplies, deriveStats, loadoutSlots, MAX_TIER, nextSlotCost, startLevelCost } from "@ffix-roguelike/game-core";
+import { campSupplies, deriveStats, MAX_TIER, nextSlotCost, starterGear, startLevelCost } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -11,7 +11,6 @@ import { trpc } from "@/utils/trpc";
 
 import { CampShop } from "./camp-shop";
 import { CharacterSheet } from "./character-sheet";
-import { Workshop } from "./workshop";
 
 /** Between runs: roster (spend CP, gear, abilities), party picker, difficulty tier, shop and workshop. */
 export function Camp() {
@@ -87,7 +86,8 @@ export function Camp() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {p.unlocked.map((key) => {
           const b = p.builds[key]!;
-          const st = deriveStats(b);
+          const st = deriveStats({ ...b, equipment: starterGear(b) });
+          const slotsOpen = 1 + (b.unlockedSlots ?? []).length;
           const inParty = chosen.includes(key);
           const cp = b.points ?? 0;
           const canSpend = cp >= startLevelCost(b.level) || cp >= (nextSlotCost(b) ?? Infinity);
@@ -109,13 +109,13 @@ export function Camp() {
                   HP {st.maxHp} · MP {st.maxMp}
                 </div>
                 <div className="text-xs text-[#c8d0ff]">
-                  {Object.values(b.equipment)
+                  {Object.values(starterGear(b))
                     .filter((x): x is number => x != null)
                     .map(itemName)
                     .join(" · ")}
                 </div>
                 <div className="text-xs opacity-80">
-                  <span className={canSpend ? "text-yellow-200" : ""}>{cp} CP</span> · {loadoutSlots(b)} gear slot{loadoutSlots(b) === 1 ? "" : "s"}
+                  <span className={canSpend ? "text-yellow-200" : ""}>{cp} CP</span> · {slotsOpen}/5 gear slots
                 </div>
               </button>
               {between && (
@@ -137,25 +137,20 @@ export function Camp() {
         ))}
       </div>
 
-      {Object.keys(p.stash).length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <StashList title="Stash — gear you own" entries={Object.entries(p.stash).filter(([id]) => !(id in supplies))} />
-          <StashList title="Packed for your next run" entries={Object.entries(supplies)} />
-        </div>
-      )}
+      {Object.keys(supplies).length > 0 && <StashList title="Packed for your next run" entries={Object.entries(supplies)} />}
 
       {between && <CampShop profile={p} />}
-      {between && <Workshop profile={p} />}
 
-      {sheet && <CharacterSheet build={p.builds[sheet]!} stash={p.stash} onClose={() => setSheet(null)} />}
+      {sheet && <CharacterSheet build={p.builds[sheet]!} onClose={() => setSheet(null)} />}
 
       <div className="ff-window p-3 text-sm leading-relaxed">
         <div className="ff-title mb-1">How runs work</div>
         Cross three worlds — Cornelia, Baron and the World of Ruin — to the boss castle at the end of each map. You start alone with Zidane;
         companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
         levels reset and everyone who came earns Completion Points (+1 per level gained, +3 per boss, +10 for a win) — spend them here on a
-        higher start level or on gear slots for bringing stash gear along. Gear teaches abilities while equipped; fill their AP to learn them
-        forever. Gear you find in a run only comes home if you win — but banked gil buys gear at the shop any time.
+        higher start level or on unlocking equipment slots (each starts runs with that character's FF9 starter gear, and can hold what they
+        find). Gear teaches abilities while equipped; fill their AP to learn them forever. Win a run and all the gear you found is unlocked
+        into future runs; banked gil unlocks more from the gear catalog, and achievements unlock the legendary pieces.
       </div>
     </div>
   );

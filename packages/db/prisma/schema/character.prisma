@@ -1,4 +1,4 @@
-/// A party member's permanent build: level, EXP, equipment and support abilities.
+/// A party member's permanent build: start level, CP, unlocked slots, abilities and FF9 growth.
 /// Every character has a row from profile creation; `unlocked` gates whether they can join a run.
 /// Equipment columns hold FF9 item ids (packages/game-data items.json).
 model PlayerCharacter {
@@ -18,8 +18,8 @@ model PlayerCharacter {
 
   /// Unspent Completion Points (earned when a run ends; spent on start level or gear slots).
   points Int @default(0)
-  /// Loadout gear slots bought with CP (0–5).
-  slots  Int @default(0)
+  /// Equipment slots unlocked with CP ("armor" | "head" | "wrist" | "accessory"); the weapon slot is always open.
+  unlockedSlots String[] @default([])
 
   weaponId    Int?
   headId      Int?

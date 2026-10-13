@@ -3,7 +3,7 @@
  * only loads, creates and persists.
  */
 import { newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
-import type { AbilityRef } from "@ffix-roguelike/game-data";
+import type { AbilityRef, EquipSlot } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 
 type Tx = Parameters<Parameters<Database["$transaction"]>[0]>[0];
@@ -55,7 +55,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       growth: { speed: c.growthSpeed, strength: c.growthStrength, magic: c.growthMagic, spirit: c.growthSpirit, gems: c.growthGems },
       record: { runs: c.runs, wins: c.wins, bossKills: c.bossKills },
       points: c.points,
-      slots: c.slots,
+      unlockedSlots: c.unlockedSlots as EquipSlot[],
     };
   }
   return {
@@ -64,6 +64,8 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
     profile: {
       gil: row.gil,
       maxTier: row.maxTier,
+      achievements: row.achievements,
+      gearUnlocked: row.gearUnlocked,
       unlocked: row.characters.filter((c) => c.unlocked).map((c) => c.key),
       builds,
       stash: Object.fromEntries(row.stash.filter((s) => s.count > 0).map((s) => [s.itemId, s.count])),
@@ -75,6 +77,8 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
         steals: row.steals,
         bestWorld: row.bestWorld,
         highestTierWon: row.highestTierWon,
+        soloWins: row.soloWins,
+        legendClears: row.legendClears,
         bossKills: Object.fromEntries(row.bossKills.map((b) => [b.enemyId, b.count])),
       },
     },
@@ -101,7 +105,7 @@ function buildColumns(b: CharacterBuild) {
     wins: b.record?.wins ?? 0,
     bossKills: b.record?.bossKills ?? 0,
     points: b.points ?? 0,
-    slots: b.slots ?? 0,
+    unlockedSlots: b.unlockedSlots ?? [],
   };
 }
 
@@ -119,6 +123,10 @@ export async function saveProfile(tx: Tx, profileId: string, p: Profile) {
       steals: p.stats.steals,
       bestWorld: p.stats.bestWorld,
       highestTierWon: p.stats.highestTierWon,
+      soloWins: p.stats.soloWins ?? [],
+      legendClears: p.stats.legendClears ?? [],
+      achievements: p.achievements ?? [],
+      gearUnlocked: p.gearUnlocked ?? [],
     },
   });
   for (const b of Object.values(p.builds)) {

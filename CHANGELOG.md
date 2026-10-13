@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.18] - 2026-10-13
+
+Achievements, and a Megabonk-style unlock model: slots and gear are unlocked, not carried.
+
+### Added
+- **Achievements** (`meta/achievements.ts`, `/achievements` page): milestones, bosses, challenges (win solo with each hero, win on Tiers 1/3/5) and secret legends (Soulcage, Deathguise, Kuja, Hades, Ozma, Necron, "Legend of <hero>"). Most pay big banked gil and/or Completion Points (to everyone, or to the solo hero). Only legends award gear.
+- **Legendary gear**: every hero's best FF9 weapon (Ultima Weapon, Excalibur II, Mace of Zeus, Dragon's Hair, Rune Claws, Gastro Fork…) plus each hero's computed best-in-slot head/arm/body/accessory. It never drops, is never sold, and is never in the catalog until its achievement unlocks it.
+- **Gear catalog** at camp: spend banked gil to unlock gear into future runs' drop pools (2× its FF9 price). Never-sold FF9 rarities (Ribbon, Genji gear…) are priced as late-game treasure.
+- The run-over screen shows achievements earned (with rewards), gear unlocked by a win, and gear found on a loss.
+
+### Changed
+- **Equipment slots are unlocked per slot with CP** (Body/Head/Arm/Accessory; 5/10/20/35 CP; weapon always open). An unlocked slot starts every run with the hero's **FF9 starter gear** and can hold gear found during the run; locked slots can't be used at all.
+- **No pre-equipping from a stash.** Every run starts with starter gear; what you find is what you wear.
+- **Drop pools** = each world's real FF9 shop stock + gear you've unlocked (catalog, achievements, or found in a **won** run — winning brings its gear home as unlocks).
+- The camp shop now has *Supplies* (consumables packed into the next run) and *Gear catalog*; the stash holds supplies only. The camp workshop is gone (synthesis stays in runs).
+- DB: `player_character.unlockedSlots` replaces `slots`; `player_profile` gains `achievements`, `gearUnlocked`, `soloWins`, `legendClears` (migration `unlocks_and_achievements`).
+
 ## [0.1.17] - 2026-10-13
 
 Stiltzkin and Chocobo stages, camp supplies, and two fairness fixes.

@@ -7,23 +7,23 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, MAIN_CAST, shops, type EquipSlot, type SynthesisRecipe } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, items, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import { WORLDS } from "../content/worlds";
-import { recipesUpTo } from "../run/loot";
+import { baseGear, effectivePrice, isGear } from "../run/loot";
 import type { RunOutcome } from "../run/run";
 import {
   activeSupports,
-  canEquip,
   emptyRecord,
   expForLevel,
-  getStarterWeapon,
-  loadoutSlots,
-  loadoutUsed,
   newBuild,
   nextSlotCost,
+  slotUnlocked,
+  starterGear,
+  UNLOCKABLE_SLOTS,
   type CharacterBuild,
 } from "../stats";
+import { awardAchievements, LEGENDARY_ITEMS } from "./achievements";
 
 export interface ProfileStats {
   runs: number;
@@ -34,6 +34,10 @@ export interface ProfileStats {
   steals: number;
   bestWorld: number;
   highestTierWon: number;
+  /** Characters who have won a run as the only party member. */
+  soloWins?: string[];
+  /** Characters who were in the party when the final journey (Terra & Memoria) was cleared. */
+  legendClears?: string[];
 }
 
 export interface Profile {
@@ -41,10 +45,15 @@ export interface Profile {
   gil: number;
   unlocked: string[];
   builds: Record<string, CharacterBuild>;
+  /** Supplies (consumables) bought at camp, packed into the next run. */
   stash: Record<number, number>;
+  /** Gear unlocked into run drop pools (catalog, achievements, won runs). */
+  gearUnlocked?: number[];
   stats: ProfileStats;
   /** Highest difficulty tier the player may start (wins unlock the next). */
   maxTier: number;
+  /** Earned achievement ids (meta/achievements.ts). */
+  achievements?: string[];
 }
 
 export const STARTING_CAST = ["zidane"];
@@ -77,7 +86,9 @@ export function newProfile(): Profile {
     unlocked: [...STARTING_CAST],
     builds,
     stash: {},
-    stats: { runs: 0, wins: 0, battles: 0, bossKills: {}, eaten: 0, steals: 0, bestWorld: 0, highestTierWon: -1 },
+    stats: { runs: 0, wins: 0, battles: 0, bossKills: {}, eaten: 0, steals: 0, bestWorld: 0, highestTierWon: -1, soloWins: [] },
+    achievements: [],
+    gearUnlocked: [],
     maxTier: 0,
   };
 }
@@ -91,6 +102,10 @@ export interface RunReport {
   tierUnlocked: number | null;
   /** Completion Points earned per character this run. */
   points: Record<string, number>;
+  /** Achievements earned by this run (rewards already granted). */
+  achievements: string[];
+  /** Gear newly unlocked into the drop pool by winning this run. */
+  gearUnlocked: number[];
 }
 
 /** Completion Points for one character at the end of a run. */
@@ -118,11 +133,16 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
       level: startLevel,
       exp: expForLevel(startLevel),
       points: (before?.points ?? 0) + earned,
-      slots: before?.slots ?? 0,
+      unlockedSlots: before?.unlockedSlots ?? [],
     };
   }
-  // The stash stayed at camp; add whatever the run brought home.
-  for (const [id, n] of Object.entries(outcome.stash)) p.stash[Number(id)] = (p.stash[Number(id)] ?? 0) + n;
+  // A won run brings its gear home: everything found is unlocked into future drop pools.
+  const gearUnlocked: number[] = [];
+  if (outcome.won) {
+    const have = new Set(p.gearUnlocked ?? []);
+    for (const id of outcome.foundGear) if (!have.has(id)) gearUnlocked.push(id);
+    p.gearUnlocked = [...have, ...gearUnlocked];
+  }
   p.gil += outcome.gilEarned;
   p.stats.runs++;
   p.stats.battles += outcome.stats.battles;
@@ -134,6 +154,7 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   if (outcome.won) {
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
+    if (outcome.builds.length === 1) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
     if (tier === p.maxTier && p.maxTier < MAX_TIER) {
       p.maxTier++;
       tierUnlocked = p.maxTier;
@@ -141,7 +162,8 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   }
   const newlyUnlocked = UNLOCKS.filter((u) => !p.unlocked.includes(u.key) && u.check(p)).map((u) => u.key);
   p.unlocked.push(...newlyUnlocked);
-  return { profile: p, newlyUnlocked, tierUnlocked, points };
+  const achievements = awardAchievements(p);
+  return { profile: p, newlyUnlocked, tierUnlocked, points, achievements, gearUnlocked };
 }
 
 // ── spending Completion Points ───────────────────────────────────────────────
@@ -167,63 +189,57 @@ export function raiseStartLevel(profile: Profile, key: string): Profile {
   return p;
 }
 
-/** Spend CP on the next loadout gear slot. */
-export function buyLoadoutSlot(profile: Profile, key: string): Profile {
+/** Spend CP to unlock an equipment slot (Body, Head, Arm or Accessory) for a character. */
+export function unlockSlot(profile: Profile, key: string, slot: EquipSlot): Profile {
   const { p, b } = editable(profile, key);
+  if (!UNLOCKABLE_SLOTS.includes(slot)) throw new ProfileError("That slot is always open");
+  if (slotUnlocked(b, slot)) throw new ProfileError("Already unlocked");
   const cost = nextSlotCost(b);
-  if (cost == null) throw new ProfileError("All gear slots unlocked");
+  if (cost == null) throw new ProfileError("All slots unlocked");
   if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
   b.points = (b.points ?? 0) - cost;
-  b.slots = loadoutSlots(b) + 1;
+  b.unlockedSlots = [...(b.unlockedSlots ?? []), slot];
+  b.equipment = starterGear(b);
   return p;
 }
 
-// ── loadout & abilities before a run ─────────────────────────────────────────
-/** Equip an item from the stash into a bought gear slot (or unequip with null). The removed piece returns to the stash. */
-export function equipFromStash(profile: Profile, key: string, slot: EquipSlot, itemId: number | null): Profile {
-  const { p, b: build } = editable(profile, key);
-  const starter = getStarterWeapon(key);
-  if (itemId == null && slot === "weapon" && build.equipment.weapon === starter) throw new ProfileError("A weapon is required");
-  if (itemId != null) {
-    if ((p.stash[itemId] ?? 0) <= 0) throw new ProfileError("You don't have that");
-    if (!canEquip(key, getItem(itemId), slot)) throw new ProfileError("Can't equip that there");
-  }
-  const old = build.equipment[slot];
-  // Is this a new loadout piece (filling a slot that was empty / held the free starting weapon)?
-  const addsPiece = itemId != null && (old == null || (slot === "weapon" && old === starter)) && !(slot === "weapon" && itemId === starter);
-  if (addsPiece && loadoutUsed(build).length >= loadoutSlots(build)) {
-    throw new ProfileError(
-      loadoutSlots(build) === 0 ? "No gear slots yet — buy one with Completion Points" : `All ${loadoutSlots(build)} gear slots are full — buy another with CP`,
-    );
-  }
-  if (itemId != null) {
-    p.stash[itemId]!--;
-    if (p.stash[itemId] === 0) delete p.stash[itemId];
-  }
-  if (old != null && !(slot === "weapon" && old === starter)) p.stash[old] = (p.stash[old] ?? 0) + 1;
-  build.equipment[slot] = itemId ?? (slot === "weapon" ? starter : null);
-  build.supports = build.supports.filter((id) => activeSupports(build).has(id));
-  return p;
-}
-
+// ── abilities before a run ───────────────────────────────────────────────────
 export function setProfileSupports(profile: Profile, key: string, supports: number[]): Profile {
   const { p, b: build } = editable(profile, key);
+  build.equipment = starterGear(build);
   const candidate = { ...build, supports: [...new Set(supports)] };
   if (activeSupports(candidate).size !== candidate.supports.length) throw new ProfileError("Not enough magic stones, or ability not available");
   build.supports = candidate.supports;
   return p;
 }
 
-// ── camp shop & workshop (banked gil) ────────────────────────────────────────
-/** Gear sold at camp: the FF9 shops of every world you've reached. Prices in banked gil. */
-export function campShopStock(profile: Profile): { itemId: number; price: number }[] {
-  const reached = WORLDS.slice(0, Math.min(WORLDS.length, profile.stats.bestWorld + 1));
-  const ids = new Set(reached.flatMap((w) => w.shops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? [])));
-  return [...ids]
-    .map((id) => getItem(id))
-    .filter((i) => i.kind !== "item" && !i.effect && i.price > 0)
-    .sort((a, b) => a.price - b.price)
-    .map((i) => ({ itemId: i.id, price: i.price }));
+// ── camp: gear catalog & supplies (banked gil) ───────────────────────────────
+/** Unlocking gear costs more than its FF9 shop price — it's permanent. */
+export const UNLOCK_PRICE_MULT = 2;
+
+/**
+ * The gear catalog: gear that isn't already in a reached world's drop pool, isn't legendary (achievements only)
+ * and isn't unlocked yet. Unlocking puts it into future runs' drops, shops and treasure for its world.
+ */
+export function gearCatalog(profile: Profile): { itemId: number; price: number }[] {
+  const reached = Math.min(WORLDS.length, profile.stats.bestWorld + 1);
+  const base = new Set(WORLDS.flatMap((w) => [...baseGear(w.index)]));
+  const unlocked = new Set(profile.gearUnlocked ?? []);
+  const maxPrice = WORLDS[reached - 1]!.gearPrice[1];
+  return items
+    .filter((i) => isGear(i) && i.price > 0 && effectivePrice(i) <= maxPrice && !base.has(i.id) && !unlocked.has(i.id) && !LEGENDARY_ITEMS.has(i.id))
+    .sort((a, b) => effectivePrice(a) - effectivePrice(b))
+    .map((i) => ({ itemId: i.id, price: effectivePrice(i) * UNLOCK_PRICE_MULT }));
+}
+
+export function unlockGear(profile: Profile, itemId: number): Profile {
+  const entry = gearCatalog(profile).find((e) => e.itemId === itemId);
+  if (!entry) throw new ProfileError("Can't unlock that yet");
+  if (profile.gil < entry.price) throw new ProfileError("Not enough gil");
+  const p = structuredClone(profile);
+  p.gil -= entry.price;
+  p.gearUnlocked = [...(p.gearUnlocked ?? []), itemId];
+  return p;
 }
 
 const SUPPLY_TIERS: string[][] = [
@@ -240,45 +256,17 @@ export function campSupplyStock(profile: Profile): { itemId: number; price: numb
     .map((i) => ({ itemId: i.id, price: i.price || 500 }));
 }
 
-/** Consumables waiting in the stash to be packed into the next run. */
+/** Supplies packed for the next run (the stash only holds consumables now). */
 export function campSupplies(profile: Profile): Record<number, number> {
-  return Object.fromEntries(Object.entries(profile.stash).filter(([id]) => getItem(Number(id)).kind === "item"));
+  return Object.fromEntries(Object.entries(profile.stash).filter(([id, n]) => n > 0 && getItem(Number(id)).kind === "item"));
 }
 
-/** Buy gear or supplies at camp with banked gil; they go straight to the stash. */
-export function buyAtCamp(profile: Profile, itemId: number): Profile {
-  const entry = [...campShopStock(profile), ...campSupplyStock(profile)].find((e) => e.itemId === itemId);
+export function buySupply(profile: Profile, itemId: number): Profile {
+  const entry = campSupplyStock(profile).find((e) => e.itemId === itemId);
   if (!entry) throw new ProfileError("Not sold here yet — reach further worlds");
   if (profile.gil < entry.price) throw new ProfileError("Not enough gil");
   const p = structuredClone(profile);
   p.gil -= entry.price;
   p.stash[itemId] = (p.stash[itemId] ?? 0) + 1;
-  return p;
-}
-
-/** Synthesis tier available at camp: the furthest world reached, and Hades Workshop (39) after a win. */
-export function campSynthTier(profile: Profile): number {
-  if (profile.stats.wins > 0) return 39;
-  return WORLDS[Math.min(WORLDS.length - 1, profile.stats.bestWorld)]!.synthTier;
-}
-
-/** Recipes the camp workshop can make: unlocked tier, and gear-only ingredients (the stash holds gear). */
-export function campRecipes(profile: Profile): SynthesisRecipe[] {
-  return recipesUpTo(campSynthTier(profile)).filter((r) => r.ingredients.every((id) => getItem(id).kind !== "item"));
-}
-
-/** Synthesize at camp from stash gear and banked gil; the result goes to the stash. */
-export function synthesizeAtCamp(profile: Profile, recipeId: number): Profile {
-  const recipe = campRecipes(profile).find((r) => r.id === recipeId);
-  if (!recipe) throw new ProfileError("That recipe isn't available yet");
-  if (profile.gil < recipe.price) throw new ProfileError("Not enough gil");
-  const p = structuredClone(profile);
-  for (const id of recipe.ingredients) {
-    if ((p.stash[id] ?? 0) <= 0) throw new ProfileError(`Missing ${getItem(id).name} in your stash`);
-    p.stash[id]!--;
-    if (p.stash[id] === 0) delete p.stash[id];
-  }
-  p.gil -= recipe.price;
-  p.stash[recipe.result] = (p.stash[recipe.result] ?? 0) + 1;
   return p;
 }

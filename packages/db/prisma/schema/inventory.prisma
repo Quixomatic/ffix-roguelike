@@ -1,6 +1,4 @@
-/// Unequipped gear the player owns permanently (FF9 item id → count).
-/// Equipped gear lives on PlayerCharacter; gear found mid-run only lands here once it's secured
-/// (mailed home at a Moogle, or the run is won).
+/// Supplies bought at camp (FF9 consumable item id → count), packed into the next run.
 model StashItem {
   id        String        @id @default(cuid())
   profileId String

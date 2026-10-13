@@ -8,6 +8,7 @@ import {
   gemsMax,
   gemsUsed,
   isMastered,
+  slotUnlocked,
   type CharacterBuild,
   type RunState,
 } from "@ffix-roguelike/game-core";
@@ -131,10 +132,12 @@ function CharacterSheet({
           onSelect={setSlot}
           slots={EQUIP_SLOTS.map((s) => {
             const inst = run.gear.find((g) => g.holder?.key === keyName && g.holder.slot === s);
+            const open = slotUnlocked(m.build, s);
             return {
               slot: s,
               itemId: m.build.equipment[s],
-              note: inst && !inst.secured ? "found · kept only if you win" : undefined,
+              locked: !open,
+              note: !open ? "locked — unlock at camp" : inst && !inst.secured ? "found this run" : undefined,
               noteTone: "warn" as const,
             };
           })}

@@ -21,6 +21,15 @@ model PlayerProfile {
   steals         Int @default(0)
   bestWorld      Int @default(0)
   highestTierWon Int @default(-1)
+  /// Characters who won a run as the only party member.
+  soloWins       String[] @default([])
+  /// Characters in the party when the final journey (Terra & Memoria) was cleared.
+  legendClears   String[] @default([])
+
+  /// Earned achievement ids (game-core meta/achievements.ts).
+  achievements String[] @default([])
+  /// Gear unlocked into run drop pools (catalog, achievements, won runs) — FF9 item ids.
+  gearUnlocked Int[]    @default([])
 
   characters PlayerCharacter[]
   stash      StashItem[]

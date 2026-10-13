@@ -9,7 +9,12 @@ export interface RunReport {
   newlyUnlocked: string[];
   tierUnlocked: number | null;
   gilEarned: number;
-  gearLost: number[];
+  /** Gear found this run (unlocked into future drop pools if won). */
+  foundGear: number[];
+  /** Achievement ids earned by this run. */
+  achievements: string[];
+  /** Gear newly unlocked by winning. */
+  gearUnlocked: number[];
   won: boolean;
   /** Completion Points earned per character. */
   points: Record<string, number>;
