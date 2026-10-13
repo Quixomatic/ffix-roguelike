@@ -1,0 +1,3 @@
+{
+  "extends": "@ffix-roguelike/config/tsconfig.base.json"
+}

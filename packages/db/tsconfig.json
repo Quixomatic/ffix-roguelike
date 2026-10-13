@@ -1,0 +1,6 @@
+{
+  "extends": "@ffix-roguelike/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

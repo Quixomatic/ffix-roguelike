@@ -1,0 +1,22 @@
+{
+  "name": "@ffix-roguelike/api",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ffix-roguelike/auth": "workspace:*",
+    "@ffix-roguelike/db": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ffix-roguelike/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
