@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { itemName } from "@/features/run/item-info";
 
 import { LoadoutSheet } from "./loadout";
+import { Workshop } from "./workshop";
 import { trpc } from "@/utils/trpc";
 
 /** Between runs: the roster, party picker, difficulty tier and lifetime stats. */
@@ -138,6 +139,8 @@ export function Camp() {
           </div>
         </div>
       )}
+
+      {!p.activeRunId && <Workshop profile={p} />}
 
       {loadout && <LoadoutSheet build={p.builds[loadout]!} stash={p.stash} onClose={() => setLoadout(null)} />}
 

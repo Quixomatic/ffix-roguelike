@@ -1,5 +1,5 @@
-import { eventById, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
-import { abilityName, getCharacter } from "@ffix-roguelike/game-data";
+import { eventById, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
 import { ItemCard, itemName } from "./item-info";
@@ -77,7 +77,7 @@ export function TreasurePanel({ phase, actions }: { phase: Extract<RunPhase, { k
 
 export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "shop" }>; actions: RunActions }) {
   return (
-    <Panel title={`Shop — ${run.gil} gil`}>
+    <Panel title={`${phase.name} — ${run.gil} gil`}>
       <div className="grid gap-3 sm:grid-cols-2">
         {phase.stock.map((entry, i) => {
           const sold = phase.sold.includes(i);
@@ -92,6 +92,7 @@ export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extra
           );
         })}
       </div>
+      <SellList run={run} actions={actions} />
       <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
         Leave
       </button>
@@ -99,7 +100,80 @@ export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extra
   );
 }
 
-export function MooglePanel({ phase, actions }: { phase: Extract<RunPhase, { kind: "moogle" }>; actions: RunActions }) {
+/** Unequipped gear you can sell for half price. */
+function SellList({ run, actions }: { run: RunState; actions: RunActions }) {
+  const sellable = run.gear.filter((g) => !g.holder);
+  if (!sellable.length) return null;
+  return (
+    <div className="ff-window p-3">
+      <div className="ff-title mb-1">Sell (unequipped gear)</div>
+      <div className="flex flex-wrap gap-2">
+        {sellable.map((g) => (
+          <button
+            key={g.uid}
+            className="rounded border border-white/30 px-2 py-0.5 text-sm hover:bg-white/10 disabled:opacity-50"
+            disabled={actions.sell.isPending}
+            onClick={() => actions.sell.mutate({ uid: g.uid })}
+          >
+            {itemName(g.itemId)} · {sellPrice(g.itemId)}g{!g.secured && <span className="text-orange-300"> ·unmailed</span>}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** How many of an item the run has available as an ingredient (consumables + unequipped gear). */
+function ingredientCount(run: RunState, itemId: number): number {
+  return (run.consumables.find((c) => c.itemId === itemId)?.count ?? 0) + run.gear.filter((g) => g.itemId === itemId && !g.holder).length;
+}
+
+export function SynthPanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "synth" }>; actions: RunActions }) {
+  const recipes = phase.recipes.map((id) => synthesis.find((r) => r.id === id)!).filter(Boolean);
+  const canMake = (r: (typeof recipes)[number]) => {
+    if (run.gil < r.price) return false;
+    const need = new Map<number, number>();
+    for (const id of r.ingredients) need.set(id, (need.get(id) ?? 0) + 1);
+    return [...need].every(([id, n]) => ingredientCount(run, id) >= n);
+  };
+  const sorted = [...recipes].sort((a, b) => Number(canMake(b)) - Number(canMake(a)) || a.price - b.price);
+  return (
+    <Panel title={`${phase.name} — ${run.gil} gil`}>
+      <div className="ff-window p-3 text-sm">Combine two items and some gil into something better. Ingredients must be unequipped.</div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {sorted.map((r) => {
+          const ok = canMake(r);
+          return (
+            <ItemCard
+              key={r.id}
+              itemId={r.result}
+              onClick={ok && !actions.synthesize.isPending ? () => actions.synthesize.mutate({ recipeId: r.id }) : undefined}
+              footer={
+                <div className="flex justify-between text-sm">
+                  <span>
+                    {r.ingredients.map((id, i) => (
+                      <span key={i} className={ingredientCount(run, id) > 0 ? "" : "text-red-300"}>
+                        {i > 0 && " + "}
+                        {findItem(id)?.name ?? id}
+                      </span>
+                    ))}
+                  </span>
+                  <span className={run.gil >= r.price ? "" : "text-red-300"}>{r.price}g</span>
+                </div>
+              }
+            />
+          );
+        })}
+      </div>
+      <SellList run={run} actions={actions} />
+      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+        Leave
+      </button>
+    </Panel>
+  );
+}
+
+export function MooglePanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "moogle" }>; actions: RunActions }) {
   return (
     <Panel title="Moogle — Kupo!">
       <div className="ff-window p-4 text-lg leading-relaxed">
@@ -109,6 +183,7 @@ export function MooglePanel({ phase, actions }: { phase: Extract<RunPhase, { kin
           ? `Mognet delivered ${phase.mailed} piece${phase.mailed === 1 ? "" : "s"} of gear home. They're yours to keep, even if you fall.`
           : "\"Nothing to mail home this time, kupo.\""}
       </div>
+      <SellList run={run} actions={actions} />
       <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
         Set off
       </button>

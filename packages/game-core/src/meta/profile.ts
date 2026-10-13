@@ -8,7 +8,7 @@ import { WORLDS } from "../content/worlds";
 import { recipesUpTo } from "../run/loot";
 
 import type { RunOutcome } from "../run/run";
-import { activeSupports, canEquip, emptyRecord, getStarterWeapon, loadoutSlots, loadoutUsed, newBuild, nextLoadoutUnlock, type CharacterBuild } from "../stats";
+import { activeSupports, canEquip, emptyRecord, expForLevel, getStarterWeapon, loadoutSlots, loadoutUsed, newBuild, nextLoadoutUnlock, type CharacterBuild } from "../stats";
 
 export interface ProfileStats {
   runs: number;
@@ -70,17 +70,24 @@ export interface RunReport {
   profile: Profile;
   newlyUnlocked: string[];
   tierUnlocked: number | null;
+  /** Memoria earned per character (levels gained during the run). */
+  memoria: Record<string, number>;
 }
 
 /** Fold a finished run into the profile. */
 export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: number): RunReport {
   const p = structuredClone(profile);
+  const memoria: Record<string, number> = {};
   for (const b of outcome.builds) {
     const record = { ...(b.record ?? emptyRecord()) };
     record.runs++;
     if (outcome.won) record.wins++;
     record.bossKills += outcome.stats.bossKills.length;
-    p.builds[b.key] = { ...b, record };
+    // Levels reset to the start level; the levels gained become Memoria. AP, the FF9 growth pool and gear stay.
+    const startLevel = profile.builds[b.key]?.level ?? 1;
+    const earned = Math.max(0, b.level - startLevel);
+    memoria[b.key] = earned;
+    p.builds[b.key] = { ...b, record, level: startLevel, exp: expForLevel(startLevel), memoria: (profile.builds[b.key]?.memoria ?? 0) + earned };
   }
   // The stash stayed at camp; add whatever the run brought home.
   for (const [id, n] of Object.entries(outcome.stash)) p.stash[Number(id)] = (p.stash[Number(id)] ?? 0) + n;
@@ -102,7 +109,7 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   }
   const newlyUnlocked = UNLOCKS.filter((u) => !p.unlocked.includes(u.key) && u.check(p)).map((u) => u.key);
   p.unlocked.push(...newlyUnlocked);
-  return { profile: p, newlyUnlocked, tierUnlocked };
+  return { profile: p, newlyUnlocked, tierUnlocked, memoria };
 }
 
 
@@ -172,5 +179,22 @@ export function synthesizeAtCamp(profile: Profile, recipeId: number): Profile {
   }
   p.gil -= recipe.price;
   p.stash[recipe.result] = (p.stash[recipe.result] ?? 0) + 1;
+  return p;
+}
+
+/** Memoria needed to raise a start level from `level` to `level + 1`. */
+export const startLevelCost = (level: number) => level;
+
+/** Spend Memoria to raise a character's start level by one. */
+export function raiseStartLevel(profile: Profile, key: string): Profile {
+  const p = structuredClone(profile);
+  const b = p.builds[key];
+  if (!b || !p.unlocked.includes(key)) throw new ProfileError("Character not available");
+  const cost = startLevelCost(b.level);
+  if ((b.memoria ?? 0) < cost) throw new ProfileError(`Need ${cost} Memoria`);
+  if (b.level >= 99) throw new ProfileError("Already at the maximum level");
+  b.memoria = (b.memoria ?? 0) - cost;
+  b.level++;
+  b.exp = expForLevel(b.level);
   return p;
 }

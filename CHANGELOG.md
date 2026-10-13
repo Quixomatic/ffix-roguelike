@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.12] - 2026-10-13
+
+Synthesis, selling and the camp workshop in the UI, and Phaser labels on the overworld.
+
+### Added
+- **Overworld labels**: every stage has an always-visible name under its icon (Battle, Elite, Treasure, Shop, Synth, Moogle, ???, BOSS); the bottom-center overlay still gives the longer description on hover.
+- **Synthesis stage UI**: FF9 recipes with ingredients (red when missing) and price; makeable recipes sort first.
+- **Selling** unequipped gear for half price at shops, synthesis shops and Moogles.
+- Shops show their real FF9 name (e.g. "Lindblum Dragoos' Armory").
+- **Camp workshop**: synthesize from stash gear with banked gil; toggle between "what I can make" and all unlocked recipes.
+- API: `run.synthesize`, `run.sell`, `profile.synthesize`.
+
 ## [0.1.11] - 2026-10-13
 
 FF9's real shops and synthesis come to the run, plus selling and a camp workshop (game rules; UI follows).

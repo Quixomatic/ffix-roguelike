@@ -38,6 +38,10 @@ export const MAX_MP = 999;
 /** Persistent per-character state (lives in the player's profile). */
 export interface CharacterBuild {
   key: string;
+  /**
+   * In a run: current level. At camp: the character's START level — every run begins here (1 until raised with
+   * Memoria).
+   */
   level: number;
   exp: number;
   equipment: Equipment;
@@ -48,6 +52,8 @@ export interface CharacterBuild {
   backRow: boolean;
   /** Runs/wins/bosses with this character in the party — unlocks loadout slots. Optional for older saves. */
   record?: CharacterRecord;
+  /** Unspent Memoria — earned 1 per level gained in a run, spent at camp to raise the start level. */
+  memoria?: number;
   /**
    * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.

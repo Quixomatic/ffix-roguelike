@@ -9,7 +9,9 @@ import {
   moveTo,
   nextWorld,
   optimizeParty,
+  sell,
   setSupports,
+  synthesize,
   useConsumable,
   type InputRecord,
   type RunState,
@@ -65,6 +67,10 @@ export const runRouter = router({
 
   claim: protectedProcedure.input(z.object({ choice: z.number().int().min(0).nullable() })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => claimReward(r, input.choice))),
   buy: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => buy(r, input.index))),
+  synthesize: protectedProcedure
+    .input(z.object({ recipeId: z.number().int().min(0) }))
+    .mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => synthesize(r, input.recipeId))),
+  sell: protectedProcedure.input(z.object({ uid: z.number().int() })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => sell(r, input.uid))),
   leave: protectedProcedure.mutation(({ ctx }) => act(ctx.db, ctx.session.user.id, leave)),
   choose: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => chooseEvent(r, input.index))),
   nextWorld: protectedProcedure.mutation(({ ctx }) => act(ctx.db, ctx.session.user.id, nextWorld)),

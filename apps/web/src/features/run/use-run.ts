@@ -43,6 +43,8 @@ export function useRunActions() {
     finishBattle: useMutation(trpc.run.finishBattle.mutationOptions(opts)),
     claim: useMutation(trpc.run.claim.mutationOptions(opts)),
     buy: useMutation(trpc.run.buy.mutationOptions(opts)),
+    synthesize: useMutation(trpc.run.synthesize.mutationOptions(opts)),
+    sell: useMutation(trpc.run.sell.mutationOptions(opts)),
     leave: useMutation(trpc.run.leave.mutationOptions(opts)),
     choose: useMutation(trpc.run.choose.mutationOptions(opts)),
     nextWorld: useMutation(trpc.run.nextWorld.mutationOptions(opts)),

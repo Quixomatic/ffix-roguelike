@@ -1,4 +1,4 @@
-import { equipFromStash, setProfileSupports, UNLOCKS } from "@ffix-roguelike/game-core";
+import { equipFromStash, setProfileSupports, synthesizeAtCamp, UNLOCKS } from "@ffix-roguelike/game-core";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
@@ -38,6 +38,18 @@ export const profileRouter = router({
       }
       await ctx.db.$transaction((tx) => saveProfile(tx, loaded.id, next));
     }),
+
+  /** Camp workshop: synthesize from stash gear with banked gil. */
+  synthesize: protectedProcedure.input(z.object({ recipeId: z.number().int().min(0) })).mutation(async ({ ctx, input }) => {
+    const loaded = await loadProfile(ctx.db, ctx.session.user.id);
+    let next;
+    try {
+      next = synthesizeAtCamp(loaded.profile, input.recipeId);
+    } catch (e) {
+      toTrpcError(e);
+    }
+    await ctx.db.$transaction((tx) => saveProfile(tx, loaded.id, next));
+  }),
 
   setSupports: protectedProcedure
     .input(z.object({ key: z.string(), supports: z.array(z.number().int()).max(64) }))

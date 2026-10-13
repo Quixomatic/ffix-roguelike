@@ -28,9 +28,23 @@ const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number 
   elite: { color: 0x8a3ad8, glyph: "☠", size: 20 },
   treasure: { color: 0xe8c040, glyph: "◆", size: 17 },
   shop: { color: 0x3ab868, glyph: "$", size: 17 },
+  synth: { color: 0xd88a3a, glyph: "⚒", size: 17 },
   moogle: { color: 0xf080b0, glyph: "✿", size: 18 },
   event: { color: 0x3a8ad8, glyph: "?", size: 17 },
   boss: { color: 0x202020, glyph: "♜", size: 28 },
+};
+
+/** Short always-visible labels under each stage (the React overlay shows the longer description on hover). */
+const NODE_LABEL: Record<NodeKind, string> = {
+  start: "Start",
+  battle: "Battle",
+  elite: "Elite",
+  treasure: "Treasure",
+  shop: "Shop",
+  synth: "Synth",
+  moogle: "Moogle",
+  event: "???",
+  boss: "BOSS",
 };
 
 const THEME_COLORS: Record<string, { ground: number; dark: number; path: number; accent: number }> = {
@@ -105,6 +119,16 @@ export class MapScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setStroke("#000000", 3);
       if (done) glyph.setAlpha(0.6);
+      const label = this.add
+        .text(p.x, p.y + style.size + (n.kind === "boss" ? 30 : 9), NODE_LABEL[n.kind], {
+          fontFamily: "\"Pixelify Sans\", monospace",
+          fontSize: n.kind === "boss" ? "16px" : "13px",
+          color: can ? "#fff2a8" : "#ffffff",
+        })
+        .setOrigin(0.5, 0)
+        .setStroke("#000000", 4)
+        .setDepth(5);
+      if (done) label.setAlpha(0.55);
       const hit = this.add.circle(p.x, p.y, style.size + 10, 0xffffff, 0.001).setInteractive({ useHandCursor: can });
       hit.on("pointerover", () => b.onHover(n));
       hit.on("pointerout", () => b.onHover(null));

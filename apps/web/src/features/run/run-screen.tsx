@@ -5,7 +5,7 @@ import { BattleView } from "@/features/battle/battle-view";
 
 import { Overworld } from "./overworld";
 import { PartyPanel } from "./party-panel";
-import { EventPanel, MooglePanel, RewardsPanel, RunOverPanel, ShopPanel, TreasurePanel, WorldClearPanel } from "./stage-panels";
+import { EventPanel, MooglePanel, RewardsPanel, RunOverPanel, ShopPanel, SynthPanel, TreasurePanel, WorldClearPanel } from "./stage-panels";
 import { useActiveRun, useRunActions } from "./use-run";
 
 /** The whole run: overworld map, battles and stage screens, driven by the server's run state. */
@@ -28,7 +28,7 @@ export function RunScreen() {
 
   const phase = run.phase;
   const inBattle = phase.kind === "battle";
-  const canManage = ["map", "moogle", "shop", "rewards", "treasure", "worldClear"].includes(phase.kind);
+  const canManage = ["map", "moogle", "shop", "synth", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
     <div className="flex flex-col gap-3 p-3 lg:flex-row">
@@ -48,7 +48,8 @@ export function RunScreen() {
         {phase.kind === "rewards" && <RewardsPanel phase={phase} actions={actions} />}
         {phase.kind === "treasure" && <TreasurePanel phase={phase} actions={actions} />}
         {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}
-        {phase.kind === "moogle" && <MooglePanel phase={phase} actions={actions} />}
+        {phase.kind === "synth" && <SynthPanel run={run} phase={phase} actions={actions} />}
+        {phase.kind === "moogle" && <MooglePanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "event" && <EventPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "worldClear" && <WorldClearPanel run={run} actions={actions} />}
         {phase.kind === "over" && <RunOverPanel run={run} report={actions.report} />}

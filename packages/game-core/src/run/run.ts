@@ -21,6 +21,7 @@ import {
   deriveStats,
   EQUIP_SLOTS,
   gearAbilities,
+  expForLevel,
   levelForExp,
   trimLoadout,
   type CharacterBuild,
@@ -152,6 +153,8 @@ export function startRun(input: StartRunInput): RunState {
   let uid = 1;
   const party = input.party.map((b) => {
     const build = structuredClone(b);
+    // Every run starts at the character's start level, with exactly that level's EXP.
+    build.exp = expForLevel(build.level);
     trimLoadout(build);
     for (const slot of EQUIP_SLOTS) {
       const id = build.equipment[slot];
