@@ -109,5 +109,12 @@ async function finalize(tx: Database, userId: string, runId: string, run: RunSta
   const report = applyRunOutcome(loaded.profile, outcome, tier);
   await saveProfile(tx as never, loaded.id, report.profile);
   await tx.run.update({ where: { id: runId }, data: { gilEarned: outcome.gilEarned } });
-  return { newlyUnlocked: report.newlyUnlocked, tierUnlocked: report.tierUnlocked, gilEarned: outcome.gilEarned, gearLost: outcome.gearLost, won: outcome.won };
+  return {
+    newlyUnlocked: report.newlyUnlocked,
+    tierUnlocked: report.tierUnlocked,
+    gilEarned: outcome.gilEarned,
+    gearLost: outcome.gearLost,
+    won: outcome.won,
+    points: report.points,
+  };
 }

@@ -11,7 +11,7 @@ const KIND_TEXT: Record<MapNode["kind"], string> = {
   treasure: "Treasure",
   shop: "Item shop — buy gear and supplies, sell what you don't need",
   synth: "Synthesis shop — combine gear into something better",
-  moogle: "Moogle — full rest, and mail found gear home so you keep it",
+  moogle: "Moogle — full rest for the party, and a place to sell gear",
   event: "Something's going on here…",
   boss: "Boss castle",
 };

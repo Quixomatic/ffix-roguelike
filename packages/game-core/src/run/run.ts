@@ -3,8 +3,8 @@
  * functions over a JSON-serializable `RunState` — the server stores the state, applies player actions with
  * these functions, and verifies battles by replaying their input logs.
  *
- * Permanence: levels, EXP and AP earned in a run are always kept. Gear found in a run is kept only if it was
- * "mailed home" at a Moogle stage, or if the run is won.
+ * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
+ * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
 import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
 
@@ -35,7 +35,7 @@ export class RunError extends Error {}
 export interface GearInstance {
   uid: number;
   itemId: number;
-  /** Kept even if the run is lost (pre-equipped at camp, or mailed home at a Moogle). */
+  /** Brought in from your loadout — always kept. Gear found during a run is only kept if you win. */
   secured: boolean;
   holder: { key: string; slot: EquipSlot } | null;
 }
@@ -62,7 +62,7 @@ export type RunPhase =
   | { kind: "treasure"; gearChoices: number[]; gil: number }
   | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
   | { kind: "synth"; name: string; recipes: number[] }
-  | { kind: "moogle"; mailed: number }
+  | { kind: "moogle" }
   | { kind: "event"; eventId: string; result: string | null }
   | { kind: "worldClear"; cleared: number }
   | { kind: "over"; won: boolean };
@@ -225,13 +225,10 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "synth":
       run.phase = { kind: "synth", name: synthShopName(run.world), recipes: recipesUpTo(WORLDS[run.world]!.synthTier).map((r) => r.id) };
       return;
-    case "moogle": {
+    case "moogle":
       healParty(run, 100, true);
-      const mailed = run.gear.filter((g) => !g.secured).length;
-      for (const g of run.gear) g.secured = true;
-      run.phase = { kind: "moogle", mailed };
+      run.phase = { kind: "moogle" };
       return;
-    }
     case "event": {
       const pool = EVENTS.filter((e) => e.worlds.includes(run.world));
       run.phase = { kind: "event", eventId: rng.pick(pool).id, result: null };
@@ -397,7 +394,7 @@ export function buy(run: RunState, index: number): RunState {
 
 /**
  * Synthesize at a synthesis shop: pay gil and consume the ingredients (unequipped gear or consumables). The
- * result counts as mailed home only if every gear ingredient already was.
+ * result is kept after a loss only if every gear ingredient was your own loadout gear.
  */
 export function synthesize(run: RunState, recipeId: number): RunState {
   if (run.phase.kind !== "synth") throw new RunError("Not at a synthesis shop");
@@ -412,7 +409,7 @@ export function synthesize(run: RunState, recipeId: number): RunState {
       stock.count--;
       continue;
     }
-    // Prefer pieces that would be lost anyway (not yet mailed home).
+    // Prefer pieces found this run over your own loadout gear.
     const inst = next.gear.filter((g) => g.itemId === id && !g.holder).sort((a, b) => Number(a.secured) - Number(b.secured))[0];
     if (!inst) throw new RunError(`Missing ${getItem(id).name} (unequip it first if it's being worn)`);
     secured &&= inst.secured;

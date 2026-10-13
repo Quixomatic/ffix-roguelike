@@ -137,7 +137,7 @@ function CharacterSheet({
                   <button key={g.uid} className="ff-option text-left" onClick={() => actions.equip.mutate({ key: keyName, slot, uid: g.uid })}>
                     <div>
                       {itemName(g.itemId)} {g.holder ? <span className="opacity-60">(on {getCharacter(g.holder.key).name})</span> : null}
-                      {!g.secured && <span className="text-orange-300"> · not yet mailed home</span>}
+                      {!g.secured && <span className="text-orange-300"> · found (kept only if you win)</span>}
                     </div>
                     <div className="text-xs text-[#c8d0ff]">{gearSummary(getItem(g.itemId))}</div>
                   </button>

@@ -49,7 +49,7 @@ export function RunScreen() {
         {phase.kind === "treasure" && <TreasurePanel phase={phase} actions={actions} />}
         {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "synth" && <SynthPanel run={run} phase={phase} actions={actions} />}
-        {phase.kind === "moogle" && <MooglePanel run={run} phase={phase} actions={actions} />}
+        {phase.kind === "moogle" && <MooglePanel run={run} actions={actions} />}
         {phase.kind === "event" && <EventPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "worldClear" && <WorldClearPanel run={run} actions={actions} />}
         {phase.kind === "over" && <RunOverPanel run={run} report={actions.report} />}
@@ -60,7 +60,7 @@ export function RunScreen() {
           <button
             className="mt-2 text-sm text-red-300 opacity-70 hover:opacity-100"
             onClick={() => {
-              if (confirm("Abandon this run? Levels and learned abilities are kept; unmailed gear is lost.")) actions.abandon.mutate();
+              if (confirm("Abandon this run? You still earn Completion Points and keep learned abilities; gear found this run is lost.")) actions.abandon.mutate();
             }}
           >
             Abandon run

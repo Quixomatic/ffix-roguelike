@@ -43,7 +43,7 @@ export function Workshop({ profile }: { profile: Profile }) {
       <div className="text-xs opacity-70">
         Synthesize permanent gear from your stash. Reach further worlds to unlock more recipes{tier < 39 ? "; win a run to open Hades Workshop" : ""}.
       </div>
-      {!shown.length && <div className="text-sm opacity-70">Nothing you can make yet — mail more gear home from your runs.</div>}
+      {!shown.length && <div className="text-sm opacity-70">Nothing you can make yet — buy or win more gear.</div>}
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((r) => {
           const ok = canMake(r);

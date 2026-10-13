@@ -11,9 +11,15 @@ model PlayerCharacter {
   unlocked   Boolean   @default(false)
   unlockedAt DateTime?
 
+  /// START level: every run begins here (raised with Completion Points). Levels gained in a run reset.
   level   Int     @default(1)
   exp     Int     @default(0)
   backRow Boolean @default(false)
+
+  /// Unspent Completion Points (earned when a run ends; spent on start level or gear slots).
+  points Int @default(0)
+  /// Loadout gear slots bought with CP (0–5).
+  slots  Int @default(0)
 
   weaponId    Int?
   headId      Int?
@@ -31,7 +37,7 @@ model PlayerCharacter {
   growthSpirit   Int @default(0)
   growthGems     Int @default(0)
 
-  /// Runs / wins / bosses defeated with this character in the party — unlocks loadout slots.
+  /// Runs / wins / bosses defeated with this character in the party (stats).
   runs      Int @default(0)
   wins      Int @default(0)
   bossKills Int @default(0)

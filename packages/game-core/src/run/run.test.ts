@@ -121,7 +121,7 @@ describe("run", () => {
     expect(out.gearLost).toContain(3);
   });
 
-  test("progress across runs: auto runs reach further as permanent levels grow", () => {
+  test("progress across runs: every run pays Completion Points; levels reset to the start level", () => {
     let profile = newProfile();
     const reached: number[] = [];
     for (let i = 0; i < 4; i++) {
@@ -133,8 +133,9 @@ describe("run", () => {
       reached.push(run.world);
     }
     expect(profile.stats.runs).toBe(4);
-    expect(Object.values(profile.builds).some((b) => b.level > 1)).toBe(true);
-    console.log("worlds reached per run:", reached.join(", "), "| unlocked:", profile.unlocked.join(", "), "| levels:", profile.unlocked.map((k) => `${k}:${profile.builds[k]!.level}`).join(" "));
+    expect(Object.values(profile.builds).some((b) => (b.points ?? 0) > 0)).toBe(true);
+    expect(Object.values(profile.builds).every((b) => b.level === 1)).toBe(true);
+    console.log("worlds reached per run:", reached.join(", "), "| unlocked:", profile.unlocked.join(", "), "| CP:", profile.unlocked.map((k) => `${k}:${profile.builds[k]!.points ?? 0}`).join(" "));
   });
 });
 

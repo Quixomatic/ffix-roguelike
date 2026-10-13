@@ -50,10 +50,12 @@ export interface CharacterBuild {
   /** Support ability ids switched on (must fit in the gem budget). */
   supports: number[];
   backRow: boolean;
-  /** Runs/wins/bosses with this character in the party — unlocks loadout slots. Optional for older saves. */
+  /** Runs/wins/bosses with this character in the party (stats). Optional for older saves. */
   record?: CharacterRecord;
-  /** Unspent Memoria — earned 1 per level gained in a run, spent at camp to raise the start level. */
-  memoria?: number;
+  /** Unspent Completion Points — earned when a run ends, spent before a run on start level or gear slots. */
+  points?: number;
+  /** Loadout gear slots bought with Completion Points (0–5). */
+  slots?: number;
   /**
    * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
@@ -130,26 +132,18 @@ export const emptyRecord = (): CharacterRecord => ({ runs: 0, wins: 0, bossKills
 
 /**
  * Loadout slots: how many pieces of stash gear a character may pre-equip before a run (in any equipment slot;
- * their FF9 starting weapon is always free). Everyone starts with none; they unlock slowly from the character's own record, because
- * starting a run geared up is a big advantage.
+ * their FF9 starting weapon is always free). Everyone starts with none; each is bought with Completion Points,
+ * because starting a run geared up is a big advantage.
  */
-export const LOADOUT_UNLOCKS: { slots: number; runs: number; bossKills?: number; wins?: number; hint: string }[] = [
-  { slots: 1, runs: 3, hint: "3 runs" },
-  { slots: 2, runs: 8, hint: "8 runs" },
-  { slots: 3, runs: 15, bossKills: 3, hint: "15 runs and 3 bosses defeated" },
-  { slots: 4, runs: 25, wins: 1, hint: "25 runs and 1 win" },
-  { slots: 5, runs: 35, wins: 3, hint: "35 runs and 3 wins" },
-];
+export const LOADOUT_SLOT_COSTS = [5, 10, 20, 35, 50];
 
 export function loadoutSlots(build: CharacterBuild): number {
-  const r = build.record ?? emptyRecord();
-  let slots = 0;
-  for (const u of LOADOUT_UNLOCKS) if (r.runs >= u.runs && r.bossKills >= (u.bossKills ?? 0) && r.wins >= (u.wins ?? 0)) slots = u.slots;
-  return slots;
+  return Math.min(LOADOUT_SLOT_COSTS.length, build.slots ?? 0);
 }
 
-export function nextLoadoutUnlock(build: CharacterBuild) {
-  return LOADOUT_UNLOCKS.find((u) => u.slots === loadoutSlots(build) + 1) ?? null;
+/** CP cost of the next loadout slot, or null when all five are owned. */
+export function nextSlotCost(build: CharacterBuild): number | null {
+  return LOADOUT_SLOT_COSTS[loadoutSlots(build)] ?? null;
 }
 
 /** Equipment slots holding loadout gear (the starting weapon doesn't count). */
@@ -178,7 +172,7 @@ export function getStarterWeapon(key: string): number | null {
   return getCharacter(key).defaultEquipment.weapon;
 }
 
-/** A fresh character: their FF9 starting weapon only (other slots unlock with levels). */
+/** A fresh character: their FF9 starting weapon only (gear slots are bought with Completion Points). */
 export function newBuild(key: string, level = 1): CharacterBuild {
   const data = getCharacter(key);
   return {

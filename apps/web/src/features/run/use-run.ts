@@ -11,6 +11,8 @@ export interface RunReport {
   gilEarned: number;
   gearLost: number[];
   won: boolean;
+  /** Completion Points earned per character. */
+  points: Record<string, number>;
 }
 
 export function useActiveRun() {

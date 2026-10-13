@@ -115,7 +115,7 @@ function SellList({ run, actions }: { run: RunState; actions: RunActions }) {
             disabled={actions.sell.isPending}
             onClick={() => actions.sell.mutate({ uid: g.uid })}
           >
-            {itemName(g.itemId)} · {sellPrice(g.itemId)}g{!g.secured && <span className="text-orange-300"> ·unmailed</span>}
+            {itemName(g.itemId)} · {sellPrice(g.itemId)}g{!g.secured && <span className="text-orange-300"> ·found</span>}
           </button>
         ))}
       </div>
@@ -173,15 +173,13 @@ export function SynthPanel({ run, phase, actions }: { run: RunState; phase: Extr
   );
 }
 
-export function MooglePanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "moogle" }>; actions: RunActions }) {
+export function MooglePanel({ run, actions }: { run: RunState; actions: RunActions }) {
   return (
     <Panel title="Moogle — Kupo!">
       <div className="ff-window p-4 text-lg leading-relaxed">
         "You look tired, kupo! Rest up — everyone's back on their feet."
         <br />
-        {phase.mailed > 0
-          ? `Mognet delivered ${phase.mailed} piece${phase.mailed === 1 ? "" : "s"} of gear home. They're yours to keep, even if you fall.`
-          : "\"Nothing to mail home this time, kupo.\""}
+        "I'll buy any gear you can't use, kupo. Remember — what you find out here only comes home if you see the journey through!"
       </div>
       <SellList run={run} actions={actions} />
       <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
@@ -243,14 +241,17 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
         <div>Reached: {WORLDS[run.world]!.name}</div>
         <div>Battles won: {run.stats.battles}</div>
         {run.party.map((m) => (
-          <div key={m.build.key}>
-            {name(m.build.key)} — Lv {m.build.level}
+          <div key={m.build.key} className="flex justify-between">
+            <span>
+              {name(m.build.key)} — reached Lv {m.build.level}
+            </span>
+            {report && <span className="text-yellow-200">+{report.points[m.build.key] ?? 0} CP</span>}
           </div>
         ))}
         {report && (
           <>
             <div className="mt-2 text-yellow-200">{report.gilEarned} gil banked.</div>
-            {report.gearLost.length > 0 && <div className="text-red-300">Lost (never mailed home): {report.gearLost.map(itemName).join(", ")}</div>}
+            {report.gearLost.length > 0 && <div className="text-red-300">Left behind (only a win brings found gear home): {report.gearLost.map(itemName).join(", ")}</div>}
             {report.newlyUnlocked.map((k) => (
               <div key={k} className="text-pink-200">
                 {name(k)} joined your roster!
@@ -259,7 +260,9 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
             {report.tierUnlocked != null && <div className="text-pink-200">Difficulty Tier {report.tierUnlocked} unlocked!</div>}
           </>
         )}
-        <div className="mt-2 text-sm opacity-80">Levels and learned abilities are permanent.</div>
+        <div className="mt-2 text-sm opacity-80">
+          Learned abilities are permanent. Spend Completion Points at camp on a higher start level or more gear slots.
+        </div>
       </div>
       <Link to="/play" className="ff-window mx-auto px-6 py-2 text-lg">
         Back to camp

@@ -1,4 +1,15 @@
-import { equipFromStash, setProfileSupports, synthesizeAtCamp, UNLOCKS } from "@ffix-roguelike/game-core";
+import {
+  buyAtCamp,
+  buyLoadoutSlot,
+  equipFromStash,
+  raiseStartLevel,
+  setProfileSupports,
+  synthesizeAtCamp,
+  UNLOCKS,
+  type Profile,
+} from "@ffix-roguelike/game-core";
+import type { Database } from "@ffix-roguelike/db";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
@@ -6,6 +17,22 @@ import { loadProfile, saveProfile } from "../services/profile";
 import { getActiveRun, toTrpcError } from "../services/runs";
 
 const slot = z.enum(["weapon", "head", "wrist", "armor", "accessory"]);
+
+/**
+ * Apply a game-core rule to the player's profile and persist it. Loadout/points/shop changes are only allowed
+ * between runs.
+ */
+async function mutateProfile(db: Database, userId: string, change: (p: Profile) => Profile) {
+  const loaded = await loadProfile(db, userId);
+  if (await getActiveRun(db, loaded.id)) throw new TRPCError({ code: "CONFLICT", message: "Finish your current run first" });
+  let next: Profile;
+  try {
+    next = change(loaded.profile);
+  } catch (e) {
+    toTrpcError(e);
+  }
+  await db.$transaction((tx) => saveProfile(tx, loaded.id, next));
+}
 
 export const profileRouter = router({
   /** The player's permanent progression (created on first call), plus unlock hints and any active run id. */
@@ -24,43 +51,32 @@ export const profileRouter = router({
     await ctx.db.playerProfile.update({ where: { userId: ctx.session.user.id }, data: { battleMode: input.mode } });
   }),
 
-  /** Between runs: equip from the stash (itemId null = unequip). Not allowed while a run is active. */
+  /** Spend Completion Points on +1 start level. */
+  raiseStartLevel: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => raiseStartLevel(p, input.key))),
+
+  /** Spend Completion Points on the next loadout gear slot. */
+  buySlot: protectedProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buyLoadoutSlot(p, input.key))),
+
+  /** Put stash gear into a bought slot (itemId null = unequip). */
   equip: protectedProcedure
     .input(z.object({ key: z.string(), slot, itemId: z.number().int().nullable() }))
-    .mutation(async ({ ctx, input }) => {
-      const loaded = await loadProfile(ctx.db, ctx.session.user.id);
-      if (await getActiveRun(ctx.db, loaded.id)) return toTrpcError(new Error("Change gear inside the run while one is active"));
-      let next;
-      try {
-        next = equipFromStash(loaded.profile, input.key, input.slot, input.itemId);
-      } catch (e) {
-        toTrpcError(e);
-      }
-      await ctx.db.$transaction((tx) => saveProfile(tx, loaded.id, next));
-    }),
-
-  /** Camp workshop: synthesize from stash gear with banked gil. */
-  synthesize: protectedProcedure.input(z.object({ recipeId: z.number().int().min(0) })).mutation(async ({ ctx, input }) => {
-    const loaded = await loadProfile(ctx.db, ctx.session.user.id);
-    let next;
-    try {
-      next = synthesizeAtCamp(loaded.profile, input.recipeId);
-    } catch (e) {
-      toTrpcError(e);
-    }
-    await ctx.db.$transaction((tx) => saveProfile(tx, loaded.id, next));
-  }),
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => equipFromStash(p, input.key, input.slot, input.itemId))),
 
   setSupports: protectedProcedure
     .input(z.object({ key: z.string(), supports: z.array(z.number().int()).max(64) }))
-    .mutation(async ({ ctx, input }) => {
-      const loaded = await loadProfile(ctx.db, ctx.session.user.id);
-      let next;
-      try {
-        next = setProfileSupports(loaded.profile, input.key, input.supports);
-      } catch (e) {
-        toTrpcError(e);
-      }
-      await ctx.db.$transaction((tx) => saveProfile(tx, loaded.id, next));
-    }),
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => setProfileSupports(p, input.key, input.supports))),
+
+  /** Camp shop: buy gear with banked gil (goes to the stash). */
+  buyGear: protectedProcedure
+    .input(z.object({ itemId: z.number().int() }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buyAtCamp(p, input.itemId))),
+
+  /** Camp workshop: synthesize from stash gear with banked gil. */
+  synthesize: protectedProcedure
+    .input(z.object({ recipeId: z.number().int().min(0) }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => synthesizeAtCamp(p, input.recipeId))),
 });

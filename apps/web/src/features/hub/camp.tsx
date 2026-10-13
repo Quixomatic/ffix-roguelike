@@ -1,4 +1,4 @@
-import { deriveStats, MAX_TIER } from "@ffix-roguelike/game-core";
+import { deriveStats, loadoutSlots, MAX_TIER, nextSlotCost, startLevelCost } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -6,19 +6,20 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { itemName } from "@/features/run/item-info";
-
-import { LoadoutSheet } from "./loadout";
-import { Workshop } from "./workshop";
 import { trpc } from "@/utils/trpc";
 
-/** Between runs: the roster, party picker, difficulty tier and lifetime stats. */
+import { CampShop } from "./camp-shop";
+import { CharacterSheet } from "./character-sheet";
+import { Workshop } from "./workshop";
+
+/** Between runs: roster (spend CP, gear, abilities), party picker, difficulty tier, shop and workshop. */
 export function Camp() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [party, setParty] = useState<string[]>([]);
   const [tier, setTier] = useState(0);
-  const [loadout, setLoadout] = useState<string | null>(null);
+  const [sheet, setSheet] = useState<string | null>(null);
 
   const start = useMutation(
     trpc.run.start.mutationOptions({
@@ -35,6 +36,7 @@ export function Camp() {
   if (!profile.data) return null;
   const p = profile.data;
   const chosen = party.length ? party : p.unlocked.slice(0, 4);
+  const between = !p.activeRunId;
 
   const toggle = (key: string) =>
     setParty((cur) => {
@@ -85,38 +87,38 @@ export function Camp() {
           const b = p.builds[key]!;
           const st = deriveStats(b);
           const inParty = chosen.includes(key);
+          const cp = b.points ?? 0;
+          const canSpend = cp >= startLevelCost(b.level) || cp >= (nextSlotCost(b) ?? Infinity);
           return (
-            <button
+            <div
               key={key}
-              className="ff-window flex flex-col gap-1 p-3 text-left enabled:hover:brightness-125 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
+              className="ff-window flex flex-col gap-1 p-3 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
               data-on={inParty}
-              disabled={!!p.activeRunId}
-              onClick={() => toggle(key)}
             >
-              <div className="flex items-baseline justify-between">
-                <span className="text-xl">{getCharacter(key).name}</span>
-                <span className="ff-title">Lv {b.level}</span>
-              </div>
-              <div className="text-sm">
-                HP {st.maxHp} · MP {st.maxMp}
-              </div>
-              <div className="text-xs text-[#c8d0ff]">
-                {[b.equipment.weapon, b.equipment.armor].filter((x): x is number => x != null).map(itemName).join(" · ")}
-              </div>
-              <div className="text-xs opacity-70">{Object.values(b.ap).filter(Boolean).length} abilities in progress</div>
-              {!p.activeRunId && (
-                <span
-                  role="button"
-                  className="mt-1 self-start rounded border border-white/40 px-2 text-xs hover:bg-white/10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setLoadout(key);
-                  }}
-                >
-                  Loadout
-                </span>
+              <button className="flex flex-col gap-1 text-left disabled:cursor-default" disabled={!between} onClick={() => toggle(key)}>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-xl">{getCharacter(key).name}</span>
+                  <span className="ff-title">Start Lv {b.level}</span>
+                </div>
+                <div className="text-sm">
+                  HP {st.maxHp} · MP {st.maxMp}
+                </div>
+                <div className="text-xs text-[#c8d0ff]">
+                  {Object.values(b.equipment)
+                    .filter((x): x is number => x != null)
+                    .map(itemName)
+                    .join(" · ")}
+                </div>
+                <div className="text-xs opacity-80">
+                  <span className={canSpend ? "text-yellow-200" : ""}>{cp} CP</span> · {loadoutSlots(b)} gear slot{loadoutSlots(b) === 1 ? "" : "s"}
+                </div>
+              </button>
+              {between && (
+                <button className="mt-1 self-start rounded border border-white/40 px-2 text-xs hover:bg-white/10" onClick={() => setSheet(key)}>
+                  Manage{canSpend ? " ★" : ""}
+                </button>
               )}
-            </button>
+            </div>
           );
         })}
         {p.locked.map((l) => (
@@ -140,16 +142,18 @@ export function Camp() {
         </div>
       )}
 
-      {!p.activeRunId && <Workshop profile={p} />}
+      {between && <CampShop profile={p} />}
+      {between && <Workshop profile={p} />}
 
-      {loadout && <LoadoutSheet build={p.builds[loadout]!} stash={p.stash} onClose={() => setLoadout(null)} />}
+      {sheet && <CharacterSheet build={p.builds[sheet]!} stash={p.stash} onClose={() => setSheet(null)} />}
 
       <div className="ff-window p-3 text-sm leading-relaxed">
         <div className="ff-title mb-1">How runs work</div>
         Cross three worlds — Cornelia, Baron and the World of Ruin — to the boss castle at the end of each map. You start alone with Zidane;
-        companions join your roster as you progress. Levels are permanent, and every level-up also grows FF9's hidden stat bonuses (more with stat-boosting gear on).
-        Each character slowly earns loadout slots — pre-equipped gear from your stash — by running with you; they start with none. Gear teaches abilities while equipped — fill their AP to master them forever (equip support abilities with magic stones,
-        which grow with level). Gear you find is only yours for keeps once a Moogle mails it home, or you win. Fall, and you start again — stronger.
+        companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
+        levels reset and everyone who came earns Completion Points (+1 per level gained, +3 per boss, +10 for a win) — spend them here on a
+        higher start level or on gear slots for bringing stash gear along. Gear teaches abilities while equipped; fill their AP to learn them
+        forever. Gear you find in a run only comes home if you win — but banked gil buys gear at the shop any time.
       </div>
     </div>
   );

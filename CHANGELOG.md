@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.13] - 2026-10-13
+
+Completion Points: levels reset every run, and finishing runs is how characters get stronger.
+
+### Changed
+- **Levels reset every run.** Each run starts at the character's *start level* and levels up with FF9's normal EXP system.
+- **Completion Points (CP)** are earned by everyone in the party when a run ends: +1 per level gained, +3 per boss defeated, +10 for a win.
+- **Spend CP before a run** on +1 start level (cost = current start level) or a **gear slot** (5 / 10 / 20 / 35 / 50 CP) — slots let a character bring stash gear into a run. Replaces the run-count slot unlocks.
+- **Found gear only comes home if you win the run.** Moogles no longer mail gear home; they fully rest the party and buy gear. Gear brought in from the loadout is always kept.
+- AP (mastered abilities) and FF9's hidden growth pool remain permanent across runs.
+
+### Added
+- **Character screen at camp** ("Manage"): *Progress* (start level and gear-slot purchases with CP), *Gear* (stash gear into bought slots), *Abilities* (support abilities with the magic-stone budget, AP progress on every ability).
+- **Camp shop**: buy gear for the stash with banked gil, from the real FF9 shops of every world you've reached.
+- Run-over screen shows CP earned per character.
+- API: `profile.raiseStartLevel`, `profile.buySlot`, `profile.buyGear`; profile mutations are blocked while a run is active.
+- DB: `player_character.points`, `slots` (migration `completion_points`).
+
+### Fixed
+- Camp crashed with "does not provide an export named nextLoadoutUnlock" after the slot rules changed.
+
 ## [0.1.12] - 2026-10-13
 
 Synthesis, selling and the camp workshop in the UI, and Phaser labels on the overworld.
