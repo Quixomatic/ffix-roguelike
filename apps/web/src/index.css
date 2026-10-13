@@ -67,3 +67,30 @@
     filter: brightness(1.6);
   }
 }
+
+/* ── Results animations ─────────────────────────────────────────────────── */
+.ff-pop {
+  animation: ff-pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+@keyframes ff-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.ff-hop {
+  animation: ff-hop 0.5s ease-out 2;
+}
+@keyframes ff-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-14px);
+  }
+}

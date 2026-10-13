@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.15] - 2026-10-13
+
+Animated FF9-style results screens.
+
+### Added
+- **Victory screen**: the party lined up with sprites; EXP bars fill from before to after (crossing level boundaries) with a **LEVEL UP!** pop and a sprite hop; AP bars fill toward every ability on the character's gear with **Learned!** when one completes; gil counts up; spoils pop in. Knocked-out members are shown down with "no EXP".
+- **Run-over screen**: party sprites with **Completion Points counting up** per character, the world reached, battles and bosses, gil banked, gear left behind, and newly unlocked characters popping in with their sprite.
+- `RewardSummary.members` (game-core): per-member level/EXP before and after, and AP before/after/cost per ability, so the client can animate real values.
+
+### Internal
+- `useTween` (eased number animation) and `ff-pop` / `ff-hop` CSS animations.
+
 ## [0.1.14] - 2026-10-13
 
 A WoW-style paperdoll for gear, character sprites in the menus, and visible ATB gauges for every unit in battle.

@@ -2,6 +2,10 @@ import { eventById, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffi
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
+import { useTween } from "@/features/results/use-tween";
+import { VictoryScreen } from "@/features/results/victory-screen";
+import { HeroSprite } from "@/features/sprites/hero-sprite";
+
 import { ItemCard, itemName } from "./item-info";
 import type { RunActions, RunReport } from "./use-run";
 
@@ -17,26 +21,11 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
 const name = (key: string) => getCharacter(key).name;
 
 export function RewardsPanel({ phase, actions }: { phase: Extract<RunPhase, { kind: "rewards" }>; actions: RunActions }) {
-  const s = phase.summary;
+  // Runs saved before per-member progress existed have no `members`.
+  const s = { ...phase.summary, members: phase.summary.members ?? [] };
   const pending = actions.claim.isPending;
   return (
-    <Panel title={phase.boss ? "Boss defeated!" : "Victory!"}>
-      <div className="ff-window grid grid-cols-3 gap-2 p-4 text-lg">
-        <div>EXP {s.exp}</div>
-        <div>AP {s.ap}</div>
-        <div>Gil {s.gil}</div>
-        {s.items.length > 0 && <div className="col-span-3 text-base">Received: {s.items.map(itemName).join(", ")}</div>}
-        {s.levelUps.map((l) => (
-          <div key={l.key} className="col-span-3 text-base text-yellow-200">
-            {name(l.key)} reached Lv {l.to}!
-          </div>
-        ))}
-        {s.mastered.map((m) => (
-          <div key={m.key + m.ref} className="col-span-3 text-base text-pink-200">
-            {name(m.key)} learned {abilityName(m.ref)}!
-          </div>
-        ))}
-      </div>
+    <VictoryScreen title={phase.boss ? "Boss defeated!" : "Victory!"} summary={s}>
       {phase.gearChoices.length > 0 ? (
         <>
           <div className="ff-title text-center text-base">Choose one</div>
@@ -54,7 +43,7 @@ export function RewardsPanel({ phase, actions }: { phase: Extract<RunPhase, { ki
           Continue
         </button>
       )}
-    </Panel>
+    </VictoryScreen>
   );
 }
 
@@ -235,38 +224,55 @@ export function WorldClearPanel({ run, actions }: { run: RunState; actions: RunA
 
 export function RunOverPanel({ run, report }: { run: RunState; report: RunReport | null }) {
   const won = run.phase.kind === "over" && run.phase.won;
+  const gil = useTween(0, report?.gilEarned ?? 0, 1200, 600);
   return (
-    <Panel title={won ? "The world is saved!" : "The party has fallen..."}>
-      <div className="ff-window flex flex-col gap-1 p-4 text-lg">
-        <div>Reached: {WORLDS[run.world]!.name}</div>
-        <div>Battles won: {run.stats.battles}</div>
-        {run.party.map((m) => (
-          <div key={m.build.key} className="flex justify-between">
-            <span>
-              {name(m.build.key)} — reached Lv {m.build.level}
-            </span>
-            {report && <span className="text-yellow-200">+{report.points[m.build.key] ?? 0} CP</span>}
-          </div>
-        ))}
-        {report && (
-          <>
-            <div className="mt-2 text-yellow-200">{report.gilEarned} gil banked.</div>
-            {report.gearLost.length > 0 && <div className="text-red-300">Left behind (only a win brings found gear home): {report.gearLost.map(itemName).join(", ")}</div>}
-            {report.newlyUnlocked.map((k) => (
-              <div key={k} className="text-pink-200">
-                {name(k)} joined your roster!
-              </div>
-            ))}
-            {report.tierUnlocked != null && <div className="text-pink-200">Difficulty Tier {report.tierUnlocked} unlocked!</div>}
-          </>
-        )}
-        <div className="mt-2 text-sm opacity-80">
-          Learned abilities are permanent. Spend Completion Points at camp on a higher start level or more gear slots.
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
+      <div className={`ff-window px-5 py-4 text-center ${won ? "" : "grayscale-[0.3]"}`}>
+        <div className="ff-pop text-3xl">{won ? "The world is saved!" : "The party has fallen..."}</div>
+        <div className="ff-title mt-1">
+          Reached {WORLDS[run.world]!.name} · {run.stats.battles} battles won · {run.stats.bossKills.length} boss{run.stats.bossKills.length === 1 ? "" : "es"} defeated
         </div>
       </div>
+
+      <div className="flex flex-wrap justify-center gap-3 [&>*]:w-48">
+        {run.party.map((m, i) => (
+          <CompletionCard key={m.build.key} heroKey={m.build.key} level={m.build.level} ko={m.hp <= 0} points={report?.points[m.build.key] ?? 0} delay={500 + i * 200} />
+        ))}
+      </div>
+
+      {report && (
+        <div className="ff-window flex flex-col gap-1 p-4 text-lg">
+          <div className="tabular-nums text-yellow-200">+{Math.round(gil)} gil banked</div>
+          {report.gearLost.length > 0 && (
+            <div className="text-base text-red-300">Left behind (only a win brings found gear home): {report.gearLost.map(itemName).join(", ")}</div>
+          )}
+          {report.newlyUnlocked.map((k, i) => (
+            <div key={k} className="ff-pop flex items-center gap-3 text-pink-200" style={{ animationDelay: `${1600 + i * 300}ms` }}>
+              <HeroSprite heroKey={k} size={40} /> {name(k)} joined your roster!
+            </div>
+          ))}
+          {report.tierUnlocked != null && <div className="text-pink-200">Difficulty Tier {report.tierUnlocked} unlocked!</div>}
+        </div>
+      )}
+
+      <div className="text-center text-sm opacity-80">Spend Completion Points at camp on a higher start level or more gear slots.</div>
       <Link to="/play" className="ff-window mx-auto px-6 py-2 text-lg">
         Back to camp
       </Link>
-    </Panel>
+    </div>
+  );
+}
+
+function CompletionCard({ heroKey, level, ko, points, delay }: { heroKey: string; level: number; ko: boolean; points: number; delay: number }) {
+  const shown = useTween(0, points, 1000, delay);
+  return (
+    <div className="ff-window flex flex-col items-center gap-2 p-3">
+      <HeroSprite heroKey={heroKey} size={80} ko={ko} />
+      <div className="text-lg">{name(heroKey)}</div>
+      <div className="ff-title">Reached Lv {level}</div>
+      <div className="ff-pop text-2xl tabular-nums text-yellow-200" style={{ animationDelay: `${delay}ms` }}>
+        +{Math.round(shown)} CP
+      </div>
+    </div>
   );
 }

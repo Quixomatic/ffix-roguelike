@@ -53,6 +53,18 @@ export interface RewardSummary {
   items: number[];
   levelUps: { key: string; from: number; to: number }[];
   mastered: { key: string; ref: AbilityRef }[];
+  /** Per-member before/after values for the animated results screen. */
+  members: MemberProgress[];
+}
+
+export interface MemberProgress {
+  key: string;
+  alive: boolean;
+  levelBefore: number;
+  levelAfter: number;
+  expBefore: number;
+  expAfter: number;
+  ap: { ref: AbilityRef; before: number; after: number; cost: number }[];
 }
 
 export type RunPhase =
@@ -297,18 +309,24 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
 
 function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; items: number[] }, final: BattleState): RewardSummary {
   const alive = run.party.filter((m) => m.hp > 0);
-  const summary: RewardSummary = { exp: r.exp, gil: r.gil, ap: r.ap, items: r.items, levelUps: [], mastered: [] };
+  const summary: RewardSummary = { exp: r.exp, gil: r.gil, ap: r.ap, items: r.items, levelUps: [], mastered: [], members: [] };
   const supportsOf = (m: RunMember) => activeSupports(m.build);
   const gilMult = Math.max(1, ...run.party.map((m) => (supportsOf(m).has(45) ? 1.5 : 1)));
   run.gil += Math.round(r.gil * gilMult);
   summary.gil = Math.round(r.gil * gilMult);
   for (const id of r.items) addLoot(run, id);
 
+  for (const m of run.party) {
+    if (m.hp <= 0) summary.members.push({ key: m.build.key, alive: false, levelBefore: m.build.level, levelAfter: m.build.level, expBefore: m.build.exp, expAfter: m.build.exp, ap: [] });
+  }
   for (const m of alive) {
     const sup = supportsOf(m);
     const share = Math.floor((r.exp / Math.max(1, alive.length)) * (sup.has(43) ? 1.5 : 1));
     const before = m.build.level;
+    const expBefore = m.build.exp;
     const oldMax = deriveStats(m.build);
+    const member: MemberProgress = { key: m.build.key, alive: true, levelBefore: before, levelAfter: before, expBefore, expAfter: expBefore, ap: [] };
+    summary.members.push(member);
     m.build.exp += share;
     m.build.level = levelForExp(m.build.exp);
     if (m.build.level > before) {
@@ -325,8 +343,11 @@ function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; 
       const had = m.build.ap[ref] ?? 0;
       if (had >= cost) continue;
       m.build.ap[ref] = Math.min(cost, had + apGain);
+      member.ap.push({ ref, before: had, after: m.build.ap[ref]!, cost });
       if (m.build.ap[ref]! >= cost) summary.mastered.push({ key: m.build.key, ref });
     }
+    member.levelAfter = m.build.level;
+    member.expAfter = m.build.exp;
     clampVitals(m);
   }
 
