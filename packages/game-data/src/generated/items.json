@@ -1,0 +1,8791 @@
+[
+ {
+  "id": 0,
+  "name": "Hammer",
+  "kind": "weapon",
+  "price": 250,
+  "quality": 1,
+  "abilities": [],
+  "equippableBy": [
+   "cinna"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 12,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 1,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 1,
+  "name": "Dagger",
+  "kind": "weapon",
+  "price": 320,
+  "quality": 1,
+  "abilities": [
+   "AA:101"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 12,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 2,
+  "name": "Mage Masher",
+  "kind": "weapon",
+  "price": 500,
+  "quality": 2,
+  "abilities": [
+   "AA:102",
+   "AA:101"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 14,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "silence"
+   ],
+   "statusRate": 20,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 3,
+  "name": "Mythril Dagger",
+  "kind": "weapon",
+  "price": 950,
+  "quality": 3,
+  "abilities": [
+   "SA:62"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 18,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 4,
+  "name": "Gladius",
+  "kind": "weapon",
+  "price": 2300,
+  "quality": 6,
+  "abilities": [
+   "AA:105",
+   "AA:107"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 30,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "slow"
+   ],
+   "statusRate": 35,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 5,
+  "name": "Zorlin Shape",
+  "kind": "weapon",
+  "price": 6000,
+  "quality": 9,
+  "abilities": [
+   "AA:101"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 42,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 6,
+  "name": "Orichalcon",
+  "kind": "weapon",
+  "price": 17000,
+  "quality": 13,
+  "abilities": [
+   "AA:102"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 71,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 7,
+  "name": "Butterfly Sword",
+  "kind": "weapon",
+  "price": 1300,
+  "quality": 4,
+  "abilities": [
+   "AA:103",
+   "SA:38"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 21,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "silence"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 8,
+  "name": "The Ogre",
+  "kind": "weapon",
+  "price": 1700,
+  "quality": 5,
+  "abilities": [
+   "AA:104"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 24,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "blind"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 9,
+  "name": "Exploda",
+  "kind": "weapon",
+  "price": 2800,
+  "quality": 7,
+  "abilities": [
+   "AA:106",
+   "AA:107"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 31,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "trouble"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 10,
+  "name": "Rune Tooth",
+  "kind": "weapon",
+  "price": 3800,
+  "quality": 8,
+  "abilities": [
+   "AA:107"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 37,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "poison"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 11,
+  "name": "Angel Bless",
+  "kind": "weapon",
+  "price": 7000,
+  "quality": 10,
+  "abilities": [
+   "AA:108"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 44,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "confuse"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 12,
+  "name": "Sargatanas",
+  "kind": "weapon",
+  "price": 9500,
+  "quality": 11,
+  "abilities": [
+   "AA:105"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 53,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "petrify"
+   ],
+   "statusRate": 0,
+   "category": 13,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 13,
+  "name": "Masamune",
+  "kind": "weapon",
+  "price": 13000,
+  "quality": 12,
+  "abilities": [
+   "AA:106"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 62,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "doom"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 14,
+  "name": "The Tower",
+  "kind": "weapon",
+  "price": 30000,
+  "quality": 14,
+  "abilities": [
+   "AA:107",
+   "AA:108"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 86,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "mini"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 15,
+  "name": "Ultima Weapon",
+  "kind": "weapon",
+  "price": 40000,
+  "quality": 15,
+  "abilities": [
+   "AA:101"
+  ],
+  "equippableBy": [
+   "zidane"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 100,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "sleep"
+   ],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 16,
+  "name": "Broadsword",
+  "kind": "weapon",
+  "price": 330,
+  "quality": 1,
+  "abilities": [
+   "SA:19"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 12,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 17,
+  "name": "Iron Sword",
+  "kind": "weapon",
+  "price": 660,
+  "quality": 2,
+  "abilities": [
+   "AA:142"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 16,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 18,
+  "name": "Mythril Sword",
+  "kind": "weapon",
+  "price": 1300,
+  "quality": 3,
+  "abilities": [
+   "AA:145"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 20,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 19,
+  "name": "Blood Sword",
+  "kind": "weapon",
+  "price": 1900,
+  "quality": 4,
+  "abilities": [
+   "AA:141"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 24,
+   "scriptId": 6,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 20,
+  "name": "Ice Brand",
+  "kind": "weapon",
+  "price": 3780,
+  "quality": 5,
+  "abilities": [
+   "AA:146"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 35,
+   "scriptId": 1,
+   "elements": [
+    "ice"
+   ],
+   "statuses": [
+    "freeze"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 21,
+  "name": "Coral Sword",
+  "kind": "weapon",
+  "price": 4000,
+  "quality": 6,
+  "abilities": [
+   "AA:148"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 38,
+   "scriptId": 1,
+   "elements": [
+    "thunder"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 22,
+  "name": "Diamond Sword",
+  "kind": "weapon",
+  "price": 4700,
+  "quality": 7,
+  "abilities": [
+   "AA:144"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 42,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 23,
+  "name": "Flame Saber",
+  "kind": "weapon",
+  "price": 5190,
+  "quality": 8,
+  "abilities": [
+   "AA:147"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 46,
+   "scriptId": 1,
+   "elements": [
+    "fire"
+   ],
+   "statuses": [
+    "heat"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 24,
+  "name": "Rune Blade",
+  "kind": "weapon",
+  "price": 8900,
+  "quality": 9,
+  "abilities": [
+   "AA:143"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 57,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "blind"
+   ],
+   "statusRate": 25,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 25,
+  "name": "Defender",
+  "kind": "weapon",
+  "price": 9340,
+  "quality": 10,
+  "abilities": [
+   "AA:149"
+  ],
+  "equippableBy": [
+   "steiner",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 3,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "ice",
+    "thunder"
+   ],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 65,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 26,
+  "name": "Save the Queen",
+  "kind": "weapon",
+  "price": 2,
+  "quality": 1,
+  "abilities": [],
+  "equippableBy": [
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 2,
+   "magic": 2,
+   "spirit": 5,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire"
+   ],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 23,
+   "scriptId": 7,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 27,
+  "name": "Ultima Sword",
+  "kind": "weapon",
+  "price": 14000,
+  "quality": 12,
+  "abilities": [
+   "AA:150"
+  ],
+  "equippableBy": [
+   "steiner"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 74,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "sleep"
+   ],
+   "statusRate": 20,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 28,
+  "name": "Excalibur",
+  "kind": "weapon",
+  "price": 19000,
+  "quality": 13,
+  "abilities": [
+   "AA:151"
+  ],
+  "equippableBy": [
+   "steiner"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 77,
+   "scriptId": 2,
+   "elements": [
+    "holy"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 29,
+  "name": "Ragnarok",
+  "kind": "weapon",
+  "price": 29000,
+  "quality": 14,
+  "abilities": [
+   "AA:152",
+   "AA:149"
+  ],
+  "equippableBy": [
+   "steiner"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 87,
+   "scriptId": 2,
+   "elements": [],
+   "statuses": [
+    "slow"
+   ],
+   "statusRate": 30,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 30,
+  "name": "Excalibur II",
+  "kind": "weapon",
+  "price": 39000,
+  "quality": 15,
+  "abilities": [
+   "AA:142",
+   "AA:151",
+   "AA:150"
+  ],
+  "equippableBy": [
+   "steiner"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 108,
+   "scriptId": 2,
+   "elements": [
+    "holy"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 31,
+  "name": "Javelin",
+  "kind": "weapon",
+  "price": 880,
+  "quality": 1,
+  "abilities": [
+   "SA:17"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 18,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 32,
+  "name": "Mythril Spear",
+  "kind": "weapon",
+  "price": 1100,
+  "quality": 2,
+  "abilities": [
+   "AA:118"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 20,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 33,
+  "name": "Partisan",
+  "kind": "weapon",
+  "price": 1600,
+  "quality": 3,
+  "abilities": [
+   "AA:117",
+   "SA:35"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 25,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 34,
+  "name": "Ice Lance",
+  "kind": "weapon",
+  "price": 2430,
+  "quality": 4,
+  "abilities": [
+   "AA:120"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 31,
+   "scriptId": 1,
+   "elements": [
+    "ice"
+   ],
+   "statuses": [
+    "freeze"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 35,
+  "name": "Trident",
+  "kind": "weapon",
+  "price": 3580,
+  "quality": 5,
+  "abilities": [
+   "AA:121"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 37,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "blind"
+   ],
+   "statusRate": 20,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 36,
+  "name": "Heavy Lance",
+  "kind": "weapon",
+  "price": 4700,
+  "quality": 6,
+  "abilities": [
+   "AA:122"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 42,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "stop"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 37,
+  "name": "Obelisk",
+  "kind": "weapon",
+  "price": 6000,
+  "quality": 7,
+  "abilities": [
+   "AA:123",
+   "SA:42"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 52,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "petrify"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 38,
+  "name": "Holy Lance",
+  "kind": "weapon",
+  "price": 11000,
+  "quality": 8,
+  "abilities": [
+   "AA:124",
+   "AA:118"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 62,
+   "scriptId": 1,
+   "elements": [
+    "holy"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 39,
+  "name": "Kain's Lance",
+  "kind": "weapon",
+  "price": 15000,
+  "quality": 9,
+  "abilities": [
+   "AA:124",
+   "AA:123",
+   "AA:120"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 71,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "confuse"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 40,
+  "name": "Dragon's Hair",
+  "kind": "weapon",
+  "price": 23500,
+  "quality": 10,
+  "abilities": [
+   "AA:119"
+  ],
+  "equippableBy": [
+   "freya"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 77,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 41,
+  "name": "Cat's Claws",
+  "kind": "weapon",
+  "price": 4000,
+  "quality": 1,
+  "abilities": [
+   "AA:125",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 23,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 42,
+  "name": "Poison Knuckles",
+  "kind": "weapon",
+  "price": 5000,
+  "quality": 2,
+  "abilities": [
+   "AA:126",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 33,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "poison"
+   ],
+   "statusRate": 40,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 43,
+  "name": "Mythril Claws",
+  "kind": "weapon",
+  "price": 6500,
+  "quality": 3,
+  "abilities": [
+   "AA:129",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 39,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 44,
+  "name": "Scissor Fangs",
+  "kind": "weapon",
+  "price": 8000,
+  "quality": 4,
+  "abilities": [
+   "AA:128",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 45,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "venom"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 45,
+  "name": "Dragon's Claws",
+  "kind": "weapon",
+  "price": 10360,
+  "quality": 5,
+  "abilities": [
+   "AA:127",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 53,
+   "scriptId": 1,
+   "elements": [
+    "water"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 46,
+  "name": "Tiger Fangs",
+  "kind": "weapon",
+  "price": 13500,
+  "quality": 6,
+  "abilities": [
+   "AA:130",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 62,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 47,
+  "name": "Avenger",
+  "kind": "weapon",
+  "price": 16000,
+  "quality": 7,
+  "abilities": [
+   "AA:131",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 70,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "death"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 48,
+  "name": "Kaiser Knuckles",
+  "kind": "weapon",
+  "price": 18000,
+  "quality": 8,
+  "abilities": [
+   "AA:132",
+   "AA:129",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 75,
+   "scriptId": 1,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [
+    "trouble"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 49,
+  "name": "Duel Claws",
+  "kind": "weapon",
+  "price": 21500,
+  "quality": 9,
+  "abilities": [
+   "AA:128",
+   "AA:127",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 79,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "berserk"
+   ],
+   "statusRate": 25,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 50,
+  "name": "Rune Claws",
+  "kind": "weapon",
+  "price": 28800,
+  "quality": 10,
+  "abilities": [
+   "AA:126",
+   "AA:131",
+   "AA:130"
+  ],
+  "equippableBy": [
+   "amarant"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 83,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "blind"
+   ],
+   "statusRate": 30,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 51,
+  "name": "Air Racket",
+  "kind": "weapon",
+  "price": 400,
+  "quality": 2,
+  "abilities": [
+   "AA:7",
+   "AA:8"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 13,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 52,
+  "name": "Multina Racket",
+  "kind": "weapon",
+  "price": 750,
+  "quality": 5,
+  "abilities": [
+   "AA:19",
+   "AA:9",
+   "AA:11"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 17,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 53,
+  "name": "Magic Racket",
+  "kind": "weapon",
+  "price": 1350,
+  "quality": 8,
+  "abilities": [
+   "AA:18",
+   "AA:15",
+   "AA:1"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 23,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 54,
+  "name": "Mythril Racket",
+  "kind": "weapon",
+  "price": 2250,
+  "quality": 11,
+  "abilities": [
+   "AA:16",
+   "AA:11",
+   "AA:12"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 27,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 55,
+  "name": "Priest's Racket",
+  "kind": "weapon",
+  "price": 8000,
+  "quality": 17,
+  "abilities": [
+   "AA:14",
+   "AA:22"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 35,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 56,
+  "name": "Tiger Racket",
+  "kind": "weapon",
+  "price": 5800,
+  "quality": 19,
+  "abilities": [
+   "AA:21"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 45,
+   "scriptId": 3,
+   "elements": [
+    "wind"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 57,
+  "name": "Rod",
+  "kind": "weapon",
+  "price": 260,
+  "quality": 1,
+  "abilities": [
+   "AA:1",
+   "AA:8",
+   "AA:12"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 11,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 58,
+  "name": "Mythril Rod",
+  "kind": "weapon",
+  "price": 560,
+  "quality": 3,
+  "abilities": [
+   "AA:5",
+   "AA:14",
+   "AA:11"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 14,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 59,
+  "name": "Stardust Rod",
+  "kind": "weapon",
+  "price": 760,
+  "quality": 4,
+  "abilities": [
+   "SA:44",
+   "AA:16",
+   "AA:20"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "shadow"
+   ],
+   "weakElement": []
+  },
+  "weapon": {
+   "power": 16,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 60,
+  "name": "Healing Rod",
+  "kind": "weapon",
+  "price": 1770,
+  "quality": 9,
+  "abilities": [
+   "SA:24",
+   "AA:2",
+   "AA:5"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 23,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 61,
+  "name": "Asura's Rod",
+  "kind": "weapon",
+  "price": 3180,
+  "quality": 12,
+  "abilities": [
+   "AA:15",
+   "AA:17",
+   "AA:14"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 27,
+   "scriptId": 1,
+   "elements": [
+    "holy"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 62,
+  "name": "Wizard Rod",
+  "kind": "weapon",
+  "price": 3990,
+  "quality": 15,
+  "abilities": [
+   "AA:3",
+   "AA:12",
+   "AA:11"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 31,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 63,
+  "name": "Whale Whisker",
+  "kind": "weapon",
+  "price": 10280,
+  "quality": 18,
+  "abilities": [
+   "AA:3",
+   "AA:5"
+  ],
+  "equippableBy": [
+   "garnet"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 36,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 64,
+  "name": "Golem's Flute",
+  "kind": "weapon",
+  "price": 2700,
+  "quality": 6,
+  "abilities": [
+   "SA:3",
+   "AA:2",
+   "AA:5"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 17,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 65,
+  "name": "Lamia's Flute",
+  "kind": "weapon",
+  "price": 3800,
+  "quality": 7,
+  "abilities": [
+   "AA:20",
+   "AA:9",
+   "AA:14"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 21,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 66,
+  "name": "Fairy Flute",
+  "kind": "weapon",
+  "price": 4500,
+  "quality": 10,
+  "abilities": [
+   "AA:10",
+   "AA:13",
+   "AA:4"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 24,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 67,
+  "name": "Hamelin",
+  "kind": "weapon",
+  "price": 5700,
+  "quality": 13,
+  "abilities": [
+   "AA:3",
+   "AA:22",
+   "AA:23"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 27,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 68,
+  "name": "Siren's Flute",
+  "kind": "weapon",
+  "price": 7000,
+  "quality": 14,
+  "abilities": [
+   "AA:6",
+   "AA:21",
+   "AA:10"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 30,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 69,
+  "name": "Angel Flute",
+  "kind": "weapon",
+  "price": 8300,
+  "quality": 16,
+  "abilities": [
+   "AA:24",
+   "AA:10",
+   "AA:3"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 33,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 70,
+  "name": "Mage Staff",
+  "kind": "weapon",
+  "price": 320,
+  "quality": 1,
+  "abilities": [
+   "AA:25"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 12,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 71,
+  "name": "Flame Staff",
+  "kind": "weapon",
+  "price": 1100,
+  "quality": 2,
+  "abilities": [
+   "AA:26",
+   "AA:28"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 16,
+   "scriptId": 1,
+   "elements": [
+    "fire"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 72,
+  "name": "Ice Staff",
+  "kind": "weapon",
+  "price": 980,
+  "quality": 2,
+  "abilities": [
+   "AA:30",
+   "AA:32"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 16,
+   "scriptId": 1,
+   "elements": [
+    "ice"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 73,
+  "name": "Lightning Staff",
+  "kind": "weapon",
+  "price": 1200,
+  "quality": 2,
+  "abilities": [
+   "AA:34",
+   "AA:37"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 16,
+   "scriptId": 1,
+   "elements": [
+    "thunder"
+   ],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 74,
+  "name": "Oak Staff",
+  "kind": "weapon",
+  "price": 2400,
+  "quality": 5,
+  "abilities": [
+   "AA:36",
+   "AA:38",
+   "AA:40"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 23,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "slow"
+   ],
+   "statusRate": 20,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 75,
+  "name": "Cypress Pile",
+  "kind": "weapon",
+  "price": 3200,
+  "quality": 6,
+  "abilities": [
+   "AA:41",
+   "AA:44",
+   "AA:42"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 27,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "confuse"
+   ],
+   "statusRate": 20,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 76,
+  "name": "Octagon Rod",
+  "kind": "weapon",
+  "price": 4500,
+  "quality": 7,
+  "abilities": [
+   "AA:27",
+   "AA:31",
+   "AA:35"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "water"
+   ],
+   "guardElement": [],
+   "absorbElement": [
+    "water",
+    "wind"
+   ],
+   "halfElement": [],
+   "weakElement": [
+    "wind"
+   ]
+  },
+  "weapon": {
+   "power": 29,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "trouble"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 77,
+  "name": "High Mage Staff",
+  "kind": "weapon",
+  "price": 6000,
+  "quality": 8,
+  "abilities": [
+   "AA:46",
+   "AA:39"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 32,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "silence"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 78,
+  "name": "Mace of Zeus",
+  "kind": "weapon",
+  "price": 10000,
+  "quality": 9,
+  "abilities": [
+   "AA:48"
+  ],
+  "equippableBy": [
+   "vivi"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 35,
+   "scriptId": 1,
+   "elements": [],
+   "statuses": [
+    "mini"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 79,
+  "name": "Fork",
+  "kind": "weapon",
+  "price": 1100,
+  "quality": 1,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 21,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 80,
+  "name": "Needle Fork",
+  "kind": "weapon",
+  "price": 3100,
+  "quality": 2,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 34,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [
+    "petrify"
+   ],
+   "statusRate": 10,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 81,
+  "name": "Mythril Fork",
+  "kind": "weapon",
+  "price": 4700,
+  "quality": 3,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 42,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 82,
+  "name": "Silver Fork",
+  "kind": "weapon",
+  "price": 7400,
+  "quality": 4,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 53,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [
+    "slow"
+   ],
+   "statusRate": 15,
+   "category": 5,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 83,
+  "name": "Bistro Fork",
+  "kind": "weapon",
+  "price": 10300,
+  "quality": 5,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 68,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [
+    "sleep"
+   ],
+   "statusRate": 20,
+   "category": 13,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 84,
+  "name": "Gastro Fork",
+  "kind": "weapon",
+  "price": 13300,
+  "quality": 6,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": null,
+  "weapon": {
+   "power": 77,
+   "scriptId": 5,
+   "elements": [],
+   "statuses": [
+    "stop"
+   ],
+   "statusRate": 10,
+   "category": 13,
+   "longRange": false
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 85,
+  "name": "Pinwheel",
+  "kind": "weapon",
+  "price": 200,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": {
+   "power": 25,
+   "scriptId": 0,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 86,
+  "name": "Rising Sun",
+  "kind": "weapon",
+  "price": 500,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": {
+   "power": 36,
+   "scriptId": 0,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 87,
+  "name": "Wing Edge",
+  "kind": "weapon",
+  "price": 3000,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": {
+   "power": 64,
+   "scriptId": 0,
+   "elements": [],
+   "statuses": [],
+   "statusRate": 0,
+   "category": 6,
+   "longRange": true
+  },
+  "armor": null,
+  "effect": null
+ },
+ {
+  "id": 88,
+  "name": "Wrist",
+  "kind": "wrist",
+  "price": 130,
+  "quality": 20,
+  "abilities": [
+   "SA:46"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 5,
+   "magicDefence": 0,
+   "magicEvade": 3
+  },
+  "effect": null
+ },
+ {
+  "id": 89,
+  "name": "Leather Wrist",
+  "kind": "wrist",
+  "price": 200,
+  "quality": 22,
+  "abilities": [
+   "SA:19",
+   "AA:29"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 7,
+   "magicDefence": 0,
+   "magicEvade": 5
+  },
+  "effect": null
+ },
+ {
+  "id": 90,
+  "name": "Glass Armlet",
+  "kind": "wrist",
+  "price": 250,
+  "quality": 24,
+  "abilities": [
+   "SA:23",
+   "SA:49"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 10,
+   "magicDefence": 0,
+   "magicEvade": 7
+  },
+  "effect": null
+ },
+ {
+  "id": 91,
+  "name": "Bone Wrist",
+  "kind": "wrist",
+  "price": 330,
+  "quality": 26,
+  "abilities": [
+   "SA:25"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "earth"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 13,
+   "magicDefence": 0,
+   "magicEvade": 9
+  },
+  "effect": null
+ },
+ {
+  "id": 92,
+  "name": "Mythril Armlet",
+  "kind": "wrist",
+  "price": 500,
+  "quality": 28,
+  "abilities": [
+   "SA:14"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 17,
+   "magicDefence": 0,
+   "magicEvade": 11
+  },
+  "effect": null
+ },
+ {
+  "id": 93,
+  "name": "Magic Armlet",
+  "kind": "wrist",
+  "price": 1000,
+  "quality": 32,
+  "abilities": [
+   "SA:58",
+   "AA:14"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 16,
+   "magicDefence": 1,
+   "magicEvade": 16
+  },
+  "effect": null
+ },
+ {
+  "id": 94,
+  "name": "Chimera Armlet",
+  "kind": "wrist",
+  "price": 1200,
+  "quality": 33,
+  "abilities": [
+   "SA:61",
+   "SA:25"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "holy"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 22,
+   "magicDefence": 0,
+   "magicEvade": 14
+  },
+  "effect": null
+ },
+ {
+  "id": 95,
+  "name": "Egoist's Armlet",
+  "kind": "wrist",
+  "price": 2000,
+  "quality": 34,
+  "abilities": [
+   "SA:19",
+   "SA:43"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "shadow"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 20,
+   "magicDefence": 0,
+   "magicEvade": 20
+  },
+  "effect": null
+ },
+ {
+  "id": 96,
+  "name": "N-Kai Armlet",
+  "kind": "wrist",
+  "price": 3000,
+  "quality": 29,
+  "abilities": [
+   "SA:62",
+   "SA:16",
+   "AA:45"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 27,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 97,
+  "name": "Jade Armlet",
+  "kind": "wrist",
+  "price": 3400,
+  "quality": 30,
+  "abilities": [
+   "SA:40",
+   "SA:35"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 27
+  },
+  "effect": null
+ },
+ {
+  "id": 98,
+  "name": "Thief Gloves",
+  "kind": "wrist",
+  "price": 50000,
+  "quality": 39,
+  "abilities": [
+   "SA:22"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 26,
+   "magicDefence": 0,
+   "magicEvade": 13
+  },
+  "effect": null
+ },
+ {
+  "id": 99,
+  "name": "Dragon Wrist",
+  "kind": "wrist",
+  "price": 4800,
+  "quality": 38,
+  "abilities": [
+   "SA:53",
+   "AA:117"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "shadow"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 28,
+   "magicDefence": 1,
+   "magicEvade": 12
+  },
+  "effect": null
+ },
+ {
+  "id": 100,
+  "name": "Power Wrist",
+  "kind": "wrist",
+  "price": 5100,
+  "quality": 42,
+  "abilities": [
+   "SA:9"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 30,
+   "magicDefence": 0,
+   "magicEvade": 10
+  },
+  "effect": null
+ },
+ {
+  "id": 101,
+  "name": "Bracer",
+  "kind": "wrist",
+  "price": 8000,
+  "quality": 43,
+  "abilities": [
+   "SA:25",
+   "SA:28"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "wind"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 35,
+   "magicDefence": 0,
+   "magicEvade": 18
+  },
+  "effect": null
+ },
+ {
+  "id": 102,
+  "name": "Bronze Gloves",
+  "kind": "wrist",
+  "price": 480,
+  "quality": 21,
+  "abilities": [
+   "SA:49"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 8,
+   "magicDefence": 0,
+   "magicEvade": 2
+  },
+  "effect": null
+ },
+ {
+  "id": 103,
+  "name": "Silver Gloves",
+  "kind": "wrist",
+  "price": 720,
+  "quality": 23,
+  "abilities": [
+   "SA:16"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "ice"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 10,
+   "magicDefence": 0,
+   "magicEvade": 5
+  },
+  "effect": null
+ },
+ {
+  "id": 104,
+  "name": "Mythril Gloves",
+  "kind": "wrist",
+  "price": 980,
+  "quality": 25,
+  "abilities": [
+   "SA:20",
+   "SA:14"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 13,
+   "magicDefence": 0,
+   "magicEvade": 7
+  },
+  "effect": null
+ },
+ {
+  "id": 105,
+  "name": "Thunder Gloves",
+  "kind": "wrist",
+  "price": 1200,
+  "quality": 27,
+  "abilities": [
+   "SA:18",
+   "SA:25"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "thunder"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "thunder"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 16,
+   "magicDefence": 0,
+   "magicEvade": 10
+  },
+  "effect": null
+ },
+ {
+  "id": 106,
+  "name": "Diamond Gloves",
+  "kind": "wrist",
+  "price": 2000,
+  "quality": 31,
+  "abilities": [
+   "SA:44",
+   "SA:53"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "water"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 19,
+   "magicDefence": 0,
+   "magicEvade": 13
+  },
+  "effect": null
+ },
+ {
+  "id": 107,
+  "name": "Venetia Shield",
+  "kind": "wrist",
+  "price": 2800,
+  "quality": 41,
+  "abilities": [
+   "SA:1",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 17,
+   "magicDefence": 1,
+   "magicEvade": 26
+  },
+  "effect": null
+ },
+ {
+  "id": 108,
+  "name": "Defense Gloves",
+  "kind": "wrist",
+  "price": 6000,
+  "quality": 40,
+  "abilities": [
+   "SA:6"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire",
+    "ice",
+    "thunder"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 25,
+   "magicDefence": 1,
+   "magicEvade": 20
+  },
+  "effect": null
+ },
+ {
+  "id": 109,
+  "name": "Genji Gloves",
+  "kind": "wrist",
+  "price": 2,
+  "quality": 36,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 27,
+   "magicDefence": 0,
+   "magicEvade": 17
+  },
+  "effect": null
+ },
+ {
+  "id": 110,
+  "name": "Aegis Gloves",
+  "kind": "wrist",
+  "price": 7000,
+  "quality": 35,
+  "abilities": [
+   "AA:148"
+  ],
+  "equippableBy": [
+   "steiner",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "fire"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 30,
+   "magicDefence": 0,
+   "magicEvade": 10
+  },
+  "effect": null
+ },
+ {
+  "id": 111,
+  "name": "Gauntlets",
+  "kind": "wrist",
+  "price": 8800,
+  "quality": 37,
+  "abilities": [
+   "SA:37"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire",
+    "earth",
+    "water",
+    "wind"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 36,
+   "magicDefence": 0,
+   "magicEvade": 7
+  },
+  "effect": null
+ },
+ {
+  "id": 112,
+  "name": "Leather Hat",
+  "kind": "head",
+  "price": 150,
+  "quality": 51,
+  "abilities": [
+   "AA:25"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 6,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 113,
+  "name": "Straw Hat",
+  "kind": "head",
+  "price": 1500,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire",
+    "ice",
+    "thunder",
+    "earth",
+    "water",
+    "wind",
+    "holy",
+    "shadow"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 114,
+  "name": "Feather Hat",
+  "kind": "head",
+  "price": 200,
+  "quality": 53,
+  "abilities": [
+   "SA:50",
+   "SA:25"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [
+    "wind"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 7,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 115,
+  "name": "Steepled Hat",
+  "kind": "head",
+  "price": 260,
+  "quality": 55,
+  "abilities": [
+   "AA:12"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 9,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 116,
+  "name": "Headgear",
+  "kind": "head",
+  "price": 330,
+  "quality": 52,
+  "abilities": [
+   "SA:16"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 6,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 117,
+  "name": "Magus Hat",
+  "kind": "head",
+  "price": 400,
+  "quality": 57,
+  "abilities": [
+   "AA:32"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "ice"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 10,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 118,
+  "name": "Bandana",
+  "kind": "head",
+  "price": 500,
+  "quality": 59,
+  "abilities": [
+   "SA:20",
+   "SA:48"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 2,
+   "magicDefence": 12,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 119,
+  "name": "Mage's Hat",
+  "kind": "head",
+  "price": 600,
+  "quality": 61,
+  "abilities": [
+   "SA:51",
+   "AA:26"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [
+    "holy",
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 14,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 120,
+  "name": "Lamia's Tiara",
+  "kind": "head",
+  "price": 800,
+  "quality": 64,
+  "abilities": [
+   "SA:58",
+   "AA:17",
+   "AA:20"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "wind"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 17,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 121,
+  "name": "Ritual Hat",
+  "kind": "head",
+  "price": 1000,
+  "quality": 63,
+  "abilities": [
+   "SA:36",
+   "SA:50",
+   "SA:16"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 16,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 122,
+  "name": "Twist Headband",
+  "kind": "head",
+  "price": 1200,
+  "quality": 65,
+  "abilities": [
+   "SA:26",
+   "SA:25"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "earth"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 17,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 123,
+  "name": "Mantra Band",
+  "kind": "head",
+  "price": 1500,
+  "quality": 66,
+  "abilities": [
+   "SA:6",
+   "SA:49"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 19,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 124,
+  "name": "Dark Hat",
+  "kind": "head",
+  "price": 1800,
+  "quality": 68,
+  "abilities": [
+   "SA:35",
+   "SA:53"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "ice"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 21,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 125,
+  "name": "Green Beret",
+  "kind": "head",
+  "price": 2180,
+  "quality": 69,
+  "abilities": [
+   "SA:44",
+   "SA:58"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 23,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 126,
+  "name": "Black Hood",
+  "kind": "head",
+  "price": 2550,
+  "quality": 72,
+  "abilities": [
+   "SA:9",
+   "SA:57",
+   "AA:43"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire",
+    "thunder",
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 27,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 127,
+  "name": "Red Hat",
+  "kind": "head",
+  "price": 3000,
+  "quality": 71,
+  "abilities": [
+   "SA:12",
+   "SA:37"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "fire"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 26,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 128,
+  "name": "Golden Hairpin",
+  "kind": "head",
+  "price": 3700,
+  "quality": 74,
+  "abilities": [
+   "SA:3",
+   "SA:51"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [
+    "water"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 32,
+   "magicEvade": 2
+  },
+  "effect": null
+ },
+ {
+  "id": 129,
+  "name": "Coronet",
+  "kind": "head",
+  "price": 4400,
+  "quality": 76,
+  "abilities": [
+   "SA:20",
+   "SA:54"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "wind"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 35,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 130,
+  "name": "Flash Hat",
+  "kind": "head",
+  "price": 5200,
+  "quality": 78,
+  "abilities": [
+   "SA:39",
+   "SA:19"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "thunder",
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 2,
+   "magicDefence": 37,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 131,
+  "name": "Adaman Hat",
+  "kind": "head",
+  "price": 6100,
+  "quality": 75,
+  "abilities": [
+   "SA:6",
+   "SA:26"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "thunder"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 3,
+   "evade": 0,
+   "magicDefence": 33,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 132,
+  "name": "Thief Hat",
+  "kind": "head",
+  "price": 7100,
+  "quality": 79,
+  "abilities": [
+   "SA:11",
+   "AA:107",
+   "SA:61"
+  ],
+  "equippableBy": [
+   "zidane",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 2,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 3,
+   "magicDefence": 38,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 133,
+  "name": "Holy Miter",
+  "kind": "head",
+  "price": 8300,
+  "quality": 80,
+  "abilities": [
+   "SA:48",
+   "SA:40"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 39,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 134,
+  "name": "Golden Skullcap",
+  "kind": "head",
+  "price": 12000,
+  "quality": 83,
+  "abilities": [
+   "SA:29",
+   "SA:57"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "water"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "earth"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 47,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 135,
+  "name": "Circlet",
+  "kind": "head",
+  "price": 13000,
+  "quality": 84,
+  "abilities": [
+   "SA:53",
+   "SA:58"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "earth"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 51,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 136,
+  "name": "Rubber Helm",
+  "kind": "head",
+  "price": 250,
+  "quality": 54,
+  "abilities": [
+   "AA:142"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "thunder"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 5,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 137,
+  "name": "Bronze Helm",
+  "kind": "head",
+  "price": 330,
+  "quality": 56,
+  "abilities": [
+   "SA:14"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 6,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 138,
+  "name": "Iron Helm",
+  "kind": "head",
+  "price": 450,
+  "quality": 58,
+  "abilities": [
+   "SA:50",
+   "SA:43"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 7,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 139,
+  "name": "Barbut",
+  "kind": "head",
+  "price": 600,
+  "quality": 60,
+  "abilities": [
+   "SA:41",
+   "SA:17"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 9,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 140,
+  "name": "Mythril Helm",
+  "kind": "head",
+  "price": 1000,
+  "quality": 62,
+  "abilities": [
+   "SA:48",
+   "SA:49"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 11,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 141,
+  "name": "Gold Helm",
+  "kind": "head",
+  "price": 1800,
+  "quality": 67,
+  "abilities": [
+   "AA:146",
+   "AA:118",
+   "SA:58"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 13,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 142,
+  "name": "Cross Helm",
+  "kind": "head",
+  "price": 2200,
+  "quality": 70,
+  "abilities": [
+   "SA:12",
+   "SA:18"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 16,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 143,
+  "name": "Diamond Helm",
+  "kind": "head",
+  "price": 3000,
+  "quality": 73,
+  "abilities": [
+   "SA:9",
+   "SA:48"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 20,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 144,
+  "name": "Platinum Helm",
+  "kind": "head",
+  "price": 4600,
+  "quality": 77,
+  "abilities": [
+   "SA:52",
+   "SA:15"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "ice"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 23,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 145,
+  "name": "Kaiser Helm",
+  "kind": "head",
+  "price": 7120,
+  "quality": 82,
+  "abilities": [
+   "SA:39"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 26,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 146,
+  "name": "Genji Helmet",
+  "kind": "head",
+  "price": 2,
+  "quality": 81,
+  "abilities": [
+   "SA:6"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 29,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 147,
+  "name": "Grand Helm",
+  "kind": "head",
+  "price": 14000,
+  "quality": 85,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 33,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 148,
+  "name": "Aloha T-shirt",
+  "kind": "armor",
+  "price": 19000,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 149,
+  "name": "Leather Shirt",
+  "kind": "armor",
+  "price": 270,
+  "quality": 102,
+  "abilities": [
+   "SA:38"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 6,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 150,
+  "name": "Silk Shirt",
+  "kind": "armor",
+  "price": 400,
+  "quality": 103,
+  "abilities": [
+   "AA:1",
+   "AA:33"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "thunder"
+   ],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 7,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 151,
+  "name": "Leather Plate",
+  "kind": "armor",
+  "price": 530,
+  "quality": 104,
+  "abilities": [
+   "AA:125"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "ice"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 8,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 152,
+  "name": "Bronze Vest",
+  "kind": "armor",
+  "price": 670,
+  "quality": 105,
+  "abilities": [
+   "SA:53"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 9,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 153,
+  "name": "Chain Plate",
+  "kind": "armor",
+  "price": 810,
+  "quality": 107,
+  "abilities": [
+   "SA:18"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "thunder"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 10,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 154,
+  "name": "Mythril Vest",
+  "kind": "armor",
+  "price": 1180,
+  "quality": 110,
+  "abilities": [
+   "SA:56"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 12,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 155,
+  "name": "Adaman Vest",
+  "kind": "armor",
+  "price": 1600,
+  "quality": 112,
+  "abilities": [
+   "SA:15",
+   "SA:13"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 14,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 156,
+  "name": "Magician Cloak",
+  "kind": "armor",
+  "price": 1850,
+  "quality": 114,
+  "abilities": [
+   "SA:48",
+   "SA:7"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [
+    "ice"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 15,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 157,
+  "name": "Survival Vest",
+  "kind": "armor",
+  "price": 2900,
+  "quality": 117,
+  "abilities": [
+   "SA:57",
+   "SA:49",
+   "SA:61"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 17,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 158,
+  "name": "Brigandine",
+  "kind": "armor",
+  "price": 4300,
+  "quality": 120,
+  "abilities": [
+   "SA:44",
+   "SA:54"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 20,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 159,
+  "name": "Judo Uniform",
+  "kind": "armor",
+  "price": 5000,
+  "quality": 122,
+  "abilities": [
+   "SA:10",
+   "SA:5"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 23,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 160,
+  "name": "Power Vest",
+  "kind": "armor",
+  "price": 7200,
+  "quality": 125,
+  "abilities": [
+   "SA:15",
+   "SA:26",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 27,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 161,
+  "name": "Gaia Gear",
+  "kind": "armor",
+  "price": 8700,
+  "quality": 124,
+  "abilities": [
+   "SA:48",
+   "SA:35",
+   "AA:39"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "earth"
+   ],
+   "guardElement": [],
+   "absorbElement": [
+    "earth"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 25,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 162,
+  "name": "Demon's Vest",
+  "kind": "armor",
+  "price": 10250,
+  "quality": 127,
+  "abilities": [
+   "SA:18",
+   "SA:56",
+   "SA:57"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "shadow"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 31,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 163,
+  "name": "Minerva's Plate",
+  "kind": "armor",
+  "price": 12200,
+  "quality": 129,
+  "abilities": [
+   "SA:52",
+   "SA:35"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 34,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 164,
+  "name": "Ninja Gear",
+  "kind": "armor",
+  "price": 14000,
+  "quality": 133,
+  "abilities": [
+   "SA:41",
+   "SA:57",
+   "SA:39"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "shadow"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 35,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 165,
+  "name": "Dark Gear",
+  "kind": "armor",
+  "price": 16300,
+  "quality": 137,
+  "abilities": [
+   "SA:58",
+   "SA:53"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 3,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 37,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 166,
+  "name": "Rubber Suit",
+  "kind": "armor",
+  "price": 20000,
+  "quality": 140,
+  "abilities": [
+   "SA:39",
+   "AA:10"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "thunder"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 39,
+   "evade": 2,
+   "magicDefence": 1,
+   "magicEvade": 3
+  },
+  "effect": null
+ },
+ {
+  "id": 167,
+  "name": "Brave Suit",
+  "kind": "armor",
+  "price": 22500,
+  "quality": 141,
+  "abilities": [
+   "SA:52",
+   "SA:3"
+  ],
+  "equippableBy": [
+   "zidane",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [
+    "fire"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 42,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 168,
+  "name": "Cotton Robe",
+  "kind": "armor",
+  "price": 4000,
+  "quality": 108,
+  "abilities": [
+   "SA:27",
+   "AA:11"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 10,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 169,
+  "name": "Silk Robe",
+  "kind": "armor",
+  "price": 5800,
+  "quality": 115,
+  "abilities": [
+   "SA:44",
+   "SA:51"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 16,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 170,
+  "name": "Magician Robe",
+  "kind": "armor",
+  "price": 8000,
+  "quality": 119,
+  "abilities": [
+   "SA:56",
+   "SA:7"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 21,
+   "evade": 0,
+   "magicDefence": 3,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 171,
+  "name": "Glutton's Robe",
+  "kind": "armor",
+  "price": 16000,
+  "quality": 131,
+  "abilities": [
+   "SA:49",
+   "SA:40",
+   "SA:3"
+  ],
+  "equippableBy": [
+   "quina"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 41,
+   "evade": 0,
+   "magicDefence": 4,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 172,
+  "name": "White Robe",
+  "kind": "armor",
+  "price": 29000,
+  "quality": 134,
+  "abilities": [
+   "SA:51",
+   "SA:56",
+   "AA:24"
+  ],
+  "equippableBy": [
+   "garnet",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 42,
+   "evade": 0,
+   "magicDefence": 4,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 173,
+  "name": "Black Robe",
+  "kind": "armor",
+  "price": 29000,
+  "quality": 136,
+  "abilities": [
+   "SA:8",
+   "AA:47",
+   "SA:31"
+  ],
+  "equippableBy": [
+   "vivi",
+   "quina"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 43,
+   "evade": 0,
+   "magicDefence": 4,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 174,
+  "name": "Light Robe",
+  "kind": "armor",
+  "price": 40000,
+  "quality": 132,
+  "abilities": [
+   "SA:34",
+   "SA:3",
+   "AA:6"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [
+    "holy",
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 41,
+   "evade": 0,
+   "magicDefence": 6,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 175,
+  "name": "Robe of Lords",
+  "kind": "armor",
+  "price": 52000,
+  "quality": 139,
+  "abilities": [
+   "SA:30",
+   "SA:33"
+  ],
+  "equippableBy": [
+   "vivi",
+   "garnet",
+   "quina",
+   "eiko"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [
+    "wind"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 46,
+   "evade": 0,
+   "magicDefence": 5,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 176,
+  "name": "Tin Armor",
+  "kind": "armor",
+  "price": 20,
+  "quality": 100,
+  "abilities": [],
+  "equippableBy": [
+   "steiner"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 62,
+   "evade": 32,
+   "magicDefence": 27,
+   "magicEvade": 17
+  },
+  "effect": null
+ },
+ {
+  "id": 177,
+  "name": "Bronze Armor",
+  "kind": "armor",
+  "price": 650,
+  "quality": 106,
+  "abilities": [
+   "SA:13"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "wind"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 9,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 178,
+  "name": "Linen Cuirass",
+  "kind": "armor",
+  "price": 800,
+  "quality": 109,
+  "abilities": [
+   "SA:37"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 10,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 179,
+  "name": "Chain Mail",
+  "kind": "armor",
+  "price": 1200,
+  "quality": 111,
+  "abilities": [
+   "SA:5",
+   "SA:13"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "earth"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 12,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 180,
+  "name": "Mythril Armor",
+  "kind": "armor",
+  "price": 1830,
+  "quality": 113,
+  "abilities": [
+   "SA:53",
+   "SA:37"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "water"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 15,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 181,
+  "name": "Plate Mail",
+  "kind": "armor",
+  "price": 2320,
+  "quality": 116,
+  "abilities": [
+   "SA:57",
+   "SA:16"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 17,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 182,
+  "name": "Gold Armor",
+  "kind": "armor",
+  "price": 2950,
+  "quality": 118,
+  "abilities": [
+   "SA:15"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 19,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 183,
+  "name": "Shield Armor",
+  "kind": "armor",
+  "price": 4300,
+  "quality": 121,
+  "abilities": [
+   "SA:10"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire",
+    "ice",
+    "thunder"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 23,
+   "evade": 0,
+   "magicDefence": 5,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 184,
+  "name": "Demon's Mail",
+  "kind": "armor",
+  "price": 5900,
+  "quality": 123,
+  "abilities": [
+   "SA:35"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [
+    "shadow"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 27,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 185,
+  "name": "Diamond Armor",
+  "kind": "armor",
+  "price": 8800,
+  "quality": 126,
+  "abilities": [
+   "SA:44"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 33,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 186,
+  "name": "Platina Armor",
+  "kind": "armor",
+  "price": 10500,
+  "quality": 128,
+  "abilities": [
+   "SA:19"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [
+    "ice"
+   ],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 36,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 187,
+  "name": "Carabini Mail",
+  "kind": "armor",
+  "price": 12300,
+  "quality": 130,
+  "abilities": [
+   "SA:3"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 39,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 188,
+  "name": "Dragon Mail",
+  "kind": "armor",
+  "price": 14000,
+  "quality": 135,
+  "abilities": [
+   "SA:21"
+  ],
+  "equippableBy": [
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 42,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 189,
+  "name": "Genji Armor",
+  "kind": "armor",
+  "price": 2,
+  "quality": 138,
+  "abilities": [
+   "SA:40",
+   "SA:9"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 45,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 190,
+  "name": "Maximillian",
+  "kind": "armor",
+  "price": 22600,
+  "quality": 142,
+  "abilities": [
+   "SA:6"
+  ],
+  "equippableBy": [
+   "steiner",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 3,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 54,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 191,
+  "name": "Grand Armor",
+  "kind": "armor",
+  "price": 28000,
+  "quality": 143,
+  "abilities": [
+   "SA:27",
+   "SA:52"
+  ],
+  "equippableBy": [
+   "steiner",
+   "freya",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "shadow"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 59,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 192,
+  "name": "Desert Boots",
+  "kind": "accessory",
+  "price": 1500,
+  "quality": 153,
+  "abilities": [
+   "SA:46",
+   "AA:12",
+   "AA:7"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "earth"
+   ],
+   "weakElement": [
+    "water"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 2,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 193,
+  "name": "Magician Shoes",
+  "kind": "accessory",
+  "price": 7500,
+  "quality": 157,
+  "abilities": [
+   "SA:7",
+   "SA:58",
+   "AA:19"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 6
+  },
+  "effect": null
+ },
+ {
+  "id": 194,
+  "name": "Germinas Boots",
+  "kind": "accessory",
+  "price": 4000,
+  "quality": 153,
+  "abilities": [
+   "SA:41",
+   "SA:5",
+   "AA:101"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "earth"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 2,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 195,
+  "name": "Sandals",
+  "kind": "accessory",
+  "price": 1200,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 196,
+  "name": "Feather Boots",
+  "kind": "accessory",
+  "price": 6000,
+  "quality": 154,
+  "abilities": [
+   "SA:1",
+   "AA:20",
+   "AA:15"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "earth"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 3,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 197,
+  "name": "Battle Boots",
+  "kind": "accessory",
+  "price": 21000,
+  "quality": 161,
+  "abilities": [
+   "SA:12",
+   "SA:42",
+   "SA:6"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 198,
+  "name": "Running Shoes",
+  "kind": "accessory",
+  "price": 33000,
+  "quality": 158,
+  "abilities": [
+   "SA:2",
+   "SA:56",
+   "AA:13"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 2,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 4,
+   "magicDefence": 0,
+   "magicEvade": 4
+  },
+  "effect": null
+ },
+ {
+  "id": 199,
+  "name": "Anklet",
+  "kind": "accessory",
+  "price": 3200,
+  "quality": 156,
+  "abilities": [
+   "SA:57",
+   "SA:24",
+   "SA:36"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "amarant",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 3,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 5,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 200,
+  "name": "Power Belt",
+  "kind": "accessory",
+  "price": 7000,
+  "quality": 160,
+  "abilities": [
+   "SA:12",
+   "SA:36",
+   "AA:26"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 3,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 201,
+  "name": "Black Belt",
+  "kind": "accessory",
+  "price": 11000,
+  "quality": 159,
+  "abilities": [
+   "SA:6",
+   "SA:19",
+   "AA:41"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [
+    "wind"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 202,
+  "name": "Glass Buckle",
+  "kind": "accessory",
+  "price": 1600,
+  "quality": 156,
+  "abilities": [
+   "SA:49",
+   "SA:25",
+   "AA:33"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 1,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 5
+  },
+  "effect": null
+ },
+ {
+  "id": 203,
+  "name": "Madain's Ring",
+  "kind": "accessory",
+  "price": 7500,
+  "quality": 160,
+  "abilities": [
+   "SA:40",
+   "SA:27",
+   "SA:47"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "ice"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 204,
+  "name": "Rosetta Ring",
+  "kind": "accessory",
+  "price": 36000,
+  "quality": 162,
+  "abilities": [
+   "SA:43",
+   "SA:33",
+   "SA:31"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "fire"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 2,
+   "magicDefence": 3,
+   "magicEvade": 2
+  },
+  "effect": null
+ },
+ {
+  "id": 205,
+  "name": "Reflect Ring",
+  "kind": "accessory",
+  "price": 7000,
+  "quality": 159,
+  "abilities": [
+   "SA:0",
+   "SA:10",
+   "AA:16"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "fire",
+    "ice",
+    "thunder"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 206,
+  "name": "Coral Ring",
+  "kind": "accessory",
+  "price": 4000,
+  "quality": 154,
+  "abilities": [
+   "SA:48",
+   "SA:20",
+   "AA:117"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "thunder"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 3
+  },
+  "effect": null
+ },
+ {
+  "id": 207,
+  "name": "Promist Ring",
+  "kind": "accessory",
+  "price": 9000,
+  "quality": 154,
+  "abilities": [
+   "SA:52",
+   "SA:55",
+   "SA:32"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 3,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 208,
+  "name": "Rebirth Ring",
+  "kind": "accessory",
+  "price": 10000,
+  "quality": 160,
+  "abilities": [
+   "SA:4",
+   "AA:5",
+   "AA:130"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 4,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 209,
+  "name": "Protect Ring",
+  "kind": "accessory",
+  "price": 40000,
+  "quality": 163,
+  "abilities": [
+   "SA:11",
+   "SA:32",
+   "SA:34"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "fire",
+    "ice",
+    "thunder",
+    "earth",
+    "water",
+    "wind",
+    "holy",
+    "shadow"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 4,
+   "magicDefence": 3,
+   "magicEvade": 6
+  },
+  "effect": null
+ },
+ {
+  "id": 210,
+  "name": "Pumice Piece",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 159,
+  "abilities": [
+   "SA:59"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "holy",
+    "shadow"
+   ],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 5,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 211,
+  "name": "Pumice",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 161,
+  "abilities": [
+   "AA:64"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 2,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 212,
+  "name": "Yellow Scarf",
+  "kind": "accessory",
+  "price": 1800,
+  "quality": 159,
+  "abilities": [
+   "SA:13",
+   "SA:45",
+   "SA:23"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 213,
+  "name": "Gold Choker",
+  "kind": "accessory",
+  "price": 4000,
+  "quality": 159,
+  "abilities": [
+   "SA:56",
+   "SA:46",
+   "AA:11"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "wind"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 2,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 214,
+  "name": "Fairy Earrings",
+  "kind": "accessory",
+  "price": 6000,
+  "quality": 157,
+  "abilities": [
+   "SA:43",
+   "SA:40",
+   "AA:4"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 0,
+   "spirit": 2,
+   "attackElement": [
+    "wind"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 4,
+   "magicDefence": 0,
+   "magicEvade": 2
+  },
+  "effect": null
+ },
+ {
+  "id": 215,
+  "name": "Angel Earrings",
+  "kind": "accessory",
+  "price": 20000,
+  "quality": 160,
+  "abilities": [
+   "SA:3",
+   "SA:8",
+   "AA:118"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 2,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 216,
+  "name": "Pearl Rouge",
+  "kind": "accessory",
+  "price": 4000,
+  "quality": 155,
+  "abilities": [
+   "SA:43",
+   "SA:30",
+   "SA:51"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 4,
+   "attackElement": [
+    "water"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [
+    "holy"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 4
+  },
+  "effect": null
+ },
+ {
+  "id": 217,
+  "name": "Pearl Armlet",
+  "kind": "wrist",
+  "price": 980,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 218,
+  "name": "Cachusha",
+  "kind": "accessory",
+  "price": 3000,
+  "quality": 159,
+  "abilities": [
+   "SA:50",
+   "SA:44",
+   "AA:5"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 1,
+   "strength": 0,
+   "magic": 2,
+   "spirit": 1,
+   "attackElement": [
+    "fire"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 219,
+  "name": "Barette",
+  "kind": "accessory",
+  "price": 7000,
+  "quality": 159,
+  "abilities": [
+   "SA:27",
+   "SA:26",
+   "AA:2"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 3,
+   "magic": 1,
+   "spirit": 1,
+   "attackElement": [
+    "ice"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 220,
+  "name": "Extension",
+  "kind": "accessory",
+  "price": 10000,
+  "quality": 160,
+  "abilities": [
+   "SA:56",
+   "SA:7",
+   "SA:43"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 2,
+   "spirit": 1,
+   "attackElement": [
+    "thunder"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 221,
+  "name": "Ribbon",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 160,
+  "abilities": [
+   "AA:74",
+   "SA:44",
+   "SA:47"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 1,
+   "magic": 3,
+   "spirit": 1,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [
+    "water",
+    "wind"
+   ],
+   "halfElement": [
+    "fire",
+    "ice",
+    "thunder",
+    "holy"
+   ],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 1,
+   "evade": 5,
+   "magicDefence": 1,
+   "magicEvade": 4
+  },
+  "effect": null
+ },
+ {
+  "id": 222,
+  "name": "Maiden Prayer",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 159,
+  "abilities": [
+   "SA:3"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 0,
+   "magic": 1,
+   "spirit": 0,
+   "attackElement": [
+    "holy"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "shadow"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 0,
+   "magicDefence": 1,
+   "magicEvade": 3
+  },
+  "effect": null
+ },
+ {
+  "id": 223,
+  "name": "Ancient Aroma",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 155,
+  "abilities": [
+   "SA:60"
+  ],
+  "equippableBy": [
+   "garnet",
+   "freya",
+   "eiko",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 2,
+   "magic": 0,
+   "spirit": 0,
+   "attackElement": [
+    "shadow"
+   ],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": [
+    "holy"
+   ]
+  },
+  "weapon": null,
+  "armor": {
+   "defence": 0,
+   "evade": 4,
+   "magicDefence": 0,
+   "magicEvade": 0
+  },
+  "effect": null
+ },
+ {
+  "id": 224,
+  "name": "Garnet",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:62",
+   "SA:24"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 12,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 225,
+  "name": "Amethyst",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:55",
+   "AA:41"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 20,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 226,
+  "name": "Aquamarine",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:60",
+   "SA:5"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 28,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 227,
+  "name": "Diamond",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "SA:40",
+   "SA:10"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 36,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 228,
+  "name": "Emerald",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:13",
+   "SA:7",
+   "AA:120"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 44,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 229,
+  "name": "Moonstone",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:11",
+   "SA:19"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 52,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 230,
+  "name": "Ruby",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:68",
+   "AA:16"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 60,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 231,
+  "name": "Peridot",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:53",
+   "AA:34"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 68,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 232,
+  "name": "Sapphire",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:66",
+   "SA:35"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 76,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 233,
+  "name": "Opal",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:49",
+   "AA:30"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 84,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 234,
+  "name": "Topaz",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:51",
+   "AA:26"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 92,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 235,
+  "name": "Lapis Lazuli",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "SA:44",
+   "SA:9"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "cinna",
+   "marcus",
+   "blank",
+   "beatrix"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 100,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 236,
+  "name": "Potion",
+  "kind": "item",
+  "price": 50,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 69,
+   "power": 10,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 237,
+  "name": "Hi-Potion",
+  "kind": "item",
+  "price": 200,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 69,
+   "power": 30,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 238,
+  "name": "Ether",
+  "kind": "item",
+  "price": 2000,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 70,
+   "power": 10,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 239,
+  "name": "Elixir",
+  "kind": "item",
+  "price": 2,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 71,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 240,
+  "name": "Phoenix Down",
+  "kind": "item",
+  "price": 150,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": true,
+   "scriptId": 72,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "death"
+   ]
+  }
+ },
+ {
+  "id": 241,
+  "name": "Echo Screen",
+  "kind": "item",
+  "price": 50,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "silence"
+   ]
+  }
+ },
+ {
+  "id": 242,
+  "name": "Soft",
+  "kind": "item",
+  "price": 100,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": true,
+   "scriptId": 62,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "petrify",
+    "gradualPetrify"
+   ]
+  }
+ },
+ {
+  "id": 243,
+  "name": "Antidote",
+  "kind": "item",
+  "price": 50,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "venom",
+    "poison"
+   ]
+  }
+ },
+ {
+  "id": 244,
+  "name": "Eye Drops",
+  "kind": "item",
+  "price": 50,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "blind"
+   ]
+  }
+ },
+ {
+  "id": 245,
+  "name": "Magic Tag",
+  "kind": "item",
+  "price": 100,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": true,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "zombie"
+   ]
+  }
+ },
+ {
+  "id": 246,
+  "name": "Vaccine",
+  "kind": "item",
+  "price": 100,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "virus"
+   ]
+  }
+ },
+ {
+  "id": 247,
+  "name": "Remedy",
+  "kind": "item",
+  "price": 300,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "venom",
+    "silence",
+    "blind",
+    "stop",
+    "poison",
+    "mini",
+    "gradualPetrify"
+   ]
+  }
+ },
+ {
+  "id": 248,
+  "name": "Annoyntment",
+  "kind": "item",
+  "price": 150,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "trouble"
+   ]
+  }
+ },
+ {
+  "id": 249,
+  "name": "Phoenix Pinion",
+  "kind": "accessory",
+  "price": 2000,
+  "quality": 0,
+  "abilities": [
+   "AA:72"
+  ],
+  "equippableBy": [
+   "eiko"
+  ],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": true,
+   "scriptId": 72,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "death"
+   ]
+  }
+ },
+ {
+  "id": 250,
+  "name": "Dark Matter",
+  "kind": "accessory",
+  "price": 2,
+  "quality": 0,
+  "abilities": [
+   "AA:58"
+  ],
+  "equippableBy": [
+   "zidane",
+   "vivi",
+   "garnet",
+   "steiner",
+   "freya",
+   "quina",
+   "eiko",
+   "amarant",
+   "beatrix"
+  ],
+  "bonus": {
+   "speed": 0,
+   "strength": 3,
+   "magic": 2,
+   "spirit": 0,
+   "attackElement": [],
+   "guardElement": [],
+   "absorbElement": [],
+   "halfElement": [],
+   "weakElement": []
+  },
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 77,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 251,
+  "name": "Gysahl Greens",
+  "kind": "item",
+  "price": 60,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 73,
+   "power": 0,
+   "rate": 0,
+   "elements": [],
+   "statuses": [
+    "berserk"
+   ]
+  }
+ },
+ {
+  "id": 252,
+  "name": "Dead Pepper",
+  "kind": "item",
+  "price": 100,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 75,
+   "power": 30,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ },
+ {
+  "id": 253,
+  "name": "Tent",
+  "kind": "item",
+  "price": 800,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 76,
+   "power": 0,
+   "rate": 50,
+   "elements": [],
+   "statuses": [
+    "silence",
+    "blind",
+    "poison"
+   ]
+  }
+ },
+ {
+  "id": 254,
+  "name": "Ore",
+  "kind": "item",
+  "price": 300,
+  "quality": 0,
+  "abilities": [],
+  "equippableBy": [],
+  "bonus": null,
+  "weapon": null,
+  "armor": null,
+  "effect": {
+   "targets": "singleAny",
+   "forDead": false,
+   "scriptId": 74,
+   "power": 4,
+   "rate": 0,
+   "elements": [],
+   "statuses": []
+  }
+ }
+]

@@ -1,0 +1,596 @@
+[
+ {
+  "level": 1,
+  "exp": 0,
+  "hpBonus": 250,
+  "mpBonus": 200
+ },
+ {
+  "level": 2,
+  "exp": 16,
+  "hpBonus": 314,
+  "mpBonus": 206
+ },
+ {
+  "level": 3,
+  "exp": 47,
+  "hpBonus": 382,
+  "mpBonus": 212
+ },
+ {
+  "level": 4,
+  "exp": 101,
+  "hpBonus": 454,
+  "mpBonus": 219
+ },
+ {
+  "level": 5,
+  "exp": 186,
+  "hpBonus": 530,
+  "mpBonus": 226
+ },
+ {
+  "level": 6,
+  "exp": 314,
+  "hpBonus": 610,
+  "mpBonus": 234
+ },
+ {
+  "level": 7,
+  "exp": 496,
+  "hpBonus": 694,
+  "mpBonus": 242
+ },
+ {
+  "level": 8,
+  "exp": 746,
+  "hpBonus": 782,
+  "mpBonus": 250
+ },
+ {
+  "level": 9,
+  "exp": 1078,
+  "hpBonus": 874,
+  "mpBonus": 259
+ },
+ {
+  "level": 10,
+  "exp": 1510,
+  "hpBonus": 970,
+  "mpBonus": 268
+ },
+ {
+  "level": 11,
+  "exp": 2059,
+  "hpBonus": 1062,
+  "mpBonus": 277
+ },
+ {
+  "level": 12,
+  "exp": 2745,
+  "hpBonus": 1150,
+  "mpBonus": 285
+ },
+ {
+  "level": 13,
+  "exp": 3588,
+  "hpBonus": 1234,
+  "mpBonus": 293
+ },
+ {
+  "level": 14,
+  "exp": 4612,
+  "hpBonus": 1314,
+  "mpBonus": 301
+ },
+ {
+  "level": 15,
+  "exp": 5840,
+  "hpBonus": 1390,
+  "mpBonus": 308
+ },
+ {
+  "level": 16,
+  "exp": 7298,
+  "hpBonus": 1462,
+  "mpBonus": 315
+ },
+ {
+  "level": 17,
+  "exp": 9012,
+  "hpBonus": 1530,
+  "mpBonus": 321
+ },
+ {
+  "level": 18,
+  "exp": 11012,
+  "hpBonus": 1594,
+  "mpBonus": 327
+ },
+ {
+  "level": 19,
+  "exp": 13327,
+  "hpBonus": 1662,
+  "mpBonus": 333
+ },
+ {
+  "level": 20,
+  "exp": 15989,
+  "hpBonus": 1734,
+  "mpBonus": 340
+ },
+ {
+  "level": 21,
+  "exp": 19030,
+  "hpBonus": 1810,
+  "mpBonus": 347
+ },
+ {
+  "level": 22,
+  "exp": 22486,
+  "hpBonus": 1890,
+  "mpBonus": 355
+ },
+ {
+  "level": 23,
+  "exp": 26392,
+  "hpBonus": 1974,
+  "mpBonus": 363
+ },
+ {
+  "level": 24,
+  "exp": 30786,
+  "hpBonus": 2062,
+  "mpBonus": 371
+ },
+ {
+  "level": 25,
+  "exp": 35706,
+  "hpBonus": 2154,
+  "mpBonus": 380
+ },
+ {
+  "level": 26,
+  "exp": 41194,
+  "hpBonus": 2250,
+  "mpBonus": 389
+ },
+ {
+  "level": 27,
+  "exp": 47291,
+  "hpBonus": 2350,
+  "mpBonus": 399
+ },
+ {
+  "level": 28,
+  "exp": 54041,
+  "hpBonus": 2454,
+  "mpBonus": 409
+ },
+ {
+  "level": 29,
+  "exp": 61488,
+  "hpBonus": 2562,
+  "mpBonus": 419
+ },
+ {
+  "level": 30,
+  "exp": 69680,
+  "hpBonus": 2674,
+  "mpBonus": 430
+ },
+ {
+  "level": 31,
+  "exp": 78664,
+  "hpBonus": 2790,
+  "mpBonus": 441
+ },
+ {
+  "level": 32,
+  "exp": 88490,
+  "hpBonus": 2910,
+  "mpBonus": 453
+ },
+ {
+  "level": 33,
+  "exp": 99208,
+  "hpBonus": 3034,
+  "mpBonus": 465
+ },
+ {
+  "level": 34,
+  "exp": 110872,
+  "hpBonus": 3162,
+  "mpBonus": 477
+ },
+ {
+  "level": 35,
+  "exp": 123535,
+  "hpBonus": 3282,
+  "mpBonus": 489
+ },
+ {
+  "level": 36,
+  "exp": 137253,
+  "hpBonus": 3394,
+  "mpBonus": 500
+ },
+ {
+  "level": 37,
+  "exp": 152082,
+  "hpBonus": 3498,
+  "mpBonus": 510
+ },
+ {
+  "level": 38,
+  "exp": 168082,
+  "hpBonus": 3594,
+  "mpBonus": 519
+ },
+ {
+  "level": 39,
+  "exp": 185312,
+  "hpBonus": 3682,
+  "mpBonus": 527
+ },
+ {
+  "level": 40,
+  "exp": 203834,
+  "hpBonus": 3762,
+  "mpBonus": 535
+ },
+ {
+  "level": 41,
+  "exp": 223710,
+  "hpBonus": 3834,
+  "mpBonus": 542
+ },
+ {
+  "level": 42,
+  "exp": 245006,
+  "hpBonus": 3898,
+  "mpBonus": 548
+ },
+ {
+  "level": 43,
+  "exp": 267787,
+  "hpBonus": 3958,
+  "mpBonus": 554
+ },
+ {
+  "level": 44,
+  "exp": 292121,
+  "hpBonus": 4014,
+  "mpBonus": 559
+ },
+ {
+  "level": 45,
+  "exp": 318076,
+  "hpBonus": 4066,
+  "mpBonus": 564
+ },
+ {
+  "level": 46,
+  "exp": 345724,
+  "hpBonus": 4114,
+  "mpBonus": 568
+ },
+ {
+  "level": 47,
+  "exp": 375136,
+  "hpBonus": 4158,
+  "mpBonus": 572
+ },
+ {
+  "level": 48,
+  "exp": 406386,
+  "hpBonus": 4198,
+  "mpBonus": 576
+ },
+ {
+  "level": 49,
+  "exp": 439548,
+  "hpBonus": 4234,
+  "mpBonus": 579
+ },
+ {
+  "level": 50,
+  "exp": 474700,
+  "hpBonus": 4266,
+  "mpBonus": 582
+ },
+ {
+  "level": 51,
+  "exp": 511919,
+  "hpBonus": 4294,
+  "mpBonus": 584
+ },
+ {
+  "level": 52,
+  "exp": 551285,
+  "hpBonus": 4317,
+  "mpBonus": 586
+ },
+ {
+  "level": 53,
+  "exp": 592878,
+  "hpBonus": 4334,
+  "mpBonus": 587
+ },
+ {
+  "level": 54,
+  "exp": 636782,
+  "hpBonus": 4344,
+  "mpBonus": 588
+ },
+ {
+  "level": 55,
+  "exp": 683080,
+  "hpBonus": 4353,
+  "mpBonus": 589
+ },
+ {
+  "level": 56,
+  "exp": 731858,
+  "hpBonus": 4361,
+  "mpBonus": 590
+ },
+ {
+  "level": 57,
+  "exp": 783202,
+  "hpBonus": 4368,
+  "mpBonus": 591
+ },
+ {
+  "level": 58,
+  "exp": 837202,
+  "hpBonus": 4374,
+  "mpBonus": 592
+ },
+ {
+  "level": 59,
+  "exp": 893947,
+  "hpBonus": 4379,
+  "mpBonus": 593
+ },
+ {
+  "level": 60,
+  "exp": 953529,
+  "hpBonus": 4383,
+  "mpBonus": 594
+ },
+ {
+  "level": 61,
+  "exp": 1016040,
+  "hpBonus": 4386,
+  "mpBonus": 595
+ },
+ {
+  "level": 62,
+  "exp": 1081576,
+  "hpBonus": 4388,
+  "mpBonus": 596
+ },
+ {
+  "level": 63,
+  "exp": 1150232,
+  "hpBonus": 4389,
+  "mpBonus": 597
+ },
+ {
+  "level": 64,
+  "exp": 1222106,
+  "hpBonus": 4390,
+  "mpBonus": 598
+ },
+ {
+  "level": 65,
+  "exp": 1297296,
+  "hpBonus": 4391,
+  "mpBonus": 599
+ },
+ {
+  "level": 66,
+  "exp": 1375904,
+  "hpBonus": 4392,
+  "mpBonus": 600
+ },
+ {
+  "level": 67,
+  "exp": 1458031,
+  "hpBonus": 4393,
+  "mpBonus": 601
+ },
+ {
+  "level": 68,
+  "exp": 1543781,
+  "hpBonus": 4394,
+  "mpBonus": 602
+ },
+ {
+  "level": 69,
+  "exp": 1633258,
+  "hpBonus": 4395,
+  "mpBonus": 603
+ },
+ {
+  "level": 70,
+  "exp": 1726570,
+  "hpBonus": 4396,
+  "mpBonus": 604
+ },
+ {
+  "level": 71,
+  "exp": 1823824,
+  "hpBonus": 4397,
+  "mpBonus": 605
+ },
+ {
+  "level": 72,
+  "exp": 1925130,
+  "hpBonus": 4398,
+  "mpBonus": 606
+ },
+ {
+  "level": 73,
+  "exp": 2030598,
+  "hpBonus": 4399,
+  "mpBonus": 607
+ },
+ {
+  "level": 74,
+  "exp": 2140342,
+  "hpBonus": 4400,
+  "mpBonus": 608
+ },
+ {
+  "level": 75,
+  "exp": 2254475,
+  "hpBonus": 4401,
+  "mpBonus": 609
+ },
+ {
+  "level": 76,
+  "exp": 2373113,
+  "hpBonus": 4402,
+  "mpBonus": 610
+ },
+ {
+  "level": 77,
+  "exp": 2496372,
+  "hpBonus": 4403,
+  "mpBonus": 611
+ },
+ {
+  "level": 78,
+  "exp": 2624372,
+  "hpBonus": 4404,
+  "mpBonus": 612
+ },
+ {
+  "level": 79,
+  "exp": 2757232,
+  "hpBonus": 4405,
+  "mpBonus": 613
+ },
+ {
+  "level": 80,
+  "exp": 2895074,
+  "hpBonus": 4406,
+  "mpBonus": 614
+ },
+ {
+  "level": 81,
+  "exp": 3038020,
+  "hpBonus": 4407,
+  "mpBonus": 615
+ },
+ {
+  "level": 82,
+  "exp": 3186196,
+  "hpBonus": 4408,
+  "mpBonus": 616
+ },
+ {
+  "level": 83,
+  "exp": 3339727,
+  "hpBonus": 4409,
+  "mpBonus": 617
+ },
+ {
+  "level": 84,
+  "exp": 3498741,
+  "hpBonus": 4410,
+  "mpBonus": 618
+ },
+ {
+  "level": 85,
+  "exp": 3663366,
+  "hpBonus": 4411,
+  "mpBonus": 619
+ },
+ {
+  "level": 86,
+  "exp": 3833734,
+  "hpBonus": 4412,
+  "mpBonus": 620
+ },
+ {
+  "level": 87,
+  "exp": 4009976,
+  "hpBonus": 4413,
+  "mpBonus": 621
+ },
+ {
+  "level": 88,
+  "exp": 4192226,
+  "hpBonus": 4414,
+  "mpBonus": 622
+ },
+ {
+  "level": 89,
+  "exp": 4380618,
+  "hpBonus": 4415,
+  "mpBonus": 623
+ },
+ {
+  "level": 90,
+  "exp": 4575290,
+  "hpBonus": 4416,
+  "mpBonus": 624
+ },
+ {
+  "level": 91,
+  "exp": 4776379,
+  "hpBonus": 4417,
+  "mpBonus": 625
+ },
+ {
+  "level": 92,
+  "exp": 4984025,
+  "hpBonus": 4418,
+  "mpBonus": 626
+ },
+ {
+  "level": 93,
+  "exp": 5198368,
+  "hpBonus": 4419,
+  "mpBonus": 627
+ },
+ {
+  "level": 94,
+  "exp": 5419552,
+  "hpBonus": 4420,
+  "mpBonus": 628
+ },
+ {
+  "level": 95,
+  "exp": 5647720,
+  "hpBonus": 4421,
+  "mpBonus": 629
+ },
+ {
+  "level": 96,
+  "exp": 5883018,
+  "hpBonus": 4422,
+  "mpBonus": 630
+ },
+ {
+  "level": 97,
+  "exp": 6125592,
+  "hpBonus": 4423,
+  "mpBonus": 631
+ },
+ {
+  "level": 98,
+  "exp": 6375592,
+  "hpBonus": 4424,
+  "mpBonus": 632
+ },
+ {
+  "level": 99,
+  "exp": 6633167,
+  "hpBonus": 4524,
+  "mpBonus": 642
+ }
+]

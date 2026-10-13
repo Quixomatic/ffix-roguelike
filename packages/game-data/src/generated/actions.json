@@ -1,0 +1,2913 @@
+[
+ {
+  "id": 0,
+  "name": "Void",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 0,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 1,
+  "name": "Cure",
+  "targets": "manyAny",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 10,
+  "power": 16,
+  "elements": [],
+  "rate": 0,
+  "category": 71,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 2,
+  "name": "Cura",
+  "targets": "manyAny",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 10,
+  "power": 38,
+  "elements": [],
+  "rate": 0,
+  "category": 71,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 3,
+  "name": "Curaga",
+  "targets": "manyAny",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 10,
+  "power": 107,
+  "elements": [],
+  "rate": 0,
+  "category": 71,
+  "statuses": [],
+  "mp": 22
+ },
+ {
+  "id": 4,
+  "name": "Regen",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "regen"
+  ],
+  "mp": 14
+ },
+ {
+  "id": 5,
+  "name": "Life",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 13,
+  "power": 5,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "death"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 6,
+  "name": "Full-Life",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 13,
+  "power": 100,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "death"
+  ],
+  "mp": 24
+ },
+ {
+  "id": 7,
+  "name": "Scan",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 59,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 71,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 8,
+  "name": "Panacea",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 12,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "venom",
+   "poison"
+  ],
+  "mp": 4
+ },
+ {
+  "id": 9,
+  "name": "Stona",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 12,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "petrify",
+   "gradualPetrify"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 10,
+  "name": "Esuna",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 12,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "silence",
+   "blind",
+   "confuse",
+   "poison",
+   "sleep",
+   "heat",
+   "freeze",
+   "mini",
+   "gradualPetrify"
+  ],
+  "mp": 20
+ },
+ {
+  "id": 11,
+  "name": "Shell",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "shell"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 12,
+  "name": "Protect",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "protect"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 13,
+  "name": "Haste",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "haste"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 14,
+  "name": "Silence",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 71,
+  "statuses": [
+   "silence"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 15,
+  "name": "Mini",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 109,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 71,
+  "statuses": [
+   "mini"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 16,
+  "name": "Reflect",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "reflect"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 17,
+  "name": "Confuse",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 71,
+  "statuses": [
+   "confuse"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 18,
+  "name": "Berserk",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 75,
+  "category": 71,
+  "statuses": [
+   "berserk"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 19,
+  "name": "Blind",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 75,
+  "category": 71,
+  "statuses": [
+   "blind"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 20,
+  "name": "Float",
+  "targets": "manyAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 71,
+  "statuses": [
+   "float"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 21,
+  "name": "Dispel",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 12,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "stop",
+   "autoLife",
+   "regen",
+   "haste",
+   "slow",
+   "float",
+   "shell",
+   "protect",
+   "vanish",
+   "reflect"
+  ],
+  "mp": 16
+ },
+ {
+  "id": 22,
+  "name": "Might",
+  "targets": "singleAny",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 43,
+  "power": 4,
+  "elements": [],
+  "rate": 0,
+  "category": 71,
+  "statuses": [],
+  "mp": 14
+ },
+ {
+  "id": 23,
+  "name": "Jewel",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 84,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 70,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 24,
+  "name": "Holy",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 113,
+  "elements": [
+   "holy"
+  ],
+  "rate": 0,
+  "category": 23,
+  "statuses": [],
+  "mp": 36
+ },
+ {
+  "id": 25,
+  "name": "Fire",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 14,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 26,
+  "name": "Fira",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 29,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 27,
+  "name": "Firaga",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 72,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 28,
+  "name": "Sleep",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 71,
+  "statuses": [
+   "sleep"
+  ],
+  "mp": 10
+ },
+ {
+  "id": 29,
+  "name": "Blizzard",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 14,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 30,
+  "name": "Blizzara",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 29,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 31,
+  "name": "Blizzaga",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 72,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 32,
+  "name": "Slow",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 60,
+  "category": 71,
+  "statuses": [
+   "slow"
+  ],
+  "mp": 6
+ },
+ {
+  "id": 33,
+  "name": "Thunder",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 14,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 34,
+  "name": "Thundara",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 29,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 35,
+  "name": "Thundaga",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 72,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 36,
+  "name": "Stop",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 40,
+  "category": 71,
+  "statuses": [
+   "stop"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 37,
+  "name": "Poison",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 60,
+  "category": 71,
+  "statuses": [
+   "poison"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 38,
+  "name": "Bio",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 42,
+  "elements": [],
+  "rate": 20,
+  "category": 19,
+  "statuses": [
+   "poison"
+  ],
+  "mp": 18
+ },
+ {
+  "id": 39,
+  "name": "Osmose",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 15,
+  "power": 15,
+  "elements": [],
+  "rate": 0,
+  "category": 70,
+  "statuses": [],
+  "mp": 2
+ },
+ {
+  "id": 40,
+  "name": "Drain",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 16,
+  "power": 32,
+  "elements": [],
+  "rate": 0,
+  "category": 86,
+  "statuses": [],
+  "mp": 14
+ },
+ {
+  "id": 41,
+  "name": "Demi",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 30,
+  "elements": [],
+  "rate": 40,
+  "category": 23,
+  "statuses": [],
+  "mp": 18
+ },
+ {
+  "id": 42,
+  "name": "Comet",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 18,
+  "power": 56,
+  "elements": [],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 16
+ },
+ {
+  "id": 43,
+  "name": "Death",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 14,
+  "power": 0,
+  "elements": [],
+  "rate": 35,
+  "category": 71,
+  "statuses": [
+   "death"
+  ],
+  "mp": 20
+ },
+ {
+  "id": 44,
+  "name": "Break",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 40,
+  "category": 71,
+  "statuses": [
+   "petrify"
+  ],
+  "mp": 18
+ },
+ {
+  "id": 45,
+  "name": "Water",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 64,
+  "elements": [
+   "water"
+  ],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 22
+ },
+ {
+  "id": 46,
+  "name": "Meteor",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 18,
+  "power": 88,
+  "elements": [],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 42
+ },
+ {
+  "id": 47,
+  "name": "Flare",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 119,
+  "elements": [],
+  "rate": 0,
+  "category": 19,
+  "statuses": [],
+  "mp": 40
+ },
+ {
+  "id": 48,
+  "name": "Doomsday",
+  "targets": "everyone",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 112,
+  "elements": [
+   "shadow"
+  ],
+  "rate": 0,
+  "category": 18,
+  "statuses": [],
+  "mp": 72
+ },
+ {
+  "id": 49,
+  "name": "Shiva",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 36,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 50,
+  "name": "Fire Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 5,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 51,
+  "name": "Ifrit",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 42,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 26
+ },
+ {
+  "id": 52,
+  "name": "Fira Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 10,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 53,
+  "name": "Ramuh",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 32,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 22
+ },
+ {
+  "id": 54,
+  "name": "Firaga Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 30,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 30
+ },
+ {
+  "id": 55,
+  "name": "Atomos",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 86,
+  "power": 30,
+  "elements": [],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 32
+ },
+ {
+  "id": 56,
+  "name": "Blizzard Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 5,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 57,
+  "name": "Blizzara Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 10,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 58,
+  "name": "Odin",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 87,
+  "power": 45,
+  "elements": [],
+  "rate": 0,
+  "category": 22,
+  "statuses": [
+   "death"
+  ],
+  "mp": 28
+ },
+ {
+  "id": 59,
+  "name": "Blizzaga Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 30,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 30
+ },
+ {
+  "id": 60,
+  "name": "Leviathan",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 59,
+  "elements": [
+   "water"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 42
+ },
+ {
+  "id": 61,
+  "name": "Thunder Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 5,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 62,
+  "name": "Bahamut",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 88,
+  "elements": [],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 56
+ },
+ {
+  "id": 63,
+  "name": "Thundara Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 10,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 64,
+  "name": "Ark",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 106,
+  "elements": [
+   "shadow"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 80
+ },
+ {
+  "id": 65,
+  "name": "Thundaga Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 30,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 30
+ },
+ {
+  "id": 66,
+  "name": "Fenrir",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 42,
+  "elements": [
+   "earth"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 30
+ },
+ {
+  "id": 67,
+  "name": "Fenrir",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 44,
+  "elements": [
+   "wind"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 30
+ },
+ {
+  "id": 68,
+  "name": "Carbuncle",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "reflect"
+  ],
+  "mp": 24
+ },
+ {
+  "id": 69,
+  "name": "Carbuncle",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "haste"
+  ],
+  "mp": 24
+ },
+ {
+  "id": 70,
+  "name": "Carbuncle",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "shell"
+  ],
+  "mp": 24
+ },
+ {
+  "id": 71,
+  "name": "Carbuncle",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "vanish"
+  ],
+  "mp": 24
+ },
+ {
+  "id": 72,
+  "name": "Phoenix",
+  "targets": "everyone",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 49,
+  "power": 40,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 6,
+  "statuses": [
+   "petrify",
+   "virus",
+   "zombie",
+   "death"
+  ],
+  "mp": 32
+ },
+ {
+  "id": 73,
+  "name": "Rebirth Flame",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 13,
+  "power": 30,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "death"
+  ],
+  "mp": 0
+ },
+ {
+  "id": 74,
+  "name": "Madeen",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": true,
+  "scriptId": 85,
+  "power": 71,
+  "elements": [
+   "holy"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 54
+ },
+ {
+  "id": 75,
+  "name": "Bio Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 20
+ },
+ {
+  "id": 76,
+  "name": "Water Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 25,
+  "elements": [
+   "water"
+  ],
+  "rate": 0,
+  "category": 2,
+  "statuses": [],
+  "mp": 26
+ },
+ {
+  "id": 77,
+  "name": "Goblin Punch",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 21,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 78,
+  "name": "LV5 Death",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 22,
+  "power": 0,
+  "elements": [],
+  "rate": 5,
+  "category": 6,
+  "statuses": [
+   "death"
+  ],
+  "mp": 20
+ },
+ {
+  "id": 79,
+  "name": "LV4 Holy",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 23,
+  "power": 34,
+  "elements": [
+   "holy"
+  ],
+  "rate": 4,
+  "category": 6,
+  "statuses": [],
+  "mp": 22
+ },
+ {
+  "id": 80,
+  "name": "LV3 Def-less",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 24,
+  "power": 0,
+  "elements": [],
+  "rate": 3,
+  "category": 6,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 81,
+  "name": "Doom",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 25,
+  "category": 70,
+  "statuses": [
+   "doom"
+  ],
+  "mp": 12
+ },
+ {
+  "id": 82,
+  "name": "Roulette",
+  "targets": "everyone",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 25,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "death"
+  ],
+  "mp": 18
+ },
+ {
+  "id": 83,
+  "name": "Aqua Breath",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 25,
+  "elements": [
+   "water"
+  ],
+  "rate": 50,
+  "category": 6,
+  "statuses": [],
+  "mp": 14
+ },
+ {
+  "id": 84,
+  "name": "Mighty Guard",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "shell",
+   "protect"
+  ],
+  "mp": 64
+ },
+ {
+  "id": 85,
+  "name": "Matra Magic",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 27,
+  "power": 1,
+  "elements": [],
+  "rate": 20,
+  "category": 6,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 86,
+  "name": "Bad Breath",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 40,
+  "category": 6,
+  "statuses": [
+   "blind",
+   "confuse",
+   "poison",
+   "slow",
+   "mini"
+  ],
+  "mp": 16
+ },
+ {
+  "id": 87,
+  "name": "Limit Glove",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 28,
+  "power": 99,
+  "elements": [],
+  "rate": 99,
+  "category": 6,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 88,
+  "name": "1,000 Needles",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 26,
+  "power": 10,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 89,
+  "name": "Pumpkin Head",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 29,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 90,
+  "name": "Night",
+  "targets": "everyone",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "sleep"
+  ],
+  "mp": 14
+ },
+ {
+  "id": 91,
+  "name": "Twister",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 18,
+  "power": 55,
+  "elements": [
+   "wind"
+  ],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 22
+ },
+ {
+  "id": 92,
+  "name": "Earth Shake",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 75,
+  "elements": [
+   "earth"
+  ],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 20
+ },
+ {
+  "id": 93,
+  "name": "Angel's Snack",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 52,
+  "power": 247,
+  "elements": [],
+  "rate": 0,
+  "category": 70,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 94,
+  "name": "Frog Drop",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 66,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 95,
+  "name": "White Wind",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 30,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 70,
+  "statuses": [],
+  "mp": 14
+ },
+ {
+  "id": 96,
+  "name": "Vanish",
+  "targets": "singleAlly",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "vanish"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 97,
+  "name": "Freeze",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [
+   "ice"
+  ],
+  "rate": 30,
+  "category": 70,
+  "statuses": [
+   "freeze"
+  ],
+  "mp": 8
+ },
+ {
+  "id": 98,
+  "name": "Mustard Bomb",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 30,
+  "category": 70,
+  "statuses": [
+   "heat"
+  ],
+  "mp": 10
+ },
+ {
+  "id": 99,
+  "name": "Magic Hammer",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 31,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 2
+ },
+ {
+  "id": 100,
+  "name": "Auto-Life",
+  "targets": "singleAlly",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 70,
+  "statuses": [
+   "autoLife"
+  ],
+  "mp": 14
+ },
+ {
+  "id": 101,
+  "name": "Flee",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 57,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 102,
+  "name": "Detect",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 60,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 103,
+  "name": "What's That!?",
+  "targets": "everyone",
+  "defaultAlly": false,
+  "forDead": true,
+  "scriptId": 54,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 2
+ },
+ {
+  "id": 104,
+  "name": "Soul Blade",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 46,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 105,
+  "name": "Annoy",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 68,
+  "statuses": [
+   "trouble"
+  ],
+  "mp": 4
+ },
+ {
+  "id": 106,
+  "name": "Sacrifice",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 45,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 32
+ },
+ {
+  "id": 107,
+  "name": "Lucky Seven",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 53,
+  "power": 99,
+  "elements": [],
+  "rate": 99,
+  "category": 4,
+  "statuses": [],
+  "mp": 6
+ },
+ {
+  "id": 108,
+  "name": "Thievery",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 67,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 109,
+  "name": "Free Energy",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 15,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 110,
+  "name": "Tidal Flame",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 15,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 111,
+  "name": "Scoop Art",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 14
+ },
+ {
+  "id": 112,
+  "name": "Shift Break",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 16
+ },
+ {
+  "id": 113,
+  "name": "Stellar Circle 5",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 25,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 114,
+  "name": "Meo Twister",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 25,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 32
+ },
+ {
+  "id": 115,
+  "name": "Solution 9",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 30,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 48
+ },
+ {
+  "id": 116,
+  "name": "Grand Lethal",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 40,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 60
+ },
+ {
+  "id": 117,
+  "name": "Lancer",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 39,
+  "power": 12,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 118,
+  "name": "Reis's Wind",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "regen"
+  ],
+  "mp": 12
+ },
+ {
+  "id": 119,
+  "name": "Dragon Breath",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 40,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 78
+ },
+ {
+  "id": 120,
+  "name": "White Draw",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 41,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 36
+ },
+ {
+  "id": 121,
+  "name": "Luna",
+  "targets": "everyone",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "berserk"
+  ],
+  "mp": 12
+ },
+ {
+  "id": 122,
+  "name": "Six Dragons",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 50,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 28
+ },
+ {
+  "id": 123,
+  "name": "Cherry Blossom",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 20,
+  "power": 15,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 46
+ },
+ {
+  "id": 124,
+  "name": "Dragon's Crest",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 68,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 16
+ },
+ {
+  "id": 125,
+  "name": "Chakra",
+  "targets": "singleAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 37,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 126,
+  "name": "Spare Change",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 38,
+  "power": 101,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 127,
+  "name": "No Mercy",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 17,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 128,
+  "name": "Aura",
+  "targets": "singleAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "autoLife",
+   "regen"
+  ],
+  "mp": 12
+ },
+ {
+  "id": 129,
+  "name": "Curse",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 51,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 4,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 130,
+  "name": "Revive",
+  "targets": "singleAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 13,
+  "power": 20,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "death"
+  ],
+  "mp": 20
+ },
+ {
+  "id": 131,
+  "name": "Demi Shock",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 20,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 20
+ },
+ {
+  "id": 132,
+  "name": "Countdown",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 76,
+  "statuses": [
+   "doom"
+  ],
+  "mp": 16
+ },
+ {
+  "id": 133,
+  "name": "Chakra",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 37,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 134,
+  "name": "Spare Change",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 38,
+  "power": 101,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 135,
+  "name": "No Mercy",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 16,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 136,
+  "name": "Aura",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "autoLife",
+   "regen"
+  ],
+  "mp": 12
+ },
+ {
+  "id": 137,
+  "name": "Curse",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 51,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 4,
+  "statuses": [],
+  "mp": 12
+ },
+ {
+  "id": 138,
+  "name": "Revive",
+  "targets": "allAlly",
+  "defaultAlly": true,
+  "forDead": true,
+  "scriptId": 13,
+  "power": 20,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "death"
+  ],
+  "mp": 20
+ },
+ {
+  "id": 139,
+  "name": "Demi Shock",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 20,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 20
+ },
+ {
+  "id": 140,
+  "name": "Countdown",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 11,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 76,
+  "statuses": [
+   "doom"
+  ],
+  "mp": 16
+ },
+ {
+  "id": 141,
+  "name": "Darkside",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 32,
+  "power": 14,
+  "elements": [
+   "shadow"
+  ],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 142,
+  "name": "Minus Strike",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 29,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 143,
+  "name": "Iai Strike",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 108,
+  "power": 0,
+  "elements": [],
+  "rate": 30,
+  "category": 76,
+  "statuses": [
+   "death"
+  ],
+  "mp": 16
+ },
+ {
+  "id": 144,
+  "name": "Power Break",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 34,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 145,
+  "name": "Armour Break",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 33,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 146,
+  "name": "Mental Break",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 35,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 8
+ },
+ {
+  "id": 147,
+  "name": "Magic Break",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 36,
+  "power": 0,
+  "elements": [],
+  "rate": 50,
+  "category": 12,
+  "statuses": [],
+  "mp": 4
+ },
+ {
+  "id": 148,
+  "name": "Charge!",
+  "targets": "randomEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 61,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 10
+ },
+ {
+  "id": 149,
+  "name": "Thunder Slash",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 20,
+  "power": 19,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 24
+ },
+ {
+  "id": 150,
+  "name": "Stock Break",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 15,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 26
+ },
+ {
+  "id": 151,
+  "name": "Climhazzard",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 20,
+  "power": 20,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 32
+ },
+ {
+  "id": 152,
+  "name": "Shock",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 19,
+  "power": 30,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 46
+ },
+ {
+  "id": 153,
+  "name": "Diamond Dust",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 34,
+  "elements": [
+   "ice"
+  ],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 154,
+  "name": "Flames of Hell",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 37,
+  "elements": [
+   "fire"
+  ],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 155,
+  "name": "Judgement Bolt",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 31,
+  "elements": [
+   "thunder"
+  ],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 156,
+  "name": "Worm Hole",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 16,
+  "elements": [],
+  "rate": 100,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 157,
+  "name": "Zantetsuken",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 49,
+  "elements": [],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 158,
+  "name": "Tsunami",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 63,
+  "elements": [
+   "water"
+  ],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 159,
+  "name": "Mega Flare",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 77,
+  "elements": [],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 160,
+  "name": "Eternal Darkness",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 87,
+  "elements": [
+   "shadow"
+  ],
+  "rate": 0,
+  "category": 84,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 161,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 162,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 163,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 164,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 165,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 166,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 167,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 168,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 169,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 170,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 171,
+  "name": "None",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 172,
+  "name": "Jump",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 173,
+  "name": "Pyro",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 26,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 174,
+  "name": "Medeo",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 26,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 175,
+  "name": "Poly",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 26,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 4,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 176,
+  "name": "Attack",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 177,
+  "name": "Steal",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 58,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 178,
+  "name": "Jump",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 0,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 179,
+  "name": "Defend",
+  "targets": "self",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 103,
+  "power": 0,
+  "elements": [],
+  "rate": 255,
+  "category": 68,
+  "statuses": [
+   "defend"
+  ],
+  "mp": 0
+ },
+ {
+  "id": 180,
+  "name": "Flee",
+  "targets": "automatic",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 56,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 181,
+  "name": "Mug",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 58,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 182,
+  "name": "Change",
+  "targets": "self",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 55,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 183,
+  "name": "Eat",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 65,
+  "power": 4,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 184,
+  "name": "Cook",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 65,
+  "power": 2,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 185,
+  "name": "Spear",
+  "targets": "singleAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 48,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 186,
+  "name": "Spear",
+  "targets": "randomEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 83,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 187,
+  "name": "Terra Homing",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 85,
+  "power": 200,
+  "elements": [
+   "holy"
+  ],
+  "rate": 0,
+  "category": 22,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 188,
+  "name": "Focus",
+  "targets": "self",
+  "defaultAlly": true,
+  "forDead": false,
+  "scriptId": 44,
+  "power": 4,
+  "elements": [],
+  "rate": 0,
+  "category": 68,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 189,
+  "name": "Flare Sword",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 60,
+  "elements": [],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 60
+ },
+ {
+  "id": 190,
+  "name": "Throw",
+  "targets": "singleEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 42,
+  "power": 0,
+  "elements": [],
+  "rate": 0,
+  "category": 12,
+  "statuses": [],
+  "mp": 0
+ },
+ {
+  "id": 191,
+  "name": "Doomsday Sword",
+  "targets": "allEnemy",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 63,
+  "power": 40,
+  "elements": [
+   "shadow"
+  ],
+  "rate": 0,
+  "category": 6,
+  "statuses": [],
+  "mp": 50
+ }
+]

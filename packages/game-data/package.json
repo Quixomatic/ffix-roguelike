@@ -1,0 +1,17 @@
+{
+  "name": "@ffix-roguelike/game-data",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "import:memoria": "bun scripts/import-memoria.ts"
+  },
+  "devDependencies": {
+    "@ffix-roguelike/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  }
+}

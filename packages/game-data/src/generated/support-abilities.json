@@ -1,0 +1,322 @@
+[
+ {
+  "id": 0,
+  "name": "Auto-Reflect",
+  "gems": 15
+ },
+ {
+  "id": 1,
+  "name": "Auto-Float",
+  "gems": 6
+ },
+ {
+  "id": 2,
+  "name": "Auto-Haste",
+  "gems": 9
+ },
+ {
+  "id": 3,
+  "name": "Auto-Regen",
+  "gems": 10
+ },
+ {
+  "id": 4,
+  "name": "Auto-Life",
+  "gems": 12
+ },
+ {
+  "id": 5,
+  "name": "HP+10%",
+  "gems": 4
+ },
+ {
+  "id": 6,
+  "name": "HP+20%",
+  "gems": 8
+ },
+ {
+  "id": 7,
+  "name": "MP+10%",
+  "gems": 4
+ },
+ {
+  "id": 8,
+  "name": "MP+20%",
+  "gems": 8
+ },
+ {
+  "id": 9,
+  "name": "Accuracy+",
+  "gems": 2
+ },
+ {
+  "id": 10,
+  "name": "Distract",
+  "gems": 5
+ },
+ {
+  "id": 11,
+  "name": "Long Reach",
+  "gems": 16
+ },
+ {
+  "id": 12,
+  "name": "MP Attack",
+  "gems": 5
+ },
+ {
+  "id": 13,
+  "name": "Bird Killer",
+  "gems": 3
+ },
+ {
+  "id": 14,
+  "name": "Bug Killer",
+  "gems": 2
+ },
+ {
+  "id": 15,
+  "name": "Stone Killer",
+  "gems": 4
+ },
+ {
+  "id": 16,
+  "name": "Undead Killer",
+  "gems": 2
+ },
+ {
+  "id": 17,
+  "name": "Dragon Killer",
+  "gems": 3
+ },
+ {
+  "id": 18,
+  "name": "Devil Killer",
+  "gems": 2
+ },
+ {
+  "id": 19,
+  "name": "Beast Killer",
+  "gems": 4
+ },
+ {
+  "id": 20,
+  "name": "Man Eater",
+  "gems": 2
+ },
+ {
+  "id": 21,
+  "name": "High Jump",
+  "gems": 4
+ },
+ {
+  "id": 22,
+  "name": "Master Thief",
+  "gems": 5
+ },
+ {
+  "id": 23,
+  "name": "Steal Gil",
+  "gems": 5
+ },
+ {
+  "id": 24,
+  "name": "Healer",
+  "gems": 2
+ },
+ {
+  "id": 25,
+  "name": "Add Status",
+  "gems": 3
+ },
+ {
+  "id": 26,
+  "name": "Gamble Defence",
+  "gems": 1
+ },
+ {
+  "id": 27,
+  "name": "Chemist",
+  "gems": 4
+ },
+ {
+  "id": 28,
+  "name": "Power Throw",
+  "gems": 19
+ },
+ {
+  "id": 29,
+  "name": "Power Up",
+  "gems": 3
+ },
+ {
+  "id": 30,
+  "name": "Reflect-Null",
+  "gems": 7
+ },
+ {
+  "id": 31,
+  "name": "Reflectx2",
+  "gems": 17
+ },
+ {
+  "id": 32,
+  "name": "Mag Elem Null",
+  "gems": 13
+ },
+ {
+  "id": 33,
+  "name": "Concentrate",
+  "gems": 10
+ },
+ {
+  "id": 34,
+  "name": "Half MP",
+  "gems": 11
+ },
+ {
+  "id": 35,
+  "name": "High Tide",
+  "gems": 8
+ },
+ {
+  "id": 36,
+  "name": "Counter",
+  "gems": 8
+ },
+ {
+  "id": 37,
+  "name": "Cover",
+  "gems": 6
+ },
+ {
+  "id": 38,
+  "name": "Protect Girls",
+  "gems": 4
+ },
+ {
+  "id": 39,
+  "name": "Eye 4 Eye",
+  "gems": 5
+ },
+ {
+  "id": 40,
+  "name": "Body Temp",
+  "gems": 4
+ },
+ {
+  "id": 41,
+  "name": "Alert",
+  "gems": 4
+ },
+ {
+  "id": 42,
+  "name": "Initiative",
+  "gems": 5
+ },
+ {
+  "id": 43,
+  "name": "Level Up",
+  "gems": 7
+ },
+ {
+  "id": 44,
+  "name": "Ability Up",
+  "gems": 3
+ },
+ {
+  "id": 45,
+  "name": "Millionaire",
+  "gems": 5
+ },
+ {
+  "id": 46,
+  "name": "Flee-Gil",
+  "gems": 3
+ },
+ {
+  "id": 47,
+  "name": "Guardian Mog",
+  "gems": 3
+ },
+ {
+  "id": 48,
+  "name": "Insomniac",
+  "gems": 5
+ },
+ {
+  "id": 49,
+  "name": "Antibody",
+  "gems": 4
+ },
+ {
+  "id": 50,
+  "name": "Bright Eyes",
+  "gems": 4
+ },
+ {
+  "id": 51,
+  "name": "Loudmouth",
+  "gems": 4
+ },
+ {
+  "id": 52,
+  "name": "Restore HP",
+  "gems": 8
+ },
+ {
+  "id": 53,
+  "name": "Jelly",
+  "gems": 4
+ },
+ {
+  "id": 54,
+  "name": "Return Magic",
+  "gems": 9
+ },
+ {
+  "id": 55,
+  "name": "Absorb MP",
+  "gems": 6
+ },
+ {
+  "id": 56,
+  "name": "Auto-Potion",
+  "gems": 3
+ },
+ {
+  "id": 57,
+  "name": "Locomotion",
+  "gems": 4
+ },
+ {
+  "id": 58,
+  "name": "Clear Headed",
+  "gems": 5
+ },
+ {
+  "id": 59,
+  "name": "Boost",
+  "gems": 12
+ },
+ {
+  "id": 60,
+  "name": "Odin's Sword",
+  "gems": 5
+ },
+ {
+  "id": 61,
+  "name": "Mug",
+  "gems": 3
+ },
+ {
+  "id": 62,
+  "name": "Bandit",
+  "gems": 5
+ },
+ {
+  "id": 63,
+  "name": "Void",
+  "gems": 20
+ }
+]

@@ -1,0 +1,2454 @@
+[
+ {
+  "id": 0,
+  "key": "zidane",
+  "name": "Zidane",
+  "base": {
+   "speed": 23,
+   "strength": 21,
+   "magic": 18,
+   "spirit": 23,
+   "gems": 18
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 25,
+    "name": "Skill",
+    "actionIds": [
+     101,
+     102,
+     103,
+     104,
+     105,
+     106,
+     107,
+     108
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 26,
+    "name": "Dyne",
+    "actionIds": [
+     109,
+     110,
+     111,
+     112,
+     113,
+     114,
+     115,
+     116
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:101",
+    "ap": 40
+   },
+   {
+    "ref": "AA:102",
+    "ap": 40
+   },
+   {
+    "ref": "AA:103",
+    "ap": 40
+   },
+   {
+    "ref": "AA:104",
+    "ap": 35
+   },
+   {
+    "ref": "AA:105",
+    "ap": 50
+   },
+   {
+    "ref": "AA:106",
+    "ap": 55
+   },
+   {
+    "ref": "AA:107",
+    "ap": 85
+   },
+   {
+    "ref": "AA:108",
+    "ap": 100
+   },
+   {
+    "ref": "SA:0",
+    "ap": 95
+   },
+   {
+    "ref": "SA:1",
+    "ap": 20
+   },
+   {
+    "ref": "SA:2",
+    "ap": 55
+   },
+   {
+    "ref": "SA:3",
+    "ap": 25
+   },
+   {
+    "ref": "SA:4",
+    "ap": 130
+   },
+   {
+    "ref": "SA:6",
+    "ap": 40
+   },
+   {
+    "ref": "SA:9",
+    "ap": 30
+   },
+   {
+    "ref": "SA:10",
+    "ap": 30
+   },
+   {
+    "ref": "SA:11",
+    "ap": 170
+   },
+   {
+    "ref": "SA:12",
+    "ap": 45
+   },
+   {
+    "ref": "SA:13",
+    "ap": 20
+   },
+   {
+    "ref": "SA:14",
+    "ap": 35
+   },
+   {
+    "ref": "SA:15",
+    "ap": 30
+   },
+   {
+    "ref": "SA:16",
+    "ap": 45
+   },
+   {
+    "ref": "SA:18",
+    "ap": 25
+   },
+   {
+    "ref": "SA:19",
+    "ap": 30
+   },
+   {
+    "ref": "SA:20",
+    "ap": 25
+   },
+   {
+    "ref": "SA:22",
+    "ap": 50
+   },
+   {
+    "ref": "SA:23",
+    "ap": 40
+   },
+   {
+    "ref": "SA:25",
+    "ap": 35
+   },
+   {
+    "ref": "SA:26",
+    "ap": 20
+   },
+   {
+    "ref": "SA:35",
+    "ap": 35
+   },
+   {
+    "ref": "SA:36",
+    "ap": 70
+   },
+   {
+    "ref": "SA:38",
+    "ap": 35
+   },
+   {
+    "ref": "SA:39",
+    "ap": 60
+   },
+   {
+    "ref": "SA:40",
+    "ap": 25
+   },
+   {
+    "ref": "SA:41",
+    "ap": 40
+   },
+   {
+    "ref": "SA:43",
+    "ap": 75
+   },
+   {
+    "ref": "SA:44",
+    "ap": 95
+   },
+   {
+    "ref": "SA:46",
+    "ap": 45
+   },
+   {
+    "ref": "SA:48",
+    "ap": 30
+   },
+   {
+    "ref": "SA:49",
+    "ap": 20
+   },
+   {
+    "ref": "SA:50",
+    "ap": 35
+   },
+   {
+    "ref": "SA:52",
+    "ap": 85
+   },
+   {
+    "ref": "SA:53",
+    "ap": 35
+   },
+   {
+    "ref": "SA:56",
+    "ap": 30
+   },
+   {
+    "ref": "SA:57",
+    "ap": 30
+   },
+   {
+    "ref": "SA:58",
+    "ap": 25
+   },
+   {
+    "ref": "SA:61",
+    "ap": 65
+   },
+   {
+    "ref": "SA:62",
+    "ap": 40
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 1,
+   "head": 112,
+   "wrist": 88,
+   "armor": 149,
+   "accessory": null
+  }
+ },
+ {
+  "id": 1,
+  "key": "vivi",
+  "name": "Vivi",
+  "base": {
+   "speed": 16,
+   "strength": 12,
+   "magic": 24,
+   "spirit": 19,
+   "gems": 14
+  },
+  "backRow": true,
+  "commands": [
+   {
+    "id": 22,
+    "name": "Blk Mag",
+    "actionIds": [
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48
+    ]
+   },
+   {
+    "id": 13,
+    "name": "Focus",
+    "actionIds": [
+     188
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 23,
+    "name": "Dbl Blk",
+    "actionIds": [
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48
+    ]
+   },
+   {
+    "id": 13,
+    "name": "Focus",
+    "actionIds": [
+     188
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:25",
+    "ap": 25
+   },
+   {
+    "ref": "AA:26",
+    "ap": 50
+   },
+   {
+    "ref": "AA:27",
+    "ap": 75
+   },
+   {
+    "ref": "AA:28",
+    "ap": 20
+   },
+   {
+    "ref": "AA:29",
+    "ap": 25
+   },
+   {
+    "ref": "AA:30",
+    "ap": 50
+   },
+   {
+    "ref": "AA:31",
+    "ap": 85
+   },
+   {
+    "ref": "AA:32",
+    "ap": 20
+   },
+   {
+    "ref": "AA:33",
+    "ap": 25
+   },
+   {
+    "ref": "AA:34",
+    "ap": 50
+   },
+   {
+    "ref": "AA:35",
+    "ap": 80
+   },
+   {
+    "ref": "AA:36",
+    "ap": 25
+   },
+   {
+    "ref": "AA:37",
+    "ap": 35
+   },
+   {
+    "ref": "AA:38",
+    "ap": 40
+   },
+   {
+    "ref": "AA:39",
+    "ap": 70
+   },
+   {
+    "ref": "AA:40",
+    "ap": 60
+   },
+   {
+    "ref": "AA:41",
+    "ap": 30
+   },
+   {
+    "ref": "AA:42",
+    "ap": 55
+   },
+   {
+    "ref": "AA:43",
+    "ap": 45
+   },
+   {
+    "ref": "AA:44",
+    "ap": 30
+   },
+   {
+    "ref": "AA:45",
+    "ap": 55
+   },
+   {
+    "ref": "AA:46",
+    "ap": 95
+   },
+   {
+    "ref": "AA:47",
+    "ap": 95
+   },
+   {
+    "ref": "AA:48",
+    "ap": 150
+   },
+   {
+    "ref": "SA:0",
+    "ap": 70
+   },
+   {
+    "ref": "SA:1",
+    "ap": 20
+   },
+   {
+    "ref": "SA:2",
+    "ap": 55
+   },
+   {
+    "ref": "SA:3",
+    "ap": 30
+   },
+   {
+    "ref": "SA:4",
+    "ap": 70
+   },
+   {
+    "ref": "SA:8",
+    "ap": 30
+   },
+   {
+    "ref": "SA:24",
+    "ap": 20
+   },
+   {
+    "ref": "SA:25",
+    "ap": 25
+   },
+   {
+    "ref": "SA:30",
+    "ap": 30
+   },
+   {
+    "ref": "SA:31",
+    "ap": 110
+   },
+   {
+    "ref": "SA:32",
+    "ap": 115
+   },
+   {
+    "ref": "SA:34",
+    "ap": 140
+   },
+   {
+    "ref": "SA:35",
+    "ap": 25
+   },
+   {
+    "ref": "SA:40",
+    "ap": 15
+   },
+   {
+    "ref": "SA:43",
+    "ap": 30
+   },
+   {
+    "ref": "SA:44",
+    "ap": 55
+   },
+   {
+    "ref": "SA:48",
+    "ap": 25
+   },
+   {
+    "ref": "SA:49",
+    "ap": 30
+   },
+   {
+    "ref": "SA:51",
+    "ap": 40
+   },
+   {
+    "ref": "SA:53",
+    "ap": 25
+   },
+   {
+    "ref": "SA:54",
+    "ap": 90
+   },
+   {
+    "ref": "SA:56",
+    "ap": 10
+   },
+   {
+    "ref": "SA:57",
+    "ap": 35
+   },
+   {
+    "ref": "SA:58",
+    "ap": 15
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 70,
+   "head": 112,
+   "wrist": null,
+   "armor": 149,
+   "accessory": null
+  }
+ },
+ {
+  "id": 2,
+  "key": "garnet",
+  "name": "Garnet",
+  "base": {
+   "speed": 21,
+   "strength": 14,
+   "magic": 23,
+   "spirit": 17,
+   "gems": 14
+  },
+  "backRow": true,
+  "commands": [
+   {
+    "id": 16,
+    "name": "Summon",
+    "actionIds": [
+     49,
+     51,
+     53,
+     55,
+     58,
+     60,
+     62,
+     64
+    ]
+   },
+   {
+    "id": 17,
+    "name": "Wht Mag",
+    "actionIds": [
+     1,
+     2,
+     3,
+     5,
+     7,
+     8,
+     9,
+     11,
+     12,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 18,
+    "name": "Eidolon",
+    "actionIds": [
+     49,
+     51,
+     53,
+     55,
+     58,
+     60,
+     62,
+     64
+    ]
+   },
+   {
+    "id": 17,
+    "name": "Wht Mag",
+    "actionIds": [
+     1,
+     2,
+     3,
+     5,
+     7,
+     8,
+     9,
+     11,
+     12,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:49",
+    "ap": 20
+   },
+   {
+    "ref": "AA:51",
+    "ap": 35
+   },
+   {
+    "ref": "AA:53",
+    "ap": 30
+   },
+   {
+    "ref": "AA:55",
+    "ap": 30
+   },
+   {
+    "ref": "AA:58",
+    "ap": 30
+   },
+   {
+    "ref": "AA:60",
+    "ap": 40
+   },
+   {
+    "ref": "AA:62",
+    "ap": 80
+   },
+   {
+    "ref": "AA:64",
+    "ap": 100
+   },
+   {
+    "ref": "AA:1",
+    "ap": 30
+   },
+   {
+    "ref": "AA:2",
+    "ap": 50
+   },
+   {
+    "ref": "AA:3",
+    "ap": 155
+   },
+   {
+    "ref": "AA:5",
+    "ap": 30
+   },
+   {
+    "ref": "AA:7",
+    "ap": 25
+   },
+   {
+    "ref": "AA:8",
+    "ap": 15
+   },
+   {
+    "ref": "AA:9",
+    "ap": 25
+   },
+   {
+    "ref": "AA:11",
+    "ap": 35
+   },
+   {
+    "ref": "AA:12",
+    "ap": 30
+   },
+   {
+    "ref": "AA:14",
+    "ap": 30
+   },
+   {
+    "ref": "AA:15",
+    "ap": 40
+   },
+   {
+    "ref": "AA:16",
+    "ap": 20
+   },
+   {
+    "ref": "AA:17",
+    "ap": 35
+   },
+   {
+    "ref": "AA:18",
+    "ap": 30
+   },
+   {
+    "ref": "AA:19",
+    "ap": 40
+   },
+   {
+    "ref": "AA:20",
+    "ap": 20
+   },
+   {
+    "ref": "SA:0",
+    "ap": 75
+   },
+   {
+    "ref": "SA:1",
+    "ap": 20
+   },
+   {
+    "ref": "SA:2",
+    "ap": 55
+   },
+   {
+    "ref": "SA:3",
+    "ap": 35
+   },
+   {
+    "ref": "SA:4",
+    "ap": 105
+   },
+   {
+    "ref": "SA:8",
+    "ap": 45
+   },
+   {
+    "ref": "SA:24",
+    "ap": 30
+   },
+   {
+    "ref": "SA:27",
+    "ap": 15
+   },
+   {
+    "ref": "SA:30",
+    "ap": 45
+   },
+   {
+    "ref": "SA:33",
+    "ap": 80
+   },
+   {
+    "ref": "SA:34",
+    "ap": 125
+   },
+   {
+    "ref": "SA:35",
+    "ap": 30
+   },
+   {
+    "ref": "SA:40",
+    "ap": 25
+   },
+   {
+    "ref": "SA:43",
+    "ap": 50
+   },
+   {
+    "ref": "SA:44",
+    "ap": 60
+   },
+   {
+    "ref": "SA:48",
+    "ap": 25
+   },
+   {
+    "ref": "SA:49",
+    "ap": 15
+   },
+   {
+    "ref": "SA:51",
+    "ap": 20
+   },
+   {
+    "ref": "SA:53",
+    "ap": 40
+   },
+   {
+    "ref": "SA:56",
+    "ap": 20
+   },
+   {
+    "ref": "SA:57",
+    "ap": 30
+   },
+   {
+    "ref": "SA:58",
+    "ap": 25
+   },
+   {
+    "ref": "SA:59",
+    "ap": 190
+   },
+   {
+    "ref": "SA:60",
+    "ap": 50
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 57,
+   "head": null,
+   "wrist": null,
+   "armor": 150,
+   "accessory": null
+  }
+ },
+ {
+  "id": 3,
+  "key": "steiner",
+  "name": "Steiner",
+  "base": {
+   "speed": 18,
+   "strength": 24,
+   "magic": 12,
+   "spirit": 21,
+   "gems": 17
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 30,
+    "name": "Swd Art",
+    "actionIds": [
+     141,
+     142,
+     143,
+     144,
+     145,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152
+    ]
+   },
+   {
+    "id": 31,
+    "name": "Swd Mag",
+    "actionIds": [
+     50,
+     52,
+     54,
+     56,
+     57,
+     59,
+     61,
+     63,
+     65,
+     75,
+     76,
+     189,
+     191
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 30,
+    "name": "Swd Art",
+    "actionIds": [
+     141,
+     142,
+     143,
+     144,
+     145,
+     146,
+     147,
+     148,
+     149,
+     150,
+     151,
+     152
+    ]
+   },
+   {
+    "id": 31,
+    "name": "Swd Mag",
+    "actionIds": [
+     50,
+     52,
+     54,
+     56,
+     57,
+     59,
+     61,
+     63,
+     65,
+     75,
+     76,
+     189,
+     191
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:141",
+    "ap": 30
+   },
+   {
+    "ref": "AA:142",
+    "ap": 35
+   },
+   {
+    "ref": "AA:143",
+    "ap": 40
+   },
+   {
+    "ref": "AA:144",
+    "ap": 40
+   },
+   {
+    "ref": "AA:145",
+    "ap": 30
+   },
+   {
+    "ref": "AA:146",
+    "ap": 45
+   },
+   {
+    "ref": "AA:147",
+    "ap": 25
+   },
+   {
+    "ref": "AA:148",
+    "ap": 30
+   },
+   {
+    "ref": "AA:149",
+    "ap": 30
+   },
+   {
+    "ref": "AA:150",
+    "ap": 35
+   },
+   {
+    "ref": "AA:151",
+    "ap": 70
+   },
+   {
+    "ref": "AA:152",
+    "ap": 60
+   },
+   {
+    "ref": "SA:0",
+    "ap": 95
+   },
+   {
+    "ref": "SA:1",
+    "ap": 20
+   },
+   {
+    "ref": "SA:2",
+    "ap": 65
+   },
+   {
+    "ref": "SA:3",
+    "ap": 75
+   },
+   {
+    "ref": "SA:4",
+    "ap": 155
+   },
+   {
+    "ref": "SA:5",
+    "ap": 20
+   },
+   {
+    "ref": "SA:6",
+    "ap": 60
+   },
+   {
+    "ref": "SA:9",
+    "ap": 40
+   },
+   {
+    "ref": "SA:10",
+    "ap": 30
+   },
+   {
+    "ref": "SA:11",
+    "ap": 200
+   },
+   {
+    "ref": "SA:12",
+    "ap": 50
+   },
+   {
+    "ref": "SA:13",
+    "ap": 25
+   },
+   {
+    "ref": "SA:14",
+    "ap": 50
+   },
+   {
+    "ref": "SA:15",
+    "ap": 20
+   },
+   {
+    "ref": "SA:16",
+    "ap": 30
+   },
+   {
+    "ref": "SA:18",
+    "ap": 30
+   },
+   {
+    "ref": "SA:19",
+    "ap": 55
+   },
+   {
+    "ref": "SA:20",
+    "ap": 20
+   },
+   {
+    "ref": "SA:25",
+    "ap": 50
+   },
+   {
+    "ref": "SA:27",
+    "ap": 20
+   },
+   {
+    "ref": "SA:35",
+    "ap": 35
+   },
+   {
+    "ref": "SA:36",
+    "ap": 100
+   },
+   {
+    "ref": "SA:37",
+    "ap": 20
+   },
+   {
+    "ref": "SA:39",
+    "ap": 35
+   },
+   {
+    "ref": "SA:40",
+    "ap": 35
+   },
+   {
+    "ref": "SA:41",
+    "ap": 60
+   },
+   {
+    "ref": "SA:43",
+    "ap": 50
+   },
+   {
+    "ref": "SA:44",
+    "ap": 70
+   },
+   {
+    "ref": "SA:48",
+    "ap": 25
+   },
+   {
+    "ref": "SA:49",
+    "ap": 35
+   },
+   {
+    "ref": "SA:50",
+    "ap": 25
+   },
+   {
+    "ref": "SA:52",
+    "ap": 100
+   },
+   {
+    "ref": "SA:53",
+    "ap": 30
+   },
+   {
+    "ref": "SA:56",
+    "ap": 20
+   },
+   {
+    "ref": "SA:57",
+    "ap": 35
+   },
+   {
+    "ref": "SA:58",
+    "ap": 30
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 16,
+   "head": 137,
+   "wrist": null,
+   "armor": 177,
+   "accessory": null
+  }
+ },
+ {
+  "id": 4,
+  "key": "freya",
+  "name": "Freya",
+  "base": {
+   "speed": 20,
+   "strength": 20,
+   "magic": 16,
+   "spirit": 22,
+   "gems": 18
+  },
+  "backRow": true,
+  "commands": [
+   {
+    "id": 3,
+    "name": "Jump",
+    "actionIds": [
+     178
+    ]
+   },
+   {
+    "id": 27,
+    "name": "Dragon",
+    "actionIds": [
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 12,
+    "name": "Jump",
+    "actionIds": [
+     172
+    ]
+   },
+   {
+    "id": 27,
+    "name": "Dragon",
+    "actionIds": [
+     117,
+     118,
+     119,
+     120,
+     121,
+     122,
+     123,
+     124
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:117",
+    "ap": 20
+   },
+   {
+    "ref": "AA:118",
+    "ap": 40
+   },
+   {
+    "ref": "AA:119",
+    "ap": 205
+   },
+   {
+    "ref": "AA:120",
+    "ap": 90
+   },
+   {
+    "ref": "AA:121",
+    "ap": 30
+   },
+   {
+    "ref": "AA:122",
+    "ap": 25
+   },
+   {
+    "ref": "AA:123",
+    "ap": 40
+   },
+   {
+    "ref": "AA:124",
+    "ap": 45
+   },
+   {
+    "ref": "SA:0",
+    "ap": 95
+   },
+   {
+    "ref": "SA:1",
+    "ap": 20
+   },
+   {
+    "ref": "SA:2",
+    "ap": 75
+   },
+   {
+    "ref": "SA:3",
+    "ap": 25
+   },
+   {
+    "ref": "SA:4",
+    "ap": 125
+   },
+   {
+    "ref": "SA:5",
+    "ap": 30
+   },
+   {
+    "ref": "SA:6",
+    "ap": 75
+   },
+   {
+    "ref": "SA:7",
+    "ap": 35
+   },
+   {
+    "ref": "SA:9",
+    "ap": 30
+   },
+   {
+    "ref": "SA:10",
+    "ap": 25
+   },
+   {
+    "ref": "SA:11",
+    "ap": 210
+   },
+   {
+    "ref": "SA:12",
+    "ap": 20
+   },
+   {
+    "ref": "SA:13",
+    "ap": 30
+   },
+   {
+    "ref": "SA:14",
+    "ap": 25
+   },
+   {
+    "ref": "SA:15",
+    "ap": 20
+   },
+   {
+    "ref": "SA:16",
+    "ap": 20
+   },
+   {
+    "ref": "SA:17",
+    "ap": 70
+   },
+   {
+    "ref": "SA:18",
+    "ap": 30
+   },
+   {
+    "ref": "SA:19",
+    "ap": 25
+   },
+   {
+    "ref": "SA:20",
+    "ap": 20
+   },
+   {
+    "ref": "SA:21",
+    "ap": 75
+   },
+   {
+    "ref": "SA:25",
+    "ap": 25
+   },
+   {
+    "ref": "SA:26",
+    "ap": 20
+   },
+   {
+    "ref": "SA:27",
+    "ap": 35
+   },
+   {
+    "ref": "SA:35",
+    "ap": 20
+   },
+   {
+    "ref": "SA:36",
+    "ap": 85
+   },
+   {
+    "ref": "SA:37",
+    "ap": 30
+   },
+   {
+    "ref": "SA:39",
+    "ap": 35
+   },
+   {
+    "ref": "SA:40",
+    "ap": 20
+   },
+   {
+    "ref": "SA:42",
+    "ap": 95
+   },
+   {
+    "ref": "SA:43",
+    "ap": 40
+   },
+   {
+    "ref": "SA:44",
+    "ap": 65
+   },
+   {
+    "ref": "SA:48",
+    "ap": 30
+   },
+   {
+    "ref": "SA:49",
+    "ap": 15
+   },
+   {
+    "ref": "SA:50",
+    "ap": 20
+   },
+   {
+    "ref": "SA:52",
+    "ap": 85
+   },
+   {
+    "ref": "SA:53",
+    "ap": 30
+   },
+   {
+    "ref": "SA:56",
+    "ap": 30
+   },
+   {
+    "ref": "SA:57",
+    "ap": 25
+   },
+   {
+    "ref": "SA:58",
+    "ap": 35
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 31,
+   "head": 136,
+   "wrist": 102,
+   "armor": 178,
+   "accessory": null
+  }
+ },
+ {
+  "id": 5,
+  "key": "quina",
+  "name": "Quina",
+  "base": {
+   "speed": 14,
+   "strength": 18,
+   "magic": 20,
+   "spirit": 11,
+   "gems": 15
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 8,
+    "name": "Eat",
+    "actionIds": [
+     183
+    ]
+   },
+   {
+    "id": 24,
+    "name": "Blu Mag",
+    "actionIds": [
+     77,
+     78,
+     79,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     94,
+     95,
+     96,
+     97,
+     98,
+     99,
+     100
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 9,
+    "name": "Cook",
+    "actionIds": [
+     184
+    ]
+   },
+   {
+    "id": 24,
+    "name": "Blu Mag",
+    "actionIds": [
+     77,
+     78,
+     79,
+     80,
+     81,
+     82,
+     83,
+     84,
+     85,
+     86,
+     87,
+     88,
+     89,
+     90,
+     91,
+     92,
+     93,
+     94,
+     95,
+     96,
+     97,
+     98,
+     99,
+     100
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:77",
+    "ap": 1
+   },
+   {
+    "ref": "AA:78",
+    "ap": 1
+   },
+   {
+    "ref": "AA:79",
+    "ap": 1
+   },
+   {
+    "ref": "AA:80",
+    "ap": 1
+   },
+   {
+    "ref": "AA:81",
+    "ap": 1
+   },
+   {
+    "ref": "AA:82",
+    "ap": 1
+   },
+   {
+    "ref": "AA:83",
+    "ap": 1
+   },
+   {
+    "ref": "AA:84",
+    "ap": 1
+   },
+   {
+    "ref": "AA:85",
+    "ap": 1
+   },
+   {
+    "ref": "AA:86",
+    "ap": 1
+   },
+   {
+    "ref": "AA:87",
+    "ap": 1
+   },
+   {
+    "ref": "AA:88",
+    "ap": 1
+   },
+   {
+    "ref": "AA:89",
+    "ap": 1
+   },
+   {
+    "ref": "AA:90",
+    "ap": 1
+   },
+   {
+    "ref": "AA:91",
+    "ap": 1
+   },
+   {
+    "ref": "AA:92",
+    "ap": 1
+   },
+   {
+    "ref": "AA:93",
+    "ap": 1
+   },
+   {
+    "ref": "AA:94",
+    "ap": 1
+   },
+   {
+    "ref": "AA:95",
+    "ap": 1
+   },
+   {
+    "ref": "AA:96",
+    "ap": 1
+   },
+   {
+    "ref": "AA:97",
+    "ap": 1
+   },
+   {
+    "ref": "AA:98",
+    "ap": 1
+   },
+   {
+    "ref": "AA:99",
+    "ap": 1
+   },
+   {
+    "ref": "AA:100",
+    "ap": 1
+   },
+   {
+    "ref": "SA:0",
+    "ap": 75
+   },
+   {
+    "ref": "SA:1",
+    "ap": 40
+   },
+   {
+    "ref": "SA:2",
+    "ap": 70
+   },
+   {
+    "ref": "SA:3",
+    "ap": 30
+   },
+   {
+    "ref": "SA:4",
+    "ap": 165
+   },
+   {
+    "ref": "SA:7",
+    "ap": 50
+   },
+   {
+    "ref": "SA:24",
+    "ap": 60
+   },
+   {
+    "ref": "SA:25",
+    "ap": 35
+   },
+   {
+    "ref": "SA:26",
+    "ap": 40
+   },
+   {
+    "ref": "SA:34",
+    "ap": 90
+   },
+   {
+    "ref": "SA:35",
+    "ap": 250
+   },
+   {
+    "ref": "SA:36",
+    "ap": 55
+   },
+   {
+    "ref": "SA:40",
+    "ap": 20
+   },
+   {
+    "ref": "SA:43",
+    "ap": 60
+   },
+   {
+    "ref": "SA:44",
+    "ap": 40
+   },
+   {
+    "ref": "SA:45",
+    "ap": 100
+   },
+   {
+    "ref": "SA:48",
+    "ap": 40
+   },
+   {
+    "ref": "SA:49",
+    "ap": 20
+   },
+   {
+    "ref": "SA:51",
+    "ap": 30
+   },
+   {
+    "ref": "SA:53",
+    "ap": 35
+   },
+   {
+    "ref": "SA:55",
+    "ap": 80
+   },
+   {
+    "ref": "SA:56",
+    "ap": 30
+   },
+   {
+    "ref": "SA:57",
+    "ap": 20
+   },
+   {
+    "ref": "SA:58",
+    "ap": 25
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 79,
+   "head": null,
+   "wrist": null,
+   "armor": null,
+   "accessory": null
+  }
+ },
+ {
+  "id": 6,
+  "key": "eiko",
+  "name": "Eiko",
+  "base": {
+   "speed": 19,
+   "strength": 13,
+   "magic": 21,
+   "spirit": 18,
+   "gems": 12
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 19,
+    "name": "Wht Mag",
+    "actionIds": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     20,
+     21,
+     22,
+     23,
+     24
+    ]
+   },
+   {
+    "id": 20,
+    "name": "Summon",
+    "actionIds": [
+     68,
+     66,
+     72,
+     74
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 21,
+    "name": "Dbl Wht",
+    "actionIds": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     20,
+     21,
+     22,
+     23,
+     24
+    ]
+   },
+   {
+    "id": 20,
+    "name": "Summon",
+    "actionIds": [
+     68,
+     66,
+     72,
+     74
+    ]
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:68",
+    "ap": 35
+   },
+   {
+    "ref": "AA:66",
+    "ap": 55
+   },
+   {
+    "ref": "AA:72",
+    "ap": 40
+   },
+   {
+    "ref": "AA:74",
+    "ap": 120
+   },
+   {
+    "ref": "AA:1",
+    "ap": 20
+   },
+   {
+    "ref": "AA:2",
+    "ap": 40
+   },
+   {
+    "ref": "AA:3",
+    "ap": 80
+   },
+   {
+    "ref": "AA:4",
+    "ap": 25
+   },
+   {
+    "ref": "AA:5",
+    "ap": 35
+   },
+   {
+    "ref": "AA:6",
+    "ap": 90
+   },
+   {
+    "ref": "AA:8",
+    "ap": 15
+   },
+   {
+    "ref": "AA:9",
+    "ap": 25
+   },
+   {
+    "ref": "AA:10",
+    "ap": 80
+   },
+   {
+    "ref": "AA:11",
+    "ap": 20
+   },
+   {
+    "ref": "AA:12",
+    "ap": 20
+   },
+   {
+    "ref": "AA:13",
+    "ap": 30
+   },
+   {
+    "ref": "AA:14",
+    "ap": 25
+   },
+   {
+    "ref": "AA:15",
+    "ap": 35
+   },
+   {
+    "ref": "AA:16",
+    "ap": 25
+   },
+   {
+    "ref": "AA:20",
+    "ap": 25
+   },
+   {
+    "ref": "AA:21",
+    "ap": 35
+   },
+   {
+    "ref": "AA:22",
+    "ap": 25
+   },
+   {
+    "ref": "AA:23",
+    "ap": 50
+   },
+   {
+    "ref": "AA:24",
+    "ap": 110
+   },
+   {
+    "ref": "SA:0",
+    "ap": 70
+   },
+   {
+    "ref": "SA:1",
+    "ap": 25
+   },
+   {
+    "ref": "SA:2",
+    "ap": 65
+   },
+   {
+    "ref": "SA:3",
+    "ap": 35
+   },
+   {
+    "ref": "SA:4",
+    "ap": 100
+   },
+   {
+    "ref": "SA:7",
+    "ap": 15
+   },
+   {
+    "ref": "SA:8",
+    "ap": 50
+   },
+   {
+    "ref": "SA:24",
+    "ap": 20
+   },
+   {
+    "ref": "SA:30",
+    "ap": 55
+   },
+   {
+    "ref": "SA:33",
+    "ap": 90
+   },
+   {
+    "ref": "SA:34",
+    "ap": 120
+   },
+   {
+    "ref": "SA:35",
+    "ap": 30
+   },
+   {
+    "ref": "SA:40",
+    "ap": 20
+   },
+   {
+    "ref": "SA:43",
+    "ap": 65
+   },
+   {
+    "ref": "SA:44",
+    "ap": 55
+   },
+   {
+    "ref": "SA:47",
+    "ap": 30
+   },
+   {
+    "ref": "SA:48",
+    "ap": 25
+   },
+   {
+    "ref": "SA:49",
+    "ap": 20
+   },
+   {
+    "ref": "SA:51",
+    "ap": 15
+   },
+   {
+    "ref": "SA:53",
+    "ap": 35
+   },
+   {
+    "ref": "SA:56",
+    "ap": 30
+   },
+   {
+    "ref": "SA:57",
+    "ap": 15
+   },
+   {
+    "ref": "SA:58",
+    "ap": 15
+   },
+   {
+    "ref": "SA:59",
+    "ap": 150
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 64,
+   "head": 114,
+   "wrist": 90,
+   "armor": 150,
+   "accessory": 232
+  }
+ },
+ {
+  "id": 7,
+  "key": "amarant",
+  "name": "Amarant",
+  "base": {
+   "speed": 22,
+   "strength": 22,
+   "magic": 13,
+   "spirit": 15,
+   "gems": 18
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 28,
+    "name": "Flair",
+    "actionIds": [
+     125,
+     126,
+     127,
+     128,
+     129,
+     130,
+     131,
+     132
+    ]
+   },
+   {
+    "id": 15,
+    "name": "Throw",
+    "actionIds": []
+   }
+  ],
+  "trance": [
+   {
+    "id": 29,
+    "name": "Elan",
+    "actionIds": [
+     133,
+     134,
+     135,
+     136,
+     137,
+     138,
+     139,
+     140
+    ]
+   },
+   {
+    "id": 15,
+    "name": "Throw",
+    "actionIds": []
+   }
+  ],
+  "abilities": [
+   {
+    "ref": "AA:125",
+    "ap": 30
+   },
+   {
+    "ref": "AA:126",
+    "ap": 90
+   },
+   {
+    "ref": "AA:127",
+    "ap": 25
+   },
+   {
+    "ref": "AA:128",
+    "ap": 25
+   },
+   {
+    "ref": "AA:129",
+    "ap": 20
+   },
+   {
+    "ref": "AA:130",
+    "ap": 35
+   },
+   {
+    "ref": "AA:131",
+    "ap": 50
+   },
+   {
+    "ref": "AA:132",
+    "ap": 40
+   },
+   {
+    "ref": "SA:0",
+    "ap": 85
+   },
+   {
+    "ref": "SA:1",
+    "ap": 35
+   },
+   {
+    "ref": "SA:2",
+    "ap": 70
+   },
+   {
+    "ref": "SA:3",
+    "ap": 35
+   },
+   {
+    "ref": "SA:4",
+    "ap": 140
+   },
+   {
+    "ref": "SA:5",
+    "ap": 10
+   },
+   {
+    "ref": "SA:6",
+    "ap": 40
+   },
+   {
+    "ref": "SA:9",
+    "ap": 30
+   },
+   {
+    "ref": "SA:11",
+    "ap": 210
+   },
+   {
+    "ref": "SA:12",
+    "ap": 60
+   },
+   {
+    "ref": "SA:13",
+    "ap": 10
+   },
+   {
+    "ref": "SA:14",
+    "ap": 10
+   },
+   {
+    "ref": "SA:15",
+    "ap": 10
+   },
+   {
+    "ref": "SA:16",
+    "ap": 10
+   },
+   {
+    "ref": "SA:18",
+    "ap": 10
+   },
+   {
+    "ref": "SA:19",
+    "ap": 10
+   },
+   {
+    "ref": "SA:20",
+    "ap": 10
+   },
+   {
+    "ref": "SA:24",
+    "ap": 40
+   },
+   {
+    "ref": "SA:25",
+    "ap": 20
+   },
+   {
+    "ref": "SA:26",
+    "ap": 35
+   },
+   {
+    "ref": "SA:28",
+    "ap": 125
+   },
+   {
+    "ref": "SA:29",
+    "ap": 30
+   },
+   {
+    "ref": "SA:35",
+    "ap": 60
+   },
+   {
+    "ref": "SA:36",
+    "ap": 240
+   },
+   {
+    "ref": "SA:37",
+    "ap": 90
+   },
+   {
+    "ref": "SA:39",
+    "ap": 50
+   },
+   {
+    "ref": "SA:40",
+    "ap": 30
+   },
+   {
+    "ref": "SA:41",
+    "ap": 30
+   },
+   {
+    "ref": "SA:43",
+    "ap": 50
+   },
+   {
+    "ref": "SA:44",
+    "ap": 80
+   },
+   {
+    "ref": "SA:46",
+    "ap": 30
+   },
+   {
+    "ref": "SA:48",
+    "ap": 20
+   },
+   {
+    "ref": "SA:49",
+    "ap": 25
+   },
+   {
+    "ref": "SA:50",
+    "ap": 25
+   },
+   {
+    "ref": "SA:52",
+    "ap": 75
+   },
+   {
+    "ref": "SA:53",
+    "ap": 15
+   },
+   {
+    "ref": "SA:54",
+    "ap": 170
+   },
+   {
+    "ref": "SA:56",
+    "ap": 30
+   },
+   {
+    "ref": "SA:57",
+    "ap": 20
+   },
+   {
+    "ref": "SA:58",
+    "ap": 30
+   }
+  ],
+  "defaultEquipment": {
+   "weapon": 41,
+   "head": null,
+   "wrist": 89,
+   "armor": 155,
+   "accessory": 194
+  }
+ },
+ {
+  "id": 8,
+  "key": "cinna",
+  "name": "Cinna",
+  "base": {
+   "speed": 19,
+   "strength": 15,
+   "magic": 16,
+   "spirit": 19,
+   "gems": 8
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "trance": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "abilities": [],
+  "defaultEquipment": {
+   "weapon": 0,
+   "head": 112,
+   "wrist": null,
+   "armor": null,
+   "accessory": null
+  }
+ },
+ {
+  "id": 9,
+  "key": "marcus",
+  "name": "Marcus",
+  "base": {
+   "speed": 20,
+   "strength": 18,
+   "magic": 11,
+   "spirit": 21,
+   "gems": 8
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "trance": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "abilities": [],
+  "defaultEquipment": {
+   "weapon": 16,
+   "head": 112,
+   "wrist": 88,
+   "armor": 149,
+   "accessory": null
+  }
+ },
+ {
+  "id": 10,
+  "key": "blank",
+  "name": "Blank",
+  "base": {
+   "speed": 23,
+   "strength": 21,
+   "magic": 12,
+   "spirit": 21,
+   "gems": 12
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "trance": [
+   {
+    "id": 2,
+    "name": "Steal",
+    "actionIds": [
+     177
+    ]
+   },
+   {
+    "id": 0,
+    "name": "None",
+    "actionIds": []
+   }
+  ],
+  "abilities": [],
+  "defaultEquipment": {
+   "weapon": 16,
+   "head": null,
+   "wrist": null,
+   "armor": 150,
+   "accessory": null
+  }
+ },
+ {
+  "id": 11,
+  "key": "beatrix",
+  "name": "Beatrix",
+  "base": {
+   "speed": 24,
+   "strength": 21,
+   "magic": 19,
+   "spirit": 23,
+   "gems": 10
+  },
+  "backRow": false,
+  "commands": [
+   {
+    "id": 32,
+    "name": "Seiken",
+    "actionIds": [
+     149,
+     150,
+     151,
+     152
+    ]
+   },
+   {
+    "id": 34,
+    "name": "Wht Mag",
+    "actionIds": [
+     2,
+     5,
+     6,
+     10,
+     14,
+     16,
+     19,
+     24
+    ]
+   }
+  ],
+  "trance": [
+   {
+    "id": 32,
+    "name": "Seiken",
+    "actionIds": [
+     149,
+     150,
+     151,
+     152
+    ]
+   },
+   {
+    "id": 34,
+    "name": "Wht Mag",
+    "actionIds": [
+     2,
+     5,
+     6,
+     10,
+     14,
+     16,
+     19,
+     24
+    ]
+   }
+  ],
+  "abilities": [],
+  "defaultEquipment": {
+   "weapon": 26,
+   "head": 138,
+   "wrist": 104,
+   "armor": 179,
+   "accessory": 192
+  }
+ }
+]
