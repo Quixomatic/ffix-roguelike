@@ -6,6 +6,7 @@ export function HeroSprite({
   size = 64,
   className,
   ko,
+  silhouette,
 }: {
   heroKey: string;
   /** Rendered height in px. */
@@ -13,6 +14,8 @@ export function HeroSprite({
   className?: string;
   /** Knocked out: lie down and grey out. */
   ko?: boolean;
+  /** Locked character: a black silhouette. */
+  silhouette?: boolean;
 }) {
   const width = (size * HERO_GRID.w) / HERO_GRID.h;
   return (
@@ -22,7 +25,9 @@ export function HeroSprite({
       viewBox={`0 0 ${HERO_GRID.w} ${HERO_GRID.h}`}
       shapeRendering="crispEdges"
       className={className}
-      style={ko ? { transform: "rotate(90deg)", filter: "grayscale(0.8) brightness(0.7)" } : undefined}
+      style={
+        ko ? { transform: "rotate(90deg)", filter: "grayscale(0.8) brightness(0.7)" } : silhouette ? { filter: "brightness(0) drop-shadow(0 0 2px #8890c0)" } : undefined
+      }
       aria-hidden
     >
       {heroPixels(heroKey).map((p, i) => (

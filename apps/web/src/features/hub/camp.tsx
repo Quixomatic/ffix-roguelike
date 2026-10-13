@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { itemName } from "@/features/run/item-info";
+import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
 import { CampShop } from "./camp-shop";
@@ -96,9 +97,12 @@ export function Camp() {
               data-on={inParty}
             >
               <button className="flex flex-col gap-1 text-left disabled:cursor-default" disabled={!between} onClick={() => toggle(key)}>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-xl">{getCharacter(key).name}</span>
-                  <span className="ff-title">Start Lv {b.level}</span>
+                <div className="flex items-end gap-3">
+                  <HeroSprite heroKey={key} size={56} className={inParty ? "ff-hop" : ""} />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xl">{getCharacter(key).name}</div>
+                    <div className="ff-title">Start Lv {b.level}</div>
+                  </div>
                 </div>
                 <div className="text-sm">
                   HP {st.maxHp} · MP {st.maxMp}
@@ -122,9 +126,12 @@ export function Camp() {
           );
         })}
         {p.locked.map((l) => (
-          <div key={l.key} className="ff-window flex flex-col gap-1 p-3 opacity-60">
-            <span className="text-xl">???</span>
-            <span className="text-sm">Unlock: {l.hint}</span>
+          <div key={l.key} className="ff-window flex items-end gap-3 p-3 opacity-70">
+            <HeroSprite heroKey={l.key} size={56} silhouette />
+            <div>
+              <div className="text-xl">???</div>
+              <div className="text-sm">Unlock: {l.hint}</div>
+            </div>
           </div>
         ))}
       </div>

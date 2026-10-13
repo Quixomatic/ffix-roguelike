@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.16] - 2026-10-13
+
+A title screen, an FF-styled header, and sprites on the camp roster.
+
+### Added
+- **Title screen** (`/`): "FINAL FANTASY IX — a roguelite" with the eight-character cast hopping in a line, and Play / Sign in plus a practice-battle link. Replaces the scaffold's ASCII placeholder page.
+- **Roster sprites** at camp: every unlocked character card shows their sprite (hopping when they're in the party); locked characters appear as black silhouettes beside their unlock hint.
+
+### Changed
+- **Header** restyled as an FF menu bar: "FFIX Roguelike" home link, Camp / Run / Practice, active page highlighted.
+
 ## [0.1.15] - 2026-10-13
 
 Animated FF9-style results screens.

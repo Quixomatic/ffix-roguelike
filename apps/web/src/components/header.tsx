@@ -5,29 +5,29 @@ import UserMenu from "./user-menu";
 
 export default function Header() {
   const links = [
-    { to: "/", label: "Home" },
-    { to: "/play", label: "Play" },
-    { to: "/battle", label: "Practice Battle" },
+    { to: "/play", label: "Camp" },
+    { to: "/run", label: "Run" },
+    { to: "/battle", label: "Practice" },
   ] as const;
 
   return (
-    <div>
-      <div className="flex flex-row items-center justify-between px-2 py-1">
-        <nav className="flex gap-4 text-lg">
-          {links.map(({ to, label }) => {
-            return (
-              <Link key={to} to={to}>
-                {label}
-              </Link>
-            );
-          })}
+    <header className="border-b-2 border-[#e8e8f4]/70 bg-gradient-to-b from-[#24317a] to-[#141b52] shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+      <div className="flex flex-row items-center justify-between px-3 py-1.5">
+        <nav className="flex items-center gap-5 font-['Pixelify_Sans'] text-lg text-white [text-shadow:2px_2px_0_#000]">
+          <Link to="/" className="mr-2 text-xl tracking-wide">
+            FFIX <span className="text-yellow-200">Roguelike</span>
+          </Link>
+          {links.map(({ to, label }) => (
+            <Link key={to} to={to} className="opacity-80 hover:opacity-100 [&.active]:text-yellow-200 [&.active]:opacity-100">
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           <ModeToggle />
           <UserMenu />
         </div>
       </div>
-      <hr />
-    </div>
+    </header>
   );
 }
