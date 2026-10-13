@@ -21,10 +21,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { gearSummary, itemName } from "@/features/run/item-info";
+import { GearPicker, Paperdoll } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
 
-const SLOT_LABEL = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" } as const;
 type Tab = "progress" | "gear" | "abilities";
 
 /** Before a run: spend Completion Points, set up the loadout, and choose support abilities. */
@@ -135,45 +134,33 @@ function GearTab({
   const starter = getStarterWeapon(build.key);
   const full = used.length >= slots;
   const options = slot ? Object.keys(stash).map(Number).filter((id) => canEquip(build.key, getItem(id), slot)) : [];
+  const current = slot ? build.equipment[slot] : null;
+  const removable = slot != null && current != null && !(slot === "weapon" && current === starter);
   return (
-    <div className="flex flex-col gap-1">
-      <div className="text-sm">
-        Using {used.length} of {slots} gear slot{slots === 1 ? "" : "s"}
-        {slots === 0 && <span className="opacity-70"> — buy one in Progress</span>}
-      </div>
-      {EQUIP_SLOTS.map((s) => {
+    <Paperdoll
+      heroKey={build.key}
+      name={getCharacter(build.key).name}
+      subtitle={`Gear slots ${used.length}/${slots}${slots === 0 ? " — buy one in Progress" : ""}`}
+      selected={slot}
+      onSelect={setSlot}
+      slots={EQUIP_SLOTS.map((s) => {
         const id = build.equipment[s];
         const isStarter = s === "weapon" && id === starter;
         const filled = id != null && !isStarter;
-        return (
-          <button key={s} className="ff-option flex justify-between disabled:opacity-50" data-active={slot === s} disabled={!filled && full} onClick={() => setSlot(slot === s ? null : s)}>
-            <span className="w-24 opacity-70">{SLOT_LABEL[s]}</span>
-            <span className="flex-1">
-              {id != null ? itemName(id) : "—"}
-              {isStarter && <span className="opacity-60"> (starting weapon, free)</span>}
-            </span>
-          </button>
-        );
+        return { slot: s, itemId: id, locked: !filled && full && !(s === "weapon"), note: isStarter ? "starting weapon · free" : filled ? "loadout" : undefined };
       })}
-      {slot && (
-        <div className="mt-1 flex max-h-60 flex-col gap-1 overflow-y-auto rounded bg-black/20 p-2 text-sm">
-          {build.equipment[slot] != null && !(slot === "weapon" && build.equipment.weapon === starter) && (
-            <button className="ff-option" onClick={() => onEquip(slot, null)}>
-              (Remove)
-            </button>
-          )}
-          {options.map((id) => (
-            <button key={id} className="ff-option text-left" onClick={() => onEquip(slot, id)}>
-              <div>
-                {itemName(id)} <span className="opacity-60">×{stash[id]}</span>
-              </div>
-              <div className="text-xs text-[#c8d0ff]">{gearSummary(getItem(id))}</div>
-            </button>
-          ))}
-          {!options.length && <div className="opacity-60">No stash gear fits — buy some at the camp shop, or win a run to keep what you find.</div>}
-        </div>
-      )}
-    </div>
+      picker={
+        slot && (
+          <GearPicker
+            title={`${slot[0]!.toUpperCase()}${slot.slice(1)} — from your stash`}
+            options={options.map((id) => ({ key: id, itemId: id, caption: <span className="opacity-60">×{stash[id]}</span> }))}
+            onPick={(id) => onEquip(slot, Number(id))}
+            onRemove={removable ? () => onEquip(slot, null) : undefined}
+            empty="No stash gear fits — buy some at the camp shop, or win a run to keep what you find."
+          />
+        )
+      }
+    />
   );
 }
 

@@ -50,11 +50,20 @@ export function EnemyList({ enemies }: { enemies: BattleUnit[] }) {
     <div className="ff-window w-52 p-2 text-base">
       {enemies
         .filter((u) => u.hp > 0 && u.statuses.death === undefined)
-        .map((u) => (
-          <div key={u.id} className="truncate">
-            {u.name}
-          </div>
-        ))}
+        .map((u) => {
+          const pct = Math.min(1, u.atb / ATB_MAX);
+          return (
+            <div key={u.id} className="flex flex-col gap-0.5 py-0.5">
+              <span className="truncate">{u.name}</span>
+              <div className="ff-gauge h-1.5">
+                <div
+                  className="ff-gauge-fill"
+                  style={{ width: `${pct * 100}%`, background: pct > 0.8 ? "linear-gradient(90deg,#ff8a3a,#ff3030)" : "linear-gradient(90deg,#c86a2a,#ff8a3a)" }}
+                />
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 }

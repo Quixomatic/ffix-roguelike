@@ -14,10 +14,11 @@ import {
 import { abilityName, findItem, getCharacter, getItem, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
 import { useState } from "react";
 
-import { gearSummary, itemName } from "./item-info";
-import type { RunActions } from "./use-run";
+import { GearPicker, Paperdoll } from "@/features/gear/paperdoll";
+import { HeroSprite } from "@/features/sprites/hero-sprite";
 
-const SLOT_LABEL = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Acc." } as const;
+import { itemName } from "./item-info";
+import type { RunActions } from "./use-run";
 
 /** Sidebar: party vitals, gil, consumables — and the equipment/abilities manager. */
 export function PartyPanel({ run, actions, canManage }: { run: RunState; actions: RunActions; canManage: boolean }) {
@@ -34,12 +35,20 @@ export function PartyPanel({ run, actions, canManage }: { run: RunState; actions
         const down = m.hp <= 0;
         return (
           <button key={m.build.key} className="ff-window flex flex-col px-3 py-2 text-left enabled:hover:brightness-125" disabled={!canManage} onClick={() => setOpen(m.build.key)}>
-            <div className="flex justify-between">
-              <span>{getCharacter(m.build.key).name}</span>
-              <span className="ff-title">Lv {m.build.level}</span>
-            </div>
-            <div className={`text-sm tabular-nums ${down ? "text-red-400" : ""}`}>
-              HP {m.hp}/{st.maxHp} · MP {m.mp}/{st.maxMp}
+            <div className="flex items-center gap-2">
+              <HeroSprite heroKey={m.build.key} size={36} ko={down} />
+              <div className="min-w-0 flex-1">
+                <div className="flex justify-between">
+                  <span>{getCharacter(m.build.key).name}</span>
+                  <span className="ff-title">Lv {m.build.level}</span>
+                </div>
+                <div className={`text-sm tabular-nums ${down ? "text-red-400" : ""}`}>
+                  HP {m.hp}/{st.maxHp} · MP {m.mp}/{st.maxMp}
+                </div>
+                <div className="ff-gauge h-1">
+                  <div className="ff-gauge-fill" style={{ width: `${(m.hp / st.maxHp) * 100}%`, background: down ? "#7a2020" : "linear-gradient(90deg,#3ab868,#9cf0a0)" }} />
+                </div>
+              </div>
             </div>
           </button>
         );
@@ -114,38 +123,45 @@ function CharacterSheet({
           <div>EXP {m.build.exp}</div>
         </div>
 
+        <Paperdoll
+          heroKey={keyName}
+          name={char.name}
+          subtitle={`Lv ${m.build.level}`}
+          selected={slot}
+          onSelect={setSlot}
+          slots={EQUIP_SLOTS.map((s) => {
+            const inst = run.gear.find((g) => g.holder?.key === keyName && g.holder.slot === s);
+            return {
+              slot: s,
+              itemId: m.build.equipment[s],
+              note: inst && !inst.secured ? "found · kept only if you win" : undefined,
+              noteTone: "warn" as const,
+            };
+          })}
+          picker={
+            slot && (
+              <GearPicker
+                title={`${slot[0]!.toUpperCase()}${slot.slice(1)} — gear you're carrying`}
+                options={options.map((g) => ({
+                  key: g.uid,
+                  itemId: g.itemId,
+                  caption: (
+                    <>
+                      {g.holder ? <span className="opacity-60">(on {getCharacter(g.holder.key).name})</span> : null}
+                      {!g.secured && <span className="text-orange-300"> · found</span>}
+                    </>
+                  ),
+                }))}
+                onPick={(uid) => actions.equip.mutate({ key: keyName, slot, uid: Number(uid) })}
+                onRemove={slot !== "weapon" && m.build.equipment[slot] != null ? () => actions.equip.mutate({ key: keyName, slot, uid: null }) : undefined}
+                empty="Nothing else fits."
+              />
+            )
+          }
+        />
+
         <div className="grid gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <div className="ff-title">Equipment</div>
-            {EQUIP_SLOTS.map((s) => {
-              const id = m.build.equipment[s];
-              return (
-                <button key={s} className="ff-option flex justify-between" data-active={slot === s} onClick={() => setSlot(slot === s ? null : s)}>
-                  <span className="w-16 opacity-70">{SLOT_LABEL[s]}</span>
-                  <span className="flex-1">{id != null ? itemName(id) : "—"}</span>
-                </button>
-              );
-            })}
-            {slot && (
-              <div className="mt-1 flex max-h-56 flex-col gap-1 overflow-y-auto rounded bg-black/20 p-2 text-sm">
-                {slot !== "weapon" && (
-                  <button className="ff-option" onClick={() => actions.equip.mutate({ key: keyName, slot, uid: null })}>
-                    (Remove)
-                  </button>
-                )}
-                {options.map((g) => (
-                  <button key={g.uid} className="ff-option text-left" onClick={() => actions.equip.mutate({ key: keyName, slot, uid: g.uid })}>
-                    <div>
-                      {itemName(g.itemId)} {g.holder ? <span className="opacity-60">(on {getCharacter(g.holder.key).name})</span> : null}
-                      {!g.secured && <span className="text-orange-300"> · found (kept only if you win)</span>}
-                    </div>
-                    <div className="text-xs text-[#c8d0ff]">{gearSummary(getItem(g.itemId))}</div>
-                  </button>
-                ))}
-                {!options.length && <div className="opacity-60">Nothing else fits.</div>}
-              </div>
-            )}
-
             {usable.length > 0 && (
               <>
                 <div className="ff-title mt-3">Use item</div>

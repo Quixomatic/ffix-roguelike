@@ -5,20 +5,7 @@
  */
 import type Phaser from "phaser";
 
-const HERO_COLORS: Record<string, [number, number]> = {
-  zidane: [0x3b6fd8, 0xf2c14e], // blue vest, blond
-  vivi: [0x2a4fa0, 0xe8d26a], // blue coat, straw hat
-  garnet: [0xe08a2c, 0x2b1d14], // orange jumpsuit, dark hair
-  steiner: [0x9aa3ad, 0x5a5f66], // plate armour
-  freya: [0xa8323a, 0xc9c2b8], // red coat, grey
-  quina: [0xd9a6b8, 0x5d8a3a], // pink, green
-  eiko: [0xf0e6d8, 0x6b4bb0], // white, purple hair
-  amarant: [0x2f8f6b, 0xd94a3a], // green, red hair
-  beatrix: [0x6e4a2e, 0xd8d0c0],
-  blank: [0x7a5a3a, 0xc94f2f],
-  marcus: [0x4a6a8a, 0x2e2e2e],
-  cinna: [0x8a7a5a, 0x7a3a2a],
-};
+import { HERO_GRID, heroPixels } from "./pixels";
 
 const FAMILY_COLORS: Record<string, number> = {
   beast: 0x8a5a2e,
@@ -44,23 +31,12 @@ export function ensurePlaceholder(scene: Phaser.Scene, key: string, opts: Placeh
   const [kind, name = ""] = key.split("/");
   const g = scene.make.graphics({ x: 0, y: 0 }, false);
   if (kind === "hero") {
-    const [body, hair] = HERO_COLORS[name] ?? [0x888888, 0x444444];
-    // 24×32 chibi: hair, face, body, legs — drawn at 2× for crisp scaling.
-    const px = (x: number, y: number, w: number, h: number, c: number) => {
-      g.fillStyle(c, 1);
-      g.fillRect(x * 2, y * 2, w * 2, h * 2);
-    };
-    px(7, 1, 10, 4, hair);
-    px(6, 4, 12, 9, 0xf3c9a0);
-    px(6, 4, 12, 3, hair);
-    px(9, 8, 2, 2, 0x1a1a1a);
-    px(13, 8, 2, 2, 0x1a1a1a);
-    px(5, 13, 14, 10, body);
-    px(3, 14, 3, 7, 0xf3c9a0);
-    px(18, 14, 3, 7, 0xf3c9a0);
-    px(7, 23, 4, 7, 0x3a2a1a);
-    px(13, 23, 4, 7, 0x3a2a1a);
-    g.generateTexture(key, 48, 64);
+    // Drawn at 2× for crisp scaling.
+    for (const p of heroPixels(name)) {
+      g.fillStyle(p.color, 1);
+      g.fillRect(p.x * 2, p.y * 2, p.w * 2, p.h * 2);
+    }
+    g.generateTexture(key, HERO_GRID.w * 2, HERO_GRID.h * 2);
   } else {
     const color = FAMILY_COLORS[opts.family ?? ""] ?? 0x8a6a9a;
     const size = opts.boss ? 128 : 72;

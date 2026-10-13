@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.14] - 2026-10-13
+
+A WoW-style paperdoll for gear, character sprites in the menus, and visible ATB gauges for every unit in battle.
+
+### Added
+- **Paperdoll** (`features/gear/paperdoll.tsx`): the character's sprite in the middle with Head/Body/Arm tiles on the left and Weapon/Accessory on the right. Tiles show the item and a note (free starting weapon, loadout, "found — kept only if you win"); hover for stats and abilities taught; click to open the gear picker. Locked slots show a lock until a gear slot is bought. Used for the camp loadout and the in-run character sheet.
+- **ATB gauges on the battlefield** under every unit — orange for enemies (flashing red when they're about to act), yellow for the party, white when full, grey while stopped/asleep — and mini gauges in the enemy list.
+- Party sprites with HP bars in the in-run sidebar.
+
+### Internal
+- Placeholder pixel art moved to a shared recipe (`features/sprites/pixels.ts`) drawn by both Phaser and a React `HeroSprite` SVG, so every screen shows the same character until the FFRK sheets replace it.
+
 ## [0.1.13] - 2026-10-13
 
 Completion Points: levels reset every run, and finishing runs is how characters get stronger.

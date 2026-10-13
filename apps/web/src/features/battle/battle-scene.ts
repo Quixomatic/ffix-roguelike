@@ -2,7 +2,7 @@
  * The battlefield: draws units and animates engine events. Game logic lives in game-core's BattleEngine —
  * this scene only reads state and plays effects; clicks on units are reported back for targeting.
  */
-import type { BattleEvent, BattleState, BattleUnit } from "@ffix-roguelike/game-core";
+import { ATB_MAX, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
 import { drawBattleBackground, ensurePlaceholder } from "@/features/sprites/sprites";
@@ -25,7 +25,12 @@ interface UnitView {
   sprite: Phaser.GameObjects.Image;
   home: { x: number; y: number };
   cursor: Phaser.GameObjects.Text;
+  /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
+  gauge: Phaser.GameObjects.Graphics;
 }
+
+const GAUGE_W = 56;
+const GAUGE_H = 6;
 
 export class BattleScene extends Phaser.Scene {
   private bridge!: BattleBridge;
@@ -74,7 +79,27 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setStroke("#000000", 4)
       .setVisible(false);
-    this.views.set(u.id, { sprite, home: { x, y }, cursor });
+    const gauge = this.add.graphics().setDepth(20);
+    this.views.set(u.id, { sprite, home: { x, y }, cursor, gauge });
+  }
+
+  private drawGauge(v: UnitView, u: BattleUnit, time: number, down: boolean) {
+    const g = v.gauge;
+    g.clear();
+    if (down) return;
+    const x = v.home.x - GAUGE_W / 2;
+    const y = v.home.y + v.sprite.displayHeight / 2 + 4;
+    const pct = Math.min(1, u.atb / ATB_MAX);
+    const frozen = u.statuses.stop || u.statuses.sleep || u.statuses.petrify || u.statuses.freeze;
+    g.fillStyle(0x000000, 0.65);
+    g.fillRect(x - 1, y - 1, GAUGE_W + 2, GAUGE_H + 2);
+    let color = u.side === "party" ? 0xffe066 : 0xff8a3a;
+    // Enemies about to act flash red; full gauges glow white.
+    if (pct >= 1) color = 0xffffff;
+    else if (u.side === "enemy" && pct > 0.8) color = Math.sin(time / 80) > 0 ? 0xff3030 : 0xff8a3a;
+    if (frozen) color = 0x8888aa;
+    g.fillStyle(color, 1);
+    g.fillRect(x, y, GAUGE_W * pct, GAUGE_H);
   }
 
   update(time: number) {
@@ -96,6 +121,7 @@ export class BattleScene extends Phaser.Scene {
       v.cursor.y = v.home.y - v.sprite.displayHeight / 2 - 18 + Math.sin(time / 120) * 3;
       // Idle bob for living units.
       if (!down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
+      this.drawGauge(v, u, time, down || stone);
     }
   }
 
