@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.9] - 2026-10-13
+
+The API dev server now restarts when any workspace package changes.
+
+### Fixed
+- **Stale game rules in dev.** `bun --hot` only watched `apps/server`, so edits to game-core, game-data, api or db kept serving the old code (Bun warned "not in the project directory and will not be watched"). The server's `dev` script now runs `scripts/dev-server.ts`, which watches `apps/server/src`, every `packages/*/src` and the generated Prisma client, and restarts the server on change (debounced). It still runs from `apps/server`, so varlock loads `apps/server/.env` as before.
+
+### Verification
+- On a spare port: server up → edit a game-core file → "restarting" → server answering again.
+
 ## [0.1.8] - 2026-10-13
 
 The game, end to end in the browser — and progression reworked to start with Zidane alone.
