@@ -1,0 +1,861 @@
+[
+ {
+  "id": 0,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   38
+  ],
+  "price": 300,
+  "result": 7,
+  "ingredients": [
+   1,
+   2
+  ]
+ },
+ {
+  "id": 1,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 700,
+  "result": 8,
+  "ingredients": [
+   2,
+   2
+  ]
+ },
+ {
+  "id": 2,
+  "shops": [
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 1000,
+  "result": 9,
+  "ingredients": [
+   2,
+   3
+  ]
+ },
+ {
+  "id": 3,
+  "shops": [
+   35,
+   36,
+   38
+  ],
+  "price": 2000,
+  "result": 10,
+  "ingredients": [
+   3,
+   3
+  ]
+ },
+ {
+  "id": 4,
+  "shops": [
+   36,
+   37,
+   38
+  ],
+  "price": 9000,
+  "result": 11,
+  "ingredients": [
+   3,
+   4
+  ]
+ },
+ {
+  "id": 5,
+  "shops": [
+   37,
+   38
+  ],
+  "price": 12000,
+  "result": 12,
+  "ingredients": [
+   4,
+   5
+  ]
+ },
+ {
+  "id": 6,
+  "shops": [
+   38
+  ],
+  "price": 16000,
+  "result": 13,
+  "ingredients": [
+   5,
+   6
+  ]
+ },
+ {
+  "id": 7,
+  "shops": [
+   38
+  ],
+  "price": 16000,
+  "result": 49,
+  "ingredients": [
+   45,
+   46
+  ]
+ },
+ {
+  "id": 8,
+  "shops": [
+   38
+  ],
+  "price": 11000,
+  "result": 55,
+  "ingredients": [
+   51,
+   218
+  ]
+ },
+ {
+  "id": 9,
+  "shops": [
+   38
+  ],
+  "price": 24000,
+  "result": 101,
+  "ingredients": [
+   197,
+   107
+  ]
+ },
+ {
+  "id": 10,
+  "shops": [
+   38
+  ],
+  "price": 8000,
+  "result": 111,
+  "ingredients": [
+   104,
+   99
+  ]
+ },
+ {
+  "id": 11,
+  "shops": [
+   38
+  ],
+  "price": 15000,
+  "result": 134,
+  "ingredients": [
+   141,
+   128
+  ]
+ },
+ {
+  "id": 12,
+  "shops": [
+   38
+  ],
+  "price": 20000,
+  "result": 135,
+  "ingredients": [
+   129,
+   204
+  ]
+ },
+ {
+  "id": 13,
+  "shops": [
+   38
+  ],
+  "price": 20000,
+  "result": 147,
+  "ingredients": [
+   142,
+   200
+  ]
+ },
+ {
+  "id": 14,
+  "shops": [
+   38
+  ],
+  "price": 20000,
+  "result": 166,
+  "ingredients": [
+   163,
+   95
+  ]
+ },
+ {
+  "id": 15,
+  "shops": [
+   38
+  ],
+  "price": 26000,
+  "result": 167,
+  "ingredients": [
+   154,
+   58
+  ]
+ },
+ {
+  "id": 16,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 1000,
+  "result": 168,
+  "ingredients": [
+   88,
+   115
+  ]
+ },
+ {
+  "id": 17,
+  "shops": [
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 2000,
+  "result": 169,
+  "ingredients": [
+   150,
+   118
+  ]
+ },
+ {
+  "id": 18,
+  "shops": [
+   36,
+   37
+  ],
+  "price": 3000,
+  "result": 170,
+  "ingredients": [
+   70,
+   156
+  ]
+ },
+ {
+  "id": 19,
+  "shops": [
+   37
+  ],
+  "price": 6000,
+  "result": 171,
+  "ingredients": [
+   81,
+   168
+  ]
+ },
+ {
+  "id": 20,
+  "shops": [
+   37
+  ],
+  "price": 8000,
+  "result": 172,
+  "ingredients": [
+   161,
+   97
+  ]
+ },
+ {
+  "id": 21,
+  "shops": [
+   37
+  ],
+  "price": 8000,
+  "result": 173,
+  "ingredients": [
+   161,
+   96
+  ]
+ },
+ {
+  "id": 22,
+  "shops": [
+   38
+  ],
+  "price": 20000,
+  "result": 174,
+  "ingredients": [
+   170,
+   90
+  ]
+ },
+ {
+  "id": 23,
+  "shops": [
+   39
+  ],
+  "price": 30000,
+  "result": 175,
+  "ingredients": [
+   172,
+   173
+  ]
+ },
+ {
+  "id": 24,
+  "shops": [
+   39
+  ],
+  "price": 50000,
+  "result": 176,
+  "ingredients": [
+   0,
+   254
+  ]
+ },
+ {
+  "id": 25,
+  "shops": [
+   38
+  ],
+  "price": 45000,
+  "result": 191,
+  "ingredients": [
+   18,
+   180
+  ]
+ },
+ {
+  "id": 26,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 300,
+  "result": 192,
+  "ingredients": [
+   112,
+   149
+  ]
+ },
+ {
+  "id": 27,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 400,
+  "result": 212,
+  "ingredients": [
+   114,
+   115
+  ]
+ },
+ {
+  "id": 28,
+  "shops": [
+   32,
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 500,
+  "result": 202,
+  "ingredients": [
+   90,
+   89
+  ]
+ },
+ {
+  "id": 29,
+  "shops": [
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 900,
+  "result": 194,
+  "ingredients": [
+   192,
+   79
+  ]
+ },
+ {
+  "id": 30,
+  "shops": [
+   33,
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 1000,
+  "result": 218,
+  "ingredients": [
+   117,
+   136
+  ]
+ },
+ {
+  "id": 31,
+  "shops": [
+   33,
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 1200,
+  "result": 206,
+  "ingredients": [
+   73,
+   57
+  ]
+ },
+ {
+  "id": 32,
+  "shops": [
+   33,
+   34,
+   35,
+   36,
+   38
+  ],
+  "price": 1300,
+  "result": 213,
+  "ingredients": [
+   178,
+   242
+  ]
+ },
+ {
+  "id": 33,
+  "shops": [
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 1500,
+  "result": 193,
+  "ingredients": [
+   194,
+   91
+  ]
+ },
+ {
+  "id": 34,
+  "shops": [
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 1800,
+  "result": 219,
+  "ingredients": [
+   80,
+   139
+  ]
+ },
+ {
+  "id": 35,
+  "shops": [
+   34,
+   35,
+   36,
+   37
+  ],
+  "price": 2000,
+  "result": 200,
+  "ingredients": [
+   202,
+   179
+  ]
+ },
+ {
+  "id": 36,
+  "shops": [
+   35,
+   36,
+   37
+  ],
+  "price": 3000,
+  "result": 203,
+  "ingredients": [
+   91,
+   59
+  ]
+ },
+ {
+  "id": 37,
+  "shops": [
+   35,
+   36,
+   37
+  ],
+  "price": 3200,
+  "result": 214,
+  "ingredients": [
+   93,
+   242
+  ]
+ },
+ {
+  "id": 38,
+  "shops": [
+   35,
+   36,
+   37
+  ],
+  "price": 3500,
+  "result": 220,
+  "ingredients": [
+   120,
+   52
+  ]
+ },
+ {
+  "id": 39,
+  "shops": [
+   35,
+   36,
+   37
+  ],
+  "price": 7000,
+  "result": 205,
+  "ingredients": [
+   199,
+   203
+  ]
+ },
+ {
+  "id": 40,
+  "shops": [
+   36,
+   37
+  ],
+  "price": 4000,
+  "result": 199,
+  "ingredients": [
+   213,
+   231
+  ]
+ },
+ {
+  "id": 41,
+  "shops": [
+   36,
+   37
+  ],
+  "price": 4000,
+  "result": 196,
+  "ingredients": [
+   193,
+   249
+  ]
+ },
+ {
+  "id": 42,
+  "shops": [
+   36,
+   37
+  ],
+  "price": 4000,
+  "result": 201,
+  "ingredients": [
+   122,
+   157
+  ]
+ },
+ {
+  "id": 43,
+  "shops": [
+   36,
+   37
+  ],
+  "price": 5000,
+  "result": 216,
+  "ingredients": [
+   229,
+   239
+  ]
+ },
+ {
+  "id": 44,
+  "shops": [
+   37
+  ],
+  "price": 6000,
+  "result": 207,
+  "ingredients": [
+   94,
+   230
+  ]
+ },
+ {
+  "id": 45,
+  "shops": [
+   37
+  ],
+  "price": 6500,
+  "result": 197,
+  "ingredients": [
+   196,
+   87
+  ]
+ },
+ {
+  "id": 46,
+  "shops": [
+   37
+  ],
+  "price": 7000,
+  "result": 208,
+  "ingredients": [
+   227,
+   199
+  ]
+ },
+ {
+  "id": 47,
+  "shops": [
+   37
+  ],
+  "price": 8000,
+  "result": 215,
+  "ingredients": [
+   214,
+   219
+  ]
+ },
+ {
+  "id": 48,
+  "shops": [
+   38
+  ],
+  "price": 12000,
+  "result": 198,
+  "ingredients": [
+   197,
+   228
+  ]
+ },
+ {
+  "id": 49,
+  "shops": [
+   38
+  ],
+  "price": 24000,
+  "result": 204,
+  "ingredients": [
+   203,
+   38
+  ]
+ },
+ {
+  "id": 50,
+  "shops": [
+   39
+  ],
+  "price": 40000,
+  "result": 209,
+  "ingredients": [
+   250,
+   208
+  ]
+ },
+ {
+  "id": 51,
+  "shops": [
+   39
+  ],
+  "price": 50000,
+  "result": 211,
+  "ingredients": [
+   210,
+   210
+  ]
+ },
+ {
+  "id": 52,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 350,
+  "result": 224,
+  "ingredients": [
+   254,
+   247
+  ]
+ },
+ {
+  "id": 53,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 200,
+  "result": 225,
+  "ingredients": [
+   254,
+   248
+  ]
+ },
+ {
+  "id": 54,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 100,
+  "result": 231,
+  "ingredients": [
+   254,
+   242
+  ]
+ },
+ {
+  "id": 55,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 200,
+  "result": 232,
+  "ingredients": [
+   254,
+   243
+  ]
+ },
+ {
+  "id": 56,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 100,
+  "result": 233,
+  "ingredients": [
+   254,
+   236
+  ]
+ },
+ {
+  "id": 57,
+  "shops": [
+   37,
+   38,
+   39
+  ],
+  "price": 100,
+  "result": 234,
+  "ingredients": [
+   254,
+   244
+  ]
+ },
+ {
+  "id": 58,
+  "shops": [
+   38,
+   39
+  ],
+  "price": 400,
+  "result": 235,
+  "ingredients": [
+   254,
+   252
+  ]
+ },
+ {
+  "id": 59,
+  "shops": [
+   39
+  ],
+  "price": 25000,
+  "result": 210,
+  "ingredients": [
+   0,
+   211
+  ]
+ },
+ {
+  "id": 60,
+  "shops": [
+   39
+  ],
+  "price": 50000,
+  "result": 26,
+  "ingredients": [
+   31,
+   103
+  ]
+ },
+ {
+  "id": 61,
+  "shops": [
+   39
+  ],
+  "price": 300,
+  "result": 249,
+  "ingredients": [
+   240,
+   251
+  ]
+ },
+ {
+  "id": 62,
+  "shops": [
+   39
+  ],
+  "price": 500,
+  "result": 238,
+  "ingredients": [
+   241,
+   246
+  ]
+ },
+ {
+  "id": 63,
+  "shops": [
+   37
+  ],
+  "price": 50000,
+  "result": 98,
+  "ingredients": [
+   92,
+   12
+  ]
+ }
+]

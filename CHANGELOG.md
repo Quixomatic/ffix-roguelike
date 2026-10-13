@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.11] - 2026-10-13
+
+FF9's real shops and synthesis come to the run, plus selling and a camp workshop (game rules; UI follows).
+
+### Added
+- Imported from Memoria: `synthesis.json` (FF9's 64 recipes — ingredients, gil price, and the synthesis shops 32–39 that sold them in story order) and `shops.json` (30 real shop inventories, e.g. Dali Weapon Shop, Lindblum Dragoos' Armory, Daguerreo Weaponsmith).
+- **Item shops use real FF9 stock**: each world draws from the shops of its part of the story (world 1: Dali/Lindblum/Burmecia/Aerbs; world 2: Treno, Cleyra, Conde Petie, Black Mage Village, Madain Sari…; world 3: Alexandria, Oeilvert, Esto Gaza, Daguerreo, Bran Bal…) plus a general store's consumables.
+- **Synthesis stage** on the map: recipes available up to the world's synthesis tier (world 1: shops 32–33, world 2: up to 36, world 3: up to 38). Synthesizing consumes unequipped gear/consumables and gil; the result counts as mailed home only if every gear ingredient already was.
+- **Selling** gear for half price at shops, synthesis shops and Moogles.
+- **Camp workshop**: synthesize from stash gear with banked gil; recipes unlock with the furthest world reached, and Hades Workshop (tier 39) after your first win.
+
+### Fixed
+- Shop selection rolled a new random shop on every comparison; now picks once.
+
 ## [0.1.10] - 2026-10-13
 
 Earned loadout slots replace level-gated gear slots, and character growth now matches FF9 exactly.

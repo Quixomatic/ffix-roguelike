@@ -204,3 +204,20 @@ export interface LevelRow {
   hpBonus: number;
   mpBonus: number;
 }
+
+export interface SynthesisRecipe {
+  id: number;
+  /** Item produced. */
+  result: number;
+  /** Item ids consumed (may repeat, e.g. two Mage Mashers). */
+  ingredients: number[];
+  price: number;
+  /** FF9 synthesis shops that sold the recipe (32–39, in story order; 39 = Hades Workshop). */
+  shops: number[];
+}
+
+export interface ShopData {
+  id: number;
+  name: string;
+  items: number[];
+}

@@ -12,6 +12,12 @@ export interface WorldDef {
   boss: string[];
   /** Gear price band rewards are drawn from (FF9 shop prices as a power proxy). */
   gearPrice: [number, number];
+  /** FF9 equipment shops (ShopItems.csv ids) whose stock appears in this world, in story order. */
+  shops: number[];
+  /** FF9 general item stores mixed into every shop for consumables. */
+  itemStores: number[];
+  /** Highest FF9 synthesis shop (32–39) whose recipes are available here. */
+  synthTier: number;
 }
 
 export const WORLDS: WorldDef[] = [
@@ -35,6 +41,9 @@ export const WORLDS: WorldDef[] = [
     elites: [["gigas-worm"], ["ogre", "ogre"], ["bomb", "bomb", "bomb"]],
     boss: ["garland"],
     gearPrice: [100, 1200],
+    shops: [0, 1, 2, 3],
+    itemStores: [25, 26],
+    synthTier: 33,
   },
   {
     index: 1,
@@ -56,6 +65,9 @@ export const WORLDS: WorldDef[] = [
     elites: [["iron-giant"], ["adamantoise", "adamantoise"], ["mind-flayer", "mind-flayer", "lamia"]],
     boss: ["golbez"],
     gearPrice: [800, 6000],
+    shops: [4, 5, 6, 7, 8, 9, 10],
+    itemStores: [27, 28],
+    synthTier: 36,
   },
   {
     index: 2,
@@ -77,5 +89,8 @@ export const WORLDS: WorldDef[] = [
     elites: [["king-behemoth"], ["ultros"], ["red-dragon", "behemoth"]],
     boss: ["kefka"],
     gearPrice: [4000, 40000],
+    shops: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+    itemStores: [29, 30],
+    synthTier: 38,
   },
 ];

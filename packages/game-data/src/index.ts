@@ -3,14 +3,18 @@ import charactersJson from "./generated/characters.json";
 import itemsJson from "./generated/items.json";
 import levelingJson from "./generated/leveling.json";
 import statusesJson from "./generated/statuses.json";
+import shopsJson from "./generated/shops.json";
 import supportJson from "./generated/support-abilities.json";
+import synthesisJson from "./generated/synthesis.json";
 import type {
   AbilityRef,
   ActionData,
   CharacterData,
   ItemData,
   LevelRow,
+  ShopData,
   StatusInfo,
+  SynthesisRecipe,
   SupportAbilityData,
 } from "./types";
 
@@ -22,6 +26,8 @@ export const items = itemsJson as ItemData[];
 export const leveling = levelingJson as LevelRow[];
 export const statuses = statusesJson as StatusInfo[];
 export const supportAbilities = supportJson as SupportAbilityData[];
+export const synthesis = synthesisJson as SynthesisRecipe[];
+export const shops = shopsJson as ShopData[];
 
 const actionMap = new Map(actions.map((a) => [a.id, a]));
 const characterMap = new Map(characters.map((c) => [c.key, c]));

@@ -154,3 +154,36 @@ function autoRunFrom(start: RunState, seed: string): RunState {
   }
   return run;
 }
+
+describe("synthesis & selling", () => {
+  test("synthesis consumes ingredients and gil; result is secured only if all ingredients were", async () => {
+    const { synthesize, sell } = await import("./run");
+    const { synthesis, itemByName } = await import("@ffix-roguelike/game-data");
+    const profile = newProfile();
+    let run = startRun({ seed: "synth", tier: 0, party: [profile.builds.zidane!] });
+    const recipe = synthesis.find((r) => r.result === itemByName("Butterfly Sword").id)!; // Dagger + Mage Masher
+    run.gil = 1000;
+    run.gear.push({ uid: 501, itemId: recipe.ingredients[0]!, secured: true, holder: null });
+    run.gear.push({ uid: 502, itemId: recipe.ingredients[1]!, secured: false, holder: null });
+    run.phase = { kind: "synth", name: "test", recipes: [recipe.id] };
+    run = synthesize(run, recipe.id);
+    expect(run.gil).toBe(1000 - recipe.price);
+    const made = run.gear.find((g) => g.itemId === recipe.result)!;
+    expect(made.secured).toBe(false);
+    expect(run.gear.some((g) => g.uid === 501 || g.uid === 502)).toBe(false);
+    const gil = run.gil;
+    run = sell(run, made.uid);
+    expect(run.gil).toBeGreaterThan(gil);
+  });
+
+  test("camp workshop uses stash + banked gil", async () => {
+    const { synthesizeAtCamp, campRecipes } = await import("../meta/profile");
+    const p = newProfile();
+    const r = campRecipes(p)[0]!;
+    p.gil = r.price;
+    for (const id of r.ingredients) p.stash[id] = (p.stash[id] ?? 0) + 1;
+    const after = synthesizeAtCamp(p, r.id);
+    expect(after.gil).toBe(0);
+    expect(after.stash[r.result]).toBe(1);
+  });
+});

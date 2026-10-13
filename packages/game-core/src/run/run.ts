@@ -6,7 +6,7 @@
  * Permanence: levels, EXP and AP earned in a run are always kept. Gear found in a run is kept only if it was
  * "mailed home" at a Moogle stage, or if the run is won.
  */
-import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
+import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import { createBattle, replayBattle } from "../battle/engine";
 import type { BattleState, InputRecord } from "../battle/types";
@@ -26,7 +26,7 @@ import {
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
-import { battleRewards, pickEncounter, rollGear, shopStock, starterKit, type ShopEntry } from "./loot";
+import { battleRewards, pickEncounter, recipesUpTo, rollGear, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
 
 export class RunError extends Error {}
@@ -59,7 +59,8 @@ export type RunPhase =
   | { kind: "battle"; nodeId: string; nodeKind: "battle" | "elite" | "boss"; enemies: string[]; battle: BattleState }
   | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean }
   | { kind: "treasure"; gearChoices: number[]; gil: number }
-  | { kind: "shop"; stock: ShopEntry[]; sold: number[] }
+  | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
+  | { kind: "synth"; name: string; recipes: number[] }
   | { kind: "moogle"; mailed: number }
   | { kind: "event"; eventId: string; result: string | null }
   | { kind: "worldClear"; cleared: number }
@@ -213,8 +214,13 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "treasure":
       run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10), gil: rng.int(80, 160) * (run.world + 1) };
       return;
-    case "shop":
-      run.phase = { kind: "shop", stock: shopStock(rng, run.world, partyKeys(run)), sold: [] };
+    case "shop": {
+      const visit = shopStock(rng, run.world, partyKeys(run));
+      run.phase = { kind: "shop", name: visit.name, stock: visit.stock, sold: [] };
+      return;
+    }
+    case "synth":
+      run.phase = { kind: "synth", name: synthShopName(run.world), recipes: recipesUpTo(WORLDS[run.world]!.synthTier).map((r) => r.id) };
       return;
     case "moogle": {
       healParty(run, 100, true);
@@ -386,11 +392,54 @@ export function buy(run: RunState, index: number): RunState {
   return next;
 }
 
+/**
+ * Synthesize at a synthesis shop: pay gil and consume the ingredients (unequipped gear or consumables). The
+ * result counts as mailed home only if every gear ingredient already was.
+ */
+export function synthesize(run: RunState, recipeId: number): RunState {
+  if (run.phase.kind !== "synth") throw new RunError("Not at a synthesis shop");
+  if (!run.phase.recipes.includes(recipeId)) throw new RunError("That recipe isn't sold here");
+  const recipe = synthesis.find((r) => r.id === recipeId)!;
+  if (run.gil < recipe.price) throw new RunError("Not enough gil");
+  const next = structuredClone(run);
+  let secured = true;
+  for (const id of recipe.ingredients) {
+    const stock = next.consumables.find((c) => c.itemId === id && c.count > 0);
+    if (stock) {
+      stock.count--;
+      continue;
+    }
+    // Prefer pieces that would be lost anyway (not yet mailed home).
+    const inst = next.gear.filter((g) => g.itemId === id && !g.holder).sort((a, b) => Number(a.secured) - Number(b.secured))[0];
+    if (!inst) throw new RunError(`Missing ${getItem(id).name} (unequip it first if it's being worn)`);
+    secured &&= inst.secured;
+    next.gear = next.gear.filter((g) => g !== inst);
+  }
+  next.consumables = next.consumables.filter((c) => c.count > 0);
+  next.gil -= recipe.price;
+  addLoot(next, recipe.result);
+  const made = next.gear.at(-1);
+  if (made && made.itemId === recipe.result) made.secured = secured;
+  return next;
+}
+
+/** Sell an unequipped piece of gear for half its price (shops, synthesis shops and Moogles). */
+export function sell(run: RunState, uid: number): RunState {
+  if (!["shop", "synth", "moogle"].includes(run.phase.kind)) throw new RunError("Nobody here to sell to");
+  const inst = run.gear.find((g) => g.uid === uid);
+  if (!inst) throw new RunError("You don't have that");
+  if (inst.holder) throw new RunError("Unequip it first");
+  const next = structuredClone(run);
+  next.gear = next.gear.filter((g) => g.uid !== uid);
+  next.gil += sellPrice(inst.itemId);
+  return next;
+}
+
 /** Leave a shop / moogle / finished event and return to the map. */
 export function leave(run: RunState): RunState {
   const k = run.phase.kind;
   if (k === "event" && run.phase.kind === "event" && !run.phase.result) throw new RunError("Make a choice first");
-  if (k !== "shop" && k !== "moogle" && k !== "event") throw new RunError("Nothing to leave");
+  if (k !== "shop" && k !== "synth" && k !== "moogle" && k !== "event") throw new RunError("Nothing to leave");
   const next = structuredClone(run);
   next.phase = { kind: "map" };
   return next;
@@ -451,7 +500,7 @@ function emptyBattle(): BattleState {
 
 // ── party management (allowed on the map) ────────────────────────────────────
 function assertCanManage(run: RunState) {
-  if (!["map", "moogle", "shop", "rewards", "treasure", "worldClear"].includes(run.phase.kind)) throw new RunError("Can't change gear right now");
+  if (!["map", "moogle", "shop", "synth", "rewards", "treasure", "worldClear"].includes(run.phase.kind)) throw new RunError("Can't change gear right now");
 }
 
 /** Equip a gear instance (or clear the slot with uid = null). */

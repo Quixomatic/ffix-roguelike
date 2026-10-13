@@ -6,7 +6,7 @@
  */
 import type { Rng } from "../rng";
 
-export type NodeKind = "start" | "battle" | "elite" | "treasure" | "shop" | "moogle" | "event" | "boss";
+export type NodeKind = "start" | "battle" | "elite" | "treasure" | "shop" | "synth" | "moogle" | "event" | "boss";
 
 export interface MapNode {
   id: string;
@@ -41,6 +41,7 @@ function pickKind(rng: Rng, col: number): NodeKind {
     { weight: col >= 3 ? 2 : 0, value: "elite" as NodeKind },
     { weight: 1.5, value: "treasure" as NodeKind },
     { weight: 1.2, value: "shop" as NodeKind },
+    { weight: 1, value: "synth" as NodeKind },
     { weight: 1.5, value: "event" as NodeKind },
     { weight: col === 4 ? 1.5 : 0.3, value: "moogle" as NodeKind },
   ]);
@@ -91,7 +92,7 @@ export function generateWorldMap(rng: Rng, world: number): WorldMap {
   for (const n of columns.flat()) {
     for (const id of n.next) {
       const m = byId.get(id)!;
-      if ((n.kind === "elite" || n.kind === "shop") && m.kind === n.kind) m.kind = "battle";
+      if ((n.kind === "elite" || n.kind === "shop" || n.kind === "synth") && m.kind === n.kind) m.kind = "battle";
     }
   }
 

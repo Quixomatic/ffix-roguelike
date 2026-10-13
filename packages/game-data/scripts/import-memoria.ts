@@ -25,6 +25,8 @@ import {
   type ItemEffectData,
   type ItemKind,
   type LevelRow,
+  type ShopData,
+  type SynthesisRecipe,
   type StatBonus,
   type Status,
   type StatusInfo,
@@ -270,6 +272,26 @@ for (const r of rows("Items/Items.csv")) {
   });
 }
 
+// ── synthesis + shops ────────────────────────────────────────────────────────
+const list = (cell: string | undefined) =>
+  (cell ?? "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .map(int);
+
+const synthesis: SynthesisRecipe[] = rows("Items/Synthesis.csv").map((r) => ({
+  id: int(r.cells[1]),
+  shops: list(r.cells[2]),
+  price: int(r.cells[3]),
+  result: int(r.cells[4]),
+  ingredients: list(r.cells[5]),
+}));
+
+const shops: ShopData[] = rows("Items/ShopItems.csv")
+  .map((r) => ({ id: int(r.cells[1]), name: r.comment.replace(/^Shop \d+\s*/, "").trim(), items: list(r.cells[2]) }))
+  .filter((s) => s.items.length && s.name);
+
 // ── characters ───────────────────────────────────────────────────────────────
 const commands = new Map<number, CommandData>();
 for (const r of rows("Characters/Commands.csv")) {
@@ -367,3 +389,5 @@ write("support-abilities", supportAbilities);
 write("leveling", leveling);
 write("items", items);
 write("characters", characters);
+write("synthesis", synthesis);
+write("shops", shops);

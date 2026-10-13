@@ -2,7 +2,10 @@
  * Permanent progression between runs: unlocked characters, their builds (level/EXP/AP/equipment), the gear
  * stash, banked gil and lifetime stats. The server persists this in Postgres; these are the pure rules.
  */
-import { getItem, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
+import { getItem, MAIN_CAST, type EquipSlot, type SynthesisRecipe } from "@ffix-roguelike/game-data";
+
+import { WORLDS } from "../content/worlds";
+import { recipesUpTo } from "../run/loot";
 
 import type { RunOutcome } from "../run/run";
 import { activeSupports, canEquip, emptyRecord, getStarterWeapon, loadoutSlots, loadoutUsed, newBuild, nextLoadoutUnlock, type CharacterBuild } from "../stats";
@@ -142,5 +145,32 @@ export function setProfileSupports(profile: Profile, key: string, supports: numb
   const candidate = { ...build, supports: [...new Set(supports)] };
   if (activeSupports(candidate).size !== candidate.supports.length) throw new ProfileError("Not enough magic stones, or ability not available");
   build.supports = candidate.supports;
+  return p;
+}
+
+/** Synthesis tier available at camp: the furthest world reached, and Hades Workshop (39) after a win. */
+export function campSynthTier(profile: Profile): number {
+  if (profile.stats.wins > 0) return 39;
+  return WORLDS[Math.min(WORLDS.length - 1, profile.stats.bestWorld)]!.synthTier;
+}
+
+/** Recipes the camp workshop can make: unlocked tier, and gear-only ingredients (the stash holds gear). */
+export function campRecipes(profile: Profile): SynthesisRecipe[] {
+  return recipesUpTo(campSynthTier(profile)).filter((r) => r.ingredients.every((id) => getItem(id).kind !== "item"));
+}
+
+/** Synthesize at camp from stash gear and banked gil; the result goes to the stash. */
+export function synthesizeAtCamp(profile: Profile, recipeId: number): Profile {
+  const recipe = campRecipes(profile).find((r) => r.id === recipeId);
+  if (!recipe) throw new ProfileError("That recipe isn't available yet");
+  if (profile.gil < recipe.price) throw new ProfileError("Not enough gil");
+  const p = structuredClone(profile);
+  for (const id of recipe.ingredients) {
+    if ((p.stash[id] ?? 0) <= 0) throw new ProfileError(`Missing ${getItem(id).name} in your stash`);
+    p.stash[id]!--;
+    if (p.stash[id] === 0) delete p.stash[id];
+  }
+  p.gil -= recipe.price;
+  p.stash[recipe.result] = (p.stash[recipe.result] ?? 0) + 1;
   return p;
 }

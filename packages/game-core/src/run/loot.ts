@@ -1,5 +1,5 @@
 /** Encounter selection, battle rewards, treasure and shop stock. */
-import { items, itemByName, type ItemData } from "@ffix-roguelike/game-data";
+import { findItem, items, itemByName, shops, synthesis, type ItemData, type SynthesisRecipe } from "@ffix-roguelike/game-data";
 
 import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
@@ -87,19 +87,50 @@ export interface ShopEntry {
   price: number;
 }
 
-const CONSUMABLES = ["Potion", "Hi-Potion", "Phoenix Down", "Ether", "Antidote", "Eye Drops", "Echo Screen", "Soft", "Remedy", "Tent"];
-
-export function shopStock(rng: Rng, world: number, partyKeys: string[]): ShopEntry[] {
-  const basics = CONSUMABLES.slice(0, 4 + world * 2).map((name) => {
-    const it = itemByName(name);
-    return { itemId: it.id, price: it.price || 100 };
-  });
-  const gear = rollGear(rng, world, partyKeys, 4, 15).map((id) => {
-    const it = items.find((x) => x.id === id)!;
-    return { itemId: id, price: it.price };
-  });
-  return [...basics, ...gear];
+export interface ShopVisit {
+  name: string;
+  stock: ShopEntry[];
 }
+
+/** A real FF9 shop for this world: its equipment list plus a general store's consumables. */
+export function shopStock(rng: Rng, world: number, partyKeys: string[]): ShopVisit {
+  const w = WORLDS[world]!;
+  const shopId = rng.pick(w.shops);
+  const storeId = rng.pick(w.itemStores);
+  const shop = shops.find((s) => s.id === shopId)!;
+  const store = shops.find((s) => s.id === storeId);
+  const ids = [...new Set([...(store?.items ?? []), ...shop.items])];
+  const stock = ids
+    .map((id) => findItem(id))
+    .filter((i): i is ItemData => !!i && i.price > 0)
+    // Only gear someone in the party can use (consumables always).
+    .filter((i) => i.kind === "item" || i.equippableBy.some((k) => partyKeys.includes(k)))
+    .map((i) => ({ itemId: i.id, price: i.price }));
+  return { name: shop.name, stock };
+}
+
+/** Recipes on sale up to an FF9 synthesis-shop tier (32–39). */
+export function recipesUpTo(tier: number): SynthesisRecipe[] {
+  return synthesis.filter((r) => Math.min(...r.shops) <= tier);
+}
+
+const SYNTH_NAMES: Record<number, string> = {
+  32: "Lindblum Synthesis Shop",
+  33: "Treno Synthesis Shop",
+  34: "Black Mage Village Synthesist",
+  35: "Lindblum Synthesis Shop",
+  36: "Daguerreo Synthesist",
+  37: "Black Mage Village Synthesist",
+  38: "Daguerreo Synthesist",
+  39: "Hades Workshop",
+};
+
+export function synthShopName(world: number): string {
+  return SYNTH_NAMES[WORLDS[world]!.synthTier] ?? "Synthesis Shop";
+}
+
+/** Half the shop price, as in FF9. */
+export const sellPrice = (itemId: number) => Math.floor((findItem(itemId)?.price ?? 0) / 2);
 
 /** Starter consumables for every run. */
 export function starterKit(): { itemId: number; count: number }[] {
