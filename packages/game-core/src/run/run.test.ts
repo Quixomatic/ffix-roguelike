@@ -71,6 +71,9 @@ function autoRun(seed: string, partyKeys = ["zidane", "vivi", "steiner"], levels
       case "event":
         run = p.result ? leave(run) : chooseEvent(run, 1 % (p.eventId ? 2 : 1));
         break;
+      case "synth":
+      case "stiltzkin":
+      case "chocobo":
       case "moogle":
         run = leave(run);
         break;
@@ -186,5 +189,27 @@ describe("synthesis & selling", () => {
     const after = synthesizeAtCamp(p, r.id);
     expect(after.gil).toBe(0);
     expect(after.stash[r.result]).toBe(1);
+  });
+});
+
+describe("special stages & supplies", () => {
+  test("Stiltzkin sells each deal once; Chocobo digs 3 of 9 spots", async () => {
+    const { buyOffer, dig } = await import("./run");
+    const { stiltzkinOffers, chocoboSpots, CHOCOBO_DIGS } = await import("./specials");
+    const profile = newProfile();
+    let run = startRun({ seed: "sp", tier: 0, party: [profile.builds.zidane!] });
+    run.gil = 99999;
+    run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(Rng.fromSeed("s"), 0, ["zidane"]), bought: [] };
+    run = buyOffer(run, 0);
+    expect(() => buyOffer(run, 0)).toThrow(/Already/);
+    run.phase = { kind: "chocobo", spots: chocoboSpots(Rng.fromSeed("c"), 0, ["zidane"]), digsLeft: CHOCOBO_DIGS, dug: [] };
+    for (let i = 0; i < 3; i++) run = dig(run, i);
+    expect(() => dig(run, 3)).toThrow(/no digs left/);
+  });
+
+  test("camp supplies are packed into the run on top of the starter kit", () => {
+    const profile = newProfile();
+    const run = startRun({ seed: "sup", tier: 0, party: [profile.builds.zidane!], supplies: { 236: 3 } });
+    expect(run.consumables.find((c) => c.itemId === 236)?.count).toBe(4 + 3);
   });
 });

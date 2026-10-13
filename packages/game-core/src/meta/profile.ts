@@ -7,7 +7,7 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, MAIN_CAST, shops, type EquipSlot, type SynthesisRecipe } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, MAIN_CAST, shops, type EquipSlot, type SynthesisRecipe } from "@ffix-roguelike/game-data";
 
 import { WORLDS } from "../content/worlds";
 import { recipesUpTo } from "../run/loot";
@@ -226,9 +226,28 @@ export function campShopStock(profile: Profile): { itemId: number; price: number
     .map((i) => ({ itemId: i.id, price: i.price }));
 }
 
-/** Buy gear at camp with banked gil; it goes straight to the stash. */
+const SUPPLY_TIERS: string[][] = [
+  ["Potion", "Phoenix Down", "Antidote", "Eye Drops", "Echo Screen"],
+  ["Hi-Potion", "Ether", "Soft", "Tent"],
+  ["Remedy", "Elixir"],
+];
+
+/** Consumables sold at camp (more as you reach further worlds). They go into your next run and are used up there. */
+export function campSupplyStock(profile: Profile): { itemId: number; price: number }[] {
+  return SUPPLY_TIERS.slice(0, Math.min(SUPPLY_TIERS.length, profile.stats.bestWorld + 1))
+    .flat()
+    .map((name) => getItem(itemByName(name).id))
+    .map((i) => ({ itemId: i.id, price: i.price || 500 }));
+}
+
+/** Consumables waiting in the stash to be packed into the next run. */
+export function campSupplies(profile: Profile): Record<number, number> {
+  return Object.fromEntries(Object.entries(profile.stash).filter(([id]) => getItem(Number(id)).kind === "item"));
+}
+
+/** Buy gear or supplies at camp with banked gil; they go straight to the stash. */
 export function buyAtCamp(profile: Profile, itemId: number): Profile {
-  const entry = campShopStock(profile).find((e) => e.itemId === itemId);
+  const entry = [...campShopStock(profile), ...campSupplyStock(profile)].find((e) => e.itemId === itemId);
   if (!entry) throw new ProfileError("Not sold here yet — reach further worlds");
   if (profile.gil < entry.price) throw new ProfileError("Not enough gil");
   const p = structuredClone(profile);

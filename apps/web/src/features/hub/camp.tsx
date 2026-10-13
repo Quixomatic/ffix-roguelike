@@ -1,4 +1,4 @@
-import { deriveStats, loadoutSlots, MAX_TIER, nextSlotCost, startLevelCost } from "@ffix-roguelike/game-core";
+import { campSupplies, deriveStats, loadoutSlots, MAX_TIER, nextSlotCost, startLevelCost } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -38,6 +38,7 @@ export function Camp() {
   const p = profile.data;
   const chosen = party.length ? party : p.unlocked.slice(0, 4);
   const between = !p.activeRunId;
+  const supplies = campSupplies(p);
 
   const toggle = (key: string) =>
     setParty((cur) => {
@@ -137,15 +138,9 @@ export function Camp() {
       </div>
 
       {Object.keys(p.stash).length > 0 && (
-        <div className="ff-window p-3">
-          <div className="ff-title mb-1">Stash (gear you own)</div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-            {Object.entries(p.stash).map(([id, n]) => (
-              <span key={id}>
-                {itemName(Number(id))} ×{n}
-              </span>
-            ))}
-          </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <StashList title="Stash — gear you own" entries={Object.entries(p.stash).filter(([id]) => !(id in supplies))} />
+          <StashList title="Packed for your next run" entries={Object.entries(supplies)} />
         </div>
       )}
 
@@ -161,6 +156,22 @@ export function Camp() {
         levels reset and everyone who came earns Completion Points (+1 per level gained, +3 per boss, +10 for a win) — spend them here on a
         higher start level or on gear slots for bringing stash gear along. Gear teaches abilities while equipped; fill their AP to learn them
         forever. Gear you find in a run only comes home if you win — but banked gil buys gear at the shop any time.
+      </div>
+    </div>
+  );
+}
+
+function StashList({ title, entries }: { title: string; entries: [string, number][] }) {
+  return (
+    <div className="ff-window p-3">
+      <div className="ff-title mb-1">{title}</div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        {entries.map(([id, n]) => (
+          <span key={id}>
+            {itemName(Number(id))} ×{n}
+          </span>
+        ))}
+        {!entries.length && <span className="opacity-60">Nothing yet</span>}
       </div>
     </div>
   );

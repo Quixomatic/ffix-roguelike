@@ -27,11 +27,12 @@ export function pickEncounter(rng: Rng, world: number, depth: number, kind: "bat
   if (kind === "boss") return w.boss;
   // Small parties meet smaller groups: a lone hero fights one monster, a full party up to five.
   const cap = partySize <= 1 ? 1 : partySize + 1;
-  return pickGroup(rng, w, depth, kind).slice(0, cap);
+  return pickGroup(rng, w, depth, kind, cap);
 }
 
-function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "battle" | "elite"): string[] {
-  const pool = [...(kind === "elite" ? w.elites : w.encounters)].sort((a, b) => threat(a) - threat(b));
+function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "battle" | "elite", cap: number): string[] {
+  // Trim each group to the party-size cap first, then order by the threat of what will actually be fought.
+  const pool = (kind === "elite" ? w.elites : w.encounters).map((g) => g.slice(0, cap)).sort((a, b) => threat(a) - threat(b));
   const span = Math.min(pool.length, kind === "elite" ? pool.length : 4);
   const start = Math.round(depth * (pool.length - span));
   return pool[Math.min(pool.length - 1, start + rng.int(0, span - 1))]!;

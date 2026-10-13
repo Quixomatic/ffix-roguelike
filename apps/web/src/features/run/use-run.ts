@@ -47,6 +47,8 @@ export function useRunActions() {
     buy: useMutation(trpc.run.buy.mutationOptions(opts)),
     synthesize: useMutation(trpc.run.synthesize.mutationOptions(opts)),
     sell: useMutation(trpc.run.sell.mutationOptions(opts)),
+    buyOffer: useMutation(trpc.run.buyOffer.mutationOptions(opts)),
+    dig: useMutation(trpc.run.dig.mutationOptions(opts)),
     leave: useMutation(trpc.run.leave.mutationOptions(opts)),
     choose: useMutation(trpc.run.choose.mutationOptions(opts)),
     nextWorld: useMutation(trpc.run.nextWorld.mutationOptions(opts)),

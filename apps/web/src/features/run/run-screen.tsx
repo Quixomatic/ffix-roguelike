@@ -5,6 +5,7 @@ import { BattleView } from "@/features/battle/battle-view";
 
 import { Overworld } from "./overworld";
 import { PartyPanel } from "./party-panel";
+import { ChocoboPanel, StiltzkinPanel } from "./special-panels";
 import { EventPanel, MooglePanel, RewardsPanel, RunOverPanel, ShopPanel, SynthPanel, TreasurePanel, WorldClearPanel } from "./stage-panels";
 import { useActiveRun, useRunActions } from "./use-run";
 
@@ -28,7 +29,7 @@ export function RunScreen() {
 
   const phase = run.phase;
   const inBattle = phase.kind === "battle";
-  const canManage = ["map", "moogle", "shop", "synth", "rewards", "treasure", "worldClear"].includes(phase.kind);
+  const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
     <div className="flex flex-col gap-3 p-3 lg:flex-row">
@@ -49,6 +50,8 @@ export function RunScreen() {
         {phase.kind === "treasure" && <TreasurePanel phase={phase} actions={actions} />}
         {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "synth" && <SynthPanel run={run} phase={phase} actions={actions} />}
+        {phase.kind === "stiltzkin" && <StiltzkinPanel run={run} phase={phase} actions={actions} />}
+        {phase.kind === "chocobo" && <ChocoboPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "moogle" && <MooglePanel run={run} actions={actions} />}
         {phase.kind === "event" && <EventPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "worldClear" && <WorldClearPanel run={run} actions={actions} />}

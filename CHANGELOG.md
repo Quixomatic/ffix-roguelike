@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.17] - 2026-10-13
+
+Stiltzkin and Chocobo stages, camp supplies, and two fairness fixes.
+
+### Added
+- **Stiltzkin** stage (rare, from mid-map): three deals — a discounted supply bundle, a restorative pack, and one piece of gear from the *next* world's band at 80% price. Each sells once.
+- **Chocobo Hot & Cold** stage: nine dig spots (buried gear, two gil caches, three consumables, three duds), three digs; the rest are revealed when Choco tires out.
+- **Camp supplies**: the camp shop now has Gear and Supplies tabs. Supplies (Potions, Phoenix Downs, Ethers… more as you reach further worlds) are packed into your next run on top of the starter kit and used up there. Camp shows the stash and "packed for your next run" separately.
+- API: `run.buyOffer`, `run.dig`; starting a run packs camp supplies and removes them from the stash in the same transaction.
+
+### Fixed
+- **A lone hero could meet a strong single monster on the first stage** (e.g. a solo Ogre): encounters are now ordered by the threat of the group *after* trimming it to party size.
+- **Lost battles counted as "battles won"**: the battle stat (which drives unlocks like "Win 3 battles") now counts victories only.
+
 ## [0.1.16] - 2026-10-13
 
 A title screen, an FF-styled header, and sprites on the camp roster.

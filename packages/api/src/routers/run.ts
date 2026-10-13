@@ -1,8 +1,10 @@
 import {
   abandonRun,
   buy,
+  buyOffer,
   chooseEvent,
   claimReward,
+  dig,
   equip,
   finishBattle,
   leave,
@@ -71,6 +73,8 @@ export const runRouter = router({
     .input(z.object({ recipeId: z.number().int().min(0) }))
     .mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => synthesize(r, input.recipeId))),
   sell: protectedProcedure.input(z.object({ uid: z.number().int() })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => sell(r, input.uid))),
+  buyOffer: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => buyOffer(r, input.index))),
+  dig: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => dig(r, input.index))),
   leave: protectedProcedure.mutation(({ ctx }) => act(ctx.db, ctx.session.user.id, leave)),
   choose: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => chooseEvent(r, input.index))),
   nextWorld: protectedProcedure.mutation(({ ctx }) => act(ctx.db, ctx.session.user.id, nextWorld)),

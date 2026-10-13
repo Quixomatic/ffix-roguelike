@@ -29,6 +29,7 @@ import {
 import { EVENTS, eventById, type EventOutcome } from "./events";
 import { battleRewards, pickEncounter, recipesUpTo, rollGear, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
+import { CHOCOBO_DIGS, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
 export class RunError extends Error {}
 
@@ -74,6 +75,8 @@ export type RunPhase =
   | { kind: "treasure"; gearChoices: number[]; gil: number }
   | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
   | { kind: "synth"; name: string; recipes: number[] }
+  | { kind: "stiltzkin"; offers: StiltzkinOffer[]; bought: number[] }
+  | { kind: "chocobo"; spots: ChocoboSpot[]; digsLeft: number; dug: number[] }
   | { kind: "moogle" }
   | { kind: "event"; eventId: string; result: string | null }
   | { kind: "worldClear"; cleared: number }
@@ -107,8 +110,10 @@ export interface RunState {
 export interface StartRunInput {
   seed: string;
   tier: number;
-  /** Party builds as saved at camp. Gear in slots the character hasn't unlocked yet is left at camp. */
+  /** Party builds as saved at camp. Gear beyond a character's bought gear slots is left at camp. */
   party: CharacterBuild[];
+  /** Consumables bought at camp (itemId → count), packed on top of the starter kit. */
+  supplies?: Record<number, number>;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -186,13 +191,24 @@ export function startRun(input: StartRunInput): RunState {
     position: map.startId,
     visited: [map.startId],
     party,
-    consumables: starterKit(),
+    consumables: withSupplies(starterKit(), input.supplies ?? {}),
     gear,
     nextUid: uid,
     gil: 300,
     phase: { kind: "map" },
     stats: { battles: 0, bossKills: [], eaten: 0, steals: 0 },
   };
+}
+
+function withSupplies(kit: { itemId: number; count: number }[], supplies: Record<number, number>) {
+  const out = kit.map((k) => ({ ...k }));
+  for (const [id, n] of Object.entries(supplies)) {
+    if (n <= 0) continue;
+    const have = out.find((k) => k.itemId === Number(id));
+    if (have) have.count += n;
+    else out.push({ itemId: Number(id), count: n });
+  }
+  return out;
 }
 
 export function isOver(run: RunState) {
@@ -237,6 +253,12 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "synth":
       run.phase = { kind: "synth", name: synthShopName(run.world), recipes: recipesUpTo(WORLDS[run.world]!.synthTier).map((r) => r.id) };
       return;
+    case "stiltzkin":
+      run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(rng, run.world, partyKeys(run)), bought: [] };
+      return;
+    case "chocobo":
+      run.phase = { kind: "chocobo", spots: chocoboSpots(rng, run.world, partyKeys(run)), digsLeft: CHOCOBO_DIGS, dug: [] };
+      return;
     case "moogle":
       healParty(run, 100, true);
       run.phase = { kind: "moogle" };
@@ -276,7 +298,6 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   }
   if (!final.outcome) throw new RunError("Battle isn't finished");
   const next = structuredClone(run);
-  next.stats.battles++;
   next.stats.steals += final.stolen.length;
   next.stats.eaten += final.learned.length;
   // Carry HP/MP and consumables out of the fight.
@@ -295,6 +316,7 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
     next.phase = { kind: "map" };
     return next;
   }
+  next.stats.battles++; // victories only — drives "win N battles" unlocks
 
   const rng = rngOf(next).fork(`rewards:${phase.nodeId}:${next.stats.battles}`);
   const rewards = battleRewards(rng, phase.enemies, next.tier, final);
@@ -456,11 +478,41 @@ export function sell(run: RunState, uid: number): RunState {
   return next;
 }
 
-/** Leave a shop / moogle / finished event and return to the map. */
+/** Buy one of Stiltzkin's deals (each once). */
+export function buyOffer(run: RunState, index: number): RunState {
+  if (run.phase.kind !== "stiltzkin") throw new RunError("Stiltzkin isn't here");
+  const offer = run.phase.offers[index];
+  if (!offer) throw new RunError("No such deal");
+  if (run.phase.bought.includes(index)) throw new RunError("Already bought, kupo!");
+  if (run.gil < offer.price) throw new RunError("Not enough gil");
+  const next = structuredClone(run);
+  next.gil -= offer.price;
+  for (const id of offer.items) addLoot(next, id);
+  if (next.phase.kind === "stiltzkin") next.phase.bought.push(index);
+  return next;
+}
+
+/** Chocobo Hot & Cold: dig one of the spots. */
+export function dig(run: RunState, index: number): RunState {
+  if (run.phase.kind !== "chocobo") throw new RunError("No chocobo here");
+  const spot = run.phase.spots[index];
+  if (!spot) throw new RunError("No such spot");
+  if (run.phase.digsLeft <= 0) throw new RunError("Choco is tired — no digs left");
+  if (run.phase.dug.includes(index)) throw new RunError("Already dug there");
+  const next = structuredClone(run);
+  if (next.phase.kind !== "chocobo") return next;
+  next.phase.digsLeft--;
+  next.phase.dug.push(index);
+  if (spot.type === "gil") next.gil += spot.amount;
+  if (spot.type === "item") addLoot(next, spot.itemId);
+  return next;
+}
+
+/** Leave a shop / moogle / finished event / special stage and return to the map. */
 export function leave(run: RunState): RunState {
   const k = run.phase.kind;
   if (k === "event" && run.phase.kind === "event" && !run.phase.result) throw new RunError("Make a choice first");
-  if (k !== "shop" && k !== "synth" && k !== "moogle" && k !== "event") throw new RunError("Nothing to leave");
+  if (!["shop", "synth", "moogle", "event", "stiltzkin", "chocobo"].includes(k)) throw new RunError("Nothing to leave");
   const next = structuredClone(run);
   next.phase = { kind: "map" };
   return next;
@@ -521,7 +573,7 @@ function emptyBattle(): BattleState {
 
 // ── party management (allowed on the map) ────────────────────────────────────
 function assertCanManage(run: RunState) {
-  if (!["map", "moogle", "shop", "synth", "rewards", "treasure", "worldClear"].includes(run.phase.kind)) throw new RunError("Can't change gear right now");
+  if (!["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(run.phase.kind)) throw new RunError("Can't change gear right now");
 }
 
 /** Equip a gear instance (or clear the slot with uid = null). */

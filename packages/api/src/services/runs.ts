@@ -5,6 +5,7 @@
  */
 import {
   applyRunOutcome,
+  campSupplies,
   ProfileError,
   RunError,
   runOutcome,
@@ -34,14 +35,20 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
 
   const seed = crypto.randomUUID();
+  // Consumables bought at camp are packed into this run and leave the stash.
+  const supplies = campSupplies(profile);
   let state: RunState;
   try {
-    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!) });
+    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies });
   } catch (e) {
     toTrpcError(e);
   }
-  return db.run.create({
-    data: { profileId, seed, tier, party: partyKeys, world: 0, state: state as object },
+  const stash = Object.fromEntries(Object.entries(profile.stash).filter(([id]) => !(id in supplies)));
+  return db.$transaction(async (tx) => {
+    if (Object.keys(supplies).length) await saveProfile(tx, profileId, { ...profile, stash });
+    return tx.run.create({
+      data: { profileId, seed, tier, party: partyKeys, world: 0, state: state as object },
+    });
   });
 }
 
