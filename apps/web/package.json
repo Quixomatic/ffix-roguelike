@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@ffix-roguelike/api": "workspace:*",
+    "@ffix-roguelike/game-core": "workspace:*",
+    "@ffix-roguelike/game-data": "workspace:*",
     "@ffix-roguelike/ui": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-form": "^1.33.5",
@@ -25,6 +27,7 @@
     "better-auth": "catalog:",
     "lucide-react": "^1.56.0",
     "next-themes": "catalog:",
+    "phaser": "4.2.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "sonner": "catalog:",

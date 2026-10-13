@@ -4,6 +4,7 @@ export * from "./battle/types";
 export * from "./battle/engine";
 export * from "./battle/units";
 export { supportImmunities } from "./battle/effects";
+export * from "./battle/autoplay";
 export * from "./content/enemies";
 export * from "./content/enemy-actions";
 export * from "./content/worlds";

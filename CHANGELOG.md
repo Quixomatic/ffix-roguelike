@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.4] - 2026-10-13
+
+The first playable screen: a practice battle at `/battle`, running the real ATB engine in the browser.
+
+### Added
+- **Practice Battle** (`/battle?world=&level=&encounter=`, typed search params): pick a world, any encounter (normal, elite or boss) and a party level, and fight Zidane, Vivi, Steiner and Garnet against it.
+- Phaser 4.2.1 battlefield (`features/battle/battle-scene.ts`): enemies left, party right, idle bob, step-forward on action, hit shake, floating damage/heal/miss/status numbers, KO and Trance effects, click-to-target cursors.
+- FF9-style menu windows (React overlay): party HP/MP with ATB and Trance gauges, the command menu (Attack, each character's two commands, Item, Defend, row change, Flee) with ability/item sub-lists showing MP costs, ally/enemy targeting with "All" for multi-target spells, full keyboard control, an Auto battle toggle and ×1/×2/×4 speed.
+- Pixel-art placeholder sprites keyed by the sprite manifest (`hero/<name>`, `enemy/<id>`, `boss/<id>`), so FFRK sheets can replace them by key.
+
+### Internal
+- Web code follows the ChannelGuide layout: thin routes, `features/<domain>/` kebab-case modules, `@/` imports.
+
 ## [0.1.3] - 2026-10-13
 
 The battle engine: FF9's ATB system as a deterministic, replayable simulation, plus the first bestiary.
