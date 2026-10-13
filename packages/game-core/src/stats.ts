@@ -46,6 +46,43 @@ export interface CharacterBuild {
   /** Support ability ids switched on (must fit in the gem budget). */
   supports: number[];
   backRow: boolean;
+  /** Runs/wins/bosses with this character in the party — unlocks loadout slots. Optional for older saves. */
+  record?: CharacterRecord;
+  /**
+   * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
+   * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
+   */
+  growth?: GrowthPool;
+}
+
+export interface GrowthPool {
+  speed: number;
+  strength: number;
+  magic: number;
+  spirit: number;
+  gems: number;
+}
+
+export const emptyGrowth = (): GrowthPool => ({ speed: 0, strength: 0, magic: 0, spirit: 0, gems: 0 });
+
+/** FF9 stat caps (FF9PLAY_STAT_MAX): Speed 50, Strength 99, Magic 99, Spirit 50. */
+export const STAT_CAPS = { speed: 50, strength: 99, magic: 99, spirit: 50 } as const;
+
+/**
+ * Apply level-ups from `from` to `build.level` to the growth pool, exactly like ff9level.cs: each level adds the
+ * fixed bonus plus the equipped gear's stat bonuses.
+ */
+export function accrueGrowth(build: CharacterBuild, from: number): void {
+  const pool = (build.growth ??= emptyGrowth());
+  const gear = equippedItems(build);
+  const sum = (k: "speed" | "strength" | "magic" | "spirit") => gear.reduce((n, i) => n + (i.bonus?.[k] ?? 0), 0);
+  for (let lv = from; lv < build.level; lv++) {
+    pool.speed += sum("speed");
+    pool.strength += 3 + sum("strength");
+    pool.magic += 3 + sum("magic");
+    pool.spirit += 1 + sum("spirit");
+    pool.gems += 5;
+  }
 }
 
 export interface ElementProfile {
@@ -76,14 +113,63 @@ export interface DerivedStats {
   gemsUsed: number;
 }
 
-/**
- * Character level needed before a slot can be pre-equipped at camp. Gear found during a run can go in any
- * slot; these unlocks are what let you start each run a little stronger.
- */
-export const PRE_EQUIP_LEVELS: Record<EquipSlot, number> = { weapon: 1, armor: 3, head: 6, wrist: 10, accessory: 15 };
+/** A character's own run history (counts only runs they were in the party for). */
+export interface CharacterRecord {
+  runs: number;
+  wins: number;
+  bossKills: number;
+}
 
-export function preEquipUnlocked(level: number, slot: EquipSlot): boolean {
-  return level >= PRE_EQUIP_LEVELS[slot];
+export const emptyRecord = (): CharacterRecord => ({ runs: 0, wins: 0, bossKills: 0 });
+
+/**
+ * Loadout slots: how many pieces of stash gear a character may pre-equip before a run (in any equipment slot;
+ * their FF9 starting weapon is always free). Everyone starts with none; they unlock slowly from the character's own record, because
+ * starting a run geared up is a big advantage.
+ */
+export const LOADOUT_UNLOCKS: { slots: number; runs: number; bossKills?: number; wins?: number; hint: string }[] = [
+  { slots: 1, runs: 3, hint: "3 runs" },
+  { slots: 2, runs: 8, hint: "8 runs" },
+  { slots: 3, runs: 15, bossKills: 3, hint: "15 runs and 3 bosses defeated" },
+  { slots: 4, runs: 25, wins: 1, hint: "25 runs and 1 win" },
+  { slots: 5, runs: 35, wins: 3, hint: "35 runs and 3 wins" },
+];
+
+export function loadoutSlots(build: CharacterBuild): number {
+  const r = build.record ?? emptyRecord();
+  let slots = 0;
+  for (const u of LOADOUT_UNLOCKS) if (r.runs >= u.runs && r.bossKills >= (u.bossKills ?? 0) && r.wins >= (u.wins ?? 0)) slots = u.slots;
+  return slots;
+}
+
+export function nextLoadoutUnlock(build: CharacterBuild) {
+  return LOADOUT_UNLOCKS.find((u) => u.slots === loadoutSlots(build) + 1) ?? null;
+}
+
+/** Equipment slots holding loadout gear (the starting weapon doesn't count). */
+export function loadoutUsed(build: CharacterBuild): EquipSlot[] {
+  const starter = getCharacter(build.key).defaultEquipment.weapon;
+  return EQUIP_SLOTS.filter((slot) => build.equipment[slot] != null && !(slot === "weapon" && build.equipment.weapon === starter));
+}
+
+/** Loadout order when trimming over-budget gear: weapon first, then body, head, arm, accessory. */
+export const LOADOUT_PRIORITY: EquipSlot[] = ["weapon", "armor", "head", "wrist", "accessory"];
+
+/**
+ * Remove gear beyond the loadout budget (mutates). A removed weapon falls back to the starting weapon.
+ * Returns the slots that were emptied.
+ */
+export function trimLoadout(build: CharacterBuild): EquipSlot[] {
+  const budget = loadoutSlots(build);
+  const used = LOADOUT_PRIORITY.filter((slot) => loadoutUsed(build).includes(slot));
+  const removed = used.slice(budget);
+  for (const slot of removed) build.equipment[slot] = slot === "weapon" ? getCharacter(build.key).defaultEquipment.weapon : null;
+  return removed;
+}
+
+/** The character's FF9 starting weapon — always free to bring, never counts against the loadout. */
+export function getStarterWeapon(key: string): number | null {
+  return getCharacter(key).defaultEquipment.weapon;
 }
 
 /** A fresh character: their FF9 starting weapon only (other slots unlock with levels). */
@@ -148,8 +234,9 @@ export function availableActions(build: CharacterBuild): number[] {
     .map((a) => a.id);
 }
 
+/** FF9: base stones + Lv × 4/10 + pool ÷ 32 (ff9level.FF9Level_GetCap). */
 export function gemsMax(build: CharacterBuild): number {
-  return getCharacter(build.key).base.gems + Math.floor((build.level * 4) / 5);
+  return getCharacter(build.key).base.gems + Math.floor((build.level * 4) / 10) + ((build.growth?.gems ?? 0) >> 5);
 }
 
 export function gemsUsed(build: CharacterBuild): number {
@@ -189,10 +276,14 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
   const gear = equippedItems(build);
   const supports = activeSupports(build);
 
-  let speed = data.base.speed + Math.floor(lv / 10);
-  let strength = data.base.strength + Math.floor((lv * 3) / 10);
-  let magic = data.base.magic + Math.floor((lv * 3) / 10);
-  let spirit = data.base.spirit + Math.floor((lv * 3) / 20);
+  // "Basis" stats (ff9level.cs): base + level growth + bonus pool ÷ 32. Max HP/MP use these, before gear.
+  const pool = build.growth ?? emptyGrowth();
+  const basisStr = Math.min(STAT_CAPS.strength, data.base.strength + Math.floor((lv * 3) / 10) + (pool.strength >> 5));
+  const basisMag = Math.min(STAT_CAPS.magic, data.base.magic + Math.floor((lv * 3) / 10) + (pool.magic >> 5));
+  let speed = Math.min(STAT_CAPS.speed, data.base.speed + Math.floor(lv / 10) + (pool.speed >> 5));
+  let strength = basisStr;
+  let magic = basisMag;
+  let spirit = Math.min(STAT_CAPS.spirit, data.base.spirit + Math.floor((lv * 3) / 20) + (pool.spirit >> 5));
   let defence = 0;
   let evade = 0;
   let magicDefence = 0;
@@ -224,14 +315,13 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
   }
   if (weapon) attackElements.push(...weapon.elements);
 
-  const cap = (n: number) => Math.min(99, n);
-  strength = cap(strength);
-  magic = cap(magic);
-  spirit = cap(spirit);
-  speed = cap(speed);
+  strength = Math.min(STAT_CAPS.strength, strength);
+  magic = Math.min(STAT_CAPS.magic, magic);
+  spirit = Math.min(STAT_CAPS.spirit, spirit);
+  speed = Math.min(STAT_CAPS.speed, speed);
 
-  let maxHp = Math.floor((row.hpBonus * strength) / 50);
-  let maxMp = Math.floor((row.mpBonus * magic) / 100);
+  let maxHp = Math.floor((row.hpBonus * basisStr) / 50);
+  let maxMp = Math.floor((row.mpBonus * basisMag) / 100);
   // HP+10%/20%, MP+10%/20% (support ids 5–8)
   if (supports.has(5)) maxHp = Math.floor(maxHp * 1.1);
   if (supports.has(6)) maxHp = Math.floor(maxHp * 1.2);

@@ -144,8 +144,8 @@ export function Camp() {
       <div className="ff-window p-3 text-sm leading-relaxed">
         <div className="ff-title mb-1">How runs work</div>
         Cross three worlds — Cornelia, Baron and the World of Ruin — to the boss castle at the end of each map. You start alone with Zidane;
-        companions join your roster as you progress. Levels are permanent, and leveling up unlocks gear slots you can pre-equip from your stash
-        before a run. Gear teaches abilities while equipped — fill their AP to master them forever (equip support abilities with magic stones,
+        companions join your roster as you progress. Levels are permanent, and every level-up also grows FF9's hidden stat bonuses (more with stat-boosting gear on).
+        Each character slowly earns loadout slots — pre-equipped gear from your stash — by running with you; they start with none. Gear teaches abilities while equipped — fill their AP to master them forever (equip support abilities with magic stones,
         which grow with level). Gear you find is only yours for keeps once a Moogle mails it home, or you win. Fall, and you start again — stronger.
       </div>
     </div>

@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.10] - 2026-10-13
+
+Earned loadout slots replace level-gated gear slots, and character growth now matches FF9 exactly.
+
+### Changed
+- **Loadout slots are earned, starting from zero.** Each character may bring N pieces of stash gear into a run (any equipment slot; their FF9 starting weapon is always free). N unlocks from that character's own record: 1 after 3 runs, 2 after 8, 3 after 15 runs + 3 bosses, 4 after 25 runs + 1 win, 5 after 35 runs + 3 wins. Over-budget gear is left at camp when a run starts and returned to the stash when it ends.
+- **FF9's real level-up model** (from Memoria's `ff9level.cs`): each level-up adds Str/Mag +3, Spirit +1 and Stones +5 to a hidden bonus pool, plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Max HP/MP use the pre-gear "basis" Strength/Magic. Caps: Speed 50, Strength 99, Magic 99, Spirit 50.
+- **Magic stones** = base + Lv × 4/10 + pool ÷ 32 (was Lv × 4/5, about twice FF9's rate).
+- Camp loadout sheet shows slots used/earned, the character's runs/wins/bosses, and what unlocks the next slot.
+
+### Added
+- `player_character` columns for the growth pool (`growthSpeed/Strength/Magic/Spirit/Gems`) and per-character record (`runs`, `wins`, `bossKills`); migration `character_growth_and_record`.
+- Tests: zero starting slots, budget enforcement, loadout-only gear entering a run, per-character records, and FF9 growth-pool math.
+
 ## [0.1.9] - 2026-10-13
 
 The API dev server now restarts when any workspace package changes.

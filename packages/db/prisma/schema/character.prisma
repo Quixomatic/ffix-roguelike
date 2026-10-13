@@ -24,6 +24,18 @@ model PlayerCharacter {
   /// Support ability ids switched on (must fit the magic-stone budget; validated by game-core).
   supports Int[] @default([])
 
+  /// FF9's hidden level-up bonus pool (ff9level.cs FF9LEVEL_BONUS); stats gain pool ÷ 32.
+  growthSpeed    Int @default(0)
+  growthStrength Int @default(0)
+  growthMagic    Int @default(0)
+  growthSpirit   Int @default(0)
+  growthGems     Int @default(0)
+
+  /// Runs / wins / bosses defeated with this character in the party — unlocks loadout slots.
+  runs      Int @default(0)
+  wins      Int @default(0)
+  bossKills Int @default(0)
+
   abilities CharacterAbility[]
 
   createdAt DateTime @default(now())

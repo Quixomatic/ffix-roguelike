@@ -1,4 +1,13 @@
-import { canEquip, deriveStats, EQUIP_SLOTS, PRE_EQUIP_LEVELS, preEquipUnlocked, type CharacterBuild } from "@ffix-roguelike/game-core";
+import {
+  canEquip,
+  deriveStats,
+  EQUIP_SLOTS,
+  getStarterWeapon,
+  loadoutSlots,
+  loadoutUsed,
+  nextLoadoutUnlock,
+  type CharacterBuild,
+} from "@ffix-roguelike/game-core";
 import { getCharacter, getItem } from "@ffix-roguelike/game-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -9,7 +18,7 @@ import { trpc } from "@/utils/trpc";
 
 const SLOT_LABEL = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" } as const;
 
-/** Camp loadout: pre-equip stash gear into the slots this character has unlocked by level. */
+/** Camp loadout: pre-equip stash gear, up to the character's earned loadout slots. */
 export function LoadoutSheet({ build, stash, onClose }: { build: CharacterBuild; stash: Record<number, number>; onClose(): void }) {
   const qc = useQueryClient();
   const [slot, setSlot] = useState<(typeof EQUIP_SLOTS)[number] | null>(null);
@@ -22,6 +31,12 @@ export function LoadoutSheet({ build, stash, onClose }: { build: CharacterBuild;
   const char = getCharacter(build.key);
   const st = deriveStats(build);
   const options = slot ? Object.keys(stash).map(Number).filter((id) => canEquip(build.key, getItem(id), slot)) : [];
+  const slots = loadoutSlots(build);
+  const used = loadoutUsed(build);
+  const next = nextLoadoutUnlock(build);
+  const starter = getStarterWeapon(build.key);
+  const record = build.record ?? { runs: 0, wins: 0, bossKills: 0 };
+  const full = used.length >= slots;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
@@ -35,20 +50,34 @@ export function LoadoutSheet({ build, stash, onClose }: { build: CharacterBuild;
         <div className="text-sm text-[#c8d0ff]">
           HP {st.maxHp} · MP {st.maxMp} · Atk {st.attack} · Def {st.defence} · M.Def {st.magicDefence} · Stones {st.gemsMax}
         </div>
-        <div className="ff-title">Starting loadout</div>
+        <div className="flex items-baseline justify-between">
+          <div className="ff-title">Starting loadout</div>
+          <div className="text-sm">
+            Slots {used.length}/{slots}
+            {next && <span className="opacity-70"> · next after {next.hint}</span>}
+          </div>
+        </div>
+        <div className="text-xs opacity-70">
+          With {char.name}: {record.runs} runs · {record.wins} wins · {record.bossKills} bosses
+        </div>
         {EQUIP_SLOTS.map((s) => {
-          const open = preEquipUnlocked(build.level, s);
           const id = build.equipment[s];
+          const isStarter = s === "weapon" && id === starter;
+          const filled = id != null && !isStarter;
+          const locked = !filled && full;
           return (
-            <button key={s} className="ff-option flex justify-between disabled:opacity-50" data-active={slot === s} disabled={!open} onClick={() => setSlot(slot === s ? null : s)}>
+            <button key={s} className="ff-option flex justify-between disabled:opacity-50" data-active={slot === s} disabled={locked} onClick={() => setSlot(slot === s ? null : s)}>
               <span className="w-24 opacity-70">{SLOT_LABEL[s]}</span>
-              <span className="flex-1">{open ? (id != null ? itemName(id) : "—") : `Unlocks at Lv ${PRE_EQUIP_LEVELS[s]}`}</span>
+              <span className="flex-1">
+                {id != null ? itemName(id) : "—"}
+                {isStarter && <span className="opacity-60"> (starting weapon, free)</span>}
+              </span>
             </button>
           );
         })}
         {slot && (
           <div className="flex max-h-60 flex-col gap-1 overflow-y-auto rounded bg-black/20 p-2 text-sm">
-            {slot !== "weapon" && build.equipment[slot] != null && (
+            {build.equipment[slot] != null && !(slot === "weapon" && build.equipment.weapon === starter) && (
               <button className="ff-option" onClick={() => equip.mutate({ key: build.key, slot, itemId: null })}>
                 (Remove)
               </button>
@@ -64,7 +93,10 @@ export function LoadoutSheet({ build, stash, onClose }: { build: CharacterBuild;
             {!options.length && <div className="opacity-60">No stash gear fits this slot yet — find some on a run and mail it home.</div>}
           </div>
         )}
-        <div className="text-xs opacity-70">Only gear in unlocked slots comes with you. Everything else you'll have to find along the way.</div>
+        <div className="text-xs opacity-70">
+          Loadout gear comes with you into the run; everything else you'll have to find along the way. Each character earns loadout slots by
+          running with you.
+        </div>
       </div>
     </div>
   );

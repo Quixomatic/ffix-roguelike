@@ -52,6 +52,8 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       supports: c.supports,
       equipment: { weapon: c.weaponId, head: c.headId, wrist: c.wristId, armor: c.armorId, accessory: c.accessoryId },
       ap: Object.fromEntries(c.abilities.map((a) => [a.ref as AbilityRef, a.ap])),
+      growth: { speed: c.growthSpeed, strength: c.growthStrength, magic: c.growthMagic, spirit: c.growthSpirit, gems: c.growthGems },
+      record: { runs: c.runs, wins: c.wins, bossKills: c.bossKills },
     };
   }
   return {
@@ -88,6 +90,14 @@ function buildColumns(b: CharacterBuild) {
     wristId: b.equipment.wrist,
     armorId: b.equipment.armor,
     accessoryId: b.equipment.accessory,
+    growthSpeed: b.growth?.speed ?? 0,
+    growthStrength: b.growth?.strength ?? 0,
+    growthMagic: b.growth?.magic ?? 0,
+    growthSpirit: b.growth?.spirit ?? 0,
+    growthGems: b.growth?.gems ?? 0,
+    runs: b.record?.runs ?? 0,
+    wins: b.record?.wins ?? 0,
+    bossKills: b.record?.bossKills ?? 0,
   };
 }
 

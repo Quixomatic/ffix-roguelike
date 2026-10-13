@@ -14,6 +14,7 @@ import { enemyGroup, partyUnit } from "../battle/units";
 import { WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
+  accrueGrowth,
   activeSupports,
   apCost,
   canEquip,
@@ -21,7 +22,7 @@ import {
   EQUIP_SLOTS,
   gearAbilities,
   levelForExp,
-  preEquipUnlocked,
+  trimLoadout,
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
@@ -150,14 +151,10 @@ export function startRun(input: StartRunInput): RunState {
   let uid = 1;
   const party = input.party.map((b) => {
     const build = structuredClone(b);
+    trimLoadout(build);
     for (const slot of EQUIP_SLOTS) {
       const id = build.equipment[slot];
-      if (id == null) continue;
-      if (!preEquipUnlocked(build.level, slot)) {
-        build.equipment[slot] = null;
-        continue;
-      }
-      gear.push({ uid: uid++, itemId: id, secured: true, holder: { key: build.key, slot } });
+      if (id != null) gear.push({ uid: uid++, itemId: id, secured: true, holder: { key: build.key, slot } });
     }
     const st = deriveStats(build);
     return { build, hp: st.maxHp, mp: st.maxMp };
@@ -309,6 +306,7 @@ function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; 
     m.build.exp += share;
     m.build.level = levelForExp(m.build.exp);
     if (m.build.level > before) {
+      accrueGrowth(m.build, before);
       const st = deriveStats(m.build);
       m.hp += st.maxHp - oldMax.maxHp;
       m.mp += st.maxMp - oldMax.maxMp;
@@ -557,11 +555,13 @@ export function runOutcome(run: RunState): RunOutcome {
   const lost = run.gear.filter((g) => !(g.secured || won));
   const builds = run.party.map((m) => {
     const b = structuredClone(m.build);
-    for (const slot of EQUIP_SLOTS) {
+    for (const slot of EQUIP_SLOTS) b.equipment[slot] = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot)?.itemId ?? null;
+    // Back at camp, gear beyond the loadout budget goes to the stash.
+    for (const slot of trimLoadout(b)) {
       const inst = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot);
-      if (inst && !preEquipUnlocked(b.level, slot)) inst.holder = null;
-      b.equipment[slot] = inst?.holder ? inst.itemId : null;
+      if (inst) inst.holder = null;
     }
+    if (b.equipment.weapon == null) b.equipment.weapon = getCharacter(b.key).defaultEquipment.weapon;
     b.supports = b.supports.filter((id) => activeSupports(b).has(id));
     return b;
   });

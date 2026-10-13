@@ -5,7 +5,7 @@
 import { getItem, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import type { RunOutcome } from "../run/run";
-import { activeSupports, canEquip, newBuild, PRE_EQUIP_LEVELS, preEquipUnlocked, type CharacterBuild } from "../stats";
+import { activeSupports, canEquip, emptyRecord, getStarterWeapon, loadoutSlots, loadoutUsed, newBuild, nextLoadoutUnlock, type CharacterBuild } from "../stats";
 
 export interface ProfileStats {
   runs: number;
@@ -72,7 +72,13 @@ export interface RunReport {
 /** Fold a finished run into the profile. */
 export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: number): RunReport {
   const p = structuredClone(profile);
-  for (const b of outcome.builds) p.builds[b.key] = b;
+  for (const b of outcome.builds) {
+    const record = { ...(b.record ?? emptyRecord()) };
+    record.runs++;
+    if (outcome.won) record.wins++;
+    record.bossKills += outcome.stats.bossKills.length;
+    p.builds[b.key] = { ...b, record };
+  }
   // The stash stayed at camp; add whatever the run brought home.
   for (const [id, n] of Object.entries(outcome.stash)) p.stash[Number(id)] = (p.stash[Number(id)] ?? 0) + n;
   p.gil += outcome.gilEarned;
@@ -104,8 +110,7 @@ export function equipFromStash(profile: Profile, key: string, slot: EquipSlot, i
   const p = structuredClone(profile);
   const build = p.builds[key];
   if (!build || !p.unlocked.includes(key)) throw new ProfileError("Character not available");
-  if (itemId == null && slot === "weapon") throw new ProfileError("A weapon is required");
-  if (!preEquipUnlocked(build.level, slot)) throw new ProfileError(`Reach Lv ${PRE_EQUIP_LEVELS[slot]} to pre-equip that slot`);
+  if (itemId == null && slot === "weapon" && build.equipment.weapon === getStarterWeapon(key)) throw new ProfileError("A weapon is required");
   if (itemId != null) {
     if ((p.stash[itemId] ?? 0) <= 0) throw new ProfileError("You don't have that");
     if (!canEquip(key, getItem(itemId), slot)) throw new ProfileError("Can't equip that there");
@@ -113,8 +118,19 @@ export function equipFromStash(profile: Profile, key: string, slot: EquipSlot, i
     if (p.stash[itemId] === 0) delete p.stash[itemId];
   }
   const old = build.equipment[slot];
-  if (old != null) p.stash[old] = (p.stash[old] ?? 0) + 1;
-  build.equipment[slot] = itemId;
+  const starter = getStarterWeapon(key);
+  // Is this a new loadout piece (filling a slot that was empty / held the free starting weapon)?
+  const addsPiece = itemId != null && (old == null || (slot === "weapon" && old === starter)) && !(slot === "weapon" && itemId === starter);
+  if (addsPiece && loadoutUsed(build).length >= loadoutSlots(build)) {
+    const next = nextLoadoutUnlock(build);
+    throw new ProfileError(
+      loadoutSlots(build) === 0
+        ? `No loadout slots yet${next ? ` — unlocks after ${next.hint} with this character` : ""}`
+        : `Loadout full (${loadoutSlots(build)})${next ? ` — next slot after ${next.hint}` : ""}`,
+    );
+  }
+  if (old != null && !(slot === "weapon" && old === starter)) p.stash[old] = (p.stash[old] ?? 0) + 1;
+  build.equipment[slot] = itemId ?? (slot === "weapon" ? starter : null);
   build.supports = build.supports.filter((id) => activeSupports(build).has(id));
   return p;
 }
