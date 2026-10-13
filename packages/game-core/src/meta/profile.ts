@@ -2,10 +2,10 @@
  * Permanent progression between runs: unlocked characters, their builds (level/EXP/AP/equipment), the gear
  * stash, banked gil and lifetime stats. The server persists this in Postgres; these are the pure rules.
  */
-import { MAIN_CAST } from "@ffix-roguelike/game-data";
+import { getItem, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import type { RunOutcome } from "../run/run";
-import { newBuild, type CharacterBuild } from "../stats";
+import { activeSupports, canEquip, newBuild, type CharacterBuild } from "../stats";
 
 export interface ProfileStats {
   runs: number;
@@ -99,4 +99,35 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
  */
 export function runStash(profile: Profile): Record<number, number> {
   return { ...profile.stash };
+}
+
+export class ProfileError extends Error {}
+
+/** Between runs: equip an item from the stash (or unequip with null). The removed piece returns to the stash. */
+export function equipFromStash(profile: Profile, key: string, slot: EquipSlot, itemId: number | null): Profile {
+  const p = structuredClone(profile);
+  const build = p.builds[key];
+  if (!build || !p.unlocked.includes(key)) throw new ProfileError("Character not available");
+  if (itemId == null && slot === "weapon") throw new ProfileError("A weapon is required");
+  if (itemId != null) {
+    if ((p.stash[itemId] ?? 0) <= 0) throw new ProfileError("You don't have that");
+    if (!canEquip(key, getItem(itemId), slot)) throw new ProfileError("Can't equip that there");
+    p.stash[itemId]!--;
+    if (p.stash[itemId] === 0) delete p.stash[itemId];
+  }
+  const old = build.equipment[slot];
+  if (old != null) p.stash[old] = (p.stash[old] ?? 0) + 1;
+  build.equipment[slot] = itemId;
+  build.supports = build.supports.filter((id) => activeSupports(build).has(id));
+  return p;
+}
+
+export function setProfileSupports(profile: Profile, key: string, supports: number[]): Profile {
+  const p = structuredClone(profile);
+  const build = p.builds[key];
+  if (!build || !p.unlocked.includes(key)) throw new ProfileError("Character not available");
+  const candidate = { ...build, supports: [...new Set(supports)] };
+  if (activeSupports(candidate).size !== candidate.supports.length) throw new ProfileError("Not enough magic stones, or ability not available");
+  build.supports = candidate.supports;
+  return p;
 }

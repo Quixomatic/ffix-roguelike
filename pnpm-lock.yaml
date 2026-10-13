@@ -215,6 +215,12 @@ importers:
       '@ffix-roguelike/db':
         specifier: workspace:*
         version: link:../db
+      '@ffix-roguelike/game-core':
+        specifier: workspace:*
+        version: link:../game-core
+      '@ffix-roguelike/game-data':
+        specifier: workspace:*
+        version: link:../game-data
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.19.0(@trpc/server@11.19.0(typescript@6.0.3))(typescript@6.0.3)

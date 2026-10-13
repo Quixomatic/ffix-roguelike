@@ -1,0 +1,132 @@
+/**
+ * Maps the relational player tables to game-core's `Profile` and back. game-core owns the rules; this module
+ * only loads, creates and persists.
+ */
+import { newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
+import type { AbilityRef } from "@ffix-roguelike/game-data";
+import type { Database } from "@ffix-roguelike/db";
+
+type Tx = Parameters<Parameters<Database["$transaction"]>[0]>[0];
+type Client = Database | Tx;
+
+const include = {
+  characters: { include: { abilities: true } },
+  stash: true,
+  bossKills: true,
+} as const;
+
+export interface LoadedProfile {
+  id: string;
+  battleMode: "WAIT" | "ACTIVE";
+  profile: Profile;
+}
+
+/** Load the player's profile, creating it (with the starting cast) on first visit. */
+export async function loadProfile(db: Client, userId: string): Promise<LoadedProfile> {
+  let row = await db.playerProfile.findUnique({ where: { userId }, include });
+  if (!row) {
+    const fresh = newProfile();
+    row = await db.playerProfile.create({
+      data: {
+        userId,
+        characters: {
+          create: Object.values(fresh.builds).map((b) => ({
+            key: b.key,
+            unlocked: fresh.unlocked.includes(b.key),
+            unlockedAt: fresh.unlocked.includes(b.key) ? new Date() : null,
+            ...buildColumns(b),
+          })),
+        },
+      },
+      include,
+    });
+  }
+  const base = newProfile();
+  const builds: Record<string, CharacterBuild> = { ...base.builds };
+  for (const c of row.characters) {
+    builds[c.key] = {
+      key: c.key,
+      level: c.level,
+      exp: c.exp,
+      backRow: c.backRow,
+      supports: c.supports,
+      equipment: { weapon: c.weaponId, head: c.headId, wrist: c.wristId, armor: c.armorId, accessory: c.accessoryId },
+      ap: Object.fromEntries(c.abilities.map((a) => [a.ref as AbilityRef, a.ap])),
+    };
+  }
+  return {
+    id: row.id,
+    battleMode: row.battleMode,
+    profile: {
+      gil: row.gil,
+      maxTier: row.maxTier,
+      unlocked: row.characters.filter((c) => c.unlocked).map((c) => c.key),
+      builds,
+      stash: Object.fromEntries(row.stash.filter((s) => s.count > 0).map((s) => [s.itemId, s.count])),
+      stats: {
+        runs: row.runs,
+        wins: row.wins,
+        battles: row.battles,
+        eaten: row.eaten,
+        steals: row.steals,
+        bestWorld: row.bestWorld,
+        highestTierWon: row.highestTierWon,
+        bossKills: Object.fromEntries(row.bossKills.map((b) => [b.enemyId, b.count])),
+      },
+    },
+  };
+}
+
+function buildColumns(b: CharacterBuild) {
+  return {
+    level: b.level,
+    exp: b.exp,
+    backRow: b.backRow,
+    supports: b.supports,
+    weaponId: b.equipment.weapon,
+    headId: b.equipment.head,
+    wristId: b.equipment.wrist,
+    armorId: b.equipment.armor,
+    accessoryId: b.equipment.accessory,
+  };
+}
+
+/** Persist a whole profile (call inside a transaction). */
+export async function saveProfile(tx: Tx, profileId: string, p: Profile) {
+  await tx.playerProfile.update({
+    where: { id: profileId },
+    data: {
+      gil: p.gil,
+      maxTier: p.maxTier,
+      runs: p.stats.runs,
+      wins: p.stats.wins,
+      battles: p.stats.battles,
+      eaten: p.stats.eaten,
+      steals: p.stats.steals,
+      bestWorld: p.stats.bestWorld,
+      highestTierWon: p.stats.highestTierWon,
+    },
+  });
+  for (const b of Object.values(p.builds)) {
+    const unlocked = p.unlocked.includes(b.key);
+    const row = await tx.playerCharacter.upsert({
+      where: { profileId_key: { profileId, key: b.key } },
+      create: { profileId, key: b.key, unlocked, unlockedAt: unlocked ? new Date() : null, ...buildColumns(b) },
+      update: { unlocked, ...buildColumns(b) },
+    });
+    if (unlocked && !row.unlockedAt) await tx.playerCharacter.update({ where: { id: row.id }, data: { unlockedAt: new Date() } });
+    await tx.characterAbility.deleteMany({ where: { characterId: row.id } });
+    const abilities = Object.entries(b.ap).filter(([, ap]) => (ap ?? 0) > 0);
+    if (abilities.length) await tx.characterAbility.createMany({ data: abilities.map(([ref, ap]) => ({ characterId: row.id, ref, ap: ap ?? 0 })) });
+  }
+  await tx.stashItem.deleteMany({ where: { profileId } });
+  const stash = Object.entries(p.stash).filter(([, n]) => n > 0);
+  if (stash.length) await tx.stashItem.createMany({ data: stash.map(([itemId, count]) => ({ profileId, itemId: Number(itemId), count })) });
+  for (const [enemyId, count] of Object.entries(p.stats.bossKills)) {
+    await tx.bossKill.upsert({
+      where: { profileId_enemyId: { profileId, enemyId } },
+      create: { profileId, enemyId, count },
+      update: { count },
+    });
+  }
+}

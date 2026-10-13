@@ -11,6 +11,8 @@
   "dependencies": {
     "@ffix-roguelike/auth": "workspace:*",
     "@ffix-roguelike/db": "workspace:*",
+    "@ffix-roguelike/game-core": "workspace:*",
+    "@ffix-roguelike/game-data": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "zod": "catalog:"

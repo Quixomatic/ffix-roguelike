@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.7] - 2026-10-13
+
+Server-authoritative game API: profiles and runs over tRPC, persisted in Postgres.
+
+### Added
+- `profile` router: `get` (creates the profile with Zidane/Vivi/Steiner on first visit; returns builds, stash, stats, unlock hints and the active run id), `setBattleMode`, and between-run `equip` (from the stash) / `setSupports`.
+- `run` router: `active`, `history`, `start` (party of 1–4 unlocked characters, unlocked tier only), `move`, `finishBattle` (the client sends only its input log — the server replays the battle to verify it), `claim`, `buy`, `leave`, `choose`, `nextWorld`, `equip`, `optimize`, `setSupports`, `useItem`, `abandon`.
+- `services/runs.ts`: every action loads the stored `RunState`, applies a game-core transition and saves with an optimistic `revision` check (two tabs can't double-apply). Verified battles are recorded in `run_battle`. When a run ends, its outcome folds into the profile in the same transaction (levels/AP kept, secured gear to the stash, gil banked, unlocks and tiers checked).
+- `services/profile.ts`: maps the relational player tables to game-core's `Profile` and back.
+- game-core: `equipFromStash` / `setProfileSupports` for managing gear between runs.
+
+### Verification
+- Smoke-tested against Postgres: profile creation, run start, four replay-verified battles, rewards, an event, abandon → profile updated (EXP, AP, gil) with the battle audit rows written.
+
 ## [0.1.6] - 2026-10-13
 
 Database schema for permanent progression and server-authoritative runs.
