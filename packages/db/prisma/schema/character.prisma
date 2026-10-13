@@ -1,0 +1,48 @@
+/// A party member's permanent build: level, EXP, equipment and support abilities.
+/// Every character has a row from profile creation; `unlocked` gates whether they can join a run.
+/// Equipment columns hold FF9 item ids (packages/game-data items.json).
+model PlayerCharacter {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  /// game-data character key: zidane, vivi, garnet, steiner, freya, quina, eiko, amarant, beatrix, blank…
+  key        String
+  unlocked   Boolean   @default(false)
+  unlockedAt DateTime?
+
+  level   Int     @default(1)
+  exp     Int     @default(0)
+  backRow Boolean @default(false)
+
+  weaponId    Int?
+  headId      Int?
+  wristId     Int?
+  armorId     Int?
+  accessoryId Int?
+
+  /// Support ability ids switched on (must fit the magic-stone budget; validated by game-core).
+  supports Int[] @default([])
+
+  abilities CharacterAbility[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([profileId, key])
+  @@index([profileId])
+  @@map("player_character")
+}
+
+/// AP earned toward one ability. Reaching the ability's AP cost masters it permanently.
+model CharacterAbility {
+  id          String          @id @default(cuid())
+  characterId String
+  character   PlayerCharacter @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  /// `AA:<actionId>` (active) or `SA:<supportId>` (support), as in game-data.
+  ref         String
+  ap          Int             @default(0)
+
+  @@unique([characterId, ref])
+  @@map("character_ability")
+}

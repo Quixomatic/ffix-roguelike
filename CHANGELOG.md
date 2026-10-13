@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.6] - 2026-10-13
+
+Database schema for permanent progression and server-authoritative runs.
+
+### Added
+- `player.prisma`: `PlayerProfile` (one per user — banked gil, max difficulty tier, Wait/Active battle preference, lifetime stats that drive unlocks) and `BossKill` counts.
+- `character.prisma`: `PlayerCharacter` (unlocked flag, level, EXP, row, five equipment slots as FF9 item ids, active support abilities) and `CharacterAbility` (AP toward each ability; full AP = mastered).
+- `inventory.prisma`: `StashItem` — unequipped gear owned permanently.
+- `run.prisma`: `Run` (seed, tier, status, the game-core `RunState` as JSON, a `revision` counter for optimistic concurrency) and `RunBattle` (every verified battle's seed and input log, enough to replay it exactly).
+- `User.profile` relation; first migration `init_game` (dev database reset to start migration history cleanly).
+
 ## [0.1.5] - 2026-10-13
 
 The run layer: Mario World–style maps, depth-scaled encounters, loot and permanent progression rules.

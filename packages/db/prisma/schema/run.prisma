@@ -1,0 +1,65 @@
+/// One roguelite run. The authoritative game state is game-core's `RunState`, stored as JSON in `state`
+/// and only ever advanced on the server through game-core's pure transitions. `revision` increments on
+/// every write so concurrent requests (two tabs) can't both apply.
+model Run {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  seed   String
+  tier   Int       @default(0)
+  status RunStatus @default(ACTIVE)
+  /// Current world index (0 = Cornelia, 1 = Baron, 2 = World of Ruin) — denormalized for listings.
+  world  Int       @default(0)
+  /// Party character keys, in slot order — denormalized for listings.
+  party  String[]
+
+  state    Json
+  revision Int  @default(0)
+
+  /// Filled when the run ends.
+  gilEarned Int?
+  endedAt   DateTime?
+
+  battles RunBattle[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId, status])
+  @@map("run")
+}
+
+enum RunStatus {
+  ACTIVE
+  WON
+  LOST
+  ABANDONED
+}
+
+/// Audit trail of every verified battle: the seed and the player's input log, enough to replay it exactly.
+model RunBattle {
+  id      String        @id @default(cuid())
+  runId   String
+  run     Run           @relation(fields: [runId], references: [id], onDelete: Cascade)
+  nodeId  String
+  world   Int
+  enemies String[]
+  seed    Int
+  outcome BattleOutcome
+  /// Battle length in engine ticks (20/s).
+  ticks   Int
+  /// `{ tick, command }[]` — game-core InputRecord.
+  inputs  Json
+
+  createdAt DateTime @default(now())
+
+  @@index([runId])
+  @@map("run_battle")
+}
+
+enum BattleOutcome {
+  VICTORY
+  DEFEAT
+  FLED
+}

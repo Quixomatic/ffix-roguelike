@@ -1,0 +1,13 @@
+/// Unequipped gear the player owns permanently (FF9 item id → count).
+/// Equipped gear lives on PlayerCharacter; gear found mid-run only lands here once it's secured
+/// (mailed home at a Moogle, or the run is won).
+model StashItem {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  itemId    Int
+  count     Int           @default(1)
+
+  @@unique([profileId, itemId])
+  @@map("stash_item")
+}

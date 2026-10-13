@@ -1,0 +1,51 @@
+/// A player's permanent progression — one per user, created on first visit to the game.
+/// Mirrors game-core's `Profile` (packages/game-core/src/meta/profile.ts); the API maps between the two.
+model PlayerProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Banked gil (half of a lost run's gil, all of a won run's).
+  gil     Int @default(0)
+  /// Highest difficulty tier the player may start. Winning at the current max unlocks the next.
+  maxTier Int @default(0)
+
+  /// Battle preference: wait (time stops while choosing) or active.
+  battleMode BattleMode @default(WAIT)
+
+  // Lifetime stats (drive character unlocks).
+  runs           Int @default(0)
+  wins           Int @default(0)
+  battles        Int @default(0)
+  eaten          Int @default(0)
+  steals         Int @default(0)
+  bestWorld      Int @default(0)
+  highestTierWon Int @default(-1)
+
+  characters PlayerCharacter[]
+  stash      StashItem[]
+  bossKills  BossKill[]
+  runsList   Run[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("player_profile")
+}
+
+enum BattleMode {
+  WAIT
+  ACTIVE
+}
+
+/// How many times the player has beaten each boss (game-core enemy id, e.g. "garland").
+model BossKill {
+  id        String        @id @default(cuid())
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  enemyId   String
+  count     Int           @default(0)
+
+  @@unique([profileId, enemyId])
+  @@map("boss_kill")
+}
