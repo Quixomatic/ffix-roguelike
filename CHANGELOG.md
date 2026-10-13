@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.5] - 2026-10-13
+
+The run layer: Mario World–style maps, depth-scaled encounters, loot and permanent progression rules.
+
+### Added
+- World map generator (`run/map.ts`): nine columns from the start to the boss castle, 1–3 stages per column with branching/merging paths. Early stages are plain battles; elites, treasure, shops and "?" events appear deeper in; the stage before every castle is a Moogle.
+- Depth-scaled encounters (`run/loot.ts`): each world's groups are sorted by threat and picked from a window that slides with map depth — weak monsters first, the toughest just before the boss.
+- Rewards: FF9-style EXP split among survivors, AP to every ability on equipped gear (permanent mastery), gil, drops and steals; elites and bosses offer a pick of 3 gear from the world's FF9 price band. Treasure, shops (consumables + gear) and five events (Chocobo's Forest, Tantalus, Stiltzkin, a suspicious chest, a ruined shrine).
+- Run state machine (`run/run.ts`): pure, JSON-serializable transitions — move, battle (verified by replaying the input log), claim reward, buy, event choice, Moogle (full heal + mail gear home), next world, equip, support abilities, out-of-battle items, abandon.
+- Permanence rules: levels/EXP/AP always kept; gear kept if mailed home at a Moogle or if the run is won; half the gil is banked on a loss.
+- Profile + unlocks (`meta/profile.ts`): start with Zidane, Vivi and Steiner; unlock Garnet (defeat Garland), Freya (15 battles), Quina (3 runs), Eiko (defeat Golbez), Amarant (20 steals), Beatrix (defeat Kefka), Blank (win on Tier 1+); winning a tier unlocks the next.
+- `optimizeParty()` best-gear helper, and tests: map reachability, deterministic runs, forged-log rejection, gear loss on defeat, and multi-run progression.
+
 ## [0.1.4] - 2026-10-13
 
 The first playable screen: a practice battle at `/battle`, running the real ATB engine in the browser.
