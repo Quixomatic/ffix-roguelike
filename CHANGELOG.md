@@ -2,6 +2,26 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.8] - 2026-10-13
+
+The game, end to end in the browser — and progression reworked to start with Zidane alone.
+
+### Added
+- **Camp** (`/play`): roster cards with level, HP/MP and gear, party picker (up to 4), difficulty tier, Begin/Continue run, stash, lifetime stats, and "???" cards with unlock hints.
+- **Loadout** at camp: pre-equip stash gear into the slots a character has unlocked by level.
+- **Run screen** (`/run`), driven by the server's run state: a Super Mario World–style Phaser overworld (stages on dotted paths, the party walking between them, pulsing reachable stages, boss castle, hover descriptions), battles (the input log goes to the server for replay-verification), rewards with level-ups and newly mastered abilities, gear picks, treasure, shop, Moogle, events, world-clear and run-over screens (gil banked, gear lost, new unlocks).
+- **Party panel** in a run: HP/MP, gil, items, Optimize gear, and a character sheet — stats, equipment swapping (flags gear not yet mailed home), out-of-battle items, support abilities with magic-stone budget and AP progress, active abilities with AP progress.
+- Header: Play, Practice Battle.
+
+### Changed
+- **You start with only Zidane.** Companions unlock one at a time: Vivi (win 3 battles), Steiner (finish a run), Garnet (defeat Garland), Freya (40 battles), Quina (6 runs), Amarant (15 steals), Eiko (defeat Golbez), then Beatrix and Blank.
+- **Gear slots unlock with level for pre-equipping**: weapon Lv1, body Lv3, head Lv6, arm Lv10, accessory Lv15. New characters start with only their FF9 starting weapon.
+- **Only pre-equipped gear comes into a run** — the stash stays at camp; everything else drops along the way. Kept gear is added to the stash at the end.
+- Encounter size follows party size (a lone hero meets one monster; a full party up to five).
+
+### Verification
+- A 15-run simulation shows a roguelite curve: one new companion every few runs, levels climbing (Lv 1 → 18), the stash growing, and the first world-3 runs around run 13.
+
 ## [0.1.7] - 2026-10-13
 
 Server-authoritative game API: profiles and runs over tRPC, persisted in Postgres.

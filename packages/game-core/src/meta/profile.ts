@@ -5,7 +5,7 @@
 import { getItem, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import type { RunOutcome } from "../run/run";
-import { activeSupports, canEquip, newBuild, type CharacterBuild } from "../stats";
+import { activeSupports, canEquip, newBuild, PRE_EQUIP_LEVELS, preEquipUnlocked, type CharacterBuild } from "../stats";
 
 export interface ProfileStats {
   runs: number;
@@ -28,7 +28,7 @@ export interface Profile {
   maxTier: number;
 }
 
-export const STARTING_CAST = ["zidane", "vivi", "steiner"];
+export const STARTING_CAST = ["zidane"];
 export const MAX_TIER = 5;
 
 export interface UnlockRule {
@@ -37,12 +37,15 @@ export interface UnlockRule {
   check(p: Profile): boolean;
 }
 
+/** In unlock order: the roster grows one companion at a time. */
 export const UNLOCKS: UnlockRule[] = [
+  { key: "vivi", hint: "Win 3 battles", check: (p) => p.stats.battles >= 3 },
+  { key: "steiner", hint: "Finish your first run", check: (p) => p.stats.runs >= 1 },
   { key: "garnet", hint: "Defeat Garland", check: (p) => (p.stats.bossKills.garland ?? 0) > 0 },
-  { key: "freya", hint: "Win 15 battles", check: (p) => p.stats.battles >= 15 },
-  { key: "quina", hint: "Finish 3 runs", check: (p) => p.stats.runs >= 3 },
+  { key: "freya", hint: "Win 40 battles", check: (p) => p.stats.battles >= 40 },
+  { key: "quina", hint: "Finish 6 runs", check: (p) => p.stats.runs >= 6 },
+  { key: "amarant", hint: "Steal 15 items", check: (p) => p.stats.steals >= 15 },
   { key: "eiko", hint: "Defeat Golbez", check: (p) => (p.stats.bossKills.golbez ?? 0) > 0 },
-  { key: "amarant", hint: "Steal 20 items", check: (p) => p.stats.steals >= 20 },
   { key: "beatrix", hint: "Defeat Kefka", check: (p) => (p.stats.bossKills.kefka ?? 0) > 0 },
   { key: "blank", hint: "Win a run on Tier 1 or higher", check: (p) => p.stats.highestTierWon >= 1 },
 ];
@@ -70,8 +73,8 @@ export interface RunReport {
 export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: number): RunReport {
   const p = structuredClone(profile);
   for (const b of outcome.builds) p.builds[b.key] = b;
-  // The stash brought into the run is fully represented in the outcome (equipped + unequipped).
-  p.stash = { ...outcome.stash };
+  // The stash stayed at camp; add whatever the run brought home.
+  for (const [id, n] of Object.entries(outcome.stash)) p.stash[Number(id)] = (p.stash[Number(id)] ?? 0) + n;
   p.gil += outcome.gilEarned;
   p.stats.runs++;
   p.stats.battles += outcome.stats.battles;
@@ -93,13 +96,6 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   return { profile: p, newlyUnlocked, tierUnlocked };
 }
 
-/**
- * Stash items not currently equipped by party members who'll be brought into a run. Characters left at home
- * keep their gear on.
- */
-export function runStash(profile: Profile): Record<number, number> {
-  return { ...profile.stash };
-}
 
 export class ProfileError extends Error {}
 
@@ -109,6 +105,7 @@ export function equipFromStash(profile: Profile, key: string, slot: EquipSlot, i
   const build = p.builds[key];
   if (!build || !p.unlocked.includes(key)) throw new ProfileError("Character not available");
   if (itemId == null && slot === "weapon") throw new ProfileError("A weapon is required");
+  if (!preEquipUnlocked(build.level, slot)) throw new ProfileError(`Reach Lv ${PRE_EQUIP_LEVELS[slot]} to pre-equip that slot`);
   if (itemId != null) {
     if ((p.stash[itemId] ?? 0) <= 0) throw new ProfileError("You don't have that");
     if (!canEquip(key, getItem(itemId), slot)) throw new ProfileError("Can't equip that there");

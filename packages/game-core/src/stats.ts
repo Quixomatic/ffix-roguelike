@@ -76,13 +76,24 @@ export interface DerivedStats {
   gemsUsed: number;
 }
 
+/**
+ * Character level needed before a slot can be pre-equipped at camp. Gear found during a run can go in any
+ * slot; these unlocks are what let you start each run a little stronger.
+ */
+export const PRE_EQUIP_LEVELS: Record<EquipSlot, number> = { weapon: 1, armor: 3, head: 6, wrist: 10, accessory: 15 };
+
+export function preEquipUnlocked(level: number, slot: EquipSlot): boolean {
+  return level >= PRE_EQUIP_LEVELS[slot];
+}
+
+/** A fresh character: their FF9 starting weapon only (other slots unlock with levels). */
 export function newBuild(key: string, level = 1): CharacterBuild {
   const data = getCharacter(key);
   return {
     key,
     level,
     exp: expForLevel(level),
-    equipment: { ...data.defaultEquipment },
+    equipment: { weapon: data.defaultEquipment.weapon, head: null, wrist: null, armor: null, accessory: null },
     ap: {},
     supports: [],
     backRow: data.backRow,

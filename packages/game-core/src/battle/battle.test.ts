@@ -80,8 +80,8 @@ describe("balance (auto AI, default gear)", () => {
   test("world 1 normal fights are winnable at Lv4", () => {
     expect(winRate(4, WORLDS[0]!.encounters)).toBeGreaterThan(0.8);
   });
-  test("Garland is risky at Lv4 and beatable at Lv7", () => {
+  test("Garland is risky at Lv4 and beatable at Lv9 (weapon-only gear)", () => {
     expect(winRate(4, [WORLDS[0]!.boss], 20)).toBeLessThan(0.8);
-    expect(winRate(7, [WORLDS[0]!.boss], 20)).toBeGreaterThan(0.6);
+    expect(winRate(9, [WORLDS[0]!.boss], 20)).toBeGreaterThan(0.5);
   });
 });

@@ -21,6 +21,7 @@ import {
   EQUIP_SLOTS,
   gearAbilities,
   levelForExp,
+  preEquipUnlocked,
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
@@ -32,7 +33,7 @@ export class RunError extends Error {}
 export interface GearInstance {
   uid: number;
   itemId: number;
-  /** Kept even if the run is lost (brought from the stash, or mailed home at a Moogle). */
+  /** Kept even if the run is lost (pre-equipped at camp, or mailed home at a Moogle). */
   secured: boolean;
   holder: { key: string; slot: EquipSlot } | null;
 }
@@ -91,9 +92,8 @@ export interface RunState {
 export interface StartRunInput {
   seed: string;
   tier: number;
+  /** Party builds as saved at camp. Gear in slots the character hasn't unlocked yet is left at camp. */
   party: CharacterBuild[];
-  /** Unequipped gear the player owns: itemId → count. Brought along so it can be equipped mid-run. */
-  stash: Record<number, number>;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -152,12 +152,16 @@ export function startRun(input: StartRunInput): RunState {
     const build = structuredClone(b);
     for (const slot of EQUIP_SLOTS) {
       const id = build.equipment[slot];
-      if (id != null) gear.push({ uid: uid++, itemId: id, secured: true, holder: { key: build.key, slot } });
+      if (id == null) continue;
+      if (!preEquipUnlocked(build.level, slot)) {
+        build.equipment[slot] = null;
+        continue;
+      }
+      gear.push({ uid: uid++, itemId: id, secured: true, holder: { key: build.key, slot } });
     }
     const st = deriveStats(build);
     return { build, hp: st.maxHp, mp: st.maxMp };
   });
-  for (const [id, count] of Object.entries(input.stash)) for (let i = 0; i < count; i++) gear.push({ uid: uid++, itemId: Number(id), secured: true, holder: null });
   const map = generateWorldMap(rng.fork("map0"), 0);
   return {
     version: 1,
@@ -208,7 +212,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "battle":
     case "elite":
     case "boss":
-      return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind), rng);
+      return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
     case "treasure":
       run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10), gil: rng.int(80, 160) * (run.world + 1) };
       return;
@@ -537,7 +541,7 @@ export function useConsumable(run: RunState, itemId: number, key: string): RunSt
 export interface RunOutcome {
   won: boolean;
   builds: CharacterBuild[];
-  /** Unequipped gear kept: itemId → count. */
+  /** Gear to add to the stash: itemId → count. */
   stash: Record<number, number>;
   gearLost: number[];
   gilEarned: number;
@@ -553,7 +557,11 @@ export function runOutcome(run: RunState): RunOutcome {
   const lost = run.gear.filter((g) => !(g.secured || won));
   const builds = run.party.map((m) => {
     const b = structuredClone(m.build);
-    for (const slot of EQUIP_SLOTS) b.equipment[slot] = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot)?.itemId ?? null;
+    for (const slot of EQUIP_SLOTS) {
+      const inst = kept.find((g) => g.holder?.key === b.key && g.holder.slot === slot);
+      if (inst && !preEquipUnlocked(b.level, slot)) inst.holder = null;
+      b.equipment[slot] = inst?.holder ? inst.itemId : null;
+    }
     b.supports = b.supports.filter((id) => activeSupports(b).has(id));
     return b;
   });

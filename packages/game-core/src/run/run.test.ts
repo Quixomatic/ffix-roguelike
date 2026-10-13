@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import { autoBattle } from "../battle/autoplay";
 import { BattleEngine } from "../battle/engine";
-import { applyRunOutcome, newProfile, runStash } from "../meta/profile";
+import { applyRunOutcome, newProfile } from "../meta/profile";
 import { Rng } from "../rng";
 import { generateWorldMap, getNode, MAP_COLUMNS } from "./map";
 import { optimizeParty } from "./optimize";
@@ -38,7 +38,7 @@ describe("map", () => {
 /** Play a whole run with simple choices; returns the final state. */
 function autoRun(seed: string, partyKeys = ["zidane", "vivi", "steiner"], levels = 1): RunState {
   const profile = newProfile();
-  let run = startRun({ seed, tier: 0, party: partyKeys.map((k) => ({ ...profile.builds[k]!, level: levels })), stash: runStash(profile) });
+  let run = startRun({ seed, tier: 0, party: partyKeys.map((k) => ({ ...profile.builds[k]!, level: levels })) });
   const rng = Rng.fromSeed(`choices:${seed}`);
   for (let step = 0; step < 400 && run.phase.kind !== "over"; step++) {
     const p = run.phase;
@@ -103,7 +103,7 @@ describe("run", () => {
 
   test("forged battle logs are rejected", () => {
     const profile = newProfile();
-    let run = startRun({ seed: "forge", tier: 0, party: [profile.builds.zidane!], stash: {} });
+    let run = startRun({ seed: "forge", tier: 0, party: [profile.builds.zidane!] });
     run = moveTo(run, getNode(run.map, run.position).next[0]!);
     if (run.phase.kind !== "battle") return;
     expect(() => finishBattle(run, [{ tick: 0, command: { actorId: "p0", kind: "attack", targetIds: ["e0"] } }])).toThrow();
@@ -111,7 +111,8 @@ describe("run", () => {
 
   test("unsecured gear is lost on defeat; secured gear is kept", () => {
     const profile = newProfile();
-    let run = startRun({ seed: "loss", tier: 0, party: [profile.builds.zidane!], stash: { 2: 1 } });
+    let run = startRun({ seed: "loss", tier: 0, party: [profile.builds.zidane!] });
+    run.gear.push({ uid: 998, itemId: 2, secured: true, holder: null });
     run.gear.push({ uid: 999, itemId: 3, secured: false, holder: null });
     run.phase = { kind: "over", won: false };
     const out = runOutcome(run);
@@ -125,7 +126,7 @@ describe("run", () => {
     const reached: number[] = [];
     for (let i = 0; i < 4; i++) {
       const keys = profile.unlocked.slice(0, 4);
-      let run = startRun({ seed: `meta-${i}`, tier: 0, party: keys.map((k) => profile.builds[k]!), stash: runStash(profile) });
+      let run = startRun({ seed: `meta-${i}`, tier: 0, party: keys.map((k) => profile.builds[k]!) });
       run = autoRunFrom(run, `meta-${i}`);
       const report = applyRunOutcome(profile, runOutcome(run), 0);
       profile = report.profile;

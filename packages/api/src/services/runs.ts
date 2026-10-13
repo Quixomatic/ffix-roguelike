@@ -8,7 +8,6 @@ import {
   ProfileError,
   RunError,
   runOutcome,
-  runStash,
   startRun as coreStartRun,
   type InputRecord,
   type RunState,
@@ -37,7 +36,7 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   const seed = crypto.randomUUID();
   let state: RunState;
   try {
-    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), stash: runStash(profile) });
+    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!) });
   } catch (e) {
     toTrpcError(e);
   }
