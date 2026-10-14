@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.23] - 2026-10-14
+
+A detailed root README, and local project docs.
+
+### Added
+- **`README.md`** — what the game is and plays like; a feature tour (FF9 battle formulas, journeys and the overworld, stages, characters/gear/abilities, Completion Points, the gear unlock pool, legendary gear, achievements, camp); architecture and server-authoritative replay; where the FF9 data comes from; repository layout; setup; scripts; the `pnpm sim` simulator; migrations; tests; versioning; status and roadmap; an IP note.
+
+### Internal
+- `.docs/` (git-ignored, like ChannelGuide): overview, vision, game design, architecture, content & data, development, a design-decision log with James's words, and a detailed session summary in `.docs/summaries/`.
+
 ## [0.1.22] - 2026-10-14
 
 FF9's story, part one: five journeys through Disc 1, each recruiting the next party member.
