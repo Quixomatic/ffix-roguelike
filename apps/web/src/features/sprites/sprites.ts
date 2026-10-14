@@ -64,6 +64,10 @@ const THEMES: Record<string, [number, number, number]> = {
   grassland: [0x7ec0ee, 0x4f9a3a, 0x2f6a24],
   castle: [0x3a3f6a, 0x6a6a7a, 0x3a3a44],
   ruin: [0x6a2a2a, 0x7a5a3a, 0x3a2a1a],
+  forest: [0x2a4a3a, 0x2f6a2a, 0x1a3a1a],
+  ice: [0x9ac8e8, 0xc8e0f0, 0x7aa0c0],
+  cave: [0x2a2420, 0x5a4a3a, 0x2a2018],
+  marsh: [0x6a8a7a, 0x5a7a4a, 0x2a4a3a],
 };
 
 export function drawBattleBackground(scene: Phaser.Scene, theme: string, w: number, h: number) {

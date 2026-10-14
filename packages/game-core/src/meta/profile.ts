@@ -9,7 +9,7 @@
  */
 import { getItem, itemByName, items, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
-import { getJourney, JOURNEYS, journeyUnlocked, WORLDS } from "../content/worlds";
+import { getArea, getJourney, JOURNEYS, journeyUnlocked, WORLDS } from "../content/worlds";
 import { baseGear, effectivePrice, isGear } from "../run/loot";
 import type { RunOutcome } from "../run/run";
 import {
@@ -67,13 +67,11 @@ export interface UnlockRule {
   check(p: Profile): boolean;
 }
 
-/** In unlock order: the roster grows one companion at a time. */
+/**
+ * Milestone unlocks — INTERIM, for characters whose story journey doesn't exist yet. Vivi, Steiner, Garnet, Freya
+ * and Quina join by clearing FF9 story journeys 1–5 (JourneyDef.unlocks).
+ */
 export const UNLOCKS: UnlockRule[] = [
-  { key: "vivi", hint: "Win 3 battles", check: (p) => p.stats.battles >= 3 },
-  { key: "steiner", hint: "Finish your first run", check: (p) => p.stats.runs >= 1 },
-  { key: "garnet", hint: "Defeat Garland", check: (p) => (p.stats.bossKills.garland ?? 0) > 0 },
-  { key: "freya", hint: "Win 40 battles", check: (p) => p.stats.battles >= 40 },
-  { key: "quina", hint: "Finish 6 runs", check: (p) => p.stats.runs >= 6 },
   { key: "amarant", hint: "Steal 15 items", check: (p) => p.stats.steals >= 15 },
   { key: "eiko", hint: "Defeat Golbez", check: (p) => (p.stats.bossKills.golbez ?? 0) > 0 },
   { key: "beatrix", hint: "Defeat Kefka", check: (p) => (p.stats.bossKills.kefka ?? 0) > 0 },
@@ -165,7 +163,9 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
     p.journeysCleared = [...new Set([...(p.journeysCleared ?? []), outcome.journey])];
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
-    if (outcome.builds.length === 1) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
+    // Solo wins only count on late-game journeys (final area tier 2+) — the early story is meant to be soloable.
+    const finalArea = getArea(getJourney(outcome.journey).areas.at(-1)!);
+    if (outcome.builds.length === 1 && finalArea.tier >= 2) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
     if (tier === p.maxTier && p.maxTier < MAX_TIER) {
       p.maxTier++;
       tierUnlocked = p.maxTier;
@@ -236,10 +236,10 @@ export const UNLOCK_PRICE_MULT = 2;
  * and isn't unlocked yet. Unlocking puts it into future runs' drops, shops and treasure for its world.
  */
 export function gearCatalog(profile: Profile): { itemId: number; price: number }[] {
-  const reached = Math.min(WORLDS.length, profile.stats.bestWorld + 1);
   const base = new Set(WORLDS.flatMap((w) => [...baseGear(w.index)]));
   const unlocked = new Set(profile.gearUnlocked ?? []);
-  const maxPrice = WORLDS[reached - 1]!.gearPrice[1];
+  // The best loot band among areas at or below the furthest progression tier reached.
+  const maxPrice = Math.max(...WORLDS.filter((w) => w.tier <= profile.stats.bestWorld).map((w) => w.gearPrice[1]));
   return items
     .filter((i) => isGear(i) && i.price > 0 && effectivePrice(i) <= maxPrice && !base.has(i.id) && !unlocked.has(i.id) && !LEGENDARY_ITEMS.has(i.id))
     .sort((a, b) => effectivePrice(a) - effectivePrice(b))

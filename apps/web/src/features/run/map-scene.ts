@@ -57,6 +57,10 @@ const THEME_COLORS: Record<string, { ground: number; dark: number; path: number;
   grassland: { ground: 0x5aa83a, dark: 0x3d7a28, path: 0xe0c890, accent: 0x7ec0ee },
   castle: { ground: 0x6a7a8a, dark: 0x4a5462, path: 0xc8c0a8, accent: 0x3a3f6a },
   ruin: { ground: 0x8a6a3a, dark: 0x5a4224, path: 0xd8b880, accent: 0x6a2a2a },
+  forest: { ground: 0x2f6a2a, dark: 0x1c4a1c, path: 0xc8b070, accent: 0x3a5a3a },
+  ice: { ground: 0xbcd8e8, dark: 0x8ab0c8, path: 0x6a8aa8, accent: 0x4a6a9a },
+  cave: { ground: 0x5a4a3a, dark: 0x3a2e24, path: 0xb89a6a, accent: 0x2a2a3a },
+  marsh: { ground: 0x5a7a4a, dark: 0x3a5a3a, path: 0xc8b890, accent: 0x4a8a8a },
 };
 
 const toPx = (n: { x: number; y: number }) => ({ x: (n.x / 100) * MAP_W, y: 60 + (n.y / 100) * (MAP_H - 120) });

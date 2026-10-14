@@ -129,6 +129,9 @@ export interface StartRunInput {
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
+/** The current area's progression tier (0 early, 1 mid, 2 late) — scales events, treasure gil and specials. */
+const tierOf = (run: RunState) => WORLDS[run.world]?.tier ?? 0;
+
 function rngOf(run: RunState) {
   return new Rng(run.rng);
 }
@@ -261,7 +264,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "boss":
       return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
     case "treasure":
-      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10, run.unlockedGear), gil: rng.int(80, 160) * (run.world + 1) };
+      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10, run.unlockedGear), gil: rng.int(80, 160) * (tierOf(run) + 1) };
       return;
     case "shop": {
       const visit = shopStock(rng, run.world, partyKeys(run));
@@ -282,7 +285,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
       run.phase = { kind: "moogle" };
       return;
     case "event": {
-      const pool = EVENTS.filter((e) => e.worlds.includes(run.world));
+      const pool = EVENTS.filter((e) => e.worlds.includes(tierOf(run)));
       run.phase = { kind: "event", eventId: rng.pick(pool).id, result: null };
       return;
     }
@@ -557,7 +560,7 @@ export function chooseEvent(run: RunState, index: number): RunState {
 function applyOutcome(run: RunState, o: EventOutcome, rng: Rng) {
   switch (o.type) {
     case "gil":
-      run.gil += o.amount * (run.world + 1);
+      run.gil += o.amount * (tierOf(run) + 1);
       return;
     case "heal":
       healParty(run, o.percent, false);
@@ -573,7 +576,7 @@ function applyOutcome(run: RunState, o: EventOutcome, rng: Rng) {
       return;
     case "exp": {
       const alive = run.party.filter((m) => m.hp > 0);
-      applyRewards(run, { exp: o.amount * (run.world + 1) * alive.length, ap: 0, gil: 0, items: [] }, emptyBattle());
+      applyRewards(run, { exp: o.amount * (tierOf(run) + 1) * alive.length, ap: 0, gil: 0, items: [] }, emptyBattle());
       return;
     }
     case "battle":
@@ -707,7 +710,7 @@ export function runOutcome(run: RunState): RunOutcome {
     foundGear: [...new Set(run.gear.filter((g) => !g.secured).map((g) => g.itemId))],
     gilEarned: won ? run.gil : Math.floor(run.gil / 2),
     stats: run.stats,
-    worldReached: run.world,
+    worldReached: WORLDS[run.world]?.tier ?? 0,
     journey: run.journey,
   };
 }

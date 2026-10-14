@@ -92,6 +92,17 @@ export const ENEMY_ACTIONS: BattleAction[] = [
   move(1033, "Tsunami", { script: 9, targets: "allEnemy", power: 50, elements: ["water"], mp: 30, magic: true }),
   move(1034, "Barrier", { script: 103, targets: "self", rate: 255, statuses: ["protect", "shell"], mp: 10, magic: true }),
   move(1035, "Hasteja", { script: 103, targets: "allAlly", rate: 255, statuses: ["haste"], mp: 20, magic: true }),
+  // ── FF9 enemy moves (Disc 1) ──
+  move(1036, "Pollen", { script: 11, targets: "allEnemy", rate: 40, statuses: ["blind"], mp: 6, magic: true }),
+  move(1037, "Silent Voice", { script: 11, targets: "allEnemy", rate: 45, statuses: ["silence"], mp: 10, magic: true }),
+  move(1038, "Crash", { power: 10 }),
+  move(1039, "Electrocute", { script: 9, targets: "allEnemy", power: 18, elements: ["thunder"], mp: 8, magic: true }),
+  move(1040, "Absorb", { script: 16, power: 14, mp: 4, magic: true }),
+  move(1041, "Sword Drain", { script: SCRIPT.enemyPhysicalStatus, power: 4, rate: 30, statuses: ["silence"] }),
+  move(1042, "Stinger", { script: SCRIPT.enemyPhysicalStatus, power: 3, rate: 35, statuses: ["poison"] }),
+  move(1043, "Freeze", { script: 11, rate: 30, statuses: ["freeze"], mp: 8, magic: true }),
+  move(1044, "Heave", { power: 8, targets: "allEnemy" }),
+  move(1045, "Tsunami Wave", { script: 9, targets: "allEnemy", power: 26, elements: ["water"], mp: 14, magic: true }),
 ];
 
 const byId = new Map(ENEMY_ACTIONS.map((a) => [a.id, a]));

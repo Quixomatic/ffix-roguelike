@@ -209,7 +209,7 @@ describe("journeys", () => {
   test("each map's boss leads to the next map; the last map's boss ends the journey", async () => {
     const { applyRunOutcome, availableJourneys } = await import("../meta/profile");
     const profile = newProfile();
-    expect(availableJourneys(profile)).toEqual(["echoes"]);
+    expect(availableJourneys(profile)).toEqual(["evil-forest"]);
     const bossWin = { kind: "rewards" as const, summary: { exp: 0, gil: 0, ap: 0, items: [], levelUps: [], mastered: [], members: [] }, gearChoices: [], boss: true };
     let run = startRun({ seed: "j", tier: 0, party: [profile.builds.zidane!], journey: "echoes" });
     for (let area = 0; area < 2; area++) {

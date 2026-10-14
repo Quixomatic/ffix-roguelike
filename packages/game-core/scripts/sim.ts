@@ -4,7 +4,7 @@
  *
  *   pnpm sim battle  --party zidane:5,vivi:5 --enemies goblin,wolf [--world 0] [--seed 1] [--auto] [--script cmds.txt]
  *   pnpm sim balance [--world 0] [--levels 2,4,7] [--party zidane,vivi,steiner] [--n 40]
- *   pnpm sim run     [--journey echoes] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
+ *   pnpm sim run     [--journey evil-forest] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
  *   pnpm sim runs    [--count 20] [--seed meta]
  *
  * `battle` is interactive: when a party member is ready you type a command (or pipe/script them):
@@ -24,6 +24,7 @@ import {
   applyRunOutcome,
   ATB_MAX,
   availableJourneys,
+  JOURNEYS,
   autoBattle,
   autoCommand,
   BattleEngine,
@@ -349,7 +350,7 @@ function runCmd() {
   const slots = list("slots", "");
   const party = keys.map((k) => ({ ...profile.builds[k]!, level: num("level", 1), unlockedSlots: slots as never }));
   const seed = args.seed ?? `run-${Date.now()}`;
-  const run = playRun(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? "echoes" }), seed, true);
+  const run = playRun(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? JOURNEYS[0]!.id }), seed, true);
   const won = run.phase.kind === "over" && run.phase.won;
   console.log(c.bold(`\n${won ? "WON" : "LOST"} in ${WORLDS[run.world]!.name} · ${run.stats.battles} wins · levels ${run.party.map((m) => `${m.build.key}:${m.build.level}`).join(" ")}`));
 }
@@ -384,7 +385,10 @@ function runsCmd() {
     profile = spendCp(profile);
     const keys = profile.unlocked.slice(0, 4);
     const seed = `${base}-${i}`;
-    const journey = availableJourneys(profile).at(-1)!;
+    // Next uncleared story journey first, then any uncleared one, else the latest.
+    const open = availableJourneys(profile);
+    const fresh = open.filter((id) => !(profile.journeysCleared ?? []).includes(id));
+    const journey = fresh.find((id) => JOURNEYS.find((j) => j.id === id)?.category === "story") ?? fresh[0] ?? open.at(-1)!;
     const run = playRun(startRun({ seed, tier: 0, party: keys.map((k) => profile.builds[k]!), unlockedGear: profile.gearUnlocked, journey }), seed, false);
     const startLv = keys.map((k) => profile.builds[k]!.level).join("/");
     const peak = Math.max(...run.party.map((m) => m.build.level));
@@ -392,7 +396,7 @@ function runsCmd() {
     profile = rep.profile;
     const won = run.phase.kind === "over" && run.phase.won;
     console.log(
-      `run ${String(i + 1).padStart(2)}: ${keys.join("/").padEnd(28)} start ${startLv.padEnd(12)} peak ${String(peak).padEnd(3)} ${WORLDS[run.world]!.name.padEnd(14)}${won ? c.green(" WON") : "    "} | CP +${Object.values(rep.points).join("/")} | gil ${profile.gil} | slots ${keys.map((k) => 1 + (profile.builds[k]!.unlockedSlots ?? []).length).join("/")}${rep.newlyUnlocked.length ? c.yellow(` | +${rep.newlyUnlocked.join(",")}`) : ""}${rep.achievements.length ? c.cyan(` | 🏆 ${rep.achievements.join(",")}`) : ""}`,
+      `run ${String(i + 1).padStart(2)}: ${keys.join("/").padEnd(28)} start ${startLv.padEnd(12)} peak ${String(peak).padEnd(3)} ${WORLDS[run.world]!.name.padEnd(22)}${won ? c.green(" WON") : "    "} | CP +${Object.values(rep.points).join("/")} | gil ${profile.gil} | slots ${keys.map((k) => 1 + (profile.builds[k]!.unlockedSlots ?? []).length).join("/")}${rep.newlyUnlocked.length ? c.yellow(` | +${rep.newlyUnlocked.join(",")}`) : ""}${rep.achievements.length ? c.cyan(` | 🏆 ${rep.achievements.join(",")}`) : ""}`,
     );
   }
   console.log(c.dim(`\nunlocked gear: ${(profile.gearUnlocked ?? []).length} · achievements: ${(profile.achievements ?? []).length} · items in game: ${items.length}`));

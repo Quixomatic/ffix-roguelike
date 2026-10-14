@@ -88,7 +88,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     ([key, name]): AchievementDef => ({
       id: `solo-${key}`,
       name: `${name} Alone`,
-      description: `Win a run with ${name} as your only party member (+25 CP for ${name})`,
+      description: `Clear a late-game journey with ${name} as your only party member (+25 CP for ${name})`,
       category: "challenge",
       reward: { gil: 8000, cp: 25, cpFor: key },
       check: (p) => solo(p, key),

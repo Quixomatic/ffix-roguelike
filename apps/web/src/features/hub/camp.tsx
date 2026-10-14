@@ -119,7 +119,17 @@ export function Camp() {
                   <div className="text-sm opacity-80">
                     {unlocked ? j.subtitle : `Clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"} first`}
                   </div>
-                  {unlocked && <div className="text-xs text-[#c8d0ff]">End boss: {area.boss.map((id) => getEnemy(id).name).join(" & ")}</div>}
+                  {unlocked && (
+                    <div className="text-xs text-[#c8d0ff]">
+                      {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {area.boss.map((id) => getEnemy(id).name).join(" & ")}
+                    </div>
+                  )}
+                  {unlocked && j.unlocks?.length ? (
+                    <div className="text-xs text-pink-200">
+                      {cleared ? "Joined: " : "Clear to recruit: "}
+                      {j.unlocks.map((k) => getCharacter(k).name).join(", ")}
+                    </div>
+                  ) : null}
                 </button>
               );
             })}
@@ -190,7 +200,7 @@ export function Camp() {
 
       <div className="ff-window p-3 text-sm leading-relaxed">
         <div className="ff-title mb-1">How runs work</div>
-        Pick a journey: cross its map — fodder, a fortress semi-boss halfway, and a hard boss at the castle. Clearing a journey unlocks the next. You start alone with Zidane;
+        Pick a journey: a campaign of overworld maps, each ending in a boss castle — the last castle holds the journey's final boss. Story journeys follow FF9 and recruit a new party member when cleared. You start alone with Zidane;
         companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
         levels reset and everyone who came earns Completion Points (+1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win) — spend them here on a
         higher start level or on unlocking equipment slots (each starts runs with that character's FF9 starter gear, and can hold what they

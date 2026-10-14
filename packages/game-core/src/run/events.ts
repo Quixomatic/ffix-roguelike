@@ -21,7 +21,7 @@ export interface EventDef {
   id: string;
   title: string;
   text: string;
-  /** Worlds this event can appear in. */
+  /** Progression tiers (area.tier) this event can appear in. */
   worlds: number[];
   choices: EventChoice[];
 }

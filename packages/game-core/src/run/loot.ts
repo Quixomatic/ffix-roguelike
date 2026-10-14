@@ -96,9 +96,16 @@ export function gearPool(world: number, partyKeys: string[], unlocked: readonly 
   );
 }
 
+/** The area whose loot band is the next step up from this one (itself if none is higher). */
+export function nextTierArea(world: number): number {
+  const top = WORLDS[world]!.gearPrice[1];
+  const higher = WORLDS.filter((w) => w.gearPrice[1] > top).sort((a, b) => a.gearPrice[1] - b.gearPrice[1])[0];
+  return higher?.index ?? world;
+}
+
 /** Pick `count` distinct gear items, weighted toward the cheaper end (better gear is rarer). */
 export function rollGear(rng: Rng, world: number, partyKeys: string[], count: number, bonus = 0, unlocked: readonly number[] = []): number[] {
-  const pool = gearPool(Math.min(WORLDS.length - 1, world + (bonus > 0 && rng.chance(bonus) ? 1 : 0)), partyKeys, unlocked);
+  const pool = gearPool(bonus > 0 && rng.chance(bonus) ? nextTierArea(world) : world, partyKeys, unlocked);
   const out: number[] = [];
   const [lo, hi] = WORLDS[world]!.gearPrice;
   for (let i = 0; i < count && pool.length; i++) {

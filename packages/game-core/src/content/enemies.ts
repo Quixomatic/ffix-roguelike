@@ -12,7 +12,7 @@ export interface EnemyDef {
   id: string;
   name: string;
   /** Which game it comes from (for flavour / sprite sourcing). */
-  origin: "FF1" | "FF2" | "FF3" | "FF4" | "FF5" | "FF6";
+  origin: "FF1" | "FF2" | "FF3" | "FF4" | "FF5" | "FF6" | "FF9";
   family: EnemyFamily;
   level: number;
   sprite: string;
@@ -246,6 +246,64 @@ export const ENEMIES: EnemyDef[] = [
       use(1035, 4, { hpBelow: 75, once: true }),
     ],
     steal: ["Elixir", "Phoenix Pinion", "Ribbon", "Robe of Lords"], drops: [{ item: "Elixir", chance: 100 }],
+  },
+  // ══ FF9 — Disc 1 ════════════════════════════════════════════════════════
+  // Fodder
+  { id: "fang", name: "Fang", origin: "FF9", family: "beast", level: 2, sprite: "enemy/fang", mult: { spd: 1.2, hp: 0.8 }, ai: [atk(3), use(1001, 2)], steal: ["Potion"], drops: [{ item: "Potion", chance: 25 }] },
+  { id: "mu", name: "Mu", origin: "FF9", family: "beast", level: 3, sprite: "enemy/mu", ai: [atk(3), use(1021, 1)], steal: ["Potion", "Eye Drops"], drops: [{ item: "Potion", chance: 25 }] },
+  { id: "dendrobium", name: "Dendrobium", origin: "FF9", family: "bug", level: 3, sprite: "enemy/dendrobium", weak: ["fire"], ai: [atk(2), use(1036, 1)], steal: ["Eye Drops"], drops: [{ item: "Eye Drops", chance: 30 }] },
+  { id: "hedgehog-pie", name: "Hedgehog Pie", origin: "FF9", family: "beast", level: 4, sprite: "enemy/hedgehog-pie", mult: { def: 1.3 }, ai: [atk(3), use(1003, 1)], steal: ["Potion"], drops: [{ item: "Potion", chance: 30 }], eatTeaches: "Pumpkin Head" },
+  { id: "python", name: "Python", origin: "FF9", family: "beast", level: 5, sprite: "enemy/python", ai: [atk(2), use(1004, 2)], steal: ["Antidote"], drops: [{ item: "Antidote", chance: 40 }] },
+  { id: "ice-flan", name: "Flan", origin: "FF9", family: "amorphous", level: 5, sprite: "enemy/flan", mult: { def: 3, mdef: 0.5 }, weak: ["fire"], absorb: ["ice"], ai: [atk(2), use(ff9("Blizzard"), 2)], steal: ["Potion"], drops: [{ item: "Potion", chance: 30 }] },
+  { id: "wyerd", name: "Wyerd", origin: "FF9", family: "devil", level: 6, sprite: "enemy/wyerd", mult: { mag: 1.2 }, weak: ["fire"], ai: [atk(2), use(ff9("Blizzard"), 2), use(ff9("Silence"), 1)], steal: ["Echo Screen", "Ether"], drops: [{ item: "Echo Screen", chance: 30 }] },
+  { id: "cave-imp", name: "Cave Imp", origin: "FF9", family: "devil", level: 6, sprite: "enemy/cave-imp", mult: { spd: 1.15 }, ai: [atk(3), use(1002, 1)], steal: ["Potion", "Hi-Potion"], drops: [{ item: "Potion", chance: 35 }] },
+  { id: "ghost", name: "Ghost", origin: "FF9", family: "undead", level: 7, sprite: "enemy/ghost", weak: ["fire", "holy"], absorb: ["shadow"], statusImmune: ["poison", "venom", "death"], ai: [atk(2), use(1040, 2)], steal: ["Phoenix Down", "Ether"], drops: [{ item: "Phoenix Down", chance: 20 }] },
+  { id: "ladybug", name: "Ladybug", origin: "FF9", family: "bug", level: 7, sprite: "enemy/ladybug", mult: { spd: 1.3, hp: 0.7, eva: 2 }, weak: ["wind"], ai: [atk(3), use(1042, 1)], steal: ["Antidote"], drops: [{ item: "Antidote", chance: 30 }] },
+  { id: "vice", name: "Vice", origin: "FF9", family: "devil", level: 8, sprite: "enemy/vice", mult: { spd: 1.2 }, ai: [atk(3), use(ff9("Fire"), 1)], steal: ["Hi-Potion", "Ether"], drops: [{ item: "Hi-Potion", chance: 20 }] },
+  { id: "goblin-mage", name: "Goblin Mage", origin: "FF9", family: "human", level: 9, sprite: "enemy/goblin-mage", mult: { mag: 1.3, hp: 0.9 }, ai: [atk(1), use(ff9("Fire"), 2), use(ff9("Blizzard"), 2), use(ff9("Thunder"), 2)], steal: ["Ether"], drops: [{ item: "Ether", chance: 25 }], eatTeaches: "Goblin Punch" },
+  { id: "axe-beak", name: "Axe Beak", origin: "FF9", family: "bird", level: 10, sprite: "enemy/axe-beak", weak: ["wind"], ai: [atk(3), use(1023, 1)], steal: ["Hi-Potion"], drops: [{ item: "Hi-Potion", chance: 25 }] },
+  { id: "gigan-toad", name: "Gigan Toad", origin: "FF9", family: "amorphous", level: 11, sprite: "enemy/gigan-toad", mult: { hp: 1.3 }, weak: ["ice"], ai: [atk(2), use(1024, 2)], steal: ["Hi-Potion", "Ether"], drops: [{ item: "Ether", chance: 20 }] },
+  { id: "lizard-man", name: "Lizard Man", origin: "FF9", family: "beast", level: 12, sprite: "enemy/lizard-man", mult: { atk: 1.15 }, weak: ["ice"], ai: [atk(3), use(1002, 1)], steal: ["Hi-Potion"], drops: [{ item: "Hi-Potion", chance: 30 }] },
+  { id: "hornet", name: "Hornet", origin: "FF9", family: "bug", level: 12, sprite: "enemy/hornet", mult: { spd: 1.3, hp: 0.8 }, weak: ["wind"], ai: [atk(2), use(1042, 2)], steal: ["Antidote", "Hi-Potion"], drops: [{ item: "Antidote", chance: 40 }] },
+  { id: "black-mage", name: "Black Mage", origin: "FF9", family: "human", level: 13, sprite: "enemy/black-mage", mult: { mag: 1.4, hp: 0.9 }, ai: [use(ff9("Fira"), 2), use(ff9("Blizzara"), 2), use(ff9("Thundara"), 2), atk(1)], steal: ["Ether"], drops: [{ item: "Ether", chance: 30 }] },
+
+  // Map bosses ("gym leaders") and journey finals
+  {
+    id: "masked-man", name: "Masked Man", origin: "FF9", family: "human", level: 4, sprite: "boss/masked-man", boss: true, reward: 3,
+    mult: { hp: 3.2, atk: 1.1 }, statusImmune: BOSS_IMMUNE, ai: [atk(3), use(1038, 2, { every: 3, offset: 2 })], steal: ["Potion", "Wrist", "Mage Masher"], drops: [{ item: "Potion", chance: 100 }],
+  },
+  {
+    id: "prison-cage", name: "Prison Cage", origin: "FF9", family: "amorphous", level: 5, sprite: "boss/prison-cage", reward: 2,
+    mult: { hp: 2.4 }, weak: ["fire"], statusImmune: COMMON_DEATH, ai: [atk(2), use(1040, 2)], steal: ["Broadsword", "Leather Wrist"], drops: [{ item: "Hi-Potion", chance: 50 }],
+  },
+  {
+    id: "plant-brain", name: "Plant Brain", origin: "FF9", family: "amorphous", level: 7, sprite: "boss/plant-brain", boss: true, reward: 5,
+    mult: { hp: 4.2, mag: 1.2 }, weak: ["fire"], statusImmune: [...BOSS_IMMUNE, "blind"],
+    ai: [atk(2), use(ff9("Thunder"), 3), use(1036, 2, { every: 3 }), use(ff9("Fire"), 1, { hpBelow: 50 })], steal: ["Eye Drops", "Iron Helm"], drops: [{ item: "Hi-Potion", chance: 100 }],
+  },
+  {
+    id: "sealion", name: "Sealion", origin: "FF9", family: "beast", level: 8, sprite: "boss/sealion", boss: true, reward: 4,
+    mult: { hp: 3.4, mag: 1.15 }, weak: ["fire"], absorb: ["ice"], statusImmune: BOSS_IMMUNE,
+    ai: [atk(2), use(ff9("Blizzard"), 3), use(1011, 2, { every: 3, offset: 1 }), use(ff9("Blizzara"), 2, { hpBelow: 50 })], steal: ["Ether", "Mythril Dagger"], drops: [{ item: "Ether", chance: 100 }],
+  },
+  {
+    id: "black-waltz-1", name: "Black Waltz No.1", origin: "FF9", family: "human", level: 9, sprite: "boss/black-waltz-1", boss: true, reward: 5,
+    mult: { hp: 3.6, mag: 1.3 }, statusImmune: BOSS_IMMUNE,
+    ai: [atk(1), use(ff9("Fire"), 3), use(ff9("Blizzard"), 3), use(ff9("Sleep"), 1), use(ff9("Cure"), 4, { hpBelow: 45, aim: "self" })], steal: ["Remedy", "Silk Shirt"], drops: [{ item: "Ether", chance: 100 }],
+  },
+  {
+    id: "black-waltz-2", name: "Black Waltz No.2", origin: "FF9", family: "human", level: 11, sprite: "boss/black-waltz-2", boss: true, reward: 6,
+    mult: { hp: 4, mag: 1.35 }, statusImmune: BOSS_IMMUNE,
+    ai: [use(ff9("Fire"), 3), use(ff9("Blizzard"), 3), use(ff9("Thunder"), 3), use(ff9("Fira"), 3, { hpBelow: 50 }), use(ff9("Silence"), 1, { once: true })], steal: ["Steepled Hat", "Linen Cuirass"], drops: [{ item: "Ether", chance: 100 }],
+  },
+  {
+    id: "zaghnol", name: "Zaghnol", origin: "FF9", family: "beast", level: 13, sprite: "boss/zaghnol", boss: true, reward: 6,
+    mult: { hp: 4.3, atk: 1.2 }, statusImmune: BOSS_IMMUNE, ai: [atk(3), use(1044, 2, { every: 3 }), use(1039, 2), use(1020, 1)], steal: ["Hi-Potion", "Mythril Gloves"], drops: [{ item: "Hi-Potion", chance: 100 }],
+  },
+  {
+    id: "gizamaluke", name: "Gizamaluke", origin: "FF9", family: "dragon", level: 16, sprite: "boss/gizamaluke", boss: true, reward: 7,
+    mult: { hp: 4.6, mag: 1.3 }, weak: ["thunder"], absorb: ["water"], statusImmune: BOSS_IMMUNE,
+    ai: [atk(2), use(1045, 3), use(1037, 2, { every: 4, offset: 1 }), use(1038, 2, { hpBelow: 60 })], steal: ["Elixir", "Magus Hat", "Ice Staff"], drops: [{ item: "Elixir", chance: 100 }],
   },
 ];
 

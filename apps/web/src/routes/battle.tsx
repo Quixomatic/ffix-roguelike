@@ -4,7 +4,7 @@ import { z } from "zod";
 import { PracticeBattle } from "@/features/battle/practice-battle";
 
 const searchSchema = z.object({
-  world: z.number().int().min(0).max(2).catch(0),
+  world: z.number().int().min(0).max(63).catch(0),
   level: z.number().int().min(1).max(99).catch(5),
   encounter: z.number().int().min(0).catch(0),
 });

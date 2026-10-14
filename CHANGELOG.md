@@ -2,6 +2,29 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.22] - 2026-10-14
+
+FF9's story, part one: five journeys through Disc 1, each recruiting the next party member.
+
+### Added
+- **Story journeys 1–5** (each a two-map campaign ending in a story boss; clearing it recruits a party member, in roughly FF9's order):
+  1. **The Evil Forest** — Alexandria (Masked Man) → Evil Forest (**Plant Brain**) → recruits **Vivi**
+  2. **The Ice Cavern** — Mist Plains (Sealion) → Ice Cavern (**Black Waltz No.1**) → **Steiner**
+  3. **Dali** — Eunorus Plains → Dali (**Black Waltz No.2**) → **Garnet**
+  4. **Lindblum** — Lindblum Fields → Festival of the Hunt (**Zaghnol**) → **Freya**
+  5. **Gizamaluke's Grotto** — Qu's Marsh → the Grotto (**Gizamaluke**) → **Quina**
+- **FF9 Disc-1 bestiary**: Fang, Mu, Dendrobium, Hedgehog Pie, Python, Flan, Wyerd, Cave Imp, Ghost, Ladybug, Vice, Goblin Mage, Axe Beak, Gigan Toad, Lizard Man, Hornet, Black Mage, plus Prison Cage, Masked Man, Plant Brain, Sealion, Black Waltz No.1 & No.2, Zaghnol and Gizamaluke — using FF9 spells (Fire/Blizzard/Thunder/Sleep/Silence/Cure…) and new moves (Pollen, Silent Voice, Absorb, Stinger, Tsunami Wave…).
+- New map/battle themes: forest, ice, cave, marsh. Journey cards show map count, final boss and who they recruit.
+
+### Changed
+- **Story journeys now recruit the party** (Vivi, Steiner, Garnet, Freya, Quina); their milestone unlocks are removed. Eiko, Amarant, Beatrix and Blank keep interim milestones until their journeys exist. **Echoes of the Past** is a side journey, unlocked after Lindblum.
+- Areas have a **progression tier** (early/mid/late) that drives the camp catalog, supplies, events, treasure gil and special stages — area order no longer matters. "Next-tier" bonus loot always steps *up* a gear band.
+- **Solo achievements** now require clearing a late-game journey alone (the early story is meant to be soloable).
+- `pnpm sim runs` plays the next uncleared story journey first.
+
+### Verification
+- 16-run progression sim: Journey 1 cleared solo around run 6, then Vivi → Steiner → Garnet → Freya join over runs 6–11; Gizamaluke is the wall after that.
+
 ## [0.1.21] - 2026-10-14
 
 Journeys are campaigns of several overworld maps, pokelike-style: each map ends with a "gym leader" boss, and the last map's castle is the journey's final boss.
