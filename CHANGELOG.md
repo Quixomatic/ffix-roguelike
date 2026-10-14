@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.26] - 2026-10-14
+
+Characters start every run in their FF9 starting outfit again, behind a balance switch.
+
+### Changed
+- **`STARTER_ARMOR`** (game-core `stats.ts`): `"all"` (default) — every run starts in the character's FF9 starting gear (e.g. Zidane's Leather Hat, Wrist and Leather Shirt); `"body"` — body armour only; `"none"` — nothing until the slot is unlocked. FF9's monster stats assume armour: a Goblin's Knife hits Zidane for about 18 in his starting gear and about 72 without.
+- Locked slots still can't be changed: unlocking a slot with Completion Points is what lets found gear go there.
+
 ## [0.1.25] - 2026-10-14
 
 Saved mid-battle runs survive the engine change.

@@ -6,7 +6,7 @@ import { getItem } from "@ffix-roguelike/game-data";
 
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
-import { accrueGrowth, deriveStats, gemsMax, newBuild } from "../stats";
+import { accrueGrowth, deriveStats, gemsMax, newBuild, STARTER_ARMOR } from "../stats";
 import { applyRunOutcome, buySupply, completionPoints, gearCatalog, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
@@ -52,10 +52,10 @@ describe("Completion Points", () => {
 });
 
 describe("gear slots & unlocks", () => {
-  test("runs start with FF9 starter gear in unlocked slots only", () => {
+  test("runs start in FF9 starter gear (per STARTER_ARMOR); locked slots can't be changed", () => {
     const p = newProfile();
     let run = startRun({ seed: "x", tier: 0, party: [p.builds.zidane!] });
-    expect(run.party[0]!.build.equipment.armor).toBeNull();
+    expect(run.party[0]!.build.equipment.armor).toBe(STARTER_ARMOR === "none" ? null : shirt);
     const unlocked = { ...p.builds.zidane!, unlockedSlots: ["armor" as const] };
     run = startRun({ seed: "x", tier: 0, party: [unlocked] });
     expect(run.party[0]!.build.equipment.armor).toBe(shirt); // Zidane's FF9 Leather Shirt

@@ -148,17 +148,35 @@ export function nextSlotCost(build: CharacterBuild): number | null {
 }
 
 /**
- * What a character starts every run wearing: their FF9 starting weapon, plus their FF9 starting gear in each
- * slot they've unlocked (some characters have no starting piece for a slot — it starts empty but usable).
+ * Balance switch — which FF9 starting gear characters wear in slots they haven't unlocked yet.
+ * FF9's monster stats assume armour: a Goblin's Knife hits Zidane for ~18 in his starting gear, ~72 without.
+ *   "all"  — full FF9 starting outfit (head, arm, body, accessory) every run
+ *   "body" — starting body armour only
+ *   "none" — nothing until the slot is unlocked with Completion Points
+ * Locked slots can't be changed either way: unlocking a slot is what lets found gear go there.
+ */
+export const STARTER_ARMOR: "all" | "body" | "none" = "all";
+
+function wearsStarter(slot: EquipSlot): boolean {
+  if (STARTER_ARMOR === "all") return true;
+  if (STARTER_ARMOR === "body") return slot === "armor";
+  return false;
+}
+
+/**
+ * What a character starts every run wearing: their FF9 starting weapon, their FF9 starting gear in each slot
+ * they've unlocked, and in locked slots whatever STARTER_ARMOR allows. Some characters have no starting piece
+ * for a slot.
  */
 export function starterGear(build: CharacterBuild): Equipment {
   const def = getCharacter(build.key).defaultEquipment;
+  const pick = (slot: Exclude<EquipSlot, "weapon">) => (slotUnlocked(build, slot) || wearsStarter(slot) ? def[slot] : null);
   return {
     weapon: def.weapon,
-    head: slotUnlocked(build, "head") ? def.head : null,
-    wrist: slotUnlocked(build, "wrist") ? def.wrist : null,
-    armor: slotUnlocked(build, "armor") ? def.armor : null,
-    accessory: slotUnlocked(build, "accessory") ? def.accessory : null,
+    head: pick("head"),
+    wrist: pick("wrist"),
+    armor: pick("armor"),
+    accessory: pick("accessory"),
   };
 }
 
