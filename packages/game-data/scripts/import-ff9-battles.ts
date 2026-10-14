@@ -13,7 +13,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { ELEMENTS, STATUSES, type Element, type FF9Bestiary, type FF9Enemy, type FF9EnemyAction, type Status, type TargetType } from "../src/types";
+import { ELEMENTS, STATUSES, type Element, type FF9Bestiary, type FF9Enemy, type FF9EnemyAction, type FF9Scene, type Status, type TargetType } from "../src/types";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // Seed data for the ff9_* tables (the server upserts it on startup when it changes).

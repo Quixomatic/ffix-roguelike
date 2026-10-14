@@ -3,13 +3,13 @@
  * scripts/import-ff9-battles.ts). Used by tests and the simulator so they run without a database; the server
  * loads the same data from Postgres. Not exported from the package root (the web bundle never needs fs).
  *
- *   import { loadBestiaryCache, loadBattleScriptCache } from "@ffix-roguelike/game-data/cache";
+ *   import { loadFf9Cache, loadBattleScriptCache } from "@ffix-roguelike/game-data/cache";
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { registerBestiary } from "./index";
+import { registerBestiary, registerGameData, type GameData } from "./index";
 import type { FF9Bestiary } from "./types";
 
 /** The committed FF9 seed data (packages/db/seed/ff9) — what the server loads into Postgres. */
@@ -37,4 +37,26 @@ export function loadBestiaryCache(): FF9Bestiary {
 /** Cached battle AI scripts: scene id → base64 of the .eb bytes. */
 export function loadBattleScriptCache(): Record<string, string> {
   return read<Record<string, string>>("battle-scripts.json");
+}
+
+/** Read the cached FF9 game tables (characters, abilities, items…) and register them. */
+export function loadGameDataCache(): GameData {
+  const data: GameData = {
+    actions: read("actions.json"),
+    characters: read("characters.json"),
+    items: read("items.json"),
+    leveling: read("leveling.json"),
+    statuses: read("statuses.json"),
+    supportAbilities: read("support-abilities.json"),
+    synthesis: read("synthesis.json"),
+    shops: read("shops.json"),
+  };
+  registerGameData(data);
+  return data;
+}
+
+/** Everything a game-rules process needs except battle scripts: game tables + bestiary. */
+export function loadFf9Cache(): void {
+  loadGameDataCache();
+  loadBestiaryCache();
 }

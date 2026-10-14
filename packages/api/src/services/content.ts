@@ -1,34 +1,74 @@
 /**
- * FF9 battle data from Postgres (ff9_* tables) into game-core's registry. Loaded once per server process on the
- * first request that needs game rules: monsters, attacks, scenes and every battle AI script. The client gets
- * scripts one battle at a time (sceneScript).
+ * FF9 data from Postgres (ff9_* tables) into game-core's registry. Loaded once per server process on the first
+ * request that needs game rules: the game tables (characters, abilities, items, shops…), the bestiary and every
+ * battle AI script. The web app gets the same tables through `content.ff9` and scripts one battle at a time.
  */
 import { registerBattleScripts } from "@ffix-roguelike/game-core";
-import { registerBestiary, type FF9Bestiary, type FF9Enemy, type FF9EnemyAction, type FF9Scene } from "@ffix-roguelike/game-data";
+import {
+  registerBestiary,
+  registerGameData,
+  type ActionData,
+  type CharacterData,
+  type FF9Bestiary,
+  type FF9Enemy,
+  type FF9EnemyAction,
+  type FF9Scene,
+  type GameData,
+  type ItemData,
+  type LevelRow,
+  type ShopData,
+  type StatusInfo,
+  type SupportAbilityData,
+  type SynthesisRecipe,
+} from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 
-let loading: Promise<FF9Bestiary> | null = null;
+export interface Ff9Content {
+  game: GameData;
+  bestiary: FF9Bestiary;
+}
+
+let loading: Promise<Ff9Content> | null = null;
 const scripts = new Map<string, Uint8Array | null>();
 
-/** Load the bestiary and all battle AI scripts and register them. Safe to call on every request. */
-export function ensureFf9Content(db: Database): Promise<FF9Bestiary> {
+const rows = <T>(list: { data: unknown }[]) => list.map((r) => r.data as T);
+
+/** Load all FF9 data and register it. Safe to call on every request. */
+export function ensureFf9Content(db: Database): Promise<Ff9Content> {
   loading ??= (async () => {
-    const [enemies, actions, scenes] = await Promise.all([
+    const [actions, characters, items, leveling, statuses, supportAbilities, synthesis, shops, enemies, enemyActions, scenes] = await Promise.all([
+      db.ff9Action.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.ff9Character.findMany({ select: { data: true } }),
+      db.ff9Item.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.ff9Level.findMany({ orderBy: { level: "asc" }, select: { data: true } }),
+      db.ff9Status.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.ff9SupportAbility.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.ff9Synthesis.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.ff9Shop.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.ff9Enemy.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.ff9EnemyAction.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.ff9BattleScene.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
     ]);
-    if (!enemies.length) throw new Error("FF9 battle data missing — run `pnpm -F @ffix-roguelike/db db:seed:ff9`");
-    const data: FF9Bestiary = {
-      enemies: enemies.map((e) => e.data as unknown as FF9Enemy),
-      actions: actions.map((a) => a.data as unknown as FF9EnemyAction),
-      scenes: scenes.map((s) => s.data as unknown as FF9Scene),
+    if (!items.length || !enemies.length) throw new Error("FF9 data missing — restart the server (it seeds on boot) or run `pnpm -F @ffix-roguelike/db db:seed:ff9`");
+    // Characters keep FF9's order (Zidane first), as in the seed file.
+    const characterRows = rows<CharacterData>(characters).sort((a, b) => a.id - b.id);
+    const game: GameData = {
+      actions: rows<ActionData>(actions),
+      characters: characterRows,
+      items: rows<ItemData>(items),
+      leveling: rows<LevelRow>(leveling),
+      statuses: rows<StatusInfo>(statuses),
+      supportAbilities: rows<SupportAbilityData>(supportAbilities),
+      synthesis: rows<SynthesisRecipe>(synthesis),
+      shops: rows<ShopData>(shops),
     };
-    registerBestiary(data);
+    const bestiary: FF9Bestiary = { enemies: rows<FF9Enemy>(enemies), actions: rows<FF9EnemyAction>(enemyActions), scenes: rows<FF9Scene>(scenes) };
+    registerGameData(game);
+    registerBestiary(bestiary);
     // Every scene's AI script, so the server can create and replay any FF9 battle.
     const scriptRows = await db.ff9BattleScene.findMany({ where: { script: { not: null } }, select: { id: true, script: true } });
     registerBattleScripts(Object.fromEntries(scriptRows.map((r) => [r.id, new Uint8Array(r.script!)])));
-    return data;
+    return { game, bestiary };
   })().catch((err) => {
     loading = null;
     throw err;

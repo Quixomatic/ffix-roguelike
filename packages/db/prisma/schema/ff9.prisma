@@ -46,3 +46,74 @@ model Ff9BattleScene {
 
   @@map("ff9_battle_scene")
 }
+
+// ── FF9 game tables (Memoria CSV import: scripts/import-memoria.ts). `data` = the game-data record. ──────────
+
+/// A playable character: base stats, command sets (normal + Trance), learnable abilities, starting gear.
+model Ff9Character {
+  /// game-data key, e.g. "zidane".
+  key  String @id
+  name String
+  data Json
+
+  @@map("ff9_character")
+}
+
+/// An ability/spell/command action (Actions.csv): targeting, script, power, element, status, MP.
+model Ff9Action {
+  id   Int    @id
+  name String
+  data Json
+
+  @@map("ff9_action")
+}
+
+/// An item: weapon, armour, accessory or consumable (stats, elements, abilities taught, effects).
+model Ff9Item {
+  id   Int    @id
+  name String
+  kind String
+  data Json
+
+  @@index([kind])
+  @@map("ff9_item")
+}
+
+model Ff9SupportAbility {
+  id   Int    @id
+  name String
+  data Json
+
+  @@map("ff9_support_ability")
+}
+
+model Ff9Synthesis {
+  id   Int  @id
+  data Json
+
+  @@map("ff9_synthesis")
+}
+
+model Ff9Shop {
+  id   Int    @id
+  name String
+  data Json
+
+  @@map("ff9_shop")
+}
+
+model Ff9Status {
+  id   Int    @id
+  key  String
+  data Json
+
+  @@map("ff9_status")
+}
+
+/// One row of the EXP / HP / MP level table.
+model Ff9Level {
+  level Int  @id
+  data  Json
+
+  @@map("ff9_level")
+}

@@ -1,5 +1,6 @@
 /**
- * Inspector: FF9's battle data in Postgres (ff9_enemy, ff9_enemy_action, ff9_battle_scene, ff9_import) — is it
+ * Inspector: FF9's data in Postgres (game tables ff9_character/item/action/…, battle data ff9_enemy,
+ * ff9_enemy_action, ff9_battle_scene, and ff9_import) — is it
  * there, current, and consistent with what the game uses? A permanent tool; extend it whenever you need to see
  * more of the FF9 data.
  *
@@ -17,14 +18,11 @@
  */
 import "varlock/auto-load";
 
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-
-import { FF9_SEED_DIR } from "@ffix-roguelike/db/seed-ff9";
+import { ff9SeedHash } from "@ffix-roguelike/db/seed-ff9";
 import { getScene, sceneGroup, WORLDS } from "@ffix-roguelike/game-core";
-import { findItem, registerBestiary, type FF9Enemy, type FF9EnemyAction, type FF9Scene } from "@ffix-roguelike/game-data";
+import { findItem, type FF9Enemy, type FF9EnemyAction, type FF9Scene } from "@ffix-roguelike/game-data";
 
+import { ensureFf9Content } from "../../../packages/api/src/services/content";
 import { db } from "../src/services";
 
 const c = {
@@ -52,14 +50,23 @@ const actions = actionRows.map((r) => r.data as unknown as FF9EnemyAction);
 const scenes = sceneRows.map((r) => r.data as unknown as FF9Scene);
 const scriptBytes = new Map(sceneRows.map((r) => [r.id, r.script?.length ?? 0]));
 
+const [chars, items, actionsCount, supports, recipes, shops, levels] = await Promise.all([
+  db.ff9Character.count(),
+  db.ff9Item.count(),
+  db.ff9Action.count(),
+  db.ff9SupportAbility.count(),
+  db.ff9Synthesis.count(),
+  db.ff9Shop.count(),
+  db.ff9Level.count(),
+]);
+console.log(c.h("FF9 game tables"));
+console.log(`  ${chars} characters · ${actionsCount} abilities · ${items} items · ${supports} support abilities · ${recipes} recipes · ${shops} shops · ${levels} levels`);
+if (!chars || !items || !actionsCount || levels !== 99) fail("game tables incomplete");
 console.log(c.h("FF9 battle data"));
 console.log(`  ${enemies.length} monsters · ${actions.length} attacks · ${scenes.length} scenes · ${[...scriptBytes.values()].filter((n) => n > 0).length} with AI scripts`);
 if (!enemies.length) fail("tables are empty — start the server (it seeds on boot) or run db:seed:ff9");
 
-const fileHash = createHash("sha256")
-  .update(readFileSync(join(FF9_SEED_DIR, "bestiary.json")))
-  .update(readFileSync(join(FF9_SEED_DIR, "battle-scripts.json")))
-  .digest("hex");
+const fileHash = ff9SeedHash();
 if (!imported) fail("no ff9_import row — data was never seeded through seedFf9");
 else if (imported.hash !== fileHash) fail(`seed files changed since the last import (${imported.importedAt.toISOString()}) — restart the server to re-seed`);
 else console.log(c.ok(`matches the seed files (imported ${imported.importedAt.toISOString()})`));
@@ -79,7 +86,7 @@ if (problems === before) console.log(c.ok("scenes, monsters and attacks all refe
 
 // ── coverage: what the game uses ─────────────────────────────────────────────
 console.log(c.h("Game coverage"));
-registerBestiary({ enemies, actions, scenes });
+await ensureFf9Content(db); // registers the game tables + bestiary as the server does
 const before2 = problems;
 for (const w of WORLDS) {
   for (const t of [...w.encounters, ...w.elites, w.boss].flat().filter((x) => x.startsWith("@"))) {

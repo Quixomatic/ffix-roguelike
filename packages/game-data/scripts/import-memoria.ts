@@ -1,11 +1,12 @@
 #!/usr/bin/env bun
 /**
- * import-memoria — convert Memoria's exported FF9 CSV tables into the JSON this package ships.
+ * import-memoria — convert Memoria's exported FF9 CSV tables into seed data for the ff9_* tables.
  *
  *   pnpm -F @ffix-roguelike/game-data import:memoria [path/to/StreamingAssets/Data]
  *
  * Source defaults to the Steam install (override with the first arg or FF9_DATA_DIR). Output goes to
- * src/generated/*.json, which is committed — the game never needs the FF9 install at runtime.
+ * packages/db/seed/ff9/*.json (committed), which the server loads into Postgres — the game never needs the FF9
+ * install at runtime.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -36,7 +37,8 @@ import {
 } from "../src/types";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, "..", "src", "generated");
+// Seed data for the ff9_* tables (the server upserts it on startup when it changes).
+const OUT = join(HERE, "..", "..", "db", "seed", "ff9");
 const DATA =
   process.argv[2] ??
   process.env.FF9_DATA_DIR ??

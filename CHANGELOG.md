@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.33] - 2026-10-14
+
+All of FF9's data now lives in Postgres — the character, ability and item tables join the battle data.
+
+### Changed
+- **FF9's game tables are in the database**: characters, abilities/spells (actions), items, support abilities, synthesis recipes, shops, statuses and the level table move from JSON compiled into the code to `ff9_character`, `ff9_action`, `ff9_item`, `ff9_support_ability`, `ff9_synthesis`, `ff9_shop`, `ff9_status` and `ff9_level` (migration `ff9_game_tables`). Their seed files sit with the battle data in `packages/db/seed/ff9`, and the server's boot seed covers them all (one hash over every seed file).
+- The server loads the game tables, bestiary and battle scripts from the DB at startup; the web app gets the tables and bestiary in one request (`content.ff9`, replacing `content.bestiary`) before rendering. Tests and `pnpm sim` read the seed files.
+- game-data's tables are runtime registries (`registerGameData`); lookups, the engine's status rules and the legendary-gear list are built lazily so nothing reads FF9 data at import time (verified by importing every package with nothing registered).
+- `import:memoria` writes its tables to `packages/db/seed/ff9`.
+- `probe-ff9-data` reports the game tables too; the seed hash is computed in one place for the seeder and the probe.
+
+### Notes
+- Game design that is ours (areas, journeys, crossover monsters, events, achievements, unlock rules, balance switches) stays in code, so client and server always run the same rules and old battles keep replaying.
+
 ## [0.1.32] - 2026-10-14
 
 No more stuck fights: FF9's story set pieces are out of the random pools, and a test keeps them out.

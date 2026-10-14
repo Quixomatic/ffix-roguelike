@@ -3,7 +3,7 @@
  * Most pay banked gil and/or Completion Points; only the legendary achievements award gear — every character's
  * best-in-slot FF9 items. Awarding gear *unlocks* it into run drop pools (it never drops before that).
  */
-import { getCharacter, itemByName, items, MAIN_CAST } from "@ffix-roguelike/game-data";
+import { gameDataVersion, itemByName, items, MAIN_CAST } from "@ffix-roguelike/game-data";
 
 import { canEquip, gearScore, isMastered } from "../stats";
 import type { Profile } from "./profile";
@@ -21,8 +21,8 @@ export interface AchievementDef {
     cp?: number;
     cpFor?: string;
     items?: string[];
-    /** Item ids (for computed rewards like best-in-slot sets). */
-    itemIds?: number[];
+    /** A hero's best-in-slot armour, computed from FF9's item table when needed. */
+    bestInSlotFor?: string;
   };
   /** Hidden until earned (shown as ???). */
   secret?: boolean;
@@ -58,6 +58,8 @@ export function bestInSlot(key: string): number[] {
 }
 
 const legendClear = (p: Profile, key: string) => p.stats.legendClears?.includes(key) ?? false;
+/** "zidane" → "Zidane" (the eight main heroes' names are their keys). */
+const heroName = (key: string) => key[0]!.toUpperCase() + key.slice(1);
 
 export const ACHIEVEMENTS: AchievementDef[] = [
   // ── milestones ──
@@ -108,10 +110,10 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   ...MAIN_CAST.map(
     (key): AchievementDef => ({
       id: `legend-set-${key}`,
-      name: `Legend of ${getCharacter(key).name}`,
-      description: `Clear Terra & Memoria with ${getCharacter(key).name} in the party — awards their best-in-slot armour`,
+      name: `Legend of ${heroName(key)}`,
+      description: `Clear Terra & Memoria with ${heroName(key)} in the party — awards their best-in-slot armour`,
       category: "legend",
-      reward: { itemIds: bestInSlot(key) },
+      reward: { bestInSlotFor: key },
       secret: true,
       check: (p) => legendClear(p, key),
     }),
@@ -128,10 +130,18 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 ];
 
 /** Gear that only achievements award — excluded from drops, shops, treasure and Stiltzkin. */
-export const LEGENDARY_ITEMS: Set<number> = new Set(ACHIEVEMENTS.flatMap(rewardItemIds));
+export function legendaryItems(): Set<number> {
+  if (legendaryFor !== gameDataVersion) {
+    legendary = new Set(ACHIEVEMENTS.flatMap(rewardItemIds));
+    legendaryFor = gameDataVersion;
+  }
+  return legendary;
+}
+let legendary = new Set<number>();
+let legendaryFor = -1;
 
 export function rewardItemIds(a: AchievementDef): number[] {
-  return [...(a.reward.items ?? []).map((name) => itemByName(name).id), ...(a.reward.itemIds ?? [])];
+  return [...(a.reward.items ?? []).map((name) => itemByName(name).id), ...(a.reward.bestInSlotFor ? bestInSlot(a.reward.bestInSlotFor) : [])];
 }
 
 /** Check every achievement not yet earned; grant rewards for new ones (mutates `p`). Returns the new ids. */

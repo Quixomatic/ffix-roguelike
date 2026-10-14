@@ -216,7 +216,12 @@ with a `revision` counter so two tabs can't double-apply.
 
 `packages/game-data/scripts/import-memoria.ts` reads the CSV tables that the
 [Memoria](https://github.com/Albeoris/Memoria) engine mod exports from a Steam copy of FF9
-(`StreamingAssets/Data`) and writes typed JSON into `packages/game-data/src/generated/`:
+(`StreamingAssets/Data`); `import-ff9-battles.ts` reads Memoria's battle export (every battle scene's monsters, attacks and
+spawn patterns) plus the compiled battle AI scripts extracted from the game's `p0data7.bin`. Both write seed files to
+`packages/db/seed/ff9/`; **the data lives in Postgres** (`ff9_*` tables), seeded automatically when the server starts
+and the files have changed. The server loads it into game-core at startup; the web app fetches it from the API.
+
+
 
 | Table | Count |
 |---|---|
@@ -247,7 +252,7 @@ apps/
     src/routes/           thin TanStack Router routes (/, /play, /run, /achievements, /battle)
   server/                 Hono on Bun; serves tRPC + Better Auth
 packages/
-  game-data/              Memoria import script + generated FF9 JSON + typed accessors
+  game-data/              Memoria import scripts, FF9 data types, runtime registries + typed accessors
   game-core/              the game: battle engine, run state machine, profile/meta, content, sim CLI
     src/battle/           engine, FF9 effects/formulas, units, autoplay AI, types
     src/run/              map generation, loot/encounters, events, specials, run state machine, optimize
@@ -271,7 +276,7 @@ scripts/
 - **pnpm 10.34.7** (pinned in `package.json` — a global pnpm 10.x will hand off to it automatically)
 - **PostgreSQL** (any recent version)
 - *(Optional)* a Steam copy of **Final Fantasy IX** with **Memoria** installed — only needed to re-import the game
-  data; the generated JSON is committed.
+  data; the seed files are committed and the server loads them into Postgres on startup.
 
 ### Setup
 
@@ -345,7 +350,8 @@ pnpm sim runs --count 20                           # multi-run meta progression 
 pnpm -F @ffix-roguelike/game-data import:memoria "C:/Program Files (x86)/Steam/steamapps/common/FINAL FANTASY IX/StreamingAssets/Data"
 ```
 
-The importer decodes Memoria's mixed UTF-8/Windows-1252 files line by line and writes `src/generated/*.json`.
+The importer decodes Memoria's mixed UTF-8/Windows-1252 files line by line and writes `packages/db/seed/ff9/*.json`;
+the server re-seeds the `ff9_*` tables on its next start. Battle data: `import:battles` (see `.docs/development.md`).
 
 ### Tests
 

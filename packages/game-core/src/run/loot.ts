@@ -5,7 +5,7 @@ import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
 import { encounterEnemies, getScene, isSceneRef, rollSceneGroup, sceneGroup } from "../content/ff9-scenes";
 import { WORLDS } from "../content/worlds";
-import { LEGENDARY_ITEMS } from "../meta/achievements";
+import { legendaryItems } from "../meta/achievements";
 import type { Rng } from "../rng";
 
 const GEAR_KINDS = new Set(["weapon", "wrist", "head", "armor", "accessory"]);
@@ -101,7 +101,7 @@ export function battleRewards(rng: Rng, group: string[], tier: number, state?: B
 /** Gear stocked by the world's real FF9 shops — always in the drop pool, no unlock needed. */
 export function baseGear(world: number): Set<number> {
   const w = WORLDS[world]!;
-  return new Set(w.shops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? []).filter((id) => !LEGENDARY_ITEMS.has(id)));
+  return new Set(w.shops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? []).filter((id) => !legendaryItems().has(id)));
 }
 
 /**
@@ -161,7 +161,7 @@ export function shopStock(rng: Rng, world: number, partyKeys: string[]): ShopVis
   const ids = [...new Set([...(store?.items ?? []), ...shop.items])];
   const stock = ids
     .map((id) => findItem(id))
-    .filter((i): i is ItemData => !!i && i.price > 0 && !LEGENDARY_ITEMS.has(i.id))
+    .filter((i): i is ItemData => !!i && i.price > 0 && !legendaryItems().has(i.id))
     // Only gear someone in the party can use (consumables always).
     .filter((i) => i.kind === "item" || i.equippableBy.some((k) => partyKeys.includes(k)))
     .map((i) => ({ itemId: i.id, price: i.price }));

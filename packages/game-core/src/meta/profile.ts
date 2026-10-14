@@ -23,7 +23,7 @@ import {
   UNLOCKABLE_SLOTS,
   type CharacterBuild,
 } from "../stats";
-import { awardAchievements, LEGENDARY_ITEMS } from "./achievements";
+import { awardAchievements, legendaryItems } from "./achievements";
 
 export interface ProfileStats {
   runs: number;
@@ -241,7 +241,7 @@ export function gearCatalog(profile: Profile): { itemId: number; price: number }
   // The best loot band among areas at or below the furthest progression tier reached.
   const maxPrice = Math.max(...WORLDS.filter((w) => w.tier <= profile.stats.bestWorld).map((w) => w.gearPrice[1]));
   return items
-    .filter((i) => isGear(i) && i.price > 0 && effectivePrice(i) <= maxPrice && !base.has(i.id) && !unlocked.has(i.id) && !LEGENDARY_ITEMS.has(i.id))
+    .filter((i) => isGear(i) && i.price > 0 && effectivePrice(i) <= maxPrice && !base.has(i.id) && !unlocked.has(i.id) && !legendaryItems().has(i.id))
     .sort((a, b) => effectivePrice(a) - effectivePrice(b))
     .map((i) => ({ itemId: i.id, price: effectivePrice(i) * UNLOCK_PRICE_MULT }));
 }

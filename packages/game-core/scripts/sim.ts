@@ -19,7 +19,7 @@
 import { createInterface } from "node:readline";
 
 import { findItem, getItem, itemByName, items } from "@ffix-roguelike/game-data";
-import { loadBattleScriptCache, loadBestiaryCache } from "@ffix-roguelike/game-data/cache";
+import { loadBattleScriptCache, loadFf9Cache } from "@ffix-roguelike/game-data/cache";
 
 import {
   applyRunOutcome,
@@ -70,8 +70,8 @@ import {
 
 // ── args ─────────────────────────────────────────────────────────────────────
 const [cmd = "help", ...rest] = process.argv.slice(2);
-// FF9 monsters, attacks and scenes from the local import cache (the server loads them from Postgres).
-loadBestiaryCache();
+// FF9 data from the seed files (the server loads it from Postgres).
+loadFf9Cache();
 registerBattleScripts(loadBattleScriptCache());
 
 const args: Record<string, string> = {};

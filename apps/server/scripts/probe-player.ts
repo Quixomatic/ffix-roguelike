@@ -15,7 +15,7 @@
 import "varlock/auto-load";
 
 import { encounterNames, getJourney, replayBattle, upgradeRunState, WORLDS, type RunState } from "@ffix-roguelike/game-core";
-import { findItem, registerBestiary, type FF9Bestiary } from "@ffix-roguelike/game-data";
+import { findItem } from "@ffix-roguelike/game-data";
 
 import { ensureFf9Content } from "../../../packages/api/src/services/content";
 import { db } from "../src/services";
@@ -33,8 +33,8 @@ const fail = (s: string) => {
 };
 const item = (id: number | null | undefined) => (id == null ? "—" : (findItem(id)?.name ?? `#${id}`));
 
-// Game rules need FF9's battle data, exactly as the server loads it.
-registerBestiary((await ensureFf9Content(db)) as FF9Bestiary);
+// Game rules need FF9's data, loaded exactly as the server does.
+await ensureFf9Content(db);
 
 const arg = process.argv[2]?.toLowerCase();
 const users = await db.user.findMany({ orderBy: { createdAt: "asc" }, select: { id: true, email: true, createdAt: true } });

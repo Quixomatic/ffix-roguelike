@@ -7,7 +7,7 @@
  * Wait mode freezes gauges and status timers while a party member is waiting for a command (queued actions
  * still play out). Active mode never freezes.
  */
-import { ELEMENTS, findItem, getAction, statuses as statusTable, type Status, type TargetType } from "@ffix-roguelike/game-data";
+import { ELEMENTS, findItem, getAction, gameDataVersion, statuses as statusTable, type Status, type StatusInfo, type TargetType } from "@ffix-roguelike/game-data";
 
 import { enemyAction } from "../content/enemy-actions";
 import { getScene } from "../content/ff9-scenes";
@@ -58,7 +58,16 @@ const CANNOT_TRANCE: Status[] = ["petrify", "venom", "zombie", "death", "stop", 
 /** Every party member in one of these = game over. */
 const PARTY_OUT: Status[] = ["petrify", "venom", "stop", "death"];
 
-const statusInfo = new Map(statusTable.map((s) => [s.key, s]));
+// FF9 status rules (StatusData), indexed lazily: the table is registered at runtime (DB / API / seed files).
+let statusIndex = new Map<Status, StatusInfo>();
+let statusIndexed = -1;
+function statusInfoOf(s: Status): StatusInfo | undefined {
+  if (statusIndexed !== gameDataVersion) {
+    statusIndex = new Map(statusTable.map((x) => [x.key, x]));
+    statusIndexed = gameDataVersion;
+  }
+  return statusIndex.get(s);
+}
 
 export function getBattleAction(id: number): BattleAction {
   return enemyAction(id) ?? getAction(id);
@@ -730,7 +739,7 @@ export class BattleEngine {
     if (kind === "ability" && (action.id === 178 || action.id === 172)) {
       const inTrance = action.id === 172;
       this.emit({ type: "actionStart", actorId: actor.id, name: "Jump", kind: "ability", targetIds: targets.map((t) => t.id) });
-      const countdown = statusInfo.get("jump")!.duration * 4 * (60 - actor.spirit);
+      const countdown = statusInfoOf("jump")!.duration * 4 * (60 - actor.spirit);
       this.alterStatus(actor, "jump", actor);
       actor.jump = { countdown, targetIds: inTrance ? [] : targets.map((t) => t.id), trance: inTrance };
       this.dropFromReady(actor);
@@ -848,7 +857,7 @@ export class BattleEngine {
       }
     }
     if (source === "spear" && actor.jump) {
-      if (actor.jump.trance && this.inTrance(actor)) actor.jump.countdown = statusInfo.get("jump")!.duration * 4 * (60 - actor.spirit);
+      if (actor.jump.trance && this.inTrance(actor)) actor.jump.countdown = statusInfoOf("jump")!.duration * 4 * (60 - actor.spirit);
       else this.removeStatus(actor, "jump");
     }
     if (source === "phantom" && actor.phantom) actor.phantom.countdown = (60 - actor.spirit) * 200;
@@ -1044,7 +1053,7 @@ export class BattleEngine {
     if (target.permanent.includes(status) || (this.has(target, status) && NO_RESET.includes(status))) return 1;
     if (status === "trance" && !target.tranceCommands.length) return 1;
     if (!bypass)
-      for (const s of Object.keys(target.statuses) as Status[]) if (statusInfo.get(s)?.immunityProvided.includes(status)) return 1;
+      for (const s of Object.keys(target.statuses) as Status[]) if (statusInfoOf(s)?.immunityProvided.includes(status)) return 1;
     if (target.removed) return 1;
     void inflicter;
 
@@ -1074,7 +1083,7 @@ export class BattleEngine {
         break;
     }
 
-    const info = statusInfo.get(status);
+    const info = statusInfoOf(status);
     const timer: { conti?: number | null; opr?: number; counter?: number } = {};
     const spr = target.spirit;
     if (TIMED.includes(status) && info?.duration) {
@@ -1101,7 +1110,7 @@ export class BattleEngine {
   }
 
   private oprCount(u: BattleUnit, s: Status): number {
-    const info = statusInfo.get(s)!;
+    const info = statusInfoOf(s)!;
     if (s === "doom" || s === "gradualPetrify") return Math.floor((info.duration * ((60 - u.spirit) << 3)) / 10);
     const factor = s === "venom" || s === "poison" ? u.spirit << 2 : (60 - u.spirit) << 2;
     return info.tick * factor;
@@ -1273,7 +1282,7 @@ export class BattleEngine {
     u.hp = 0;
     if (!this.has(u, "death")) {
       u.statuses.death = {};
-      for (const s of statusInfo.get("death")!.clearOnApply) if (!u.permanent.includes(s)) delete u.statuses[s];
+      for (const s of statusInfoOf("death")!.clearOnApply) if (!u.permanent.includes(s)) delete u.statuses[s];
     }
     this.onDeath(u);
   }
