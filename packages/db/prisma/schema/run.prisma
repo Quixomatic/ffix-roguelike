@@ -49,7 +49,7 @@ model RunBattle {
   enemies String[]
   seed    Int
   outcome BattleOutcome
-  /// Battle length in engine ticks (20/s).
+  /// Battle length in engine ticks (15/s, FF9's battle tick rate).
   ticks   Int
   /// `{ tick, command }[]` — game-core InputRecord.
   inputs  Json

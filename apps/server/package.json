@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -16,6 +16,8 @@
     "@ffix-roguelike/api": "workspace:*",
     "@ffix-roguelike/auth": "workspace:*",
     "@ffix-roguelike/db": "workspace:*",
+    "@ffix-roguelike/game-core": "workspace:*",
+    "@ffix-roguelike/game-data": "workspace:*",
     "@hono/trpc-server": "^0.4.2",
     "@trpc/server": "catalog:",
     "better-auth": "catalog:",

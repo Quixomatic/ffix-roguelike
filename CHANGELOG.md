@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.29] - 2026-10-14
+
+Probe scripts for the database, ChannelGuide-style — and a fix they caught on the first run.
+
+### Added
+- **`apps/server/scripts/probe-ff9-data.ts [scene|monster …]`** — FF9 battle data in Postgres: row counts, scenes with AI scripts, whether the loaded data matches the seed files, integrity (every scene's monster types and attack slots point at real rows), and coverage (every FF9 scene the game's areas use exists and every spawn pattern resolves). Details per scene (`EF_E009`) or monster (`"Plant Brain"`): stats, elements, immunities, steal/drop tables, attacks. Exits 1 on problems.
+- **`apps/server/scripts/probe-player.ts [email]`** — every account at a glance, or one player's profile, characters, unlocks and active run, with checks that the run still loads under the current rules and that a fight in progress replays from its recorded inputs (what the server does to verify battles).
+- The server app depends on game-core and game-data directly (for the probes).
+
+### Fixed
+- **FF9 scene lookups were indexed at startup, before the bestiary was loaded from the database**, so the server would have reported "Unknown FF9 battle scene" for every FF9 encounter. Scene and monster lookups now rebuild whenever the bestiary is registered.
+
 ## [0.1.28] - 2026-10-14
 
 Fixes "Unknown enemy @EF_E009" on the camp screen.

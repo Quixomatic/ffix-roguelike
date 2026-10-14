@@ -72,6 +72,12 @@ importers:
       '@ffix-roguelike/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@ffix-roguelike/game-core':
+        specifier: workspace:*
+        version: link:../../packages/game-core
+      '@ffix-roguelike/game-data':
+        specifier: workspace:*
+        version: link:../../packages/game-data
       '@hono/trpc-server':
         specifier: ^0.4.2
         version: 0.4.2(@trpc/server@11.19.0(typescript@6.0.3))(hono@4.13.13)

@@ -8,16 +8,25 @@
  * steals and drops; its battle AI is the scene's own FF9 script (battle/ai), with a fallback that uses only the
  * monster's real attacks.
  */
-import { bestiary, type FF9Enemy, type FF9Scene } from "@ffix-roguelike/game-data";
+import { bestiary, bestiaryVersion, type FF9Enemy, type FF9Scene } from "@ffix-roguelike/game-data";
 
 import type { AiRule, EnemyFamily } from "../battle/types";
 import type { Rng } from "../rng";
 import { getEnemy, type EnemyDef } from "./enemies";
 import { FF9_ACTION_BASE } from "./ff9";
 
-const sceneById = new Map(bestiary.scenes.map((s) => [s.id, s]));
+// Lookups are rebuilt whenever the bestiary is (re)registered (it starts empty; the server fills it from the DB).
+let sceneById = new Map<string, FF9Scene>();
+let indexedFor = -1;
+function index() {
+  if (indexedFor === bestiaryVersion) return;
+  sceneById = new Map(bestiary.scenes.map((s) => [s.id, s]));
+  defCache.clear();
+  indexedFor = bestiaryVersion;
+}
 
 export function getScene(id: string): FF9Scene {
+  index();
   const s = sceneById.get(id);
   if (!s) throw new Error(`Unknown FF9 battle scene ${id}`);
   return s;
@@ -59,6 +68,7 @@ const defCache = new Map<number, EnemyDef>();
 
 /** The bestiary entry for any FF9 monster. */
 export function ff9EnemyDef(uid: number): EnemyDef {
+  index();
   const cached = defCache.get(uid);
   if (cached) return cached;
   const m = bestiary.enemies[uid];
