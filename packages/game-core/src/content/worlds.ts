@@ -14,7 +14,8 @@ export interface WorldDef {
   encounters: string[][];
   /** Elite ("fortress") encounters. */
   elites: string[][];
-  /** Semi-boss set piece at the middle of the map (every path passes it). */
+  /** Optional semi-boss fortress at the middle of the map (every path passes it). Each map's castle boss is
+   *  already the "gym leader", so most areas leave this unset. */
   semiBoss?: string[];
   boss: string[];
   /** Gear price band rewards are drawn from (FF9 shop prices as a power proxy). */
@@ -46,8 +47,7 @@ export const WORLDS: WorldDef[] = [
       ["ogre", "wolf"],
       ["skeleton", "black-widow", "bomb"],
     ],
-    elites: [["ogre", "ogre"], ["bomb", "bomb", "bomb"]],
-    semiBoss: ["gigas-worm"],
+    elites: [["gigas-worm"], ["ogre", "ogre"], ["bomb", "bomb", "bomb"]],
     boss: ["garland"],
     gearPrice: [100, 1200],
     shops: [0, 1, 2, 3],
@@ -72,8 +72,7 @@ export const WORLDS: WorldDef[] = [
       ["flan", "mind-flayer"],
       ["lamia", "lamia"],
     ],
-    elites: [["adamantoise", "adamantoise"], ["mind-flayer", "mind-flayer", "lamia"]],
-    semiBoss: ["iron-giant"],
+    elites: [["iron-giant"], ["adamantoise", "adamantoise"], ["mind-flayer", "mind-flayer", "lamia"]],
     boss: ["golbez"],
     gearPrice: [800, 6000],
     shops: [4, 5, 6, 7, 8, 9, 10],
@@ -98,8 +97,7 @@ export const WORLDS: WorldDef[] = [
       ["tonberry", "malboro"],
       ["cactuar", "cactuar", "cactuar"],
     ],
-    elites: [["ultros"], ["red-dragon", "behemoth"]],
-    semiBoss: ["king-behemoth"],
+    elites: [["king-behemoth"], ["ultros"], ["red-dragon", "behemoth"]],
     boss: ["kefka"],
     gearPrice: [4000, 40000],
     shops: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
@@ -115,8 +113,10 @@ export function getArea(id: string): WorldDef {
 }
 
 /**
- * Journeys — what you pick at camp. A normal journey is one area: fodder stages, a semi-boss partway along and a
- * hard end boss. Journeys unlock in order. (FF9 story journeys and the Boss Gauntlet challenge come next.)
+ * Journeys — what you pick at camp. Like pokelike.xyz: a journey is a series of overworld maps (areas); each
+ * map ends at a castle with a "gym leader" boss, and the last map's castle holds the journey's final boss.
+ * By then the party is high level and geared. Journeys unlock in order. (FF9 disc journeys and the Boss Gauntlet
+ * challenge come next.)
  */
 export interface JourneyDef {
   id: string;
@@ -132,9 +132,14 @@ export interface JourneyDef {
 }
 
 export const JOURNEYS: JourneyDef[] = [
-  { id: "cornelia", name: "Echoes: Cornelia", subtitle: "Garland waits at the Chaos Shrine", category: "echoes", areas: ["cornelia"], unlockAfter: null },
-  { id: "baron", name: "Echoes: Baron", subtitle: "Golbez and the Red Wings", category: "echoes", areas: ["baron"], unlockAfter: "cornelia" },
-  { id: "ruin", name: "Echoes: World of Ruin", subtitle: "Kefka's tower", category: "echoes", areas: ["ruin"], unlockAfter: "baron" },
+  {
+    id: "echoes",
+    name: "Echoes of the Past",
+    subtitle: "Cornelia → Baron → the World of Ruin. Kefka awaits at the end.",
+    category: "echoes",
+    areas: ["cornelia", "baron", "ruin"],
+    unlockAfter: null,
+  },
 ];
 
 export function getJourney(id: string): JourneyDef {

@@ -195,24 +195,34 @@ describe("special stages & supplies", () => {
 describe("journeys", () => {
   test("an area with a semi-boss puts a single fortress stage mid-map that every path crosses", async () => {
     const { SEMIBOSS_COLUMN } = await import("./map");
+    const { WORLDS } = await import("../content/worlds");
+    WORLDS[0]!.semiBoss = ["gigas-worm"];
     for (let s = 0; s < 20; s++) {
       const map = generateWorldMap(Rng.fromSeed(`j${s}`), 0);
       const mid = map.nodes.filter((n) => n.col === SEMIBOSS_COLUMN);
       expect(mid.length).toBe(1);
       expect(mid[0]!.kind).toBe("semiboss");
     }
+    delete WORLDS[0]!.semiBoss;
   });
 
-  test("beating a single-area journey's boss wins the run and unlocks the next journey", async () => {
+  test("each map's boss leads to the next map; the last map's boss ends the journey", async () => {
     const { applyRunOutcome, availableJourneys } = await import("../meta/profile");
     const profile = newProfile();
-    expect(availableJourneys(profile)).toEqual(["cornelia"]);
-    let run = startRun({ seed: "j", tier: 0, party: [profile.builds.zidane!], journey: "cornelia" });
-    run.phase = { kind: "rewards", summary: { exp: 0, gil: 0, ap: 0, items: [], levelUps: [], mastered: [], members: [] }, gearChoices: [], boss: true };
+    expect(availableJourneys(profile)).toEqual(["echoes"]);
+    const bossWin = { kind: "rewards" as const, summary: { exp: 0, gil: 0, ap: 0, items: [], levelUps: [], mastered: [], members: [] }, gearChoices: [], boss: true };
+    let run = startRun({ seed: "j", tier: 0, party: [profile.builds.zidane!], journey: "echoes" });
+    for (let area = 0; area < 2; area++) {
+      run.phase = bossWin;
+      run = claimReward(run, null);
+      expect(run.phase.kind).toBe("worldClear");
+      run = nextWorld(run);
+      expect(run.stage).toBe(area + 1);
+    }
+    run.phase = bossWin;
     run = claimReward(run, null);
     expect(run.phase).toEqual({ kind: "over", won: true });
     const report = applyRunOutcome(profile, runOutcome(run), 0);
-    expect(report.journeyCleared).toBe("cornelia");
-    expect(availableJourneys(report.profile)).toEqual(["cornelia", "baron"]);
+    expect(report.journeyCleared).toBe("echoes");
   });
 });

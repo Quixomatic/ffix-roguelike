@@ -192,7 +192,7 @@ export function startRun(input: StartRunInput): RunState {
     const st = deriveStats(build);
     return { build, hp: st.maxHp, mp: st.maxMp };
   });
-  const journey = getJourney(input.journey ?? "cornelia");
+  const journey = getJourney(input.journey ?? JOURNEYS[0]!.id);
   const firstArea = getArea(journey.areas[0]!).index;
   const map = generateWorldMap(rng.fork("map0"), firstArea);
   return {
@@ -719,12 +719,15 @@ export function learnedActive(build: CharacterBuild): AbilityRef[] {
 
 /** Bring a stored RunState from an older version up to date (fields added since it was saved). */
 export function upgradeRunState(run: RunState): RunState {
-  if (run.journey && run.stage != null && run.unlockedGear) return run;
+  const known = JOURNEYS.some((j) => j.id === run.journey);
+  if (known && run.stage != null && run.unlockedGear) return run;
+  // Unknown/missing journey (older saves): the journey that contains the current area, at that area's stage.
   const area = WORLDS[run.world];
+  const journey = known ? getJourney(run.journey) : (JOURNEYS.find((j) => area && j.areas.includes(area.id)) ?? JOURNEYS[0]!);
   return {
     ...run,
-    journey: run.journey ?? JOURNEYS.find((j) => area && j.areas.includes(area.id))?.id ?? "cornelia",
-    stage: run.stage ?? 0,
+    journey: journey.id,
+    stage: known && run.stage != null ? run.stage : Math.max(0, journey.areas.indexOf(area?.id ?? "")),
     unlockedGear: run.unlockedGear ?? [],
   };
 }

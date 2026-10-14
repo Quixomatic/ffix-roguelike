@@ -4,7 +4,7 @@
  *
  *   pnpm sim battle  --party zidane:5,vivi:5 --enemies goblin,wolf [--world 0] [--seed 1] [--auto] [--script cmds.txt]
  *   pnpm sim balance [--world 0] [--levels 2,4,7] [--party zidane,vivi,steiner] [--n 40]
- *   pnpm sim run     [--journey cornelia] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
+ *   pnpm sim run     [--journey echoes] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
  *   pnpm sim runs    [--count 20] [--seed meta]
  *
  * `battle` is interactive: when a party member is ready you type a command (or pipe/script them):
@@ -349,7 +349,7 @@ function runCmd() {
   const slots = list("slots", "");
   const party = keys.map((k) => ({ ...profile.builds[k]!, level: num("level", 1), unlockedSlots: slots as never }));
   const seed = args.seed ?? `run-${Date.now()}`;
-  const run = playRun(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? "cornelia" }), seed, true);
+  const run = playRun(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? "echoes" }), seed, true);
   const won = run.phase.kind === "over" && run.phase.won;
   console.log(c.bold(`\n${won ? "WON" : "LOST"} in ${WORLDS[run.world]!.name} · ${run.stats.battles} wins · levels ${run.party.map((m) => `${m.build.key}:${m.build.level}`).join(" ")}`));
 }

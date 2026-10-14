@@ -54,9 +54,9 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
       <div ref={hostRef} className="absolute inset-0" />
       <div className="pointer-events-none absolute left-3 top-3 ff-window px-4 py-2">
         <div className="text-xl">
-          {getJourney(run.journey).name}
+          {world.name} <span className="ff-title">— map {run.stage + 1}/{getJourney(run.journey).areas.length}</span>
         </div>
-        <div className="ff-title">{world.subtitle}</div>
+        <div className="ff-title">{getJourney(run.journey).name}</div>
       </div>
       {hover && (
         <div className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>

@@ -55,7 +55,7 @@ export const runRouter = router({
   }),
 
   start: protectedProcedure
-    .input(z.object({ party: z.array(z.string()).min(1).max(4), tier: z.number().int().min(0).max(5), journey: z.string().default("cornelia") }))
+    .input(z.object({ party: z.array(z.string()).min(1).max(4), tier: z.number().int().min(0).max(5), journey: z.string().default("echoes") }))
     .mutation(async ({ ctx, input }) => {
       const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey);
       return { id: row.id };

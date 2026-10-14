@@ -8,7 +8,7 @@ model Run {
 
   seed    String
   /// Journey played (game-core JOURNEYS id).
-  journey String    @default("cornelia")
+  journey String    @default("echoes")
   tier    Int       @default(0)
   status RunStatus @default(ACTIVE)
   /// Current world index (0 = Cornelia, 1 = Baron, 2 = World of Ruin) — denormalized for listings.

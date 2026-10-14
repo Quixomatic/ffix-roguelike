@@ -1,4 +1,4 @@
-import { achievement, eventById, getJourney, JOURNEYS, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, eventById, getArea, getJourney, JOURNEYS, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -209,7 +209,8 @@ export function EventPanel({ run, phase, actions }: { run: RunState; phase: Extr
 }
 
 export function WorldClearPanel({ run, actions }: { run: RunState; actions: RunActions }) {
-  const next = WORLDS[run.world + 1];
+  const nextId = getJourney(run.journey).areas[run.stage + 1];
+  const next = nextId ? getArea(nextId) : undefined;
   return (
     <Panel title={`${WORLDS[run.world]!.name} cleared!`}>
       <div className="ff-window p-4 text-lg">

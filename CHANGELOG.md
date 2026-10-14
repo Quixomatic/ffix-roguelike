@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.21] - 2026-10-14
+
+Journeys are campaigns of several overworld maps, pokelike-style: each map ends with a "gym leader" boss, and the last map's castle is the journey's final boss.
+
+### Changed
+- **Echoes of the Past** is now one journey across three maps — Cornelia (Garland) → Baron (Golbez) → World of Ruin (final boss Kefka) — instead of three one-map journeys.
+- The mid-map semi-boss fortress is off by default (each map's castle boss is already the semi-boss tier); it stays available per area. Gigas Worm, Iron Giant and King Behemoth are elites again.
+- The overworld shows the area and progress ("Cornelia — map 1/3") with the journey name; the world-clear screen follows the journey's own map order.
+- Runs saved under the old one-map journey ids are mapped to the journey containing their current map.
+- DB: `run.journey` defaults to `echoes` (migration `journey_default_echoes`).
+
 ## [0.1.20] - 2026-10-14
 
 Journeys: pokelike-style separate runs — one map each, fodder, a semi-boss fortress halfway, and a hard end boss.
