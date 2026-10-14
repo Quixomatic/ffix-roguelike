@@ -117,8 +117,10 @@ export const WORLDS: WorldDef[] = [
     name: "Alexandria",
     subtitle: "I Want to Be Your Canary",
     theme: "grassland",
-    encounters: [["@TH_E004"],["@TH_E005"],["@TH_E003"],["@TH_E002"]],
-    elites: [["@TH_E002"],["@TH_E004"]],
+    // FF9's first random encounters (Mu, Goblin/Python, Fang) plus the castle fights against Haagen & Weimar and
+    // the Bomb. The play's scripted set pieces (King Leo, Blank) stay out of the random pool.
+    encounters: [["@WM_0000"], ["@WM_0004"], ["@EF_R007"], ["@WM_0001"], ["@TH_E005"], ["@WM_0005"]],
+    elites: [["@TH_E004"], ["@WM_0002"]],
     boss: ["@TH_E001"],
     gearPrice: [50, 600],
     shops: [0],

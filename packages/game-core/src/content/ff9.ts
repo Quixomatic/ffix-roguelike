@@ -27,7 +27,8 @@ export function ff9Action(id: number): BattleAction | undefined {
     mp: a.mp,
     type: a.type,
     vfx: a.vfx,
-    enemyOnly: true,
+    // Real FF9 moves carry their own power (not added to the monster's attack like our shorthand moves).
+    enemyOnly: false,
   };
 }
 

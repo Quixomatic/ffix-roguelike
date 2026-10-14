@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.30] - 2026-10-14
+
+FF9 monsters were hitting about twice as hard as they should, and Alexandria threw story set pieces at a lone Zidane.
+
+### Fixed
+- **FF9 monster attacks used double power.** Real FF9 moves were treated like this project's shorthand enemy moves, whose power is *added* to the monster's attack — so e.g. Masked Man's Gwahaha! hit with 13 + 13 power instead of 13. FF9 moves now use exactly their own power.
+
+### Changed
+- **Alexandria (Journey 1, map 1)** now uses FF9's first real random encounters (Mu, Goblin/Python, Goblin/Fang) plus the castle fight against Haagen & Weimar and the Mu ambush; Masked Man stays the boss. The play's scripted set pieces (King Leo's "Poly"/"Pyro" stage effects, Blank) are out of the random pool — they only make sense inside the story.
+
 ## [0.1.29] - 2026-10-14
 
 Probe scripts for the database, ChannelGuide-style — and a fix they caught on the first run.
