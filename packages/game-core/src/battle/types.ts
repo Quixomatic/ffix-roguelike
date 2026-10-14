@@ -1,6 +1,7 @@
 import type { ActionData, Element, Status, TargetType, WeaponData } from "@ffix-roguelike/game-data";
 
 import type { ElementProfile } from "../stats";
+import type { AiState } from "./ai/vm";
 
 export type Side = "party" | "enemy";
 
@@ -136,6 +137,19 @@ export interface BattleUnit {
   boss?: boolean;
   /** Blue magic Quina learns by eating this enemy. */
   eatTeaches?: number;
+  // FF9 battle scripts (battle/ai)
+  /** FF9 enemy type slot (typeNo) in the battle's scene. */
+  ff9Type?: number;
+  /** Spawn position in the scene's pattern (FF9 btl index 4 + slot); defaults to the unit's id number. */
+  ff9Slot?: number;
+  /** Set by the battle script: can't be targeted. */
+  untargetable?: boolean;
+  /** Set by the battle script: not shown (and not targetable). */
+  hidden?: boolean;
+  /** Takes no ATB turns (FF9 bi.atb = 0: scripted parts that only act through their script). */
+  noAtb?: boolean;
+  /** A boss whose HP ran out, held for its script to stage the end (FF9's "HP < 10,000" dying state). */
+  ff9Dying?: boolean;
 }
 
 export type CommandKind = "attack" | "ability" | "item" | "throw" | "defend" | "flee" | "change";
@@ -148,10 +162,15 @@ export interface BattleCommand {
   targetIds: string[];
   /** Double Black / Double White: the second spell and its targets. */
   second?: { actionId: number; targetIds: string[] };
+  /** Chosen by an FF9 battle script: its targets are used as given. */
+  scripted?: boolean;
 }
 
-/** Why a command is in the queue (FF9 command slots: main, counter, Jump, Trance…). */
-export type CommandSource = "main" | "counter" | "magicCounter" | "autoPotion" | "auto" | "spear" | "phantom" | "second";
+/**
+ * Why a command is in the queue (FF9 command slots: main, counter, Jump, Trance…). "dying" is an enemy's death
+ * move (FF9 EnemyDying), "script" a move a battle script plays outside the queue (AttackSpecial).
+ */
+export type CommandSource = "main" | "counter" | "magicCounter" | "autoPotion" | "auto" | "spear" | "phantom" | "second" | "dying" | "script";
 
 export interface QueuedCommand {
   command: BattleCommand;
@@ -179,6 +198,8 @@ export type BattleEvent =
   | { type: "steal"; actorId: string; targetId: string; itemId: number | null }
   | { type: "learn"; unitId: string; actionId: number }
   | { type: "message"; text: string }
+  /** An FF9 battle script shows a line of the scene's battle text. */
+  | { type: "scriptText"; scene: string; textId: number; actorId?: string }
   | { type: "end"; outcome: BattleOutcome };
 
 export type BattleOutcome = "victory" | "defeat" | "fled";
@@ -216,6 +237,10 @@ export interface BattleState {
   /** Lifetime counters some abilities scale with (Thievery, Dragon's Crest, Tonberry Karma). */
   meta: { thefts: number; dragonKills: number; tonberryKills: number };
   start: "normal" | "preemptive" | "back";
+  /** FF9 battle scene (e.g. "EF_E009") whose AI script drives the FF9 monsters. */
+  scene?: string;
+  /** Battle AI (FF9 event engine) state, present when the scene's script is registered. */
+  ai?: AiState;
 }
 
 /** An action as the engine sees it: FF9 data or an enemy-only move from the content tables. */

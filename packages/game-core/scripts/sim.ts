@@ -19,10 +19,15 @@
 import { createInterface } from "node:readline";
 
 import { findItem, getItem, itemByName, items } from "@ffix-roguelike/game-data";
-import { loadBestiaryCache } from "@ffix-roguelike/game-data/cache";
+import { loadBattleScriptCache, loadBestiaryCache } from "@ffix-roguelike/game-data/cache";
 
 import {
   applyRunOutcome,
+  registerBattleScripts,
+  encounterNames,
+  encounterUnits,
+  isSceneRef,
+  rollSceneGroup,
   starterGear,
   TICKS_PER_SECOND,
   availableJourneys,
@@ -35,7 +40,7 @@ import {
   claimReward,
   createBattle,
   dig,
-  enemyGroup,
+
   finishBattle,
   getBattleAction,
   getNode,
@@ -67,6 +72,7 @@ import {
 const [cmd = "help", ...rest] = process.argv.slice(2);
 // FF9 monsters, attacks and scenes from the local import cache (the server loads them from Postgres).
 loadBestiaryCache();
+registerBattleScripts(loadBattleScriptCache());
 
 const args: Record<string, string> = {};
 for (let i = 0; i < rest.length; i++) {
@@ -192,12 +198,15 @@ function parseCommand(e: BattleEngine, actor: BattleUnit, line: string): BattleC
 async function battleCmd() {
   const party = list("party", "zidane:5,vivi:5,steiner:5").map((p, i) => {
     const [key, lv] = p.split(":");
-    return partyUnit(newBuild(key!, Number(lv ?? 5)), i);
+    const b = newBuild(key!, Number(lv ?? 5));
+    return partyUnit({ ...b, equipment: starterGear(b) }, i);
   });
   const world = num("world", 0);
   const enemyIds = list("enemies", WORLDS[world]!.encounters[0]!.join(","));
   const seed = num("seed", Date.now() % 1_000_000);
-  const engine = new BattleEngine(createBattle({ seed, party, enemies: enemyGroup(enemyIds, num("tier", 0)), inventory: potions() }));
+  // FF9 scenes: --enemies @EF_E009 (main group) or @EF_R004#2 (a pattern).
+  const enc = encounterUnits(enemyIds, num("tier", 0));
+  const engine = new BattleEngine(createBattle({ seed, party, enemies: enc.units, inventory: potions(), ...(enc.scene ? { scene: enc.scene } : {}) }));
   console.log(c.cyan(`Battle seed ${seed}: ${party.map((u) => u.name).join(", ")} vs ${enemyIds.join(", ")}`));
   printState(engine);
 
@@ -223,7 +232,8 @@ async function battleCmd() {
     for (const actor of engine.readyUnits()) {
       for (;;) {
         if (autoAll || pipedDone) {
-          engine.submit(autoCommand(engine, actor));
+          const res = engine.submit(autoCommand(engine, actor));
+          if (!res.ok) engine.submit({ actorId: actor.id, kind: "defend", targetIds: [] });
           break;
         }
         const line = await nextLine(c.yellow(`${actor.name} (${actor.id}) ready > `));
@@ -289,7 +299,11 @@ function balanceCmd() {
             const b = newBuild(k, lv);
             return partyUnit({ ...b, equipment: starterGear(b) }, j);
           });
-          const st = autoBattle(new BattleEngine(createBattle({ seed: 7000 + i, party, enemies: enemyGroup(g), inventory: potions() }))).state;
+          // FF9 scenes roll their group like a real run would (same party-size cap).
+          const cap = keys.length <= 1 ? 1 : keys.length + 1;
+          const rolled = g.map((t) => (isSceneRef(t) && !t.includes("#") ? rollSceneGroup(Rng.fromSeed(`bal:${i}`), t, kind === "boss" ? 8 : cap) : t));
+          const enc = encounterUnits(rolled, 0);
+          const st = autoBattle(new BattleEngine(createBattle({ seed: 7000 + i, party, enemies: enc.units, inventory: potions(), ...(enc.scene ? { scene: enc.scene } : {}) }))).state;
           if (st.outcome === "victory") wins++;
           secs += st.tick / TICKS_PER_SECOND;
         }
@@ -297,7 +311,7 @@ function balanceCmd() {
         const txt = `${pct.toFixed(0)}% ${(secs / n).toFixed(0)}s`.padStart(16);
         return pct >= 80 ? c.green(txt) : pct >= 40 ? c.yellow(txt) : c.red(txt);
       });
-      console.log(`${`[${kind}] ${g.join(",")}`.padEnd(34)} ${cells.join("")}`);
+      console.log(`${`[${kind}] ${encounterNames(g).join(",")}`.padEnd(34)} ${cells.join("")}`);
     }
   }
 }

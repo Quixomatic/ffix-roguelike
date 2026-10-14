@@ -12,9 +12,9 @@ const HEAL_SCRIPTS = new Set([10]);
 const DAMAGE_SCRIPTS = new Set([9, 18, 19, 20, 63, 85, 21]);
 
 export function autoCommand(e: BattleEngine, u: BattleUnit): BattleCommand {
-  const foes = e.opponents(u).filter((x) => e.isActive(x));
+  const foes = e.opponents(u).filter((x) => e.isTargetable(x));
   const allies = e.allies(u);
-  const hurt = allies.filter((x) => e.isActive(x) && x.hp < x.maxHp * 0.4).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+  const hurt = allies.filter((x) => e.isTargetable(x) && x.hp < x.maxHp * 0.4).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
   const downed = allies.find((x) => !e.isAlive(x));
   const abilities = e.commandsOf(u).flatMap((c) => c.actionIds).map(getBattleAction);
   const affordable = abilities.filter((a) => a.mp <= u.mp && !(e.isMagical(a) && e.has(u, "silence")));

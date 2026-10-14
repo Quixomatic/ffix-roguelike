@@ -1,14 +1,16 @@
 /**
  * FF9 battle data from Postgres (ff9_* tables) into game-core's registry. Loaded once per server process on the
- * first request that needs game rules; battle AI scripts are fetched per scene and cached.
+ * first request that needs game rules: monsters, attacks, scenes and every battle AI script. The client gets
+ * scripts one battle at a time (sceneScript).
  */
+import { registerBattleScripts } from "@ffix-roguelike/game-core";
 import { registerBestiary, type FF9Bestiary, type FF9Enemy, type FF9EnemyAction, type FF9Scene } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 
 let loading: Promise<FF9Bestiary> | null = null;
 const scripts = new Map<string, Uint8Array | null>();
 
-/** Load the bestiary (monsters, attacks, scenes — not scripts) and register it. Safe to call on every request. */
+/** Load the bestiary and all battle AI scripts and register them. Safe to call on every request. */
 export function ensureFf9Content(db: Database): Promise<FF9Bestiary> {
   loading ??= (async () => {
     const [enemies, actions, scenes] = await Promise.all([
@@ -23,6 +25,9 @@ export function ensureFf9Content(db: Database): Promise<FF9Bestiary> {
       scenes: scenes.map((s) => s.data as unknown as FF9Scene),
     };
     registerBestiary(data);
+    // Every scene's AI script, so the server can create and replay any FF9 battle.
+    const scriptRows = await db.ff9BattleScene.findMany({ where: { script: { not: null } }, select: { id: true, script: true } });
+    registerBattleScripts(Object.fromEntries(scriptRows.map((r) => [r.id, new Uint8Array(r.script!)])));
     return data;
   })().catch((err) => {
     loading = null;

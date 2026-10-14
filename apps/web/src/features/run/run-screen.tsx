@@ -2,6 +2,7 @@ import { WORLDS } from "@ffix-roguelike/game-core";
 import { Link } from "@tanstack/react-router";
 
 import { BattleView } from "@/features/battle/battle-view";
+import { useBattleScript } from "@/features/battle/use-battle-script";
 
 import { Overworld } from "./overworld";
 import { PartyPanel } from "./party-panel";
@@ -29,6 +30,8 @@ export function RunScreen() {
 
   const phase = run.phase;
   const inBattle = phase.kind === "battle";
+  // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs.
+  const scriptReady = useBattleScript(phase.kind === "battle" ? phase.battle.scene : undefined);
   const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
@@ -38,12 +41,13 @@ export function RunScreen() {
         {phase.kind === "battle" && (
           <div className="flex flex-col gap-2">
             {actions.finishBattle.isPending && <div className="ff-window mx-auto px-4 py-1">Verifying battle…</div>}
-            <BattleView
+            {!scriptReady && <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>}
+            {scriptReady && <BattleView
               key={`${phase.nodeId}-${run.stats.battles}`}
               initial={phase.battle}
               theme={WORLDS[run.world]!.theme}
               onEnd={(final) => actions.finishBattle.mutate({ inputs: final.inputs })}
-            />
+            />}
           </div>
         )}
         {phase.kind === "rewards" && <RewardsPanel phase={phase} actions={actions} />}

@@ -101,38 +101,53 @@ export function rollPattern(rng: Rng, scene: FF9Scene): number {
   return i;
 }
 
-/** A concrete encounter: the scene's group for that pattern (targetable monsters only). */
+/** One monster of a scene group: which bestiary entry, its FF9 type and spawn slot (what its script calls it). */
+export interface SceneSpawn {
+  id: string;
+  /** FF9 enemy type slot (typeNo). */
+  type: number;
+  /** Position in the pattern's spawn list, counting non-targetable spawns — the script's object order. */
+  slot: number;
+  /** Untargetable parts (scripted pieces) are fielded but can't be attacked and don't count for victory. */
+  targetable: boolean;
+}
+
+/** A concrete encounter: the scene's group for that pattern. */
 export interface SceneGroup {
   scene: string;
   pattern: number;
-  /** Bestiary ids, one per monster, in spawn order. */
+  /** Every spawn with a bestiary entry, in spawn order. */
+  spawns: SceneSpawn[];
+  /** Bestiary ids of the targetable monsters (what you fight and are rewarded for). */
   enemies: string[];
-  /** FF9 enemy type slot (typeNo) of each monster, for its AI script. */
-  types: number[];
 }
 
+/** Token: "@SCENE" (main group), "@SCENE#pattern", or "@SCENE#pattern!n" (only the first n targetable monsters). */
 export function sceneGroup(token: string): SceneGroup {
-  const [sceneId, pat] = token.slice(1).split("#");
+  const [ref, limit] = token.slice(1).split("!");
+  const [sceneId, pat] = ref!.split("#");
   const scene = getScene(sceneId!);
   // No pattern given: the scene's main group (FF9's last, catch-all pattern).
   const pattern = pat == null ? scene.patterns.length - 1 : Math.min(Number(pat), scene.patterns.length - 1);
-  const enemies: string[] = [];
-  const types: number[] = [];
-  for (const s of scene.patterns[pattern]?.spawn ?? []) {
+  const spawns: SceneSpawn[] = [];
+  let kept = 0;
+  (scene.patterns[pattern]?.spawn ?? []).forEach((s, slot) => {
     const uid = scene.types[s.typeNo];
-    if (uid == null || uid < 0 || !s.targetable) continue;
-    enemies.push(ff9EnemyId(uid));
-    types.push(s.typeNo);
-  }
-  return { scene: scene.id, pattern, enemies, types };
+    if (uid == null || uid < 0) return;
+    if (s.targetable && limit != null && kept >= Number(limit)) return;
+    if (s.targetable) kept++;
+    spawns.push({ id: ff9EnemyId(uid), type: s.typeNo, slot, targetable: s.targetable });
+  });
+  return { scene: scene.id, pattern, spawns, enemies: spawns.filter((s) => s.targetable).map((s) => s.id) };
 }
 
 /**
  * Roll which group of a scene appears. Small parties prefer patterns that fit (a lone hero meets small groups,
- * as the rest of the game does), re-rolling a few times before taking the smallest.
+ * as the rest of the game does), re-rolling a few times before taking the smallest. If even that is bigger than
+ * the party allows, the extra monsters stay home ("!n") — except in boss fights (`trim` false).
  */
-export function rollSceneGroup(rng: Rng, sceneRef: string, cap: number): string {
-  const scene = getScene(sceneRef.replace(/^@/, "").split("#")[0]!);
+export function rollSceneGroup(rng: Rng, sceneRef: string, cap: number, trim = true): string {
+  const scene = getScene(sceneRef.replace(/^@/, "").split(/[#!]/)[0]!);
   let best: number | null = null;
   for (let i = 0; i < 6; i++) {
     const p = rollPattern(rng, scene);
@@ -140,7 +155,8 @@ export function rollSceneGroup(rng: Rng, sceneRef: string, cap: number): string 
     if (size > 0 && size <= cap) return `@${scene.id}#${p}`;
     if (best == null || size < sceneGroup(`@${scene.id}#${best}`).enemies.length) best = p;
   }
-  return `@${scene.id}#${best ?? 0}`;
+  const token = `@${scene.id}#${best ?? 0}`;
+  return trim && sceneGroup(token).enemies.length > cap ? `${token}!${cap}` : token;
 }
 
 /**

@@ -7,12 +7,14 @@
  * Wait mode freezes gauges and status timers while a party member is waiting for a command (queued actions
  * still play out). Active mode never freezes.
  */
-import { findItem, getAction, statuses as statusTable, type Status, type TargetType } from "@ffix-roguelike/game-data";
+import { ELEMENTS, findItem, getAction, statuses as statusTable, type Status, type TargetType } from "@ffix-roguelike/game-data";
 
 import { enemyAction } from "../content/enemy-actions";
+import { getScene } from "../content/ff9-scenes";
 import { Rng } from "../rng";
 import { C, Calc, CAT, F, itemAction, PHANTOMS, performScript, REMOVE_ON_MAGICAL, REMOVE_ON_PHYSICAL, SA, type CalcCommand } from "./calc";
 import { supportImmunities } from "./units";
+import { BattleAi, commandIds } from "./ai/vm";
 import {
   ATB_COEF,
   ATB_SPEED_FACTOR,
@@ -81,6 +83,10 @@ export interface CreateBattleOptions {
   meta?: Partial<BattleMeta>;
   /** No preemptive strikes / back attacks (boss fights, scripted battles). */
   noSurprise?: boolean;
+  /** FF9 battle scene ("EF_E009" or "@EF_E009#0"): its registered AI script drives the FF9 monsters. */
+  scene?: string;
+  /** The scene's spawn pattern (FF9 GetBattleGroupId); defaults to the "#n" in `scene`, else 0. */
+  pattern?: number;
 }
 
 export function createBattle(opts: CreateBattleOptions): BattleState {
@@ -117,6 +123,11 @@ export function createBattle(opts: CreateBattleOptions): BattleState {
   };
   const engine = new BattleEngine(state, rng);
   for (const u of units) engine.initUnit(u, start);
+  if (opts.scene) {
+    const [scene, pat] = opts.scene.replace(/^@/, "").split("#");
+    state.scene = scene!;
+    BattleAi.start(engine, scene!, opts.pattern ?? Number(pat ?? 0));
+  }
   if (start === "preemptive") engine.emit({ type: "message", text: "Preemptive strike!" });
   if (start === "back") engine.emit({ type: "message", text: "Back attack!" });
   state.rng = engine.rng.state;
@@ -127,12 +138,21 @@ export class BattleEngine {
   readonly rng: Rng;
   private events: BattleEvent[] = [];
   private after: (() => void)[] = [];
+  private _ai: BattleAi | null | undefined;
+  /** The queued command being executed (for battle-script reactions). */
+  private current: QueuedCommand | null = null;
 
   constructor(
     public state: BattleState,
     rng?: Rng,
   ) {
     this.rng = rng ?? new Rng(state.rng);
+  }
+
+  /** The FF9 battle-script VM, when the battle's scene has a registered script. */
+  get ai(): BattleAi | null {
+    if (this._ai === undefined || (this._ai && this._ai.s !== this.state.ai) || (this._ai === null && this.state.ai)) this._ai = BattleAi.attach(this);
+    return this._ai;
   }
 
   // ── setup ──────────────────────────────────────────────────────────────────
@@ -169,7 +189,7 @@ export class BattleEngine {
   }
 
   /** Auto-statuses (supports, monster traits): always on, never wear off. */
-  private makePermanent(u: BattleUnit, s: Status) {
+  makePermanent(u: BattleUnit, s: Status) {
     if (!u.permanent.includes(s)) u.permanent.push(s);
     u.statuses[s] = PERIODIC.includes(s) ? { opr: this.oprCount(u, s) } : {};
     if (s === "haste" && !u.statusImmune.includes("slow")) u.statusImmune.push("slow");
@@ -201,11 +221,11 @@ export class BattleEngine {
 
   /** Can be picked as a target (Jumping units are out of reach). */
   isTargetable(u: BattleUnit): boolean {
-    return this.isActive(u) && !this.has(u, "jump");
+    return this.isActive(u) && !this.has(u, "jump") && !u.untargetable && !u.hidden && !u.ff9Dying;
   }
 
   canAct(u: BattleUnit): boolean {
-    return this.isActive(u) && !this.hasAny(u, NO_INPUT);
+    return this.isActive(u) && !this.hasAny(u, NO_INPUT) && !u.ff9Dying;
   }
 
   allies(u: BattleUnit): BattleUnit[] {
@@ -297,7 +317,7 @@ export class BattleEngine {
    */
   isIdle(): boolean {
     const s = this.state;
-    return s.mode === "wait" && s.ready.length > 0 && s.busy === 0 && s.queue.length === 0;
+    return s.mode === "wait" && s.ready.length > 0 && s.busy === 0 && s.queue.length === 0 && (this.ai?.isNormal() ?? true);
   }
 
   /** Party members waiting for a command, in the order their gauges filled. */
@@ -322,6 +342,7 @@ export class BattleEngine {
 
   validate(c: BattleCommand): string | null {
     if (this.state.outcome) return "Battle is over";
+    if (this.ai && !this.ai.isNormal()) return "Wait";
     if (!this.state.ready.includes(c.actorId)) return "That character is not ready";
     const actor = this.unit(c.actorId);
     if (!this.canAct(actor)) return "That character can't act";
@@ -430,13 +451,20 @@ export class BattleEngine {
     if (s.outcome || this.isIdle()) return [];
     s.tick++;
 
-    const frozen = s.mode === "wait" && s.ready.length > 0;
+    // FF9 battle scripts can pause the battle (intro, cutscenes): no ATB and no new commands meanwhile.
+    const ai = this.ai;
+    const normal = ai?.isNormal() ?? true;
+    const frozen = !normal || (s.mode === "wait" && s.ready.length > 0);
     if (!frozen) for (const u of s.units) this.atbTick(u);
 
     if (s.busy > 0) s.busy--;
-    else this.runQueue();
+    else if (normal) this.runQueue();
 
     for (const u of s.units) this.checkPoint(u);
+    if (ai && !s.outcome) {
+      ai.frame();
+      for (const u of s.units) this.checkPoint(u);
+    }
     this.checkEnd();
     if (!s.outcome && s.tick >= MAX_TICKS) this.finish("defeat");
     s.rng = this.rng.state;
@@ -449,7 +477,7 @@ export class BattleEngine {
 
   /** One ATB tick for a unit: statuses, Jump/Eidolon countdowns, gauge. */
   private atbTick(u: BattleUnit) {
-    if (u.removed || !this.isAlive(u)) return;
+    if (u.removed || !this.isAlive(u) || u.ff9Dying) return;
     const coef = this.coef(u);
     if (!this.hasAny(u, STOP_ATB)) this.tickStatuses(u, coef);
     if (!this.isAlive(u)) return;
@@ -468,7 +496,7 @@ export class BattleEngine {
       if (u.phantom.countdown <= 0) this.enqueue({ actorId: u.id, kind: "ability", actionId: u.phantom.actionId, targetIds: [] }, "phantom", true);
     }
 
-    if (this.hasAny(u, STOP_ATB) || u.busyCommand) return;
+    if (this.hasAny(u, STOP_ATB) || u.busyCommand || u.noAtb) return;
     if (u.atb < u.atbMax) u.atb = Math.min(u.atbMax, u.atb + coef * ATB_SPEED_FACTOR);
     if (u.atb < u.atbMax || this.hasAny(u, PREVENT_ATB_CONFIRM)) return;
     this.onGaugeFull(u);
@@ -492,6 +520,12 @@ export class BattleEngine {
         this.state.ready.push(u.id);
         this.emit({ type: "turnReady", unitId: u.id });
       }
+      return;
+    }
+    // FF9 battle script: the ATB function picks the move (a frame later); null = not a scripted unit.
+    const scripted = this.ai?.requestAtb(u);
+    if (scripted != null) {
+      if (scripted) u.busyCommand = true;
       return;
     }
     const cmd = this.chooseEnemyCommand(u);
@@ -574,7 +608,9 @@ export class BattleEngine {
       const q = s.queue.shift()!;
       const actor = s.units.find((u) => u.id === q.command.actorId);
       if (!actor) continue;
+      this.current = q;
       const ran = this.execute(actor, q);
+      this.current = null;
       if (ran > 0) {
         s.busy = ran;
         return;
@@ -589,9 +625,11 @@ export class BattleEngine {
     const reaction = isPriority(source) && source !== "spear" && source !== "phantom";
     const declarable = source === "main" || source === "second" || source === "auto";
 
-    // Can the actor still do it?
-    if (!this.isActive(actor)) return this.cancel(actor, q);
-    if (reaction) {
+    // Can the actor still do it? (An enemy's death move plays as it falls.)
+    if (source === "dying") {
+      if (actor.removed) return 0;
+    } else if (!this.isActive(actor)) return this.cancel(actor, q);
+    else if (reaction) {
       if (this.hasAny(actor, PREVENT_COUNTER)) return 0;
     } else if (source === "spear") {
       if (!this.has(actor, "jump")) return 0;
@@ -737,6 +775,13 @@ export class BattleEngine {
 
     const name = cmd.kind === "attack" ? (kind === "counter" ? "Counter" : "Attack") : action.name;
     this.emit({ type: "actionStart", actorId: actor.id, name, kind: cmd.kind, targetIds: hits.map((h) => h.target.id) });
+    const ai = this.ai;
+    if (ai) {
+      const [cmdNo, sub] = this.ff9CommandIds(actor, cmd, source);
+      let targetBits = 0;
+      for (const h of hits) targetBits |= ai.bit(h.target);
+      ai.commandStart({ cmd: cmdNo, sub, caster: ai.bit(actor), targets: targetBits, element: elementBits(action.elements), weaponElement: elementBits(actor.attackElements) });
+    }
 
     // Items are used up as the action starts (Throw too).
     if (cmd.kind === "item" || cmd.kind === "throw") this.consume(cmd.itemId!);
@@ -812,6 +857,11 @@ export class BattleEngine {
   private resolveTargets(actor: BattleUnit, action: BattleAction, cmd: BattleCommand): BattleUnit[] {
     const t = action.targets;
     const forDead = action.forDead || (cmd.kind === "item" && (findItem(cmd.itemId!)?.effect?.forDead ?? false));
+    // FF9 battle scripts pick their targets themselves (SV_Target); only dead/removed ones are dropped.
+    if (cmd.scripted && cmd.targetIds.length) {
+      const picked = cmd.targetIds.map((id) => this.unit(id)).filter((u) => !u.removed && !this.has(u, "jump") && (forDead || this.isAlive(u)));
+      if (picked.length) return picked;
+    }
     if (t === "self") return [actor];
     if (t.startsWith("all") || t === "everyone" || (cmd.targetIds.length === 0 && t !== "automatic" && !t.startsWith("random"))) {
       const pool = this.targetPool(actor, t === "everyone" || t === "all" ? "everyone" : t, forDead);
@@ -901,6 +951,26 @@ export class BattleEngine {
       }
     }
     this.reactions(v);
+    // End of FF9's CalcResult: the battle script's Death / Counter / CounterEx requests.
+    const ai = this.ai;
+    if (ai && target.side === "enemy") {
+      const q = this.current ?? { command: { actorId: caster.id, kind: "ability" as const, actionId: action.id, targetIds: [] }, source: "main" as const };
+      const [cmdNo, sub] = this.ff9CommandIds(caster, q.command, q.source);
+      ai.onHit(caster, target, cmdNo, sub, v.cmd.counterable);
+    }
+  }
+
+  /** FF9 BattleCommandId / sub id of a command (what battle scripts compare against). */
+  private ff9CommandIds(actor: BattleUnit, cmd: BattleCommand, source: CommandSource): [number, number] {
+    let attacks: number[] | undefined;
+    if (actor.side === "enemy" && this.state.scene) {
+      try {
+        attacks = getScene(this.state.scene).attacks;
+      } catch {
+        attacks = undefined;
+      }
+    }
+    return commandIds(this, actor, cmd, source, attacks);
   }
 
   /** Taking a hit from the other side fills the Trance gauge. */
@@ -951,8 +1021,8 @@ export class BattleEngine {
         }
       }
     }
-    // Enemy counters (FF9 battle scripts).
-    if (target.side === "enemy" && caster.side === "party" && v.cmd.counterable && this.isAlive(target) && !this.hasAny(target, PREVENT_COUNTER) && target.counters?.length) {
+    // Enemy counters (hand-written AI; FF9 battle scripts counter through ai.onHit).
+    if (target.side === "enemy" && caster.side === "party" && v.cmd.counterable && this.isAlive(target) && !this.hasAny(target, PREVENT_COUNTER) && target.counters?.length && !this.ai?.drives(target)) {
       for (const r of target.counters) {
         if (r.hpBelow != null && (target.hp / target.maxHp) * 100 > r.hpBelow) continue;
         if (!this.rng.chance(r.weight)) continue;
@@ -1191,6 +1261,8 @@ export class BattleEngine {
   killUnit(u: BattleUnit) {
     if (u.removed) return;
     if (this.has(u, "death") && u.hp === 0) return;
+    // FF9 non-dying bosses: their script stages the end.
+    if (this.ai?.holdDeath(u)) return;
     if (this.has(u, "autoLife") && !this.isZombieUnit(u)) {
       delete u.statuses.autoLife;
       this.emit({ type: "statusOff", targetId: u.id, status: "autoLife" });
@@ -1241,6 +1313,26 @@ export class BattleEngine {
     u.removed = true;
     u.hp = 0;
     this.onDeath(u);
+  }
+
+  /** btl_cmd.KillStandardCommands: drop a unit's pending turn (its gauge restarts). */
+  killStandardCommands(u: BattleUnit) {
+    const before = this.state.queue.length;
+    this.state.queue = this.state.queue.filter((q) => !(q.command.actorId === u.id && (q.source === "main" || q.source === "second" || q.source === "auto")));
+    this.dropFromReady(u);
+    if (before !== this.state.queue.length) u.atb = 0;
+    u.busyCommand = false;
+  }
+
+  /** btl_cmd.KillAllCommand (a battle script pausing the battle): every pending command is dropped. */
+  killAllCommands() {
+    this.state.queue = [];
+    for (const u of this.state.units) u.busyCommand = false;
+  }
+
+  /** A battle script plays a move at once, outside the queue (FF9 AttackSpecial). Returns its duration. */
+  executeScripted(actor: BattleUnit, command: BattleCommand): number {
+    return this.execute(actor, { command, source: "script" });
   }
 
   // ── escape ─────────────────────────────────────────────────────────────────
@@ -1297,6 +1389,13 @@ export class BattleEngine {
     stock.count--;
     return true;
   }
+}
+
+/** FF9 element bit set (fire 1 … shadow 128). */
+function elementBits(list: readonly string[]): number {
+  let bits = 0;
+  for (const e of list) bits |= 1 << ELEMENTS.indexOf(e as (typeof ELEMENTS)[number]);
+  return bits;
 }
 
 /** Commands 21 (Double White) and 23 (Double Black) cast two spells per turn. */

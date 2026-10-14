@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.31] - 2026-10-14
+
+FF9's own battle AI: every FF9 monster and boss now fights with its real compiled AI script from the game.
+
+### Added
+- **FF9 battle script VM** (`game-core/src/battle/ai/`): a port of the part of Memoria's EventEngine that battle AI uses — script parsing and a disassembler (`bun scripts/disasm.ts <SCENE>`), the expression evaluator (all 56 operators the scripts use, including the per-unit list operators and random picks), variables (global/map/instance, system lists, unit members), flow control, and the battle opcodes (choosing an attack and target, special attacks, battle code: pausing the ATB, ending the battle, adding gil…). All 562 battle scripts (108,630 instructions) decode with no errors; all 21 opcodes, 17 system values and 42 unit properties they use are supported. The VM's state lives in the battle state, so replays stay exact.
+- Monsters pick their moves, counters, phase changes and death sequences the way FF9 does: Plant Brain opens with Pollen and changes phase after six turns; Masked Man takes "Oww!" reaction turns; random encounters use only their own monsters' attacks; Hades and Ozma run their full scripts.
+- FF9's scripted-death bosses: scripts see the hidden +10,000 HP buffer, and a boss at 0 HP is held for its script to stage the ending.
+- **Every battle carries its scene** (`createBattle({ scene })`); units carry their FF9 type and spawn slot (untargetable script pieces are fielded too, as in FF9).
+- **Scripts load per battle**: the server registers every scene's script from Postgres at startup; the browser fetches just the current fight's script (`content.battleScript`) before the battle starts. Tests and `pnpm sim` load them from the seed files.
+- 12 VM tests (all 562 scenes start and their enemies act; Plant Brain, a Goblin/Fang encounter, Hades and Ozma; determinism and replay).
+
+### Changed
+- **Small parties no longer face whole FF9 groups in regular battles**: when even a scene's smallest group is bigger than the party allows, the extra monsters stay home (bosses keep their full groups).
+- The auto-battle AI and target menus skip units a script has hidden or made untargetable.
+- `pnpm sim battle --enemies @EF_E009` fights FF9 scenes; `sim balance` rolls scene groups like a real run.
+
+### Known issues
+- A few scripted story fights wait for story events the roguelike doesn't have (Black Waltz No.1 + Sealion, the Prison Cage) and can stall; Gizamaluke looks far too hard. Being investigated next.
+- Story progress flags start at zero, so scripts take their early-story branches.
+
 ## [0.1.30] - 2026-10-14
 
 FF9 monsters were hitting about twice as hard as they should, and Alexandria threw story set pieces at a lone Zidane.

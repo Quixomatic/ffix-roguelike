@@ -303,12 +303,13 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
 }
 
 /**
- * Battle units for an encounter. FF9 scene tokens ("@EF_R004#2") become that scene's group, each monster tagged
- * with its FF9 enemy type slot and position so the scene's own AI script can drive it.
+ * Battle units for an encounter. An FF9 scene token ("@EF_R004#2") becomes that scene's group: every spawn tagged
+ * with its FF9 type and spawn slot (the scene's AI script addresses monsters by slot), untargetable pieces
+ * included. `scene` is the token createBattle needs to run the scene's script.
  */
 export function encounterUnits(group: string[], tier: number): { units: BattleUnit[]; scene?: string } {
   const ids: string[] = [];
-  const tags: ({ ff9Type: number; ff9Slot: number } | null)[] = [];
+  const tags: (Partial<BattleUnit> | null)[] = [];
   let scene: string | undefined;
   for (const t of group) {
     if (!isSceneRef(t)) {
@@ -316,12 +317,11 @@ export function encounterUnits(group: string[], tier: number): { units: BattleUn
       tags.push(null);
       continue;
     }
-    const g = sceneGroup(t);
-    scene ??= g.scene;
-    g.enemies.forEach((id, i) => {
-      ids.push(id);
-      tags.push({ ff9Type: g.types[i]!, ff9Slot: i });
-    });
+    scene ??= t.split("!")[0];
+    for (const s of sceneGroup(t).spawns) {
+      ids.push(s.id);
+      tags.push({ ff9Type: s.type, ff9Slot: s.slot, ...(s.targetable ? {} : { untargetable: true }) });
+    }
   }
   const units = enemyGroup(ids, tier).map((u, i) => (tags[i] ? Object.assign(u, tags[i]) : u));
   return { units, scene };

@@ -3,6 +3,7 @@ import { itemByName } from "@ffix-roguelike/game-data";
 import { useMemo, useState } from "react";
 
 import { BattleView } from "./battle-view";
+import { useBattleScript } from "./use-battle-script";
 
 interface Props {
   world: number;
@@ -19,13 +20,16 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   const groups = [...w.encounters, ...w.elites, w.boss];
   const group = groups[encounter % groups.length]!;
 
+  const foes = useMemo(() => encounterUnits(group, 0), [group]);
+  const scriptReady = useBattleScript(foes.scene);
+
   const initial = useMemo(() => {
-    const encounter = encounterUnits(group, 0);
+    if (!scriptReady) return null;
     return createBattle({
         seed: Date.now() >>> 0,
         party: ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(newBuild(k, level), i)),
-        enemies: encounter.units,
-        ...(encounter.scene ? { scene: encounter.scene } : {}),
+        enemies: structuredClone(foes.units),
+        ...(foes.scene ? { scene: foes.scene } : {}),
         inventory: [
           { itemId: itemByName("Potion").id, count: 6 },
           { itemId: itemByName("Hi-Potion").id, count: 2 },
@@ -37,7 +41,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   },
     // A new round re-rolls the seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [world, level, encounter, round],
+    [world, level, encounter, round, scriptReady],
   );
 
   return (
@@ -91,7 +95,11 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
           </span>
         )}
       </div>
-      <BattleView key={`${world}-${level}-${encounter}-${round}`} initial={initial} theme={w.theme} onEnd={setResult} />
+      {initial ? (
+        <BattleView key={`${world}-${level}-${encounter}-${round}`} initial={initial} theme={w.theme} onEnd={setResult} />
+      ) : (
+        <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
+      )}
       <p className="text-center text-sm text-muted-foreground">
         Arrows + Enter to choose, Esc to go back, Tab to swap target side · click a ready party member to switch who acts
       </p>
