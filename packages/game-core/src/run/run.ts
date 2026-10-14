@@ -758,6 +758,15 @@ export function learnedActive(build: CharacterBuild): AbilityRef[] {
 
 /** Bring a stored RunState from an older version up to date (fields added since it was saved). */
 export function upgradeRunState(run: RunState): RunState {
+  // A fight saved under the pre-v0.1.24 engine can't be replayed by the FF9 engine: start that fight over.
+  if (run.phase.kind === "battle" && run.phase.battle.units.some((u) => u.atbMax == null)) {
+    const next = structuredClone(run);
+    const p = next.phase as Extract<RunState["phase"], { kind: "battle" }>;
+    const rng = rngOf(next).fork(`upgrade:${p.nodeId}`);
+    startBattle(next, p.nodeId, p.nodeKind, p.enemies, rng);
+    next.rng = rng.state;
+    return upgradeRunState(next);
+  }
   const known = JOURNEYS.some((j) => j.id === run.journey);
   if (known && run.stage != null && run.unlockedGear) return run;
   // Unknown/missing journey (older saves): the journey that contains the current area, at that area's stage.

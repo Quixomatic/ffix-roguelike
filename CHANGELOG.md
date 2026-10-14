@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.25] - 2026-10-14
+
+Saved mid-battle runs survive the engine change.
+
+### Fixed
+- A run saved in the middle of a fight under the old engine couldn't be replayed by the new FF9 engine. Loading such a run now restarts that fight (same enemies) under the new rules; everything else in the run is kept.
+
 ## [0.1.24] - 2026-10-14
 
 FF9's battle system, ported faithfully from Memoria's source: every battle script, every support ability, the real status and ATB rules, Trance specials, Cover/Protect Girls, counters and Reflect.
