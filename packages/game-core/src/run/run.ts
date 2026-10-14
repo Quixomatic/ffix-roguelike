@@ -9,8 +9,9 @@
 import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { createBattle, isThrowable, replayBattle } from "../battle/engine";
-import type { BattleState, InputRecord } from "../battle/types";
+import type { BattleState, BattleUnit, InputRecord } from "../battle/types";
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
+import { isSceneRef, sceneGroup } from "../content/ff9-scenes";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
@@ -301,12 +302,39 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
   }
 }
 
+/**
+ * Battle units for an encounter. FF9 scene tokens ("@EF_R004#2") become that scene's group, each monster tagged
+ * with its FF9 enemy type slot and position so the scene's own AI script can drive it.
+ */
+export function encounterUnits(group: string[], tier: number): { units: BattleUnit[]; scene?: string } {
+  const ids: string[] = [];
+  const tags: ({ ff9Type: number; ff9Slot: number } | null)[] = [];
+  let scene: string | undefined;
+  for (const t of group) {
+    if (!isSceneRef(t)) {
+      ids.push(t);
+      tags.push(null);
+      continue;
+    }
+    const g = sceneGroup(t);
+    scene ??= g.scene;
+    g.enemies.forEach((id, i) => {
+      ids.push(id);
+      tags.push({ ff9Type: g.types[i]!, ff9Slot: i });
+    });
+  }
+  const units = enemyGroup(ids, tier).map((u, i) => (tags[i] ? Object.assign(u, tags[i]) : u));
+  return { units, scene };
+}
+
 function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, enemies: string[], rng: Rng) {
   const living = run.party.map((m, i) => partyUnit(m.build, i, { hp: m.hp, mp: m.mp, statuses: m.statuses }));
+  const encounter = encounterUnits(enemies, run.tier);
   const battle = createBattle({
     seed: rng.int(1, 2 ** 31 - 1),
     party: living,
-    enemies: enemyGroup(enemies, run.tier),
+    enemies: encounter.units,
+    ...(encounter.scene ? { scene: encounter.scene } : {}),
     inventory: [...run.consumables.filter((c) => c.count > 0), ...throwables(run)],
     canFlee: nodeKind === "battle",
     noSurprise: nodeKind !== "battle",

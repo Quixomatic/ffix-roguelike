@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:seed:ff9": "bun scripts/seed-ff9.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

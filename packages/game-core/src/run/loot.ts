@@ -3,6 +3,7 @@ import { findItem, items, itemByName, shops, synthesis, type ItemData, type Synt
 
 import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
+import { encounterEnemies, getScene, isSceneRef, rollSceneGroup, sceneGroup } from "../content/ff9-scenes";
 import { WORLDS } from "../content/worlds";
 import { LEGENDARY_ITEMS } from "../meta/achievements";
 import type { Rng } from "../rng";
@@ -18,12 +19,21 @@ export const isGear = (item: ItemData) => GEAR_KINDS.has(item.kind) && !item.eff
 export const RARE_PRICE = 20000;
 export const effectivePrice = (item: ItemData) => (item.price < 10 ? RARE_PRICE : item.price);
 
-/** Rough threat of a group: sum of level × HP multiplier. Used to order encounters by difficulty. */
+/**
+ * Rough threat of a group: sum of level × HP multiplier. Used to order encounters by difficulty. An FF9 scene
+ * counts as its most likely (last, catch-all) pattern.
+ */
 function threat(group: string[]): number {
-  return group.reduce((s, id) => {
+  const ids = group.flatMap((t) => (isSceneRef(t) ? sceneGroup(`${t.split("#")[0]}#${getScene(t.slice(1).split("#")[0]!).patterns.length - 1}`).enemies : [t]));
+  return ids.reduce((s, id) => {
     const e = getEnemy(id);
     return s + e.level * (e.mult?.hp ?? 1);
   }, 0);
+}
+
+/** Resolve FF9 scene refs ("@EF_R004") in a group to a rolled pattern ("@EF_R004#2"). */
+function rollScenes(rng: Rng, group: string[], cap: number): string[] {
+  return group.map((t) => (isSceneRef(t) && !t.includes("#") ? rollSceneGroup(rng, t, cap) : t));
 }
 
 /**
@@ -32,16 +42,16 @@ function threat(group: string[]): number {
  */
 export function pickEncounter(rng: Rng, world: number, depth: number, kind: BattleNodeKind, partySize = 4): string[] {
   const w = WORLDS[world]!;
-  if (kind === "boss") return w.boss;
-  if (kind === "semiboss") return w.semiBoss ?? w.elites[0] ?? w.boss;
   // Small parties meet smaller groups: a lone hero fights one monster, a full party up to five.
   const cap = partySize <= 1 ? 1 : partySize + 1;
-  return pickGroup(rng, w, depth, kind, cap);
+  if (kind === "boss") return rollScenes(rng, w.boss, 8);
+  if (kind === "semiboss") return rollScenes(rng, w.semiBoss ?? w.elites[0] ?? w.boss, 8);
+  return rollScenes(rng, pickGroup(rng, w, depth, kind, cap), cap);
 }
 
 function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "battle" | "elite", cap: number): string[] {
   // Trim each group to the party-size cap first, then order by the threat of what will actually be fought.
-  const pool = (kind === "elite" ? w.elites : w.encounters).map((g) => g.slice(0, cap)).sort((a, b) => threat(a) - threat(b));
+  const pool = (kind === "elite" ? w.elites : w.encounters).map((g) => (g.some(isSceneRef) ? g : g.slice(0, cap))).sort((a, b) => threat(a) - threat(b));
   const span = Math.min(pool.length, kind === "elite" ? pool.length : 4);
   const start = Math.round(depth * (pool.length - span));
   return pool[Math.min(pool.length - 1, start + rng.int(0, span - 1))]!;
@@ -56,16 +66,30 @@ export interface BattleRewards {
   items: number[];
 }
 
+/** FF9 drop rates by slot (out of 256). */
+const FF9_DROP_RATES = [256, 96, 32, 1];
+
 /** Experience/AP/gil and drops for a won battle (before per-character support multipliers). */
-export function battleRewards(rng: Rng, enemyIds: string[], tier: number, state?: BattleState): BattleRewards {
+export function battleRewards(rng: Rng, group: string[], tier: number, state?: BattleState): BattleRewards {
   let exp = 0;
   let ap = 0;
   let gil = 0;
   const drops: number[] = [];
-  for (const id of enemyIds) {
+  for (const id of encounterEnemies(group)) {
     const def = getEnemy(id);
     const b = baseStats(def.level, tier);
     const r = def.reward ?? 1;
+    const f = def.ff9;
+    if (f) {
+      // FF9's own numbers. FF9 bosses give no EXP (story fights); here they pay the curve so runs keep moving.
+      exp += f.exp > 0 ? f.exp : Math.round(b.exp * r);
+      ap += f.ap;
+      gil += f.gil > 0 ? f.gil : Math.round(b.gil * r);
+      f.drops.forEach((item, slot) => {
+        if (item >= 0 && rng.int(0, 255) < (FF9_DROP_RATES[slot] ?? 1)) drops.push(item);
+      });
+      continue;
+    }
     exp += Math.round(b.exp * r);
     ap += Math.round(b.ap * r);
     gil += Math.round(b.gil * r);

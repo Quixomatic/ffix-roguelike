@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.27] - 2026-10-14
+
+FF9's real bestiary: every monster, attack and battle scene from the game, stored in Postgres and seeded on server startup. The Disc-1 journeys now fight FF9's actual encounters.
+
+### Added
+- **FF9 battle data import** (`game-data/scripts/import-ff9-battles.ts`): reads Memoria's battle export (562 battle scenes) into 218 unique monsters (real HP, MP, Str/Mag/Spirit/Speed, Def/MDef, Evade, level, element weaknesses/resistances/absorbs, status immunities, auto-statuses, steal and drop tables, EXP/gil/AP, Blue Magic) and 872 real attacks (power, element, status, hit rate, script). FF9's "+10,000 HP" scripted-death bosses get their true HP back (Hades and Ozma: 55,535). Each scene keeps its enemy types, attack table and spawn patterns.
+- **FF9 battle AI scripts** extracted from the game (`extract-battle-scripts.py`, `p0data7.bin` → 562 `EVT_BATTLE_*.eb`), stored for the script VM (in progress).
+- **Postgres tables** `ff9_enemy`, `ff9_enemy_action`, `ff9_battle_scene` (with the AI script bytes) and `ff9_import` (migrations `ff9_battle_data`, `ff9_import_version`). Seed data lives in `packages/db/seed/ff9`; **the server seeds on startup** whenever it's missing or changed (idempotent, like ChannelGuide's boot seeds). `pnpm -F @ffix-roguelike/db db:seed:ff9` forces a reload.
+- The server loads the bestiary from the DB into game-core once per process; the web app loads it through `content.bestiary` before rendering. Tests and `pnpm sim` read the seed files.
+- **Every FF9 monster is usable** (`ff9-<uid>` bestiary ids) with its real attacks.
+- **Encounters can be FF9 battle scenes** (`"@EF_R004"`): the group is rolled with FF9's own pattern rates, so fights are exactly the groups FF9 throws at you (small parties prefer the smaller patterns).
+
+### Changed
+- **The Disc-1 journeys use FF9's real fights**: Alexandria = the prologue battles (Haagen & Weimar, the Bomb, Blank, King Leo) and Masked Man; Evil Forest = Goblin/Fang, Dendrobium, Plant Spider packs, Prison Cage, Plant Brain; Mist Plains = Mu, Python/Goblin, Carve Spider; Ice Cavern = Flan/Cave Imp, Wyerd, then Black Waltz No.1 with Sealion; Eunorus Plains and Dali's underground (Vice, Hedgehog Pie, Ghost, Ladybug, Skeleton, Mandragora, Clipper, Serpion) and Black Waltz No.2; Lindblum Fields (Lizard Man, Axe Beak, Skeleton, Carve Spider, Trick Sparrow, Yeti, Bomb) and the Festival of the Hunt's real fights with Zaghnol; Qu's Marsh (Axolotl, Gigan Toad, Sahagin); Gizamaluke's Grotto (Hornet, Lamia, Skeleton, the black mage ambush) and Gizamaluke.
+- Hand-written FF9 monsters now use their real stats, steals and attacks (Goblin: Knife + Goblin Punch; Plant Brain: both tentacles, Thunder, Pollen…).
+- Monsters FF9 doesn't have (the FF1–FF6 crossovers) use a stat curve fitted to FF9's random encounters (Def/MDef ≈ 12, Str ≈ 8 + 0.3·Lv, attack ≈ 6 + 1.3·Lv, HP ≈ 4·Lv² + 20·Lv) instead of the old, far too fragile one — the reason Level 1 hits were doing 100+ damage.
+- Rewards for FF9 monsters are FF9's (EXP, gil, AP, drops at 256/96/32/1); bosses that gave no EXP in FF9 pay the curve so Completion Points keep flowing.
+- The balance simulator builds characters in their starting gear.
+
+### Notes
+- Old balance tests are skipped until the balance pass with the real AI scripts (solo early journeys are now very hard with FF9's numbers).
+
 ## [0.1.26] - 2026-10-14
 
 Characters start every run in their FF9 starting outfit again, behind a balance switch.

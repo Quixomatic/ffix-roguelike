@@ -19,9 +19,11 @@
 import { createInterface } from "node:readline";
 
 import { findItem, getItem, itemByName, items } from "@ffix-roguelike/game-data";
+import { loadBestiaryCache } from "@ffix-roguelike/game-data/cache";
 
 import {
   applyRunOutcome,
+  starterGear,
   TICKS_PER_SECOND,
   availableJourneys,
   JOURNEYS,
@@ -63,6 +65,9 @@ import {
 
 // ── args ─────────────────────────────────────────────────────────────────────
 const [cmd = "help", ...rest] = process.argv.slice(2);
+// FF9 monsters, attacks and scenes from the local import cache (the server loads them from Postgres).
+loadBestiaryCache();
+
 const args: Record<string, string> = {};
 for (let i = 0; i < rest.length; i++) {
   const a = rest[i]!;
@@ -280,7 +285,10 @@ function balanceCmd() {
         let wins = 0;
         let secs = 0;
         for (let i = 0; i < n; i++) {
-          const party = keys.map((k, j) => partyUnit(newBuild(k, lv), j));
+          const party = keys.map((k, j) => {
+            const b = newBuild(k, lv);
+            return partyUnit({ ...b, equipment: starterGear(b) }, j);
+          });
           const st = autoBattle(new BattleEngine(createBattle({ seed: 7000 + i, party, enemies: enemyGroup(g), inventory: potions() }))).state;
           if (st.outcome === "victory") wins++;
           secs += st.tick / TICKS_PER_SECOND;

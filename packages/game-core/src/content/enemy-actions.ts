@@ -5,6 +5,7 @@
 import { actionByName, type Element, type Status, type TargetType } from "@ffix-roguelike/game-data";
 
 import type { BattleAction } from "../battle/types";
+import { ff9Action, FF9_ACTION_BASE } from "./ff9";
 
 /** Engine-internal script ids (outside FF9's range). */
 export const SCRIPT = {
@@ -108,7 +109,7 @@ export const ENEMY_ACTIONS: BattleAction[] = [
 ];
 
 const byId = new Map(ENEMY_ACTIONS.map((a) => [a.id, a]));
-export const enemyAction = (id: number) => byId.get(id);
+export const enemyAction = (id: number) => (id >= FF9_ACTION_BASE ? ff9Action(id) : byId.get(id));
 
 /** FF9 action id by name — enemies cast the real spells. */
 export const ff9 = (name: string) => actionByName(name).id;

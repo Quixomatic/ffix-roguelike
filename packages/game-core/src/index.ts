@@ -7,6 +7,8 @@ export * from "./battle/autoplay";
 export * from "./content/enemies";
 export * from "./content/enemy-actions";
 export * from "./content/worlds";
+export * from "./content/ff9";
+export * from "./content/ff9-scenes";
 export * from "./run/map";
 export * from "./run/loot";
 export * from "./run/events";

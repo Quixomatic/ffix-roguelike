@@ -231,3 +231,81 @@ export interface ShopData {
   name: string;
   items: number[];
 }
+
+/** An enemy attack from FF9's battle scenes (Memoria battle export). Targets read from the monster's side. */
+export interface FF9EnemyAction {
+  /** Index in bestiary.json's action table. */
+  uid: number;
+  name: string;
+  targets: TargetType;
+  defaultAlly: boolean;
+  scriptId: number;
+  power: number;
+  elements: Element[];
+  rate: number;
+  category: number;
+  statuses: Status[];
+  mp: number;
+  type: number;
+  vfx: number;
+}
+
+/** A monster from FF9's battle scenes, with its real stats. */
+export interface FF9Enemy {
+  uid: number;
+  name: string;
+  level: number;
+  /** Real HP (FF9's +10,000 "scripted death" buffer already removed). */
+  hp: number;
+  mp: number;
+  speed: number;
+  strength: number;
+  magic: number;
+  spirit: number;
+  defence: number;
+  evade: number;
+  magicDefence: number;
+  magicEvade: number;
+  exp: number;
+  gil: number;
+  ap: number;
+  /** FF9 enemy category bits: 1 humanoid, 2 beast, 4 devil, 8 dragon, 16 undead, 32 stone, 64 soul, 128 flight. */
+  category: number;
+  resist: Status[];
+  autoStatus: Status[];
+  startStatus: Status[];
+  guard: Element[];
+  absorb: Element[];
+  half: Element[];
+  weak: Element[];
+  /** Steal slots, common → rare (FF9 rates 256/64/16/1); -1 = empty. */
+  steal: number[];
+  /** Drops (FF9 rates 256/96/32/1); -1 = empty. */
+  drops: number[];
+  /** Blue magic Quina learns by eating it (FF9 ability id), 0 = none. */
+  blue: number;
+  /** Scripted-death boss (FF9 FLG_NON_DYING_BOSS). */
+  boss: boolean;
+  /** Its attacks (indexes into the action table). */
+  attacks: number[];
+  /** Battle scenes it appears in (Memoria scene names, e.g. EF_E009 = Evil Forest). */
+  scenes: string[];
+}
+
+/** One FF9 battle scene: which bestiary monster each enemy type is, its attack table, spawn patterns. */
+export interface FF9Scene {
+  /** Memoria scene name without the EVT_BATTLE_ prefix, e.g. "EF_E009" (Plant Brain). */
+  id: string;
+  flags: string[];
+  /** Enemy type slot (typeNo) → bestiary enemy uid (-1 = dummy/unnamed). */
+  types: number[];
+  /** Attack slot (the index the AI script picks) → bestiary action uid. */
+  attacks: number[];
+  patterns: { rate: number; ap: number; spawn: { typeNo: number; targetable: boolean }[] }[];
+}
+
+export interface FF9Bestiary {
+  enemies: FF9Enemy[];
+  actions: FF9EnemyAction[];
+  scenes: FF9Scene[];
+}

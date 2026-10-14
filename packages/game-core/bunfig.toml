@@ -1,0 +1,3 @@
+[test]
+# FF9 battle data (bestiary + scenes) from the local import cache; the server loads it from Postgres.
+preload = ["./src/test-setup.ts"]

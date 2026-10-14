@@ -1,4 +1,5 @@
 import { Toaster } from "@ffix-roguelike/ui/components/sonner";
+import { registerBestiary } from "@ffix-roguelike/game-data";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
@@ -16,6 +17,10 @@ export interface RouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+  // FF9 monsters, attacks and battle scenes (served from the DB) must be registered before any game screen renders.
+  loader: async ({ context }) => {
+    registerBestiary(await context.queryClient.ensureQueryData(context.trpc.content.bestiary.queryOptions(undefined, { staleTime: Infinity })));
+  },
   component: RootComponent,
   head: () => ({
     meta: [

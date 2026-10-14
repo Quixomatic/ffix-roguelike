@@ -3,6 +3,7 @@ import { getAction, getCharacter, getItem, type Status } from "@ffix-roguelike/g
 
 import { baseStats, enemyItemId, getEnemy, type EnemyDef } from "../content/enemies";
 import { ff9 } from "../content/enemy-actions";
+import { ff9AttackPower } from "../content/ff9";
 import { activeSupports, availableActions, deriveStats, type CharacterBuild } from "../stats";
 import { atbMaxFor, ENEMY_CATEGORY, type BattleUnit, type CommandDef, type EnemyFamily } from "./types";
 
@@ -114,7 +115,62 @@ const FAMILY_CATEGORY: Record<EnemyFamily, number> = {
 /** FF9 steal rates by slot (common → rare). */
 const STEAL_RATES = [256, 64, 16, 1];
 
+/** FF9 monster → battle unit with its exact stats (tier/ascension scales HP and attack power). */
+function ff9Unit(def: EnemyDef, slot: number, tier: number): BattleUnit {
+  const f = def.ff9!;
+  const t = 1 + tier * 0.2;
+  const hp = Math.round(f.hp * t);
+  return {
+    id: `e${slot}`,
+    side: "enemy",
+    key: def.id,
+    name: def.name,
+    sprite: def.sprite,
+    level: f.level,
+    hp,
+    maxHp: hp,
+    mp: f.mp,
+    maxMp: f.mp,
+    speed: f.speed,
+    strength: f.strength,
+    magic: f.magic,
+    spirit: f.spirit,
+    attack: Math.round(ff9AttackPower(f) * (1 + tier * 0.1)),
+    defence: f.defence,
+    evade: f.evade,
+    magicDefence: f.magicDefence,
+    magicEvade: f.magicEvade,
+    weapon: null,
+    weaponId: null,
+    attackElements: [],
+    bonusElements: [],
+    elements: { weak: f.weak, half: f.half, immune: f.guard, absorb: f.absorb },
+    statusImmune: [...f.resist],
+    statuses: Object.fromEntries(f.startStatus.filter((s) => s !== "easyKill").map((s) => [s, {}])),
+    permanent: [...f.autoStatus, ...(f.startStatus.includes("easyKill") ? (["easyKill"] as Status[]) : [])],
+    atb: 0,
+    atbMax: atbMaxFor(f.speed),
+    trance: 0,
+    backRow: false,
+    supports: [],
+    turns: 0,
+    busyCommand: false,
+    playerCategory: 0,
+    enemyCategory: f.category,
+    commands: [],
+    tranceCommands: [],
+    family: def.family,
+    ai: def.ai,
+    counters: def.counters,
+    usedOnce: [],
+    steal: f.steal.map((itemId, i) => ({ itemId, chance: itemId >= 0 ? (STEAL_RATES[i] ?? 1) : 0 })),
+    boss: def.boss || f.boss,
+    eatTeaches: f.blue > 0 ? f.blue : def.eatTeaches ? ff9(def.eatTeaches) : undefined,
+  };
+}
+
 export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
+  if (def.ff9) return ff9Unit(def, slot, tier);
   const b = def.stats ?? baseStats(def.level, tier);
   const m = (k: keyof NonNullable<EnemyDef["mult"]>) => (def.stats ? 1 : (def.mult?.[k] ?? 1));
   const t = def.stats ? 1 + tier * 0.2 : 1;

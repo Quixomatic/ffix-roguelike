@@ -10,6 +10,8 @@ import type {
   AbilityRef,
   ActionData,
   CharacterData,
+  FF9Bestiary,
+  FF9Enemy,
   ItemData,
   LevelRow,
   ShopData,
@@ -28,6 +30,31 @@ export const statuses = statusesJson as StatusInfo[];
 export const supportAbilities = supportJson as SupportAbilityData[];
 export const synthesis = synthesisJson as SynthesisRecipe[];
 export const shops = shopsJson as ShopData[];
+/**
+ * FF9's real monsters, attacks and battle scenes. Stored in Postgres (ff9_* tables) and registered at runtime:
+ * the server loads them from the DB at startup, the client from the API, tests and the simulator from the local
+ * import cache (.cache/ff9). Empty until `registerBestiary` runs.
+ */
+export const bestiary: FF9Bestiary = { enemies: [], actions: [], scenes: [] };
+
+/** Load (or replace) the FF9 bestiary. Arrays are replaced in place so existing references stay valid. */
+export function registerBestiary(data: FF9Bestiary): void {
+  bestiary.enemies.splice(0, bestiary.enemies.length, ...data.enemies);
+  bestiary.actions.splice(0, bestiary.actions.length, ...data.actions);
+  bestiary.scenes.splice(0, bestiary.scenes.length, ...data.scenes);
+  bestiaryVersion++;
+}
+
+/** Bumped by every registerBestiary call (lets lookups rebuild their caches). */
+export let bestiaryVersion = 0;
+
+/** An FF9 monster by name; with several versions, the one closest to `level`. */
+export function ff9Enemy(name: string, level?: number): FF9Enemy {
+  const all = bestiary.enemies.filter((e) => e.name === name);
+  if (!all.length) throw new Error(`Unknown FF9 monster ${name}`);
+  if (level == null) return all[0]!;
+  return all.reduce((a, b) => (Math.abs(b.level - level) < Math.abs(a.level - level) ? b : a));
+}
 
 const actionMap = new Map(actions.map((a) => [a.id, a]));
 const characterMap = new Map(characters.map((c) => [c.key, c]));

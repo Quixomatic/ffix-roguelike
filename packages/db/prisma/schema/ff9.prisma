@@ -1,0 +1,48 @@
+/// FF9's own battle data, imported from the game (Memoria battle export + the compiled battle AI scripts in
+/// p0data7.bin). Static content shared by every player: loaded by the server at startup into game-core's
+/// registry, and served to the client per fight. Re-import with
+/// `pnpm -F @ffix-roguelike/game-data import:battles` (writes packages/db/seed/ff9); the server seeds on startup.
+
+/// Which version of the FF9 seed data (packages/db/seed/ff9) is loaded — the server re-seeds on startup when
+/// the files' hash changes.
+model Ff9Import {
+  id         Int      @id @default(1)
+  hash       String
+  importedAt DateTime @default(now())
+
+  @@map("ff9_import")
+}
+
+/// One FF9 monster (real stats, elements, statuses, steals, drops, its attack list). `data` = game-data FF9Enemy.
+model Ff9Enemy {
+  /// Bestiary uid (stable for a given export).
+  id    Int    @id
+  name  String
+  level Int
+  boss  Boolean @default(false)
+  data  Json
+
+  @@index([name])
+  @@map("ff9_enemy")
+}
+
+/// One FF9 monster attack (power, element, status, script). `data` = game-data FF9EnemyAction.
+model Ff9EnemyAction {
+  id   Int    @id
+  name String
+  data Json
+
+  @@map("ff9_enemy_action")
+}
+
+/// One FF9 battle scene: its monster types, attack table, spawn patterns and compiled AI script.
+model Ff9BattleScene {
+  /// Memoria scene name without the EVT_BATTLE_ prefix, e.g. "EF_E009" (Plant Brain), "CW_E0XX" (Hades).
+  id     String @id
+  /// game-data FF9Scene (types, attacks, patterns, flags).
+  data   Json
+  /// EVT_BATTLE_<id>.eb — FF9's battle AI bytecode, run by game-core's script VM.
+  script Bytes?
+
+  @@map("ff9_battle_scene")
+}
