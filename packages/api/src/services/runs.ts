@@ -5,6 +5,8 @@
  */
 import {
   applyRunOutcome,
+  availableJourneys,
+  upgradeRunState,
   campSupplies,
   ProfileError,
   RunError,
@@ -27,19 +29,20 @@ export function toTrpcError(e: unknown): never {
   throw e;
 }
 
-export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number) {
+export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string) {
   const { id: profileId, profile } = await loadProfile(db, userId);
   if (await getActiveRun(db, profileId)) throw new TRPCError({ code: "CONFLICT", message: "Finish or abandon your current run first" });
   if (new Set(partyKeys).size !== partyKeys.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Duplicate party member" });
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
   if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
+  if (!availableJourneys(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
 
   const seed = crypto.randomUUID();
   // Consumables bought at camp are packed into this run and leave the stash.
   const supplies = campSupplies(profile);
   let state: RunState;
   try {
-    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies, unlockedGear: profile.gearUnlocked ?? [] });
+    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies, unlockedGear: profile.gearUnlocked ?? [], journey });
   } catch (e) {
     toTrpcError(e);
   }
@@ -47,7 +50,7 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   return db.$transaction(async (tx) => {
     if (Object.keys(supplies).length) await saveProfile(tx, profileId, { ...profile, stash });
     return tx.run.create({
-      data: { profileId, seed, tier, party: partyKeys, world: 0, state: state as object },
+      data: { profileId, seed, journey, tier, party: partyKeys, world: state.world, state: state as object },
     });
   });
 }
@@ -65,7 +68,7 @@ export async function act(
   const { id: profileId } = await loadProfile(db, userId);
   const row = await getActiveRun(db, profileId);
   if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "No active run" });
-  const before = row.state as unknown as RunState;
+  const before = upgradeRunState(row.state as unknown as RunState);
   let after: RunState;
   try {
     after = transition(before);
@@ -125,5 +128,6 @@ async function finalize(tx: Database, userId: string, runId: string, run: RunSta
     points: report.points,
     achievements: report.achievements,
     gearUnlocked: report.gearUnlocked,
+    journeyCleared: report.journeyCleared,
   };
 }

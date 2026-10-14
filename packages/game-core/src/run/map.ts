@@ -4,9 +4,10 @@
  * the player picks a route. Early stages are plain battles; elites, shops and events appear deeper in; the
  * column before the castle is always a Moogle (rest + mail gear home).
  */
+import { WORLDS } from "../content/worlds";
 import type { Rng } from "../rng";
 
-export type NodeKind = "start" | "battle" | "elite" | "treasure" | "shop" | "synth" | "stiltzkin" | "chocobo" | "moogle" | "event" | "boss";
+export type NodeKind = "start" | "battle" | "elite" | "semiboss" | "treasure" | "shop" | "synth" | "stiltzkin" | "chocobo" | "moogle" | "event" | "boss";
 
 export interface MapNode {
   id: string;
@@ -29,6 +30,7 @@ export interface WorldMap {
 }
 
 export const MAP_COLUMNS = 9;
+export const SEMIBOSS_COLUMN = 4;
 
 function pickKind(rng: Rng, col: number): NodeKind {
   if (col <= 2) return rng.weighted([
@@ -53,10 +55,12 @@ export function generateWorldMap(rng: Rng, world: number): WorldMap {
   const last = MAP_COLUMNS - 1;
   const columns: MapNode[][] = [];
   for (let col = 0; col <= last; col++) {
-    const count = col === 0 || col === last ? 1 : col === last - 1 ? rng.int(1, 2) : rng.int(2, 3);
+    // The middle column is a single semi-boss fortress (every path passes it) when the area has one.
+    const fortress = col === SEMIBOSS_COLUMN && !!WORLDS[world]?.semiBoss;
+    const count = col === 0 || col === last || fortress ? 1 : col === last - 1 ? rng.int(1, 2) : rng.int(2, 3);
     const rows = rng.shuffle([0, 1, 2]).slice(0, count).sort();
     const nodes = rows.map((row): MapNode => {
-      const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : col === last - 1 ? "moogle" : pickKind(rng, col);
+      const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : fortress ? "semiboss" : col === last - 1 ? "moogle" : pickKind(rng, col);
       const centred = count === 1 ? 1 : row;
       return {
         id: `w${world}c${col}r${row}`,

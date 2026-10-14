@@ -1,4 +1,4 @@
-import { achievement, eventById, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, eventById, getJourney, JOURNEYS, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -228,7 +228,7 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-3">
       <div className={`ff-window px-5 py-4 text-center ${won ? "" : "grayscale-[0.3]"}`}>
-        <div className="ff-pop text-3xl">{won ? "The world is saved!" : "The party has fallen..."}</div>
+        <div className="ff-pop text-3xl">{won ? "Journey complete!" : "The party has fallen..."}</div>
         <div className="ff-title mt-1">
           Reached {WORLDS[run.world]!.name} · {run.stats.battles} battles won · {run.stats.bossKills.length} boss{run.stats.bossKills.length === 1 ? "" : "es"} defeated
         </div>
@@ -243,6 +243,12 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
       {report && (
         <div className="ff-window flex flex-col gap-1 p-4 text-lg">
           <div className="tabular-nums text-yellow-200">+{Math.round(gil)} gil banked</div>
+          {report.journeyCleared && (
+            <div className="ff-pop text-pink-200">
+              {getJourney(report.journeyCleared).name} cleared!
+              {JOURNEYS.filter((j) => j.unlockAfter === report.journeyCleared).map((j) => ` New journey: ${j.name}.`)}
+            </div>
+          )}
           {report.gearUnlocked.length > 0 && (
             <div className="text-base text-green-300">Unlocked for future runs: {report.gearUnlocked.map(itemName).join(", ")}</div>
           )}

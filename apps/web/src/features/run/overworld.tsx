@@ -1,4 +1,4 @@
-import { WORLDS, type MapNode, type RunState } from "@ffix-roguelike/game-core";
+import { getJourney, WORLDS, type MapNode, type RunState } from "@ffix-roguelike/game-core";
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,6 +15,7 @@ const KIND_TEXT: Record<MapNode["kind"], string> = {
   chocobo: "Chocobo Hot & Cold — dig for buried treasure",
   moogle: "Moogle — full rest for the party, and a place to sell gear",
   event: "Something's going on here…",
+  semiboss: "Fortress — a semi-boss blocks the road",
   boss: "Boss castle",
 };
 
@@ -53,7 +54,7 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
       <div ref={hostRef} className="absolute inset-0" />
       <div className="pointer-events-none absolute left-3 top-3 ff-window px-4 py-2">
         <div className="text-xl">
-          World {run.world + 1}: {world.name}
+          {getJourney(run.journey).name}
         </div>
         <div className="ff-title">{world.subtitle}</div>
       </div>

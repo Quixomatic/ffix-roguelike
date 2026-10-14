@@ -6,8 +6,10 @@ model Run {
   profileId String
   profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  seed   String
-  tier   Int       @default(0)
+  seed    String
+  /// Journey played (game-core JOURNEYS id).
+  journey String    @default("cornelia")
+  tier    Int       @default(0)
   status RunStatus @default(ACTIVE)
   /// Current world index (0 = Cornelia, 1 = Baron, 2 = World of Ruin) — denormalized for listings.
   world  Int       @default(0)

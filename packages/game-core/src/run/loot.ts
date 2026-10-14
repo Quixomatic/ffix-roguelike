@@ -30,9 +30,10 @@ function threat(group: string[]): number {
  * Pick an encounter for a map stage. Groups are sorted by threat and the window slides with depth, so the
  * first stages of a world are its weakest monsters and the last stages before the castle its toughest.
  */
-export function pickEncounter(rng: Rng, world: number, depth: number, kind: "battle" | "elite" | "boss", partySize = 4): string[] {
+export function pickEncounter(rng: Rng, world: number, depth: number, kind: BattleNodeKind, partySize = 4): string[] {
   const w = WORLDS[world]!;
   if (kind === "boss") return w.boss;
+  if (kind === "semiboss") return w.semiBoss ?? w.elites[0] ?? w.boss;
   // Small parties meet smaller groups: a lone hero fights one monster, a full party up to five.
   const cap = partySize <= 1 ? 1 : partySize + 1;
   return pickGroup(rng, w, depth, kind, cap);
@@ -45,6 +46,8 @@ function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "b
   const start = Math.round(depth * (pool.length - span));
   return pool[Math.min(pool.length - 1, start + rng.int(0, span - 1))]!;
 }
+
+export type BattleNodeKind = "battle" | "elite" | "semiboss" | "boss";
 
 export interface BattleRewards {
   exp: number;

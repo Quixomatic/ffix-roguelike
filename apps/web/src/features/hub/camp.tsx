@@ -1,4 +1,15 @@
-import { campSupplies, deriveStats, MAX_TIER, nextSlotCost, starterGear, startLevelCost } from "@ffix-roguelike/game-core";
+import {
+  availableJourneys,
+  campSupplies,
+  deriveStats,
+  getArea,
+  getEnemy,
+  JOURNEYS,
+  MAX_TIER,
+  nextSlotCost,
+  starterGear,
+  startLevelCost,
+} from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -19,6 +30,7 @@ export function Camp() {
   const navigate = useNavigate();
   const [party, setParty] = useState<string[]>([]);
   const [tier, setTier] = useState(0);
+  const [journey, setJourney] = useState<string | null>(null);
   const [sheet, setSheet] = useState<string | null>(null);
 
   const start = useMutation(
@@ -38,6 +50,8 @@ export function Camp() {
   const chosen = party.length ? party : p.unlocked.slice(0, 4);
   const between = !p.activeRunId;
   const supplies = campSupplies(p);
+  const open = availableJourneys(p);
+  const chosenJourney = journey && open.includes(journey) ? journey : open[open.length - 1]!;
 
   const toggle = (key: string) =>
     setParty((cur) => {
@@ -74,13 +88,44 @@ export function Camp() {
             <button
               className="ff-window px-6 py-2 text-xl disabled:opacity-50"
               disabled={!chosen.length || start.isPending}
-              onClick={() => start.mutate({ party: chosen, tier })}
+              onClick={() => start.mutate({ party: chosen, tier, journey: chosenJourney })}
             >
               Begin run ▶
             </button>
           </div>
         )}
       </div>
+
+      {between && (
+        <>
+          <div className="ff-title px-1 text-base">Journey</div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {JOURNEYS.map((j) => {
+              const unlocked = open.includes(j.id);
+              const cleared = (p.journeysCleared ?? []).includes(j.id);
+              const area = getArea(j.areas[j.areas.length - 1]!);
+              return (
+                <button
+                  key={j.id}
+                  className="ff-window flex flex-col gap-1 p-3 text-left enabled:hover:brightness-125 disabled:opacity-50 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
+                  data-on={chosenJourney === j.id}
+                  disabled={!unlocked}
+                  onClick={() => setJourney(j.id)}
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-lg">{unlocked ? j.name : "???"}</span>
+                    {cleared && <span className="text-sm text-yellow-200">Cleared ✓</span>}
+                  </div>
+                  <div className="text-sm opacity-80">
+                    {unlocked ? j.subtitle : `Clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"} first`}
+                  </div>
+                  {unlocked && <div className="text-xs text-[#c8d0ff]">End boss: {area.boss.map((id) => getEnemy(id).name).join(" & ")}</div>}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       <div className="ff-title px-1 text-base">Party — pick up to 4 {p.activeRunId ? "(after this run)" : ""}</div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -145,7 +190,7 @@ export function Camp() {
 
       <div className="ff-window p-3 text-sm leading-relaxed">
         <div className="ff-title mb-1">How runs work</div>
-        Cross three worlds — Cornelia, Baron and the World of Ruin — to the boss castle at the end of each map. You start alone with Zidane;
+        Pick a journey: cross its map — fodder, a fortress semi-boss halfway, and a hard boss at the castle. Clearing a journey unlocks the next. You start alone with Zidane;
         companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
         levels reset and everyone who came earns Completion Points (+1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win) — spend them here on a
         higher start level or on unlocking equipment slots (each starts runs with that character's FF9 starter gear, and can hold what they

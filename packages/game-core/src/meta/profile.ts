@@ -9,7 +9,7 @@
  */
 import { getItem, itemByName, items, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
 
-import { WORLDS } from "../content/worlds";
+import { getJourney, JOURNEYS, journeyUnlocked, WORLDS } from "../content/worlds";
 import { baseGear, effectivePrice, isGear } from "../run/loot";
 import type { RunOutcome } from "../run/run";
 import {
@@ -49,6 +49,8 @@ export interface Profile {
   stash: Record<number, number>;
   /** Gear unlocked into run drop pools (catalog, achievements, won runs). */
   gearUnlocked?: number[];
+  /** Journeys cleared at least once (each unlocks the next). */
+  journeysCleared?: string[];
   stats: ProfileStats;
   /** Highest difficulty tier the player may start (wins unlock the next). */
   maxTier: number;
@@ -89,6 +91,7 @@ export function newProfile(): Profile {
     stats: { runs: 0, wins: 0, battles: 0, bossKills: {}, eaten: 0, steals: 0, bestWorld: 0, highestTierWon: -1, soloWins: [] },
     achievements: [],
     gearUnlocked: [],
+    journeysCleared: [],
     maxTier: 0,
   };
 }
@@ -106,6 +109,8 @@ export interface RunReport {
   achievements: string[];
   /** Gear newly unlocked into the drop pool by winning this run. */
   gearUnlocked: number[];
+  /** Journey cleared for the first time by this run (unlocks the next). */
+  journeyCleared: string | null;
 }
 
 /**
@@ -154,7 +159,10 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   p.stats.bestWorld = Math.max(p.stats.bestWorld, outcome.worldReached);
   for (const id of outcome.stats.bossKills) p.stats.bossKills[id] = (p.stats.bossKills[id] ?? 0) + 1;
   let tierUnlocked: number | null = null;
+  let journeyCleared: string | null = null;
   if (outcome.won) {
+    if (!(p.journeysCleared ?? []).includes(outcome.journey)) journeyCleared = outcome.journey;
+    p.journeysCleared = [...new Set([...(p.journeysCleared ?? []), outcome.journey])];
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
     if (outcome.builds.length === 1) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
@@ -163,10 +171,13 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
       tierUnlocked = p.maxTier;
     }
   }
-  const newlyUnlocked = UNLOCKS.filter((u) => !p.unlocked.includes(u.key) && u.check(p)).map((u) => u.key);
+  // Story journeys bring characters into the roster on their first clear; milestone rules cover the rest.
+  const fromJourney = journeyCleared ? (getJourney(journeyCleared).unlocks ?? []).filter((k) => !p.unlocked.includes(k)) : [];
+  const fromMilestones = UNLOCKS.filter((u) => !p.unlocked.includes(u.key) && !fromJourney.includes(u.key) && u.check(p)).map((u) => u.key);
+  const newlyUnlocked = [...fromJourney, ...fromMilestones];
   p.unlocked.push(...newlyUnlocked);
   const achievements = awardAchievements(p);
-  return { profile: p, newlyUnlocked, tierUnlocked, points, achievements, gearUnlocked };
+  return { profile: p, newlyUnlocked, tierUnlocked, points, achievements, gearUnlocked, journeyCleared };
 }
 
 // ── spending Completion Points ───────────────────────────────────────────────
@@ -272,4 +283,9 @@ export function buySupply(profile: Profile, itemId: number): Profile {
   p.gil -= entry.price;
   p.stash[itemId] = (p.stash[itemId] ?? 0) + 1;
   return p;
+}
+
+/** Journeys the player can start, in order. */
+export function availableJourneys(profile: Profile): string[] {
+  return JOURNEYS.filter((j) => journeyUnlocked(j.id, profile.journeysCleared ?? [])).map((j) => j.id);
 }

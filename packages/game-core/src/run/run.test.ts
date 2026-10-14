@@ -191,3 +191,28 @@ describe("special stages & supplies", () => {
     expect(run.consumables.find((c) => c.itemId === 236)?.count).toBe(4 + 3);
   });
 });
+
+describe("journeys", () => {
+  test("an area with a semi-boss puts a single fortress stage mid-map that every path crosses", async () => {
+    const { SEMIBOSS_COLUMN } = await import("./map");
+    for (let s = 0; s < 20; s++) {
+      const map = generateWorldMap(Rng.fromSeed(`j${s}`), 0);
+      const mid = map.nodes.filter((n) => n.col === SEMIBOSS_COLUMN);
+      expect(mid.length).toBe(1);
+      expect(mid[0]!.kind).toBe("semiboss");
+    }
+  });
+
+  test("beating a single-area journey's boss wins the run and unlocks the next journey", async () => {
+    const { applyRunOutcome, availableJourneys } = await import("../meta/profile");
+    const profile = newProfile();
+    expect(availableJourneys(profile)).toEqual(["cornelia"]);
+    let run = startRun({ seed: "j", tier: 0, party: [profile.builds.zidane!], journey: "cornelia" });
+    run.phase = { kind: "rewards", summary: { exp: 0, gil: 0, ap: 0, items: [], levelUps: [], mastered: [], members: [] }, gearChoices: [], boss: true };
+    run = claimReward(run, null);
+    expect(run.phase).toEqual({ kind: "over", won: true });
+    const report = applyRunOutcome(profile, runOutcome(run), 0);
+    expect(report.journeyCleared).toBe("cornelia");
+    expect(availableJourneys(report.profile)).toEqual(["cornelia", "baron"]);
+  });
+});

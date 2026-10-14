@@ -14,6 +14,7 @@ import {
   sell,
   setSupports,
   synthesize,
+  upgradeRunState,
   useConsumable,
   type InputRecord,
   type RunState,
@@ -39,7 +40,7 @@ export const runRouter = router({
   active: protectedProcedure.query(async ({ ctx }) => {
     const { id } = await loadProfile(ctx.db, ctx.session.user.id);
     const row = await getActiveRun(ctx.db, id);
-    return row ? { id: row.id, tier: row.tier, state: row.state as unknown as RunState } : null;
+    return row ? { id: row.id, tier: row.tier, state: upgradeRunState(row.state as unknown as RunState) } : null;
   }),
 
   /** Recent finished runs. */
@@ -49,14 +50,14 @@ export const runRouter = router({
       where: { profileId: id, status: { not: "ACTIVE" } },
       orderBy: { createdAt: "desc" },
       take: 20,
-      select: { id: true, tier: true, status: true, world: true, party: true, gilEarned: true, createdAt: true, endedAt: true },
+      select: { id: true, journey: true, tier: true, status: true, world: true, party: true, gilEarned: true, createdAt: true, endedAt: true },
     });
   }),
 
   start: protectedProcedure
-    .input(z.object({ party: z.array(z.string()).min(1).max(4), tier: z.number().int().min(0).max(5) }))
+    .input(z.object({ party: z.array(z.string()).min(1).max(4), tier: z.number().int().min(0).max(5), journey: z.string().default("cornelia") }))
     .mutation(async ({ ctx, input }) => {
-      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier);
+      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey);
       return { id: row.id };
     }),
 

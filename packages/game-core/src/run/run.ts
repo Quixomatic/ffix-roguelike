@@ -11,7 +11,7 @@ import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis
 import { createBattle, replayBattle } from "../battle/engine";
 import type { BattleState, InputRecord } from "../battle/types";
 import { enemyGroup, partyUnit } from "../battle/units";
-import { WORLDS } from "../content/worlds";
+import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
   accrueGrowth,
@@ -28,7 +28,7 @@ import {
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
-import { battleRewards, pickEncounter, recipesUpTo, rollGear, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
+import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, rollGear, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
 import { CHOCOBO_DIGS, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
@@ -71,7 +71,7 @@ export interface MemberProgress {
 
 export type RunPhase =
   | { kind: "map" }
-  | { kind: "battle"; nodeId: string; nodeKind: "battle" | "elite" | "boss"; enemies: string[]; battle: BattleState }
+  | { kind: "battle"; nodeId: string; nodeKind: BattleNodeKind; enemies: string[]; battle: BattleState }
   | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean }
   | { kind: "treasure"; gearChoices: number[]; gil: number }
   | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
@@ -95,6 +95,11 @@ export interface RunState {
   seed: string;
   rng: number;
   tier: number;
+  /** Journey being played (content/worlds.ts JOURNEYS). */
+  journey: string;
+  /** Position within the journey's areas. */
+  stage: number;
+  /** Current area index into WORLDS (also the loot tier). */
   world: number;
   map: WorldMap;
   position: string;
@@ -119,6 +124,8 @@ export interface StartRunInput {
   supplies?: Record<number, number>;
   /** Gear unlocked into the drop pool (camp catalog, achievements, won runs). */
   unlockedGear?: number[];
+  /** Journey to play (default: the first one). */
+  journey?: string;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -185,13 +192,17 @@ export function startRun(input: StartRunInput): RunState {
     const st = deriveStats(build);
     return { build, hp: st.maxHp, mp: st.maxMp };
   });
-  const map = generateWorldMap(rng.fork("map0"), 0);
+  const journey = getJourney(input.journey ?? "cornelia");
+  const firstArea = getArea(journey.areas[0]!).index;
+  const map = generateWorldMap(rng.fork("map0"), firstArea);
   return {
     version: 1,
     seed: input.seed,
     rng: rng.state,
     tier: input.tier,
-    world: 0,
+    journey: journey.id,
+    stage: 0,
+    world: firstArea,
     map,
     position: map.startId,
     visited: [map.startId],
@@ -246,6 +257,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
   switch (kind) {
     case "battle":
     case "elite":
+    case "semiboss":
     case "boss":
       return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
     case "treasure":
@@ -279,7 +291,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
   }
 }
 
-function startBattle(run: RunState, nodeId: string, nodeKind: "battle" | "elite" | "boss", enemies: string[], rng: Rng) {
+function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, enemies: string[], rng: Rng) {
   const living = run.party.map((m, i) => partyUnit(m.build, i, { hp: m.hp, mp: m.mp }));
   const battle = createBattle({
     seed: rng.int(1, 2 ** 31 - 1),
@@ -329,7 +341,7 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   const summary = applyRewards(next, rewards, final);
   const boss = phase.nodeKind === "boss";
   if (boss) next.stats.bossKills.push(...phase.enemies);
-  const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : 20, next.unlockedGear);
+  const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : phase.nodeKind === "semiboss" ? 40 : 20, next.unlockedGear);
   next.phase = { kind: "rewards", summary, gearChoices, boss };
   next.rng = rng.state;
   return next;
@@ -407,7 +419,8 @@ export function claimReward(run: RunState, choice: number | null): RunState {
   }
   if (p.kind === "treasure") next.gil += p.gil;
   if (p.kind === "rewards" && p.boss) {
-    if (next.world >= WORLDS.length - 1) next.phase = { kind: "over", won: true };
+    // The last area's boss ends the journey; otherwise travel on to its next area.
+    if (next.stage >= getJourney(next.journey).areas.length - 1) next.phase = { kind: "over", won: true };
     else next.phase = { kind: "worldClear", cleared: next.world };
   } else next.phase = { kind: "map" };
   return next;
@@ -417,8 +430,9 @@ export function claimReward(run: RunState, choice: number | null): RunState {
 export function nextWorld(run: RunState): RunState {
   if (run.phase.kind !== "worldClear") throw new RunError("The world isn't cleared yet");
   const next = structuredClone(run);
-  next.world++;
-  next.map = generateWorldMap(rngOf(next).fork(`map${next.world}`), next.world);
+  next.stage++;
+  next.world = getArea(getJourney(next.journey).areas[next.stage]!).index;
+  next.map = generateWorldMap(rngOf(next).fork(`map${next.stage}`), next.world);
   next.position = next.map.startId;
   next.visited = [next.map.startId];
   healParty(next, 100, true);
@@ -673,6 +687,7 @@ export interface RunOutcome {
   gilEarned: number;
   stats: RunStats;
   worldReached: number;
+  journey: string;
 }
 
 /** What the player keeps when the run ends. */
@@ -693,10 +708,23 @@ export function runOutcome(run: RunState): RunOutcome {
     gilEarned: won ? run.gil : Math.floor(run.gil / 2),
     stats: run.stats,
     worldReached: run.world,
+    journey: run.journey,
   };
 }
 
 /** Ability refs on a character's learn list that are active (for menus). */
 export function learnedActive(build: CharacterBuild): AbilityRef[] {
   return getCharacter(build.key).abilities.map((a) => a.ref).filter((ref) => parseAbilityRef(ref).kind === "active");
+}
+
+/** Bring a stored RunState from an older version up to date (fields added since it was saved). */
+export function upgradeRunState(run: RunState): RunState {
+  if (run.journey && run.stage != null && run.unlockedGear) return run;
+  const area = WORLDS[run.world];
+  return {
+    ...run,
+    journey: run.journey ?? JOURNEYS.find((j) => area && j.areas.includes(area.id))?.id ?? "cornelia",
+    stage: run.stage ?? 0,
+    unlockedGear: run.unlockedGear ?? [],
+  };
 }

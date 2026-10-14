@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.20] - 2026-10-14
+
+Journeys: pokelike-style separate runs — one map each, fodder, a semi-boss fortress halfway, and a hard end boss.
+
+### Added
+- **Journeys** (`JOURNEYS` in game-core): each journey is one map; you pick one at camp. Journeys unlock in order (clear one → the next opens). The first three are the Echoes crossovers — Cornelia (Garland), Baron (Golbez), World of Ruin (Kefka). FF9's own story journeys and the Boss Gauntlet challenge are next.
+- **Semi-boss fortress**: when an area has a semi-boss, the middle column of its map is a single fortress stage every path passes through (Gigas Worm, Iron Giant, King Behemoth for the Echoes). Better loot than elites.
+- **Journey-granted character unlocks**: a journey can bring characters into the roster on its first clear — the planned way FF9's party joins via the story journeys (current milestone unlocks stay until those exist).
+- Camp **journey picker** (cleared marks, end boss, what unlocks locked ones); the overworld shows the journey name; the run-over screen announces journeys cleared and newly opened.
+- `pnpm sim run --journey <id>`; `sim runs` plays the newest unlocked journey.
+
+### Changed
+- Beating the boss of a journey's last area wins the run (no more three worlds per run).
+- DB: `player_profile.journeysCleared`, `run.journey` (migration `journeys`). Runs saved before this update are upgraded on load (`upgradeRunState`).
+
 ## [0.1.19] - 2026-10-13
 
 Server-side simulation tooling, and a Completion Points fix it surfaced.
