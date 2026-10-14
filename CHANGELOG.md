@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.32] - 2026-10-14
+
+No more stuck fights: FF9's story set pieces are out of the random pools, and a test keeps them out.
+
+### Fixed
+- **The prologue Bomb fight could never end** (it grows until a cutscene ends the battle in FF9) — it's out of Alexandria's pool. So are the other set pieces that only end on story cues: Haagen & Weimar (ended itself after 3 seconds), Prison Cage + Garnet (Evil Forest elite) and the second Prison Cage (Mist Plains boss).
+- **"Mu" elites were FF9's friendly Mu** (asks for an item and leaves) — replaced with real Goblin/Python packs.
+
+### Changed
+- Alexandria: Mu, Goblin/Python, Goblin/Fang encounters; Goblin/Python packs as elites. Evil Forest elites: Plant Spider and a Goblin/Fang pack. Mist Plains elites: Carve Spider/Python and Goblin/Python packs; boss: the Wyerd pair.
+
+### Added
+- **Encounter test** (`content/encounters.test.ts`): every spawn pattern of every area's battles and elites is played out under FF9's scripts and must end in a real win or loss — no stall, no monster left standing at "victory" (197 fights).
+
 ## [0.1.31] - 2026-10-14
 
 FF9's own battle AI: every FF9 monster and boss now fights with its real compiled AI script from the game.
