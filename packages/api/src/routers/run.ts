@@ -27,10 +27,11 @@ import { act, getActiveRun, startRun } from "../services/runs";
 
 const command = z.object({
   actorId: z.string().max(8),
-  kind: z.enum(["attack", "ability", "item", "defend", "flee", "change"]),
+  kind: z.enum(["attack", "ability", "item", "throw", "defend", "flee", "change"]),
   actionId: z.number().int().optional(),
   itemId: z.number().int().optional(),
   targetIds: z.array(z.string().max(8)).max(8),
+  second: z.object({ actionId: z.number().int(), targetIds: z.array(z.string().max(8)).max(8) }).optional(),
 });
 const inputLog = z.array(z.object({ tick: z.number().int().min(0), command })).max(5000);
 const slot = z.enum(["weapon", "head", "wrist", "armor", "accessory"]);

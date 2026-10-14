@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.24] - 2026-10-14
+
+FF9's battle system, ported faithfully from Memoria's source: every battle script, every support ability, the real status and ATB rules, Trance specials, Cover/Protect Girls, counters and Reflect.
+
+### Added
+- **Battle calculator ported from Memoria** (`battle/calc.ts`): FF9's BattleCalculator and all ~100 battle scripts used by FF9's abilities — weapon formulas 1–7, Zidane's Skills/Dyne, Sword Arts, Magic Sword, Blue Magic (Goblin Punch, LV5 Death, LV4 Holy, LV3 Def-less, Matra Magic, Limit Glove, White Wind, Mighty Guard…), Spare Change (costs gil), Lucky Seven, Thievery, Dragon's Crest, Six Dragons, Curse, Chakra, Charge!, Sacrifice, Soul Blade, Lancer, Dragon Breath, White Draw, summons (+gem bonuses, short/long summons), Atomos, Odin, Phoenix, Comet/Meteor misses, steal rates by slot, Eat/Cook, items (Potion = power × 15, Elixir, Phoenix Down, Soft on stone monsters, Dead Pepper, Tent…). Damage modifiers stack on Attack (×1.5 / ×½) exactly like FF9.
+- **All 64 support abilities**: Cover, Protect Girls, Counter, Eye 4 Eye, Return Magic, Auto-Potion, Restore HP, Absorb MP, Reflect-Null, Reflect×2, Mag Elem Null, Distract, Accuracy+, Healer (and the Healing Rod), Power Up, Power Throw, Boost, Odin's Sword, Gamble Defence, Add Status, Chemist, Concentrate, killers, MP Attack, Long Reach, High Jump, Master Thief, Bandit, Steal Gil, Mug, Flee-Gil, Initiative (preemptive strikes), Alert (no back attacks), Auto-Reflect/Float/Haste/Regen/Life, and every status guard.
+- **Trance specials**: Double Black / Double White (two spells per turn, half the Trance cost each), Garnet's Eidolon recasting its Phantom attack on its own, Freya's Jump in Trance (stays airborne, Spear hits all enemies repeatedly), Steiner's doubled attacks, Quina's Cook, Amarant's Elan, Zidane's Dyne. Trance fills by Rnd(Spirit) per hit taken and drains (300 − Lv) ÷ Spirit × 10 per action.
+- **Jump** is two-phase: Freya leaves the field (can't be targeted), then lands with Spear.
+- **Throw**: Amarant throws spare weapons from the bag (weapon power × 2, more against flying enemies).
+- **Reflect** works FF9's way, including the classic trick of bouncing your own spells off a reflecting ally onto the enemy, and multi-target reflection.
+- Battle menu: Double Black/White asks for a second spell; Throw lists spare weapons; "Guard" popups for nullified elements; jumping and vanished units disappear from the field.
+- 26 new mechanics tests (Protect Girls, Cover, Counter, Return Magic, Auto-Potion, Reflect bounces, Double Black, Jump, Eidolon recast, Trance, Haste, poison timing, freeze shatter, Easy Kill bosses…).
+
+### Changed
+- **FF9 time model**: 15 ticks/s; gauge max = (60 − Speed) × 160, +40 per tick (+60 Haste, +24 Slow). Statuses last FF9 durations (scaled by Spirit) and tick on FF9 intervals; Stop and Sleep let poison/regen keep ticking only when they should.
+- **Statuses follow FF9's rules** (from Memoria's StatusData): what each status clears and blocks, Petrify/Venom/Stop on the whole party = game over, Defend halves hit rate as well as damage, sleep/confuse break on physical hits, Vanish breaks on magic, Heat kills on acting, Freeze shatters on a physical hit, Mini, Trouble splashes half the damage onto allies, Zombie reverses healing, Doom/Gradual Petrify count down 10 ticks, Low HP at ⅙ max HP.
+- Bosses are "Easy Kill" proof (no Death, Demi, Gravity…) instead of halving every status chance.
+- Lasting statuses (Petrify, Venom, Virus, Silence, Blind, Trouble, Zombie) stay on between battles until a Moogle rest; Virus and Zombie block EXP/AP.
+- Battles can start with a preemptive strike or a back attack (not in boss fights).
+- Importer: statuses carry clear/immunity rules; actions carry their ability type and effect id; characters carry FF9's male/female category.
+
+### Notes
+- Monster stats are still this project's own curve (why early hits are too big). Importing FF9's real bestiary from Memoria's battle export is next.
+
 ## [0.1.23] - 2026-10-14
 
 A detailed root README, and local project docs.

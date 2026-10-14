@@ -2,7 +2,7 @@
  * The battlefield: draws units and animates engine events. Game logic lives in game-core's BattleEngine —
  * this scene only reads state and plays effects; clicks on units are reported back for targeting.
  */
-import { ATB_MAX, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
+import { type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
 import { drawBattleBackground, ensurePlaceholder } from "@/features/sprites/sprites";
@@ -89,7 +89,7 @@ export class BattleScene extends Phaser.Scene {
     if (down) return;
     const x = v.home.x - GAUGE_W / 2;
     const y = v.home.y + v.sprite.displayHeight / 2 + 4;
-    const pct = Math.min(1, u.atb / ATB_MAX);
+    const pct = Math.min(1, u.atb / u.atbMax);
     const frozen = u.statuses.stop || u.statuses.sleep || u.statuses.petrify || u.statuses.freeze;
     g.fillStyle(0x000000, 0.65);
     g.fillRect(x - 1, y - 1, GAUGE_W + 2, GAUGE_H + 2);
@@ -109,8 +109,8 @@ export class BattleScene extends Phaser.Scene {
       if (!v) continue;
       const down = u.hp <= 0 || u.statuses.death !== undefined;
       const stone = u.statuses.petrify !== undefined;
-      if (u.side === "enemy") v.sprite.setAlpha(down ? Math.max(0, v.sprite.alpha - 0.03) : 1);
-      else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : 1);
+      if (u.side === "enemy") v.sprite.setAlpha(down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
+      else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
       if (stone) v.sprite.setTint(0x888888);
       else if (u.statuses.trance) v.sprite.setTint(0xff99cc);
       else if (u.statuses.poison || u.statuses.venom) v.sprite.setTint(0xaaddaa);
@@ -146,8 +146,11 @@ export class BattleScene extends Phaser.Scene {
         case "miss":
           this.popup(ev.targetId, "Miss", "#dddddd", popupIndex++);
           break;
+        case "guard":
+          this.popup(ev.targetId, "Guard", "#bbbbff", popupIndex++);
+          break;
         case "statusOn":
-          if (ev.status !== "defend" && ev.status !== "trance") this.popup(ev.targetId, ev.status.toUpperCase(), "#ffb3e6", popupIndex++, false, 14);
+          if (ev.status !== "defend" && ev.status !== "trance" && ev.status !== "lowHp" && ev.status !== "jump") this.popup(ev.targetId, ev.status.toUpperCase(), "#ffb3e6", popupIndex++, false, 14);
           break;
         case "revive":
           this.popup(ev.targetId, "Revived", "#7dff8a", popupIndex++);

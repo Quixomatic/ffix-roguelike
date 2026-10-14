@@ -4,24 +4,50 @@ import type { ElementProfile } from "../stats";
 
 export type Side = "party" | "enemy";
 
-/** Monster families — FF9's "killer" support abilities deal extra damage to these. */
+/** Monster families (sprites + killer abilities). Mapped onto FF9's enemy category bits. */
 export type EnemyFamily = "beast" | "bird" | "bug" | "stone" | "undead" | "dragon" | "devil" | "human" | "machine" | "amorphous";
 
-/** 20 ticks = 1 second of battle time. */
-export const TICKS_PER_SECOND = 20;
-export const ATB_MAX = 10_000;
+/** FF9 enemy category bits (Memoria EnemyCategory). */
+export const ENEMY_CATEGORY = {
+  humanoid: 1,
+  beast: 2,
+  devil: 4,
+  dragon: 8,
+  undead: 16,
+  stone: 32,
+  soul: 64,
+  flight: 128,
+} as const;
+
+/** FF9 character category bits (Memoria CharacterCategory). */
+export const PLAYER_CATEGORY = { male: 1, female: 2, gaia: 4, terra: 8, subpc: 16 } as const;
+
+/**
+ * Time model — FF9 (Memoria, default settings): the battle runs at 15 ticks per second; every tick each unit's
+ * ATB rises by `at_coef × 4` (at_coef 10 normally, 15 with Haste, 6 with Slow) towards a maximum of
+ * `(60 − Speed) × 160`. Status timers count down by `at_coef` per tick.
+ */
+export const TICKS_PER_SECOND = 15;
+export const ATB_COEF = 10;
+export const ATB_SPEED_FACTOR = 4;
 export const TRANCE_MAX = 255;
+export const DAMAGE_LIMIT = 9999;
+export const MP_DAMAGE_LIMIT = 999;
+
+export const atbMaxFor = (speed: number) => Math.max(160, (60 - speed) * 160);
 
 export interface StatusTimer {
-  /** Ticks left; null = lasts until cured. */
-  remaining: number | null;
-  /** Ticks until the next poison/regen/doom tick. */
-  nextTick: number;
+  /** ATB units left before the status wears off (null = until cured). */
+  conti?: number | null;
+  /** ATB units until the next poison/regen/doom tick. */
+  opr?: number;
   /** Doom / gradual-petrify countdown shown to the player. */
   counter?: number;
 }
 
 export interface CommandDef {
+  /** FF9 command id (Commands.csv): drives special behaviour (Double Black, Eidolon, Jump in Trance…). */
+  id: number;
   name: string;
   actionIds: number[];
 }
@@ -42,7 +68,7 @@ export interface AiRule {
 
 export interface StealSlot {
   itemId: number;
-  /** Out of 256, as in FF9 (slots are usually 256/64/16/1). */
+  /** Out of 256 (FF9 steal rate). Slots are tried rarest (last) first. */
   chance: number;
 }
 
@@ -62,27 +88,49 @@ export interface BattleUnit {
   strength: number;
   magic: number;
   spirit: number;
+  /** Party: weapon power. Enemies: power of their basic attack. */
   attack: number;
   defence: number;
   evade: number;
   magicDefence: number;
   magicEvade: number;
   weapon: WeaponData | null;
+  weaponId: number | null;
+  /** The weapon's elements (what the Attack command hits with). */
   attackElements: Element[];
+  /** Elements this unit's gear boosts (+50% to abilities of that element). */
+  bonusElements: Element[];
   elements: ElementProfile;
   statusImmune: Status[];
   statuses: Partial<Record<Status, StatusTimer>>;
+  /** Statuses that can't be removed (Auto-Haste, Auto-Reflect…). */
+  permanent: Status[];
   atb: number;
+  atbMax: number;
   trance: number;
   backRow: boolean;
   supports: number[];
   turns: number;
+  /** Has a command selected or queued (FF9 `sel_mode`): the gauge doesn't fill meanwhile. */
+  busyCommand: boolean;
+  /** Taken out of the battle entirely (swallowed). */
+  removed?: boolean;
+  /** FF9 player category bits (male/female…), 0 for enemies. */
+  playerCategory: number;
+  /** FF9 enemy category bits (humanoid/beast…), 0 for party members. */
+  enemyCategory: number;
   // party only
   commands: CommandDef[];
   tranceCommands: CommandDef[];
+  /** Freya's Jump: ATB units until she lands, and where. */
+  jump?: { countdown: number; targetIds: string[]; trance: boolean };
+  /** Garnet's Trance: the Eidolon that keeps recasting, and when. */
+  phantom?: { actionId: number; countdown: number };
   // enemy only
   family?: EnemyFamily;
   ai?: AiRule[];
+  /** Abilities the enemy answers attacks with (FF9 battle scripts' counters). */
+  counters?: AiRule[];
   usedOnce?: number[];
   steal?: StealSlot[];
   boss?: boolean;
@@ -90,7 +138,7 @@ export interface BattleUnit {
   eatTeaches?: number;
 }
 
-export type CommandKind = "attack" | "ability" | "item" | "defend" | "flee" | "change";
+export type CommandKind = "attack" | "ability" | "item" | "throw" | "defend" | "flee" | "change";
 
 export interface BattleCommand {
   actorId: string;
@@ -98,6 +146,16 @@ export interface BattleCommand {
   actionId?: number;
   itemId?: number;
   targetIds: string[];
+  /** Double Black / Double White: the second spell and its targets. */
+  second?: { actionId: number; targetIds: string[] };
+}
+
+/** Why a command is in the queue (FF9 command slots: main, counter, Jump, Trance…). */
+export type CommandSource = "main" | "counter" | "magicCounter" | "autoPotion" | "auto" | "spear" | "phantom" | "second";
+
+export interface QueuedCommand {
+  command: BattleCommand;
+  source: CommandSource;
 }
 
 export interface InputRecord {
@@ -111,6 +169,7 @@ export type BattleEvent =
   | { type: "damage"; targetId: string; amount: number; crit?: boolean; mp?: boolean }
   | { type: "heal"; targetId: string; amount: number; mp?: boolean }
   | { type: "miss"; targetId: string }
+  | { type: "guard"; targetId: string }
   | { type: "statusOn"; targetId: string; status: Status }
   | { type: "statusOff"; targetId: string; status: Status }
   | { type: "ko"; targetId: string }
@@ -138,7 +197,7 @@ export interface BattleState {
   /** Party members whose gauge is full and who are waiting for a command, in order. */
   ready: string[];
   /** Commands waiting to execute, in order. */
-  queue: BattleCommand[];
+  queue: QueuedCommand[];
   /** Ticks until the next queued command may execute (animation time). */
   busy: number;
   inventory: ConsumableStock[];
@@ -149,6 +208,14 @@ export interface BattleState {
   stolen: number[];
   learned: { unitId: string; actionId: number }[];
   gilBonus: number;
+  /** Fled by luck (Flee command, not Zidane's Flee skill) — Flee-Gil pays out. */
+  fledByLuck?: boolean;
+  /** Party gil at the start (Spare Change), and how much the fight spent. */
+  gil: number;
+  gilSpent: number;
+  /** Lifetime counters some abilities scale with (Thievery, Dragon's Crest, Tonberry Karma). */
+  meta: { thefts: number; dragonKills: number; tonberryKills: number };
+  start: "normal" | "preemptive" | "back";
 }
 
 /** An action as the engine sees it: FF9 data or an enemy-only move from the content tables. */

@@ -1,39 +1,74 @@
 /**
- * The ATB battle engine. Fully deterministic: all randomness comes from the seeded RNG in the state, and
- * time advances in fixed ticks (20/s). Player commands are recorded with the tick they were given at, so a
- * battle can be replayed from (initial state, inputs) — the server does exactly that to verify results.
+ * The ATB battle engine — FF9's battle loop (Memoria: HonoluluBattleMain.ProcessActiveTime, btl_cmd, btl_stat,
+ * btl_para) as a deterministic simulation. All randomness comes from the seeded RNG in the state and time
+ * advances in fixed ticks (15/s, as FF9), so a battle replays exactly from (initial state, inputs) — the server
+ * does that to verify results.
  *
  * Wait mode freezes gauges and status timers while a party member is waiting for a command (queued actions
- * still play out), like FF9's Wait setting. Active mode never freezes.
+ * still play out). Active mode never freezes.
  */
 import { findItem, getAction, statuses as statusTable, type Status, type TargetType } from "@ffix-roguelike/game-data";
 
 import { enemyAction } from "../content/enemy-actions";
 import { Rng } from "../rng";
-import { executeAction } from "./effects";
+import { C, Calc, CAT, F, itemAction, PHANTOMS, performScript, REMOVE_ON_MAGICAL, REMOVE_ON_PHYSICAL, SA, type CalcCommand } from "./calc";
+import { supportImmunities } from "./units";
 import {
-  ATB_MAX,
-  TICKS_PER_SECOND,
+  ATB_COEF,
+  ATB_SPEED_FACTOR,
+  DAMAGE_LIMIT,
+  MP_DAMAGE_LIMIT,
+  PLAYER_CATEGORY,
   TRANCE_MAX,
   type BattleAction,
   type BattleCommand,
   type BattleEvent,
   type BattleState,
   type BattleUnit,
+  type CommandSource,
   type ConsumableStock,
+  type QueuedCommand,
 } from "./types";
 
-/** Animation time per executed command, in ticks. */
-export const ACTION_TICKS = 24;
-/** Hard cap so a stalemate can't run forever (10 minutes). */
-export const MAX_TICKS = TICKS_PER_SECOND * 600;
+/** Hard cap so a stalemate can't run forever (15 minutes). */
+export const MAX_TICKS = 15 * 900;
 
-export const POSITIVE_STATUSES: Status[] = ["regen", "haste", "float", "shell", "protect", "vanish", "reflect", "autoLife", "defend", "trance"];
-/** Statuses that stop the gauge and prevent acting. */
-const DISABLING: Status[] = ["death", "petrify", "stop", "sleep", "freeze", "venom", "jump"];
+export const POSITIVE_STATUSES: Status[] = ["autoLife", "trance", "defend", "regen", "haste", "float", "shell", "protect", "vanish", "reflect"];
+const NEGATIVE_STATUSES: Status[] = ["petrify", "venom", "virus", "silence", "blind", "trouble", "zombie", "death", "confuse", "stop", "poison", "sleep", "slow", "heat", "freeze", "doom", "mini", "gradualPetrify"];
+/** Statuses with a duration (ContiCount). */
+const TIMED: Status[] = ["poison", "sleep", "regen", "haste", "slow", "float", "shell", "protect", "heat", "freeze", "vanish", "reflect"];
+/** Statuses with a periodic effect (OprCount). */
+const PERIODIC: Status[] = ["venom", "poison", "regen", "gradualPetrify", "doom"];
+/** Applying these cancels the unit's pending commands. */
+const CMD_CANCEL: Status[] = ["petrify", "venom", "death", "confuse", "berserk", "sleep"];
+/** Can't take a turn. */
+const NO_INPUT: Status[] = [...CMD_CANCEL, "stop", "freeze", "jump"];
+/** Frozen in place: no counters, no support reactions. */
+const IMMOBILIZED: Status[] = ["petrify", "venom", "stop", "freeze", "death", "jump"];
+const PREVENT_COUNTER: Status[] = ["petrify", "venom", "stop", "freeze", "death", "sleep"];
+/** The gauge doesn't move. */
+const STOP_ATB: Status[] = ["petrify", "death", "stop", "jump"];
+/** The gauge fills but the turn doesn't come. */
+const PREVENT_ATB_CONFIRM: Status[] = ["venom", "sleep", "freeze"];
+/** Statuses that never stack/refresh while present. */
+const NO_RESET: Status[] = ["petrify", "venom", "virus", "silence", "blind", "trouble", "zombie", "death", "lowHp", "confuse", "berserk", "stop", "autoLife", "trance", "defend", "doom", "gradualPetrify"];
+const CANNOT_TRANCE: Status[] = ["petrify", "venom", "zombie", "death", "stop", "trance", "freeze"];
+/** Every party member in one of these = game over. */
+const PARTY_OUT: Status[] = ["petrify", "venom", "stop", "death"];
+
+const statusInfo = new Map(statusTable.map((s) => [s.key, s]));
 
 export function getBattleAction(id: number): BattleAction {
   return enemyAction(id) ?? getAction(id);
+}
+
+export interface BattleMeta {
+  /** Party gil (Spare Change spends it). */
+  gil: number;
+  /** Successful steals so far (Thievery). */
+  thefts: number;
+  dragonKills: number;
+  tonberryKills: number;
 }
 
 export interface CreateBattleOptions {
@@ -43,29 +78,25 @@ export interface CreateBattleOptions {
   inventory: ConsumableStock[];
   mode?: "wait" | "active";
   canFlee?: boolean;
+  meta?: Partial<BattleMeta>;
+  /** No preemptive strikes / back attacks (boss fights, scripted battles). */
+  noSurprise?: boolean;
 }
 
 export function createBattle(opts: CreateBattleOptions): BattleState {
   const rng = new Rng(opts.seed);
   const units = [...opts.party, ...opts.enemies].map((u) => structuredClone(u));
-  for (const u of units) {
-    // Start gauges partly filled (FF9 randomises the opening ATB); Initiative/Alert start full.
-    const head = u.supports.includes(42) || u.supports.includes(41);
-    u.atb = u.hp > 0 ? (head ? ATB_MAX : rng.int(0, Math.floor(ATB_MAX * 0.6))) : 0;
-    if (u.hp <= 0) u.statuses.death = { remaining: null, nextTick: 0 };
-    // Auto-statuses from support abilities.
-    const auto: [number, Status][] = [
-      [0, "reflect"],
-      [1, "float"],
-      [2, "haste"],
-      [3, "regen"],
-      [4, "autoLife"],
-    ];
-    for (const [sa, status] of auto) if (u.supports.includes(sa) && u.hp > 0) u.statuses[status] = { remaining: null, nextTick: 0 };
+  // Battle start (FF9: preemptive 16/256, Initiative 85/256; back attack 24/256, Alert prevents it).
+  let start: "normal" | "preemptive" | "back" = "normal";
+  if (!opts.noSurprise) {
+    const initiative = opts.party.some((u) => u.supports.includes(SA.initiative));
+    const alert = opts.party.some((u) => u.supports.includes(SA.alert));
+    if (rng.int(0, 255) < (initiative ? 85 : 16)) start = "preemptive";
+    else if (!alert && rng.int(0, 255) < 24) start = "back";
   }
-  return {
+  const state: BattleState = {
     seed: opts.seed,
-    rng: rng.state,
+    rng: 0,
     tick: 0,
     mode: opts.mode ?? "wait",
     units,
@@ -79,15 +110,69 @@ export function createBattle(opts: CreateBattleOptions): BattleState {
     stolen: [],
     learned: [],
     gilBonus: 0,
+    gil: opts.meta?.gil ?? 0,
+    gilSpent: 0,
+    meta: { thefts: opts.meta?.thefts ?? 0, dragonKills: opts.meta?.dragonKills ?? 0, tonberryKills: opts.meta?.tonberryKills ?? 0 },
+    start,
   };
+  const engine = new BattleEngine(state, rng);
+  for (const u of units) engine.initUnit(u, start);
+  if (start === "preemptive") engine.emit({ type: "message", text: "Preemptive strike!" });
+  if (start === "back") engine.emit({ type: "message", text: "Back attack!" });
+  state.rng = engine.rng.state;
+  return state;
 }
 
 export class BattleEngine {
   readonly rng: Rng;
   private events: BattleEvent[] = [];
+  private after: (() => void)[] = [];
 
-  constructor(public state: BattleState) {
-    this.rng = new Rng(state.rng);
+  constructor(
+    public state: BattleState,
+    rng?: Rng,
+  ) {
+    this.rng = rng ?? new Rng(state.rng);
+  }
+
+  // ── setup ──────────────────────────────────────────────────────────────────
+  initUnit(u: BattleUnit, start: "normal" | "preemptive" | "back") {
+    u.atbMax = u.atbMax || 1;
+    u.busyCommand = false;
+    u.permanent ??= [];
+    u.statuses ??= {};
+    for (const s of supportImmunities(u.supports)) if (!u.statusImmune.includes(s)) u.statusImmune.push(s);
+    if (u.hp <= 0) {
+      u.hp = 0;
+      u.statuses = { death: {} };
+      u.atb = 0;
+      return;
+    }
+    // Support statuses (StatusInit features).
+    const auto: [number, Status][] = [
+      [SA.autoReflect, "reflect"],
+      [SA.autoFloat, "float"],
+      [SA.autoHaste, "haste"],
+      [SA.autoRegen, "regen"],
+    ];
+    for (const [sa, s] of auto) if (u.supports.includes(sa)) this.makePermanent(u, s);
+    if (u.supports.includes(SA.autoLife)) this.alterStatus(u, "autoLife");
+    if (u.boss) this.makePermanent(u, "easyKill");
+    for (const s of u.permanent) if (!u.statuses[s]) this.makePermanent(u, s);
+    if (u.side === "party") {
+      u.atb = start === "preemptive" ? u.atbMax - 1 : start === "back" ? 0 : this.rng.int(0, u.atbMax - 1);
+      if (start === "back") u.backRow = !u.backRow;
+    } else {
+      u.atb = start === "preemptive" ? 0 : start === "back" ? u.atbMax - 1 : this.rng.int(0, u.atbMax - 1);
+    }
+    this.checkPoint(u);
+  }
+
+  /** Auto-statuses (supports, monster traits): always on, never wear off. */
+  private makePermanent(u: BattleUnit, s: Status) {
+    if (!u.permanent.includes(s)) u.permanent.push(s);
+    u.statuses[s] = PERIODIC.includes(s) ? { opr: this.oprCount(u, s) } : {};
+    if (s === "haste" && !u.statusImmune.includes("slow")) u.statusImmune.push("slow");
   }
 
   // ── queries ────────────────────────────────────────────────────────────────
@@ -101,25 +186,34 @@ export class BattleEngine {
     return u.statuses[s] !== undefined;
   }
 
+  hasAny(u: BattleUnit, list: Status[]): boolean {
+    return list.some((s) => u.statuses[s] !== undefined);
+  }
+
   isAlive(u: BattleUnit): boolean {
     return u.hp > 0 && !this.has(u, "death");
   }
 
   /** In the fight: alive and not stone. */
   isActive(u: BattleUnit): boolean {
-    return this.isAlive(u) && !this.has(u, "petrify");
+    return this.isAlive(u) && !this.has(u, "petrify") && !u.removed;
+  }
+
+  /** Can be picked as a target (Jumping units are out of reach). */
+  isTargetable(u: BattleUnit): boolean {
+    return this.isActive(u) && !this.has(u, "jump");
   }
 
   canAct(u: BattleUnit): boolean {
-    return this.isActive(u) && !DISABLING.some((s) => this.has(u, s));
+    return this.isActive(u) && !this.hasAny(u, NO_INPUT);
   }
 
   allies(u: BattleUnit): BattleUnit[] {
-    return this.state.units.filter((x) => x.side === u.side);
+    return this.state.units.filter((x) => x.side === u.side && !x.removed);
   }
 
   opponents(u: BattleUnit): BattleUnit[] {
-    return this.state.units.filter((x) => x.side !== u.side);
+    return this.state.units.filter((x) => x.side !== u.side && !x.removed);
   }
 
   inTrance(u: BattleUnit): boolean {
@@ -131,17 +225,53 @@ export class BattleEngine {
     return this.inTrance(u) && u.tranceCommands.length ? u.tranceCommands : u.commands;
   }
 
+  /** The command an ability belongs to, from this unit's current command set. */
+  commandOf(u: BattleUnit, actionId: number) {
+    return this.commandsOf(u).find((c) => c.actionIds.includes(actionId));
+  }
+
   mpCost(u: BattleUnit, action: BattleAction): number {
-    return u.supports.includes(34) ? Math.floor(action.mp / 2) : action.mp;
+    let mp = action.mp;
+    if (u.side === "party" && u.supports.includes(SA.halfMp)) mp = Math.floor(mp / 2);
+    return mp;
   }
 
   isMagical(action: BattleAction): boolean {
-    return (action.category & 2) !== 0;
+    return (action.category & CAT.silenceable) !== 0;
+  }
+
+  gil() {
+    return Math.max(0, this.state.gil - this.state.gilSpent);
+  }
+  thefts() {
+    return this.state.meta.thefts + this.state.stolen.length;
+  }
+  dragonKills() {
+    return this.state.meta.dragonKills;
+  }
+  tonberryKills() {
+    return this.state.meta.tonberryKills;
+  }
+  itemCount(itemId: number) {
+    return this.state.inventory.find((s) => s.itemId === itemId)?.count ?? 0;
+  }
+  addItem(itemId: number) {
+    const s = this.state.inventory.find((x) => x.itemId === itemId);
+    if (s) s.count++;
+    else this.state.inventory.push({ itemId, count: 1 });
+  }
+  /** An enemy stole an item from the party. */
+  loseItem(itemId: number) {
+    if (!this.consume(itemId)) {
+      this.emit({ type: "message", text: "Couldn't steal anything" });
+      return;
+    }
+    this.emit({ type: "message", text: `${findItem(itemId)?.name ?? "An item"} was stolen!` });
   }
 
   /** Default legal targets for an action from `actor`'s point of view. */
   targetPool(actor: BattleUnit, targets: TargetType, forDead: boolean): BattleUnit[] {
-    const ok = (u: BattleUnit) => (forDead ? true : this.isActive(u));
+    const ok = (u: BattleUnit) => (forDead ? !u.removed && !this.has(u, "jump") : this.isTargetable(u));
     switch (targets) {
       case "self":
         return [actor];
@@ -156,7 +286,7 @@ export class BattleEngine {
       case "randomEnemy":
         return this.opponents(actor).filter(ok);
       default:
-        return this.state.units.filter(ok);
+        return this.state.units.filter((u) => !u.removed).filter(ok);
     }
   }
 
@@ -181,7 +311,12 @@ export class BattleEngine {
     if (err) return { ok: false, error: err };
     this.state.ready = this.state.ready.filter((id) => id !== command.actorId);
     this.state.inputs.push({ tick: this.state.tick, command: structuredClone(command) });
-    this.state.queue.push(structuredClone(command));
+    const actor = this.unit(command.actorId);
+    actor.busyCommand = true;
+    // Choosing a new command drops Defend (RemoveOnMainCommand).
+    this.removeStatus(actor, "defend");
+    this.enqueue(structuredClone(command), "main");
+    if (command.second) this.enqueue({ actorId: command.actorId, kind: "ability", actionId: command.second.actionId, targetIds: command.second.targetIds }, "second");
     return { ok: true };
   }
 
@@ -195,7 +330,7 @@ export class BattleEngine {
     switch (c.kind) {
       case "attack":
         if (c.targetIds.length !== 1) return "Attack needs one target";
-        if (!this.isActive(targets[0]!)) return "Target is down";
+        if (!this.isTargetable(targets[0]!)) return "Target is down";
         return null;
       case "defend":
       case "change":
@@ -203,13 +338,17 @@ export class BattleEngine {
       case "flee":
         return this.state.canFlee ? null : "Can't escape!";
       case "ability": {
-        if (c.actionId == null) return "No ability";
-        const available = this.commandsOf(actor).some((cmd) => cmd.actionIds.includes(c.actionId!));
-        if (!available) return "Ability not available";
-        const action = getBattleAction(c.actionId);
-        if (actor.mp < this.mpCost(actor, action)) return "Not enough MP";
-        if (this.isMagical(action) && this.has(actor, "silence")) return "Silenced";
-        return this.validateTargets(actor, action.targets, action.forDead, c.targetIds);
+        const err = this.validateAbility(actor, c.actionId, c.targetIds);
+        if (err) return err;
+        if (c.second) {
+          const cmd = this.commandOf(actor, c.actionId!);
+          if (!cmd || !DOUBLE_CAST.has(cmd.id)) return "Only Double Black / Double White cast twice";
+          const err2 = this.validateAbility(actor, c.second.actionId, c.second.targetIds);
+          if (err2) return err2;
+          const total = this.mpCost(actor, getBattleAction(c.actionId!)) + this.mpCost(actor, getBattleAction(c.second.actionId));
+          if (actor.mp < total) return "Not enough MP";
+        }
+        return null;
       }
       case "item": {
         const stock = this.state.inventory.find((s) => s.itemId === c.itemId);
@@ -218,7 +357,24 @@ export class BattleEngine {
         if (!effect) return "Item can't be used";
         return this.validateTargets(actor, effect.targets, effect.forDead, c.targetIds);
       }
+      case "throw": {
+        if (!this.commandsOf(actor).some((cmd) => cmd.id === 15)) return "Can't throw";
+        const stock = this.state.inventory.find((s) => s.itemId === c.itemId);
+        if (!stock || stock.count <= 0) return "Nothing to throw";
+        if (!isThrowable(c.itemId!)) return "Can't throw that";
+        return this.validateTargets(actor, "singleEnemy", false, c.targetIds);
+      }
     }
+  }
+
+  private validateAbility(actor: BattleUnit, actionId: number | undefined, targetIds: string[]): string | null {
+    if (actionId == null) return "No ability";
+    if (!this.commandOf(actor, actionId)) return "Ability not available";
+    const action = getBattleAction(actionId);
+    if (actor.mp < this.mpCost(actor, action)) return "Not enough MP";
+    if (this.isMagical(action) && this.has(actor, "silence")) return "Silenced";
+    if (action.scriptId === 63 && !this.magicSwordReady(actor)) return "Vivi can't help right now";
+    return this.validateTargets(actor, action.targets, action.forDead, targetIds);
   }
 
   private validateTargets(actor: BattleUnit, type: TargetType, forDead: boolean, ids: string[]): string | null {
@@ -230,7 +386,8 @@ export class BattleEngine {
     for (const id of ids) {
       const u = this.unit(id);
       if (!anySide && !pool.has(id)) return "Invalid target";
-      if (!forDead && !this.isActive(u)) return "Target is down";
+      if (!forDead && !this.isTargetable(u)) return "Target is down";
+      if (u.removed || this.has(u, "jump")) return "Invalid target";
     }
     if ((type.startsWith("single") || type === "self") && ids.length > 1) return "Only one target";
     if (ids.length > 1 && type.startsWith("many")) {
@@ -240,9 +397,30 @@ export class BattleEngine {
     return null;
   }
 
+  /** Steiner's Magic Sword needs Vivi in the party and able to act. */
+  magicSwordReady(steiner: BattleUnit): boolean {
+    const vivi = this.allies(steiner).find((u) => u.key === "vivi");
+    return !!vivi && this.isActive(vivi) && !this.hasAny(vivi, [...IMMOBILIZED, "silence", "confuse", "berserk", "sleep", "heat", "mini"]);
+  }
+
+  /** Queue a command (counters jump the queue, like FF9's priority commands). */
+  enqueue(command: BattleCommand, source: CommandSource, priority = source !== "main" && source !== "second" && source !== "auto") {
+    const q: QueuedCommand = { command, source };
+    if (priority) {
+      // after other priority commands already waiting, before ordinary ones
+      const idx = this.state.queue.findIndex((x) => !isPriority(x.source));
+      if (idx < 0) this.state.queue.push(q);
+      else this.state.queue.splice(idx, 0, q);
+    } else this.state.queue.push(q);
+  }
+
   // ── simulation ─────────────────────────────────────────────────────────────
   emit(e: BattleEvent) {
     this.events.push(e);
+  }
+
+  afterCommand(fn: () => void) {
+    this.after.push(fn);
   }
 
   /** Advance one tick. Returns what happened (for the client to animate). */
@@ -253,49 +431,86 @@ export class BattleEngine {
     s.tick++;
 
     const frozen = s.mode === "wait" && s.ready.length > 0;
-    if (!frozen) {
-      for (const u of s.units) this.tickStatuses(u);
-      for (const u of s.units) this.fillGauge(u);
-    }
+    if (!frozen) for (const u of s.units) this.atbTick(u);
 
     if (s.busy > 0) s.busy--;
     else this.runQueue();
 
+    for (const u of s.units) this.checkPoint(u);
     this.checkEnd();
     if (!s.outcome && s.tick >= MAX_TICKS) this.finish("defeat");
     s.rng = this.rng.state;
     return this.events;
   }
 
-  private fillGauge(u: BattleUnit) {
-    if (!this.canAct(u)) return;
-    if (u.atb >= ATB_MAX) return;
-    let rate = (u.speed + 20) * 4;
-    if (this.has(u, "haste")) rate *= 1.5;
-    if (this.has(u, "slow")) rate *= 0.5;
-    u.atb = Math.min(ATB_MAX, u.atb + Math.round(rate));
-    if (u.atb >= ATB_MAX) this.onGaugeFull(u);
+  private coef(u: BattleUnit) {
+    return this.has(u, "haste") ? (ATB_COEF * 3) >> 1 : this.has(u, "slow") ? Math.floor((ATB_COEF * 2) / 3) : ATB_COEF;
+  }
+
+  /** One ATB tick for a unit: statuses, Jump/Eidolon countdowns, gauge. */
+  private atbTick(u: BattleUnit) {
+    if (u.removed || !this.isAlive(u)) return;
+    const coef = this.coef(u);
+    if (!this.hasAny(u, STOP_ATB)) this.tickStatuses(u, coef);
+    if (!this.isAlive(u)) return;
+
+    // Freya in the air.
+    if (u.jump && this.has(u, "jump") && !this.queued(u, "spear")) {
+      u.jump.countdown -= coef;
+      if (u.jump.countdown < 0) {
+        const spear = u.jump.trance ? 186 : 185;
+        this.enqueue({ actorId: u.id, kind: "ability", actionId: spear, targetIds: u.jump.targetIds }, "spear", true);
+      }
+    }
+    // Garnet's Eidolon recasting during Trance.
+    if (u.phantom && this.inTrance(u) && !this.queued(u, "phantom")) {
+      u.phantom.countdown -= coef;
+      if (u.phantom.countdown <= 0) this.enqueue({ actorId: u.id, kind: "ability", actionId: u.phantom.actionId, targetIds: [] }, "phantom", true);
+    }
+
+    if (this.hasAny(u, STOP_ATB) || u.busyCommand) return;
+    if (u.atb < u.atbMax) u.atb = Math.min(u.atbMax, u.atb + coef * ATB_SPEED_FACTOR);
+    if (u.atb < u.atbMax || this.hasAny(u, PREVENT_ATB_CONFIRM)) return;
+    this.onGaugeFull(u);
+  }
+
+  private queued(u: BattleUnit, source: CommandSource) {
+    return this.state.queue.some((q) => q.source === source && q.command.actorId === u.id);
   }
 
   private onGaugeFull(u: BattleUnit) {
-    const auto = this.has(u, "berserk") || this.has(u, "confuse");
-    if (u.side === "party" && !auto) {
+    if (this.has(u, "berserk") || this.has(u, "confuse")) {
+      const cmd = this.autoAttack(u);
+      if (cmd) {
+        u.busyCommand = true;
+        this.enqueue(cmd, "auto");
+      }
+      return;
+    }
+    if (u.side === "party") {
       if (!this.state.ready.includes(u.id)) {
         this.state.ready.push(u.id);
         this.emit({ type: "turnReady", unitId: u.id });
       }
       return;
     }
-    const cmd = u.side === "enemy" && !auto ? this.chooseEnemyCommand(u) : this.autoCommand(u);
-    if (cmd) this.state.queue.push(cmd);
-    else u.atb = 0;
+    const cmd = this.chooseEnemyCommand(u);
+    if (cmd) {
+      u.busyCommand = true;
+      this.enqueue(cmd, "main");
+    } else u.atb = 0;
   }
 
-  /** Berserk: attack a random foe. Confuse: attack anyone. */
-  private autoCommand(u: BattleUnit): BattleCommand | null {
-    const pool = (this.has(u, "confuse") ? this.state.units : this.opponents(u)).filter((x) => this.isActive(x) && x !== u);
-    if (!pool.length) return null;
-    return { actorId: u.id, kind: "attack", targetIds: [this.rng.pick(pool).id] };
+  /** Berserk: attack a random foe. Confuse: attack a random side. */
+  private autoAttack(u: BattleUnit): BattleCommand | null {
+    const pool = this.has(u, "confuse")
+      ? this.rng.chance(50)
+        ? this.allies(u).filter((x) => this.isTargetable(x) && x !== u)
+        : this.opponents(u).filter((x) => this.isTargetable(x))
+      : this.opponents(u).filter((x) => this.isTargetable(x));
+    const targets = pool.length ? pool : this.opponents(u).filter((x) => this.isTargetable(x));
+    if (!targets.length) return null;
+    return { actorId: u.id, kind: "attack", targetIds: [this.rng.pick(targets).id] };
   }
 
   private chooseEnemyCommand(u: BattleUnit): BattleCommand | null {
@@ -312,7 +527,11 @@ export class BattleEngine {
     });
     const rule = rules.length ? this.rng.weighted(rules.map((r) => ({ weight: r.weight, value: r }))) : { actionId: 1000, weight: 1, aim: undefined, once: false };
     if (rule.once) (u.usedOnce ??= []).push(rule.actionId);
-    const action = getBattleAction(rule.actionId);
+    return this.aimAt(u, rule.actionId, rule.aim);
+  }
+
+  private aimAt(u: BattleUnit, actionId: number, aim?: string, forceTarget?: BattleUnit): BattleCommand | null {
+    const action = getBattleAction(actionId);
     const pool = this.targetPool(u, action.targets, false);
     if (!pool.length) return null;
     let targetIds: string[];
@@ -320,234 +539,742 @@ export class BattleEngine {
     if (t === "self") targetIds = [u.id];
     else if (t.startsWith("all") || t === "everyone") targetIds = pool.map((x) => x.id);
     else {
-      let target: BattleUnit;
       // Hostile moves aim at the party; support moves (e.g. Barrier) at self/allies.
       const hostile = !action.defaultAlly && t !== "singleAlly";
-      const candidates = hostile ? this.opponents(u).filter((x) => this.isActive(x) && !this.has(x, "jump")) : pool;
+      const candidates = hostile ? this.opponents(u).filter((x) => this.isTargetable(x)) : pool;
       if (!candidates.length) return null;
-      switch (rule.aim) {
-        case "lowestHp":
-          target = candidates.reduce((a, b) => (b.hp < a.hp ? b : a));
-          break;
-        case "highestHp":
-          target = candidates.reduce((a, b) => (b.hp > a.hp ? b : a));
-          break;
-        case "self":
-          target = u;
-          break;
-        case "backRow":
-          target = this.rng.pick(candidates.filter((x) => x.backRow).length ? candidates.filter((x) => x.backRow) : candidates);
-          break;
-        default:
-          target = this.rng.pick(candidates);
-      }
+      let target: BattleUnit;
+      if (forceTarget && candidates.includes(forceTarget)) target = forceTarget;
+      else
+        switch (aim) {
+          case "lowestHp":
+            target = candidates.reduce((a, b) => (b.hp < a.hp ? b : a));
+            break;
+          case "highestHp":
+            target = candidates.reduce((a, b) => (b.hp > a.hp ? b : a));
+            break;
+          case "self":
+            target = u;
+            break;
+          case "backRow":
+            target = this.rng.pick(candidates.filter((x) => x.backRow).length ? candidates.filter((x) => x.backRow) : candidates);
+            break;
+          default:
+            target = this.rng.pick(candidates);
+        }
       targetIds = [target.id];
     }
-    const kind = rule.actionId === 1000 ? "attack" : "ability";
-    return { actorId: u.id, kind, actionId: rule.actionId, targetIds };
+    const kind = actionId === 1000 ? "attack" : "ability";
+    return { actorId: u.id, kind, actionId, targetIds };
   }
 
   private runQueue() {
     const s = this.state;
-    while (s.queue.length) {
-      const cmd = s.queue.shift()!;
-      const actor = this.state.units.find((u) => u.id === cmd.actorId);
-      if (!actor || !this.canAct(actor)) {
-        if (actor) actor.atb = 0;
-        continue;
+    while (s.queue.length && !s.outcome) {
+      const q = s.queue.shift()!;
+      const actor = s.units.find((u) => u.id === q.command.actorId);
+      if (!actor) continue;
+      const ran = this.execute(actor, q);
+      if (ran > 0) {
+        s.busy = ran;
+        return;
       }
-      this.execute(actor, cmd);
-      actor.atb = 0;
-      actor.turns++;
-      s.busy = ACTION_TICKS;
-      return;
     }
   }
 
-  private execute(actor: BattleUnit, cmd: BattleCommand) {
-    // Heat: acting while heated knocks you out.
-    if (this.has(actor, "heat")) {
+  // ── command execution (btl_cmd) ────────────────────────────────────────────
+  /** Run a queued command. Returns its animation time in ticks (0 = didn't happen). */
+  private execute(actor: BattleUnit, q: QueuedCommand): number {
+    const { command: cmd, source } = q;
+    const reaction = isPriority(source) && source !== "spear" && source !== "phantom";
+    const declarable = source === "main" || source === "second" || source === "auto";
+
+    // Can the actor still do it?
+    if (!this.isActive(actor)) return this.cancel(actor, q);
+    if (reaction) {
+      if (this.hasAny(actor, PREVENT_COUNTER)) return 0;
+    } else if (source === "spear") {
+      if (!this.has(actor, "jump")) return 0;
+    } else if (source === "phantom") {
+      if (!this.inTrance(actor)) return 0;
+    } else if (this.hasAny(actor, ["stop", "freeze", "petrify", "venom", "sleep"]) || (this.has(actor, "jump") && source !== "main")) {
+      return this.cancel(actor, q);
+    }
+
+    // Heat: taking an action while heated is fatal (bosses just lose the turn).
+    if (!reaction && source !== "phantom" && this.has(actor, "heat")) {
       this.emit({ type: "message", text: `${actor.name} is overheated!` });
-      this.knockOut(actor);
-      return;
+      if (this.has(actor, "easyKill")) this.finishCommand(actor, q, null);
+      else {
+        this.killUnit(actor);
+        this.finishCommand(actor, q, null);
+      }
+      return 6;
     }
-    if (this.has(actor, "defend")) this.removeStatus(actor, "defend");
 
-    executeAction(this, actor, cmd);
+    // Simple commands.
+    if (cmd.kind === "defend") {
+      this.emit({ type: "actionStart", actorId: actor.id, name: "Defend", kind: "defend", targetIds: [actor.id] });
+      this.alterStatus(actor, "defend");
+      this.finishCommand(actor, q, null);
+      return 8;
+    }
+    if (cmd.kind === "change") {
+      this.emit({ type: "actionStart", actorId: actor.id, name: "Change", kind: "change", targetIds: [actor.id] });
+      actor.backRow = !actor.backRow;
+      this.finishCommand(actor, q, null);
+      return 10;
+    }
+    if (cmd.kind === "flee") {
+      this.emit({ type: "actionStart", actorId: actor.id, name: "Flee", kind: "flee", targetIds: [] });
+      this.tryFlee(false);
+      this.finishCommand(actor, q, null);
+      return 15;
+    }
 
-    if (this.inTrance(actor) && this.isAlive(actor)) {
-      actor.trance = Math.max(0, actor.trance - Math.max(25, 75 - actor.spirit));
-      if (actor.trance <= 0) {
-        this.removeStatus(actor, "trance");
-        this.emit({ type: "tranceEnd", unitId: actor.id });
+    // Resolve the action.
+    let action: BattleAction;
+    let kind: CalcCommand["kind"];
+    if (cmd.kind === "attack") {
+      action = actor.side === "enemy" ? getBattleAction(1000) : getBattleAction(176);
+      kind = source === "counter" ? "counter" : "attack";
+    } else if (cmd.kind === "item") {
+      if (this.itemCount(cmd.itemId!) <= 0) {
+        this.emit({ type: "message", text: "No items left" });
+        return this.cancel(actor, q);
+      }
+      action = itemAction(cmd.itemId!);
+      kind = "item";
+    } else if (cmd.kind === "throw") {
+      if (this.itemCount(cmd.itemId!) <= 0) {
+        this.emit({ type: "message", text: "Nothing left to throw" });
+        return this.cancel(actor, q);
+      }
+      action = { ...getBattleAction(190), name: findItem(cmd.itemId!)?.name ?? "Throw" };
+      kind = "throw";
+    } else {
+      action = getBattleAction(cmd.actionId!);
+      kind = "ability";
+    }
+
+    // Silence (CheckMagicCondition).
+    if (this.isMagical(action) && this.has(actor, "silence") && source !== "magicCounter" && source !== "phantom") {
+      this.emit({ type: "message", text: `${actor.name} is silenced!` });
+      return this.cancel(actor, q, 8);
+    }
+    if (action.scriptId === 63 && !this.magicSwordReady(actor)) {
+      this.emit({ type: "message", text: "Magic Sword failed" });
+      return this.cancel(actor, q, 8);
+    }
+
+    // Targets (CheckTargetCondition).
+    let targets = this.resolveTargets(actor, action, cmd);
+    if (!targets.length) return this.cancel(actor, q);
+
+    // MP (CheckMpCondition). Return Magic and Eidolon recasts are free.
+    const cost = source === "magicCounter" || source === "phantom" || source === "spear" ? 0 : this.mpCost(actor, action);
+    if (actor.mp < cost) {
+      this.emit({ type: "message", text: "Not enough MP" });
+      return this.cancel(actor, q, 8);
+    }
+    actor.mp -= cost;
+    // Spare Change costs gil.
+    if (action.scriptId === 38) {
+      const gilCost = action.power * actor.level;
+      if (this.gil() < gilCost) {
+        this.emit({ type: "message", text: "Not enough gil" });
+        return this.cancel(actor, q, 8);
+      }
+      this.state.gilSpent += gilCost;
+    }
+
+    // Jump: Freya leaves the battlefield; Spear lands later.
+    if (kind === "ability" && (action.id === 178 || action.id === 172)) {
+      const inTrance = action.id === 172;
+      this.emit({ type: "actionStart", actorId: actor.id, name: "Jump", kind: "ability", targetIds: targets.map((t) => t.id) });
+      const countdown = statusInfo.get("jump")!.duration * 4 * (60 - actor.spirit);
+      this.alterStatus(actor, "jump", actor);
+      actor.jump = { countdown, targetIds: inTrance ? [] : targets.map((t) => t.id), trance: inTrance };
+      this.dropFromReady(actor);
+      this.finishCommand(actor, q, action);
+      return 12;
+    }
+
+    const isSummon = (action.type & 4) !== 0 || action.scriptId === 85 || action.scriptId === 86 || action.scriptId === 87 || (action.id >= 66 && action.id <= 74);
+    let shortSummon = false;
+    if (isSummon && source !== "phantom" && !actor.supports.includes(SA.boost)) {
+      shortSummon = this.rng.int(0, 255) < (actor.mp > action.mp * 2 ? 230 : 170);
+    }
+    const meteorMiss = action.name === "Meteor" && !(Math.floor(actor.level / 2) + actor.spirit >= this.rng.int(0, 99));
+
+    // Cover / Protect Girls (only enemy physical single-target attacks on the party).
+    if (actor.side === "enemy" && declarable && (action.category & CAT.physical) !== 0 && targets.length === 1 && targets[0]!.side === "party") {
+      const coverer = this.findCover(targets[0]!);
+      if (coverer) {
+        this.emit({ type: "message", text: `${coverer.name} covers ${targets[0]!.name}!` });
+        targets = [coverer];
+      }
+    }
+
+    // Reflect (CheckReflec): reflecting targets bounce single hits to a random unit on the other side.
+    const reflectNull = actor.supports.includes(SA.reflectNull) && actor.side === "party";
+    const hits: { target: BattleUnit; reflected: number }[] = [];
+    const reflectable = (action.category & CAT.reflectable) !== 0 && kind === "ability" && !reflectNull;
+    if (reflectable && targets.some((t) => this.has(t, "reflect") && !this.has(t, "petrify"))) {
+      const bounced = new Map<BattleUnit, number>();
+      for (const t of targets) {
+        if (this.has(t, "reflect") && !this.has(t, "petrify")) {
+          const other = this.state.units.filter((u) => u.side !== t.side && this.isTargetable(u));
+          if (other.length) {
+            const to = other[this.rng.int(0, 255) % other.length]!;
+            bounced.set(to, (bounced.get(to) ?? 0) + 1);
+          }
+        } else hits.push({ target: t, reflected: 0 });
+      }
+      for (const [t, n] of bounced) hits.push({ target: t, reflected: n });
+      this.emit({ type: "message", text: "Reflected!" });
+    } else for (const t of targets) hits.push({ target: t, reflected: 0 });
+
+    const name = cmd.kind === "attack" ? (kind === "counter" ? "Counter" : "Attack") : action.name;
+    this.emit({ type: "actionStart", actorId: actor.id, name, kind: cmd.kind, targetIds: hits.map((h) => h.target.id) });
+
+    // Items are used up as the action starts (Throw too).
+    if (cmd.kind === "item" || cmd.kind === "throw") this.consume(cmd.itemId!);
+
+    const divided = cmd.targetIds.length > 1 && action.targets.startsWith("many");
+    const enemyCount = this.opponents(actor).filter((u) => this.isTargetable(u)).length;
+    const base: Omit<CalcCommand, "reflectHits"> = {
+      action,
+      kind,
+      itemId: cmd.itemId,
+      divided,
+      shortRange: kind === "attack" || kind === "counter" ? (actor.side === "enemy" || !(actor.weapon?.longRange ?? false)) : actor.side === "enemy",
+      shortSummon,
+      reflectNull,
+      elements: actor.side === "party" && actor.supports.includes(SA.magElemNull) && kind !== "attack" ? [] : action.elements,
+      meteorMiss,
+      counterable: declarable,
+      enemyCount,
+    };
+    for (const h of hits) {
+      if (h.target.removed) continue;
+      const calc = new Calc(this, actor, h.target, { ...base, reflectHits: Math.max(1, h.reflected) });
+      performScript(calc);
+      if (calc.performResult) this.applyResult(calc, h.reflected > 0);
+      if (this.state.outcome) break;
+    }
+
+    for (const fn of this.after.splice(0)) fn();
+    this.finishCommand(actor, q, action);
+    return commandTicks(action, kind, shortSummon, source);
+  }
+
+  /** Drop a command that couldn't run; its owner gets a fresh turn later. */
+  private cancel(actor: BattleUnit, q: QueuedCommand, ticks = 0): number {
+    if (q.source === "main" || q.source === "auto" || q.source === "second") {
+      actor.busyCommand = this.state.queue.some((x) => x.command.actorId === actor.id && (x.source === "second" || x.source === "main"));
+      if (!actor.busyCommand) actor.atb = 0;
+    }
+    return ticks;
+  }
+
+  /** FinishCommand: reset the gauge, drain Trance, land from Jump, arm Garnet's Eidolon. */
+  private finishCommand(actor: BattleUnit, q: QueuedCommand, action: BattleAction | null) {
+    const { source } = q;
+    const declarable = source === "main" || source === "second" || source === "auto";
+    const isJump = action != null && (action.id === 178 || action.id === 172);
+    if (declarable) {
+      actor.turns++;
+      const more = this.state.queue.some((x) => x.command.actorId === actor.id && x.source === "second");
+      if (!isJump && !more) {
+        actor.atb = 0;
+        actor.busyCommand = false;
+      }
+      // Trance drains with every action (half for each half of a Double cast).
+      if (this.inTrance(actor) && !actor.permanent.includes("trance") && !isJump) {
+        let delta = Math.floor((300 - actor.level) / Math.max(1, actor.spirit)) * 10;
+        if (q.command.second || source === "second") delta = Math.floor(delta / 2);
+        if (actor.trance > delta) actor.trance -= delta;
+        else this.removeStatus(actor, "trance");
+      }
+      // Garnet: summoning in Trance arms the Eidolon's free recast.
+      if (action && actor.key === "garnet" && this.inTrance(actor) && PHANTOMS[action.id] != null && this.commandOf(actor, action.id)?.id === 18) {
+        actor.phantom = { actionId: PHANTOMS[action.id]!, countdown: (60 - actor.spirit) * 200 };
+      }
+    }
+    if (source === "spear" && actor.jump) {
+      if (actor.jump.trance && this.inTrance(actor)) actor.jump.countdown = statusInfo.get("jump")!.duration * 4 * (60 - actor.spirit);
+      else this.removeStatus(actor, "jump");
+    }
+    if (source === "phantom" && actor.phantom) actor.phantom.countdown = (60 - actor.spirit) * 200;
+  }
+
+  private resolveTargets(actor: BattleUnit, action: BattleAction, cmd: BattleCommand): BattleUnit[] {
+    const t = action.targets;
+    const forDead = action.forDead || (cmd.kind === "item" && (findItem(cmd.itemId!)?.effect?.forDead ?? false));
+    if (t === "self") return [actor];
+    if (t.startsWith("all") || t === "everyone" || (cmd.targetIds.length === 0 && t !== "automatic" && !t.startsWith("random"))) {
+      const pool = this.targetPool(actor, t === "everyone" || t === "all" ? "everyone" : t, forDead);
+      if (t.startsWith("all") || t === "everyone") return pool.filter((u) => forDead || this.isTargetable(u));
+    }
+    if (t.startsWith("random")) {
+      const pool = this.targetPool(actor, t, false);
+      return pool.length ? [this.rng.pick(pool)] : [];
+    }
+    if (t === "automatic") return this.targetPool(actor, "everyone", false).filter((u) => u.side !== actor.side);
+    const valid = cmd.targetIds
+      .map((id) => this.unit(id))
+      .filter((u) => !u.removed && !this.has(u, "jump") && ((forDead && u.side === "party") || this.isAlive(u)));
+    if (valid.length) return valid;
+    if (cmd.targetIds.length > 1) return [];
+    // The target fell before the action landed: FF9 picks a random living unit on the same side.
+    const original = cmd.targetIds.length ? this.unit(cmd.targetIds[0]!) : null;
+    const side = original?.side ?? (actor.side === "party" ? "enemy" : "party");
+    const pool = this.state.units.filter((u) => u.side === side && this.isTargetable(u));
+    return pool.length ? [this.rng.pick(pool)] : [];
+  }
+
+  /** Cover (Steiner: allies in critical condition) and Protect Girls (Zidane: women under half HP). */
+  private findCover(target: BattleUnit): BattleUnit | null {
+    let best: BattleUnit | null = null;
+    for (const u of this.allies(target)) {
+      if (u === target || !this.isTargetable(u) || this.hasAny(u, IMMOBILIZED) || this.has(u, "heat") || this.hasAny(u, ["sleep", "confuse", "berserk"])) continue;
+      const cover = u.supports.includes(SA.cover) && this.has(target, "lowHp");
+      const girls = u.supports.includes(SA.protectGirls) && (target.playerCategory & PLAYER_CATEGORY.female) !== 0 && target.hp < Math.floor(target.maxHp / 2);
+      if (!cover && !girls) continue;
+      if (!best || u.hp > best.hp) best = u;
+    }
+    return best;
+  }
+
+  /** CalcResult: apply one hit's numbers, statuses, Trance and support reactions. */
+  applyResult(v: Calc, reflected = false) {
+    const { caster, target } = v;
+    const action = v.cmd.action;
+    // "BattleScriptEnd": Reflect×2 doubles bounced spells.
+    if (reflected && caster.supports.includes(SA.reflectX2)) v.hpDamage *= 2;
+    if (v.flags & F.mpAttack) caster.mp = Math.max(0, caster.mp - (caster.maxMp >> 3));
+
+    if (v.flags & F.guard) {
+      this.emit({ type: "guard", targetId: target.id });
+    } else if (v.flags & F.miss) {
+      this.emit({ type: "miss", targetId: target.id });
+    } else {
+      if (v.flags & F.addStat && this.isAlive(target) && caster.weapon?.statuses.length) v.tryAlterStatuses(caster.weapon.statuses, false);
+      if (action.category & CAT.physical || v.cmd.kind === "attack" || v.cmd.kind === "counter")
+        for (const s of REMOVE_ON_PHYSICAL) if (!v.added.includes(s)) this.removeStatus(target, s);
+      if (action.category & CAT.magical) for (const s of REMOVE_ON_MAGICAL) if (!v.added.includes(s)) this.removeStatus(target, s);
+      if (v.added.includes("death")) v.targetFlags &= ~(C.hp | C.hpRecover);
+      v.hpDamage *= v.cmd.reflectHits;
+      v.mpDamage *= v.cmd.reflectHits;
+
+      if (v.targetFlags & C.hp) {
+        const amount = Math.min(DAMAGE_LIMIT, Math.max(0, Math.floor(v.hpDamage)));
+        if (v.targetFlags & C.hpRecover) {
+          this.heal(target, amount);
+          if (v.isDrain) this.damage(caster, amount, { noTrance: true });
+        } else {
+          const trouble = this.has(target, "trouble") && !v.added.includes("trouble") && (action.category & CAT.physical) !== 0;
+          this.damage(target, amount, { crit: (v.targetFlags & C.crit) !== 0 });
+          if (amount > 0) this.tranceReaction(v);
+          if (trouble && amount > 1) for (const ally of this.allies(target)) if (ally !== target && this.isTargetable(ally)) this.damage(ally, amount >> 1, { noTrance: true });
+          if (v.isDrain) this.heal(caster, amount);
+        }
+      }
+      if (v.targetFlags & C.mp) {
+        const amount = Math.min(MP_DAMAGE_LIMIT, Math.max(0, Math.floor(v.mpDamage)));
+        if (v.targetFlags & C.mpRecover) {
+          this.healMp(target, amount);
+          if (v.isDrain) this.damageMp(caster, amount);
+        } else {
+          this.damageMp(target, amount);
+          if (v.isDrain) this.healMp(caster, Math.min(amount, v.casterMp || amount));
+        }
+      }
+      if (v.casterFlags & C.hp && !v.isDrain) {
+        if (v.casterFlags & C.hpRecover) this.heal(caster, v.casterHp);
+        else this.damage(caster, v.casterHp, { noTrance: true });
+      }
+      if (v.casterFlags & C.mp && !v.isDrain && !(v.targetFlags & C.mp)) {
+        if (v.casterFlags & C.mpRecover) this.healMp(caster, v.casterMp);
+        else this.damageMp(caster, v.casterMp);
+      }
+    }
+    this.reactions(v);
+  }
+
+  /** Taking a hit from the other side fills the Trance gauge. */
+  private tranceReaction(v: Calc) {
+    const t = v.target;
+    if (t.side === v.caster.side || !t.tranceCommands.length || !this.isAlive(t) || this.hasAny(t, CANNOT_TRANCE)) return;
+    const next = t.trance + v.tranceIncrease;
+    if (next < TRANCE_MAX) t.trance = Math.max(0, next);
+    else {
+      t.trance = TRANCE_MAX;
+      this.alterStatus(t, "trance");
+    }
+  }
+
+  /** "EffectDone" support features and enemy counters. */
+  private reactions(v: Calc) {
+    const { caster, target } = v;
+    const action = v.cmd.action;
+    const hostile = caster.side !== target.side;
+    const damaged = (v.hpDamage !== 0 && (v.targetFlags & C.hp) !== 0 && !(v.targetFlags & C.hpRecover)) || (v.flags & F.directHp) !== 0;
+    const hit = !(v.flags & (F.miss | F.guard));
+    if (!hostile) return;
+
+    if (target.side === "party" && this.isAlive(target) && !this.hasAny(target, IMMOBILIZED)) {
+      // Restore HP / Absorb MP
+      if (target.supports.includes(SA.restoreHp) && damaged && target.hp * 6 <= target.maxHp) this.heal(target, target.maxHp >> 1);
+      if (target.supports.includes(SA.absorbMp) && damaged && action.mp > 0) this.healMp(target, action.mp);
+      // Counter / Return Magic / Auto-Potion — at most one per hit.
+      if (v.cmd.counterable && !this.hasAny(target, PREVENT_COUNTER)) {
+        let reacted = false;
+        if (!reacted && target.supports.includes(SA.counter) && (action.category & CAT.physical) !== 0) {
+          const chance = target.supports.includes(SA.eyeForEye) ? target.spirit * 2 : target.spirit;
+          if (chance > this.rng.int(0, 99) && this.isTargetable(caster)) {
+            this.enqueue({ actorId: target.id, kind: "attack", targetIds: [caster.id] }, "counter", true);
+            reacted = true;
+          }
+        }
+        // Enemy versions of spells carry FF9's "returnable" bit; enemies casting party spells count too.
+        const returnable = (action.category & CAT.returnable) !== 0 || (caster.side === "enemy" && (action.category & CAT.magical) !== 0);
+        if (!reacted && target.supports.includes(SA.returnMagic) && returnable && action.id > 0) {
+          const ids = action.targets.startsWith("all") || action.targets === "everyone" ? [] : this.isTargetable(caster) ? [caster.id] : [];
+          this.enqueue({ actorId: target.id, kind: "ability", actionId: action.id, targetIds: ids }, "magicCounter", true);
+          reacted = true;
+        }
+        if (!reacted && target.supports.includes(SA.autoPotion) && damaged && hit) {
+          const potion = this.itemCount(236) > 0 ? 236 : this.itemCount(237) > 0 ? 237 : null;
+          if (potion != null) this.enqueue({ actorId: target.id, kind: "item", itemId: potion, targetIds: [target.id] }, "autoPotion", true);
+        }
+      }
+    }
+    // Enemy counters (FF9 battle scripts).
+    if (target.side === "enemy" && caster.side === "party" && v.cmd.counterable && this.isAlive(target) && !this.hasAny(target, PREVENT_COUNTER) && target.counters?.length) {
+      for (const r of target.counters) {
+        if (r.hpBelow != null && (target.hp / target.maxHp) * 100 > r.hpBelow) continue;
+        if (!this.rng.chance(r.weight)) continue;
+        const cmd = this.aimAt(target, r.actionId, r.aim, caster);
+        if (cmd) this.enqueue(cmd, "counter", true);
+        break;
       }
     }
   }
 
-  // ── statuses ───────────────────────────────────────────────────────────────
-  statusDuration(target: BattleUnit, status: Status): number | null {
-    const info = statusTable.find((x) => x.key === status);
-    if (!info || !info.duration) return null;
-    const positive = POSITIVE_STATUSES.includes(status);
-    const seconds = positive ? info.duration * 0.75 : (info.duration * Math.max(10, 50 - target.spirit)) / 40;
-    return Math.round(seconds * TICKS_PER_SECOND);
-  }
+  // ── statuses (btl_stat) ───────────────────────────────────────────────────
+  /**
+   * Try to inflict a status. Returns 0 = resisted ("Guard"), 1 = no effect ("Miss"), 2 = had an effect without
+   * sticking (e.g. Haste cancelling Slow), 3 = applied.
+   */
+  alterStatus(target: BattleUnit, status: Status, inflicter?: BattleUnit): 0 | 1 | 2 | 3 {
+    const bypass = status === "death" && target.hp === 0;
+    if (!bypass && target.statusImmune.includes(status)) return 0;
+    if (target.permanent.includes(status) || (this.has(target, status) && NO_RESET.includes(status))) return 1;
+    if (status === "trance" && !target.tranceCommands.length) return 1;
+    if (!bypass)
+      for (const s of Object.keys(target.statuses) as Status[]) if (statusInfo.get(s)?.immunityProvided.includes(status)) return 1;
+    if (target.removed) return 1;
+    void inflicter;
 
-  addStatus(target: BattleUnit, status: Status): boolean {
-    if (target.statusImmune.includes(status)) return false;
-    if (status === "death") {
-      this.knockOut(target);
-      return true;
+    // Status scripts.
+    switch (status) {
+      case "haste":
+        if (this.has(target, "slow")) return this.removeStatus(target, "slow") ? 2 : 0;
+        break;
+      case "slow":
+        if (this.has(target, "haste")) return this.removeStatus(target, "haste") ? 2 : 0;
+        break;
+      case "mini":
+        if (this.has(target, "mini")) return this.removeStatus(target, "mini") ? 2 : 1;
+        break;
+      case "death":
+        if (target.hp > 0) {
+          this.killUnit(target);
+          return 3;
+        }
+        break;
+      case "petrify":
+        this.removeStatus(target, "gradualPetrify");
+        target.atb = 0;
+        break;
+      case "zombie":
+        if (target.side === "party" && !this.has(target, "trance")) target.trance = 0;
+        break;
     }
-    if (!this.isActive(target)) return false;
-    if (status === "petrify") {
-      target.statuses = { petrify: { remaining: null, nextTick: 0 } };
-      target.atb = 0;
-      this.dropFromQueues(target);
-      this.emit({ type: "statusOn", targetId: target.id, status });
-      return true;
+
+    const info = statusInfo.get(status);
+    const timer: { conti?: number | null; opr?: number; counter?: number } = {};
+    const spr = target.spirit;
+    if (TIMED.includes(status) && info?.duration) {
+      const factor = NEGATIVE_STATUSES.includes(status) ? (60 - spr) << 3 : POSITIVE_STATUSES.includes(status) ? spr << 3 : (60 - spr) << 2;
+      timer.conti = info.duration * factor;
     }
-    if (status === "haste") this.removeStatus(target, "slow");
-    if (status === "slow") this.removeStatus(target, "haste");
-    const remaining = this.statusDuration(target, status);
-    const timer = { remaining, nextTick: 0, counter: undefined as number | undefined };
-    const info = statusTable.find((x) => x.key === status);
-    if (status === "doom" || status === "gradualPetrify") {
-      timer.counter = 10;
-      timer.nextTick = Math.max(1, Math.round((remaining ?? 200) / 10));
-      timer.remaining = null;
-    } else if (info?.tick) {
-      timer.nextTick = Math.round((info.tick / 4) * TICKS_PER_SECOND);
+    if (PERIODIC.includes(status)) {
+      timer.opr = this.oprCount(target, status);
+      if (status === "doom" || status === "gradualPetrify") timer.counter = 10;
     }
     target.statuses[status] = timer;
-    if (status === "stop" || status === "sleep" || status === "freeze" || status === "venom") this.dropFromQueues(target);
     this.emit({ type: "statusOn", targetId: target.id, status });
+
+    if (CMD_CANCEL.includes(status)) this.commandCancel(target);
+    else if (NO_INPUT.includes(status)) this.dropFromReady(target);
+    for (const s of info?.clearOnApply ?? []) this.removeStatus(target, s);
+    if (this.hasAny(target, STOP_ATB)) target.atb = status === "jump" ? target.atb : 0;
+    if (status === "trance") {
+      this.emit({ type: "tranceStart", unitId: target.id });
+      if (this.state.ready.includes(target.id)) this.emit({ type: "turnReady", unitId: target.id });
+    }
+    if (status === "death") this.onDeath(target);
+    return 3;
+  }
+
+  private oprCount(u: BattleUnit, s: Status): number {
+    const info = statusInfo.get(s)!;
+    if (s === "doom" || s === "gradualPetrify") return Math.floor((info.duration * ((60 - u.spirit) << 3)) / 10);
+    const factor = s === "venom" || s === "poison" ? u.spirit << 2 : (60 - u.spirit) << 2;
+    return info.tick * factor;
+  }
+
+  /** Returns true if the status was removed. */
+  removeStatus(target: BattleUnit, status: Status): boolean {
+    if (target.statuses[status] === undefined || target.permanent.includes(status)) return false;
+    delete target.statuses[status];
+    this.emit({ type: "statusOff", targetId: target.id, status });
+    switch (status) {
+      case "trance":
+        target.trance = 0;
+        target.phantom = undefined;
+        if (this.has(target, "jump")) this.removeStatus(target, "jump");
+        this.emit({ type: "tranceEnd", unitId: target.id });
+        if (this.state.ready.includes(target.id)) this.emit({ type: "turnReady", unitId: target.id });
+        break;
+      case "jump":
+        target.jump = undefined;
+        target.atb = 0;
+        target.busyCommand = false;
+        this.state.queue = this.state.queue.filter((q) => !(q.command.actorId === target.id && q.source === "spear"));
+        break;
+      case "berserk":
+      case "confuse":
+        this.commandCancel(target);
+        break;
+    }
     return true;
   }
 
-  removeStatus(target: BattleUnit, status: Status) {
-    if (target.statuses[status] === undefined) return;
-    delete target.statuses[status];
-    this.emit({ type: "statusOff", targetId: target.id, status });
+  /** StatusCommandCancel: drop the unit's pending turn. */
+  private commandCancel(u: BattleUnit) {
+    this.dropFromReady(u);
+    const before = this.state.queue.length;
+    this.state.queue = this.state.queue.filter((q) => !(q.command.actorId === u.id && (q.source === "main" || q.source === "second" || q.source === "auto")));
+    if (before !== this.state.queue.length || u.busyCommand) {
+      u.atb = 0;
+      u.busyCommand = false;
+    }
   }
 
-  private dropFromQueues(u: BattleUnit) {
+  private dropFromReady(u: BattleUnit) {
     this.state.ready = this.state.ready.filter((id) => id !== u.id);
-    this.state.queue = this.state.queue.filter((c) => c.actorId !== u.id);
   }
 
-  private tickStatuses(u: BattleUnit) {
-    if (!this.isActive(u)) return;
+  private tickStatuses(u: BattleUnit, coef: number) {
     for (const key of Object.keys(u.statuses) as Status[]) {
       const t = u.statuses[key];
       if (!t) continue;
-      if (t.nextTick > 0 && --t.nextTick === 0) {
-        const info = statusTable.find((x) => x.key === key);
-        const interval = Math.round(((info?.tick ?? 10) / 4) * TICKS_PER_SECOND);
-        switch (key) {
-          case "poison":
-            this.damage(u, Math.max(1, Math.floor(u.maxHp / 16)), { noTrance: true });
-            t.nextTick = interval;
-            break;
-          case "venom":
-            this.damage(u, Math.max(1, Math.floor(u.maxHp / 8)), { noTrance: true });
-            t.nextTick = interval;
-            break;
-          case "regen":
-            this.heal(u, Math.max(1, Math.floor(u.maxHp / 16)));
-            t.nextTick = interval;
-            break;
-          case "doom":
-          case "gradualPetrify":
-            t.counter = (t.counter ?? 10) - 1;
-            if (t.counter <= 0) {
-              this.removeStatus(u, key);
-              this.addStatus(u, key === "doom" ? "death" : "petrify");
-              continue;
-            }
-            t.nextTick = Math.max(1, Math.round((this.statusDuration(u, key) ?? 200) / 10));
-            break;
-        }
-        if (!this.isActive(u)) return;
+      if (t.opr !== undefined && PERIODIC.includes(key)) {
+        if (t.opr <= 0) {
+          t.opr = this.oprCount(u, key);
+          this.onOpr(u, key, t);
+          if (!this.isAlive(u)) return;
+        } else t.opr -= coef;
       }
-      if (t.remaining != null && --t.remaining <= 0) this.removeStatus(u, key);
+      if (t.conti != null && TIMED.includes(key) && !u.permanent.includes(key)) {
+        t.conti -= coef;
+        if (t.conti < 0) this.removeStatus(u, key);
+      }
     }
+  }
+
+  private onOpr(u: BattleUnit, s: Status, t: { counter?: number }) {
+    if (this.has(u, "petrify")) return;
+    const easy = this.has(u, "easyKill");
+    switch (s) {
+      case "poison":
+      case "venom": {
+        let dmg = u.maxHp >> 4;
+        if (easy) dmg >>= 2;
+        if (s === "venom") {
+          let mp = u.maxMp >> 4;
+          if (easy) mp >>= 2;
+          u.mp = Math.max(0, u.mp - mp);
+        }
+        this.damage(u, Math.max(1, dmg), { noTrance: true });
+        return;
+      }
+      case "regen": {
+        let heal = u.maxHp >> 4;
+        if (easy) heal >>= 2;
+        if (this.isZombieUnit(u)) this.damage(u, heal, { noTrance: true });
+        else this.heal(u, heal);
+        return;
+      }
+      case "doom":
+      case "gradualPetrify":
+        t.counter = (t.counter ?? 10) - 1;
+        if (t.counter > 0) return;
+        this.removeStatus(u, s);
+        if (s === "doom") this.alterStatus(u, "death");
+        else this.alterStatus(u, "petrify");
+        return;
+    }
+  }
+
+  isZombieUnit(u: BattleUnit) {
+    return (u.enemyCategory & 16) !== 0 || this.has(u, "zombie");
+  }
+
+  /** CheckPointData: Low HP for the party, KO at 0 HP. */
+  private checkPoint(u: BattleUnit) {
+    if (u.removed) return;
+    u.hp = Math.min(u.hp, u.maxHp);
+    u.mp = Math.min(u.mp, u.maxMp);
+    if (u.hp <= 0) {
+      if (!this.has(u, "death")) this.killUnit(u);
+      return;
+    }
+    if (u.side !== "party") return;
+    const low = u.hp * 6 <= u.maxHp;
+    if (low && !this.has(u, "lowHp")) u.statuses.lowHp = {};
+    else if (!low && this.has(u, "lowHp")) delete u.statuses.lowHp;
   }
 
   // ── HP ─────────────────────────────────────────────────────────────────────
   damage(target: BattleUnit, amount: number, opts: { crit?: boolean; noTrance?: boolean } = {}) {
-    if (!this.isActive(target)) return;
-    const dmg = Math.max(0, Math.min(9999, Math.round(amount)));
-    target.hp = Math.max(0, target.hp - dmg);
-    this.emit({ type: "damage", targetId: target.id, amount: dmg, crit: opts.crit });
-    if (target.hp <= 0) {
-      this.knockOut(target);
+    if (!this.isAlive(target)) {
+      this.emit({ type: "miss", targetId: target.id });
       return;
     }
-    if (dmg > 0) {
-      if (this.has(target, "sleep")) this.removeStatus(target, "sleep");
-      if (this.has(target, "confuse") && this.rng.chance(50)) this.removeStatus(target, "confuse");
-      if (!opts.noTrance) this.gainTrance(target);
+    if (this.has(target, "petrify")) {
+      this.emit({ type: "damage", targetId: target.id, amount: 0 });
+      return;
     }
+    const dmg = Math.max(0, Math.min(DAMAGE_LIMIT, Math.round(amount)));
+    target.hp = Math.max(0, target.hp - dmg);
+    this.emit({ type: "damage", targetId: target.id, amount: dmg, crit: opts.crit });
+    if (target.hp <= 0) this.killUnit(target);
   }
 
   heal(target: BattleUnit, amount: number) {
-    if (!this.isActive(target)) return;
-    const h = Math.max(0, Math.min(9999, Math.round(amount)));
+    if (!this.isAlive(target) || this.has(target, "petrify")) return;
+    const h = Math.max(0, Math.min(DAMAGE_LIMIT, Math.round(amount)));
     target.hp = Math.min(target.maxHp, target.hp + h);
     this.emit({ type: "heal", targetId: target.id, amount: h });
   }
 
   damageMp(target: BattleUnit, amount: number) {
+    if (!this.isAlive(target)) return;
     const d = Math.max(0, Math.min(target.mp, Math.round(amount)));
     target.mp -= d;
     this.emit({ type: "damage", targetId: target.id, amount: d, mp: true });
   }
 
   healMp(target: BattleUnit, amount: number) {
+    if (!this.isAlive(target)) return;
     const h = Math.max(0, Math.round(amount));
     target.mp = Math.min(target.maxMp, target.mp + h);
     this.emit({ type: "heal", targetId: target.id, amount: h, mp: true });
   }
 
-  private gainTrance(u: BattleUnit) {
-    if (u.side !== "party" || this.inTrance(u) || !u.tranceCommands.length) return;
-    let gain = 4 + Math.floor(this.rng.int(0, u.spirit) / 2);
-    if (u.supports.includes(35)) gain *= 2; // High Tide
-    u.trance = Math.min(TRANCE_MAX, u.trance + gain);
-    if (u.trance >= TRANCE_MAX) {
-      u.statuses.trance = { remaining: null, nextTick: 0 };
-      this.emit({ type: "tranceStart", unitId: u.id });
-    }
-  }
-
-  knockOut(u: BattleUnit) {
-    if (this.has(u, "autoLife") && !this.has(u, "zombie")) {
-      this.removeStatus(u, "autoLife");
-      u.hp = Math.max(1, Math.floor(u.maxHp / 10));
+  /** KO (Death status). Auto-Life brings the unit straight back with 1 HP. */
+  killUnit(u: BattleUnit) {
+    if (u.removed) return;
+    if (this.has(u, "death") && u.hp === 0) return;
+    if (this.has(u, "autoLife") && !this.isZombieUnit(u)) {
+      delete u.statuses.autoLife;
+      this.emit({ type: "statusOff", targetId: u.id, status: "autoLife" });
+      u.hp = 1;
       this.emit({ type: "revive", targetId: u.id });
       return;
     }
     u.hp = 0;
-    const keep = this.has(u, "zombie") ? { zombie: u.statuses.zombie } : {};
-    u.statuses = { ...keep, death: { remaining: null, nextTick: 0 } } as BattleUnit["statuses"];
+    if (!this.has(u, "death")) {
+      u.statuses.death = {};
+      for (const s of statusInfo.get("death")!.clearOnApply) if (!u.permanent.includes(s)) delete u.statuses[s];
+    }
+    this.onDeath(u);
+  }
+
+  /** Alias kept for older callers. */
+  knockOut(u: BattleUnit) {
+    this.killUnit(u);
+  }
+
+  private onDeath(u: BattleUnit) {
     u.atb = 0;
-    if (u.side === "party") u.trance = 0;
-    this.dropFromQueues(u);
+    u.busyCommand = false;
+    if (this.has(u, "trance")) {
+      delete u.statuses.trance;
+      u.trance = Math.min(254, u.trance);
+    }
+    if (u.side === "party") u.trance = Math.min(u.trance, 254);
+    u.jump = undefined;
+    u.phantom = undefined;
+    this.dropFromReady(u);
+    this.state.queue = this.state.queue.filter((q) => q.command.actorId !== u.id);
     this.emit({ type: "ko", targetId: u.id });
   }
 
   revive(u: BattleUnit, hp: number) {
-    if (this.isAlive(u) || this.has(u, "zombie")) return false;
+    if (this.isAlive(u) || this.isZombieUnit(u) || u.removed) return false;
     delete u.statuses.death;
     u.hp = Math.max(1, Math.min(u.maxHp, Math.round(hp)));
     u.atb = 0;
+    u.busyCommand = false;
     this.emit({ type: "revive", targetId: u.id });
     return true;
   }
 
+  /** Swallowed / removed from battle entirely. */
+  removeUnit(u: BattleUnit) {
+    u.removed = true;
+    u.hp = 0;
+    this.onDeath(u);
+  }
+
+  // ── escape ─────────────────────────────────────────────────────────────────
+  /** FF9: rate = 200 / avg enemy level × avg party level / 16 per attempt; Zidane's Flee always works. */
+  tryFlee(sure: boolean) {
+    if (!this.state.canFlee) {
+      this.emit({ type: "message", text: "Can't escape!" });
+      return;
+    }
+    if (!this.state.units.some((u) => u.side === "party" && this.isActive(u) && !this.hasAny(u, ["venom", "zombie", "stop", "sleep", "freeze", "jump"]))) {
+      this.emit({ type: "message", text: "Can't escape!" });
+      return;
+    }
+    if (!sure) {
+      const avg = (side: "party" | "enemy") => {
+        const us = this.state.units.filter((u) => u.side === side && !u.removed);
+        const lv = us.reduce((s, u) => s + u.level, 0) || 1;
+        return Math.max(1, Math.floor(lv / Math.max(1, us.length)));
+      };
+      const rate = Math.floor((Math.floor(200 / avg("enemy")) * avg("party")) / 16);
+      // Holding Flee for about a second gives FF9 that many escape rolls.
+      let escaped = false;
+      for (let i = 0; i < 15 && !escaped; i++) escaped = rate > this.rng.int(0, 99);
+      if (!escaped) {
+        this.emit({ type: "message", text: "Couldn't escape!" });
+        return;
+      }
+      this.state.fledByLuck = true;
+    }
+    this.finish("fled");
+  }
+
   // ── end ────────────────────────────────────────────────────────────────────
-  finish(outcome: BattleState["outcome"] & string) {
+  finish(outcome: NonNullable<BattleState["outcome"]>) {
     if (this.state.outcome) return;
     this.state.outcome = outcome;
     this.state.ready = [];
@@ -557,8 +1284,8 @@ export class BattleEngine {
 
   private checkEnd() {
     if (this.state.outcome) return;
-    const partyUp = this.state.units.some((u) => u.side === "party" && this.isActive(u));
     const enemiesUp = this.state.units.some((u) => u.side === "enemy" && this.isActive(u));
+    const partyUp = this.state.units.some((u) => u.side === "party" && !u.removed && this.isAlive(u) && !this.hasAny(u, PARTY_OUT));
     if (!enemiesUp) this.finish("victory");
     else if (!partyUp) this.finish("defeat");
   }
@@ -570,6 +1297,28 @@ export class BattleEngine {
     stock.count--;
     return true;
   }
+}
+
+/** Commands 21 (Double White) and 23 (Double Black) cast two spells per turn. */
+const DOUBLE_CAST = new Set([21, 23]);
+
+function isPriority(source: CommandSource) {
+  return source !== "main" && source !== "second" && source !== "auto";
+}
+
+/** Weapons Amarant can throw (FF9 weapon category "throw"). */
+export function isThrowable(itemId: number): boolean {
+  const w = findItem(itemId)?.weapon;
+  return !!w && (w.category & 4) !== 0;
+}
+
+/** How long a command takes on screen, in ticks (FF9 animations run ~1.5–5 s). */
+function commandTicks(action: BattleAction, kind: CalcCommand["kind"], shortSummon: boolean, source: CommandSource): number {
+  if (source === "phantom") return 30;
+  if (kind === "attack" || kind === "counter" || kind === "throw") return 22;
+  if (kind === "item") return 18;
+  if ((action.type & 4) !== 0 || action.scriptId === 85 || action.scriptId === 86 || action.scriptId === 87) return shortSummon ? 45 : 90;
+  return 28;
 }
 
 /**

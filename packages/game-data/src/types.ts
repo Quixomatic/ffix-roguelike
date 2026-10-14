@@ -64,10 +64,14 @@ export interface StatusInfo {
   id: number;
   key: Status;
   name: string;
-  /** Seconds between ticks for damage/heal-over-time statuses (0 = no tick). */
+  /** FF9 OprCnt: interval factor for poison/regen/doom ticks (0 = no tick). */
   tick: number;
-  /** Duration in game-time units (0 = until cured). */
+  /** FF9 ContiCnt: duration factor (0 = until cured). */
   duration: number;
+  /** Statuses removed when this one is applied. */
+  clearOnApply: Status[];
+  /** Statuses that can't be applied while this one is active. */
+  immunityProvided: Status[];
 }
 
 export interface ActionData {
@@ -85,6 +89,10 @@ export interface ActionData {
   category: number;
   statuses: Status[];
   mp: number;
+  /** FF9 ability type flags (4 = summon). */
+  type: number;
+  /** Special-effect id (FF9 uses it to tell e.g. Comet from other spells). */
+  vfx: number;
 }
 
 export interface SupportAbilityData {
@@ -116,6 +124,8 @@ export interface CharacterData {
   base: BaseStats;
   /** True = starts in the back row. */
   backRow: boolean;
+  /** FF9 character category bits: 1 male, 2 female, 4 Gaia, 8 Terra, 16 sub-character. */
+  category: number;
   /** The two special commands (e.g. Zidane: Steal + Skill). */
   commands: [CommandData, CommandData];
   trance: [CommandData, CommandData];

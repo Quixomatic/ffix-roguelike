@@ -6,11 +6,11 @@
  * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
  * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
-import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
+import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
-import { createBattle, replayBattle } from "../battle/engine";
+import { createBattle, isThrowable, replayBattle } from "../battle/engine";
 import type { BattleState, InputRecord } from "../battle/types";
-import { enemyGroup, partyUnit } from "../battle/units";
+import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
@@ -46,6 +46,8 @@ export interface RunMember {
   build: CharacterBuild;
   hp: number;
   mp: number;
+  /** Statuses that outlast a battle in FF9 (Petrify, Venom, Virus, Silence, Blind, Trouble, Zombie). */
+  statuses?: Status[];
 }
 
 export interface RewardSummary {
@@ -88,6 +90,9 @@ export interface RunStats {
   bossKills: string[];
   eaten: number;
   steals: number;
+  /** Dragons defeated (Freya's Dragon's Crest). */
+  dragonKills?: number;
+  tonberryKills?: number;
 }
 
 export interface RunState {
@@ -172,6 +177,8 @@ function healParty(run: RunState, percent: number, revive: boolean) {
     if (m.hp <= 0 && !revive) continue;
     m.hp = Math.min(st.maxHp, Math.max(m.hp, 1) + Math.ceil((st.maxHp * percent) / 100));
     m.mp = Math.min(st.maxMp, m.mp + Math.ceil((st.maxMp * percent) / 100));
+    // A full rest (Moogle) cures lasting statuses, like an FF9 inn or tent.
+    if (revive) m.statuses = [];
   }
 }
 
@@ -295,15 +302,25 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
 }
 
 function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, enemies: string[], rng: Rng) {
-  const living = run.party.map((m, i) => partyUnit(m.build, i, { hp: m.hp, mp: m.mp }));
+  const living = run.party.map((m, i) => partyUnit(m.build, i, { hp: m.hp, mp: m.mp, statuses: m.statuses }));
   const battle = createBattle({
     seed: rng.int(1, 2 ** 31 - 1),
     party: living,
     enemies: enemyGroup(enemies, run.tier),
-    inventory: run.consumables.filter((c) => c.count > 0),
+    inventory: [...run.consumables.filter((c) => c.count > 0), ...throwables(run)],
     canFlee: nodeKind === "battle",
+    noSurprise: nodeKind !== "battle",
+    meta: { gil: run.gil, thefts: run.stats.steals, dragonKills: run.stats.dragonKills ?? 0, tonberryKills: run.stats.tonberryKills ?? 0 },
   });
   run.phase = { kind: "battle", nodeId, nodeKind, enemies, battle };
+}
+
+/** Spare weapons Amarant can Throw (unequipped gear), as battle inventory. */
+function throwables(run: RunState): { itemId: number; count: number }[] {
+  if (!run.party.some((m) => getCharacter(m.build.key).commands.some((c) => c.id === 15))) return [];
+  const counts = new Map<number, number>();
+  for (const g of run.gear) if (!g.holder && isThrowable(g.itemId)) counts.set(g.itemId, (counts.get(g.itemId) ?? 0) + 1);
+  return [...counts].map(([itemId, count]) => ({ itemId, count }));
 }
 
 // ── battles ──────────────────────────────────────────────────────────────────
@@ -326,14 +343,27 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
     const m = next.party.find((p) => p.build.key === u.key)!;
     m.hp = u.statuses.petrify ? 0 : u.hp;
     m.mp = u.mp;
+    m.statuses = m.hp > 0 ? LASTING_STATUSES.filter((s) => u.statuses[s] && s !== "petrify") : [];
   }
-  next.consumables = final.inventory.filter((c) => c.count > 0);
+  // Thrown weapons are gone; the rest of the battle inventory is consumables.
+  const thrownStock = new Map(throwables(run).map((t) => [t.itemId, t.count]));
+  for (const [itemId, had] of thrownStock) {
+    let thrown = had - (final.inventory.find((c) => c.itemId === itemId)?.count ?? 0);
+    next.gear = next.gear.filter((g) => !(thrown > 0 && !g.holder && g.itemId === itemId && thrown-- > 0));
+  }
+  next.consumables = final.inventory.filter((c) => c.count > 0 && !thrownStock.has(c.itemId));
+  next.gil = Math.max(0, next.gil - (final.gilSpent ?? 0));
+  if (final.outcome === "victory") next.stats.dragonKills = (next.stats.dragonKills ?? 0) + final.units.filter((u) => u.side === "enemy" && (u.enemyCategory & 8) !== 0).length;
 
   if (final.outcome === "defeat") {
     next.phase = { kind: "over", won: false };
     return next;
   }
   if (final.outcome === "fled") {
+    // Flee-Gil: running away by luck still pays a tenth of the enemies' gil.
+    if (final.fledByLuck && next.party.some((m) => activeSupports(m.build).has(46))) {
+      next.gil += Math.floor(battleRewards(rngOf(next).fork("fleegil"), phase.enemies, next.tier).gil / 10);
+    }
     next.phase = { kind: "map" };
     return next;
   }
@@ -352,6 +382,8 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
 
 function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; items: number[] }, final: BattleState): RewardSummary {
   const alive = run.party.filter((m) => m.hp > 0);
+  // Virus / Zombie: no EXP or AP (FF9 DisableRewards).
+  const blocked = (m: RunMember) => (m.statuses ?? []).some((s) => s === "virus" || s === "zombie");
   const summary: RewardSummary = { exp: r.exp, gil: r.gil, ap: r.ap, items: r.items, levelUps: [], mastered: [], members: [] };
   const supportsOf = (m: RunMember) => activeSupports(m.build);
   const gilMult = Math.max(1, ...run.party.map((m) => (supportsOf(m).has(45) ? 1.5 : 1)));
@@ -363,6 +395,10 @@ function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; 
     if (m.hp <= 0) summary.members.push({ key: m.build.key, alive: false, levelBefore: m.build.level, levelAfter: m.build.level, expBefore: m.build.exp, expAfter: m.build.exp, ap: [] });
   }
   for (const m of alive) {
+    if (blocked(m)) {
+      summary.members.push({ key: m.build.key, alive: true, levelBefore: m.build.level, levelAfter: m.build.level, expBefore: m.build.exp, expAfter: m.build.exp, ap: [] });
+      continue;
+    }
     const sup = supportsOf(m);
     const share = Math.floor((r.exp / Math.max(1, alive.length)) * (sup.has(43) ? 1.5 : 1));
     const before = m.build.level;

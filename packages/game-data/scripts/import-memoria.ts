@@ -139,6 +139,8 @@ const statuses: StatusInfo[] = rows("Battle/StatusData.csv")
     name: r.cells[0]!,
     tick: int(r.cells[3]),
     duration: int(r.cells[4]),
+    clearOnApply: statusList(r.cells[5] ?? ""),
+    immunityProvided: statusList(r.cells[6] ?? ""),
   }));
 
 const statusSets = new Map<number, Status[]>();
@@ -160,6 +162,8 @@ const actions: ActionData[] = rows("Battle/Actions.csv").map((r) => {
     category: int(c[14]),
     statuses: statusSets.get(int(c[15])) ?? [],
     mp: int(c[16]),
+    type: int(c[17]),
+    vfx: int(c[8]),
   };
 });
 const actionById = new Map(actions.map((a) => [a.id, a]));
@@ -362,6 +366,7 @@ const characters: CharacterData[] = rows("Characters/BaseStats.csv").map((r) => 
       gems: int(r.cells[6]),
     },
     backRow: p[1] === "0",
+    category: int(p[3]),
     commands: [cmd(set[2]), cmd(set[3])],
     trance: [cmd(set[8]), cmd(set[9])],
     abilities,

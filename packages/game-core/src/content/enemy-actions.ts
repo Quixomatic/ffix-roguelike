@@ -46,10 +46,12 @@ function move(
     power: opts.power ?? 0,
     elements: opts.elements ?? [],
     rate: opts.rate ?? 0,
-    // bit 3 = physical, bit 1 = magical (silence-able), bit 0 = reflectable
-    category: physical ? 8 : opts.magic ? 3 : 4,
+    // FF9 category bits: 8 physical; magic = 1 reflectable | 2 silence-able | 16 magical | 128 Return Magic
+    category: physical ? 8 : opts.magic ? 147 : 16,
     statuses: opts.statuses ?? [],
     mp: opts.mp ?? 0,
+    type: 0,
+    vfx: 0,
     physical,
     enemyOnly: true,
   };

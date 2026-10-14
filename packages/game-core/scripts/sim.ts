@@ -22,7 +22,7 @@ import { findItem, getItem, itemByName, items } from "@ffix-roguelike/game-data"
 
 import {
   applyRunOutcome,
-  ATB_MAX,
+  TICKS_PER_SECOND,
   availableJourneys,
   JOURNEYS,
   autoBattle,
@@ -99,11 +99,11 @@ function bar(v: number, max: number, w = 10) {
 
 function printState(e: BattleEngine) {
   const s = e.state;
-  console.log(c.dim(`── tick ${s.tick} (${(s.tick / 20).toFixed(1)}s) ──`));
+  console.log(c.dim(`── tick ${s.tick} (${(s.tick / TICKS_PER_SECOND).toFixed(1)}s) ──`));
   for (const u of s.units) {
     const st = Object.keys(u.statuses).join(",");
     const down = !e.isActive(u);
-    const line = `${u.id.padEnd(3)} ${u.name.padEnd(12)} Lv${String(u.level).padEnd(3)} HP ${String(u.hp).padStart(5)}/${String(u.maxHp).padEnd(5)} MP ${String(u.mp).padStart(3)} ATB ${bar(u.atb, ATB_MAX)}${u.side === "party" && u.tranceCommands.length ? ` TR ${bar(u.trance, 255, 5)}` : ""} ${st}`;
+    const line = `${u.id.padEnd(3)} ${u.name.padEnd(12)} Lv${String(u.level).padEnd(3)} HP ${String(u.hp).padStart(5)}/${String(u.maxHp).padEnd(5)} MP ${String(u.mp).padStart(3)} ATB ${bar(u.atb, u.atbMax)}${u.side === "party" && u.tranceCommands.length ? ` TR ${bar(u.trance, 255, 5)}` : ""} ${st}`;
     console.log(down ? c.dim(line) : u.side === "enemy" ? c.red(line) : c.green(line));
   }
 }
@@ -283,7 +283,7 @@ function balanceCmd() {
           const party = keys.map((k, j) => partyUnit(newBuild(k, lv), j));
           const st = autoBattle(new BattleEngine(createBattle({ seed: 7000 + i, party, enemies: enemyGroup(g), inventory: potions() }))).state;
           if (st.outcome === "victory") wins++;
-          secs += st.tick / 20;
+          secs += st.tick / TICKS_PER_SECOND;
         }
         const pct = (wins / n) * 100;
         const txt = `${pct.toFixed(0)}% ${(secs / n).toFixed(0)}s`.padStart(16);
@@ -312,7 +312,7 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
       }
       case "battle": {
         const st: BattleState = autoBattle(new BattleEngine(structuredClone(p.battle))).state;
-        say(`   ${p.nodeKind} vs ${p.enemies.join(",")}: ${st.outcome} in ${(st.tick / 20).toFixed(0)}s · party HP ${st.units.filter((u) => u.side === "party").map((u) => `${u.hp}/${u.maxHp}`).join(" ")}`);
+        say(`   ${p.nodeKind} vs ${p.enemies.join(",")}: ${st.outcome} in ${(st.tick / TICKS_PER_SECOND).toFixed(0)}s · party HP ${st.units.filter((u) => u.side === "party").map((u) => `${u.hp}/${u.maxHp}`).join(" ")}`);
         run = finishBattle(run, st.inputs);
         break;
       }

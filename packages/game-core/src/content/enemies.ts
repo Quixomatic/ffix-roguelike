@@ -29,6 +29,18 @@ export interface EnemyDef {
   boss?: boolean;
   /** Reward multiplier (elites/bosses pay more). */
   reward?: number;
+  /** Exact FF9 stats (imported monsters) — used as-is instead of the level curve × multipliers. */
+  stats?: EnemyStats;
+  /** FF9 enemy category bits (overrides the family mapping). */
+  category?: number;
+  /** Element of the basic attack. */
+  attackElements?: Element[];
+  /** Statuses the monster always has (Float, Reflect…). */
+  autoStatus?: Status[];
+  /** Answers to being hit (FF9 battle-script counters); weight = % chance. */
+  counters?: AiRule[];
+  /** Exact FF9 steal slots (item id + rate out of 256). */
+  stealSlots?: { itemId: number; chance: number }[];
 }
 
 export interface EnemyStats {

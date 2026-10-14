@@ -1,4 +1,4 @@
-import { ATB_MAX, TRANCE_MAX, type BattleUnit } from "@ffix-roguelike/game-core";
+import { TRANCE_MAX, type BattleUnit } from "@ffix-roguelike/game-core";
 
 const SHOWN_STATUSES = ["poison", "venom", "blind", "silence", "sleep", "slow", "haste", "regen", "protect", "shell", "float", "berserk", "confuse", "doom", "mini", "reflect", "stop", "zombie"] as const;
 
@@ -29,7 +29,7 @@ export function PartyStatus({ party, activeId, readyIds }: { party: BattleUnit[]
               <div className="text-right tabular-nums">{u.mp}</div>
               <div className="flex flex-col gap-0.5">
                 <div className="ff-gauge">
-                  <div className="ff-gauge-fill" data-full={u.atb >= ATB_MAX} style={{ width: `${(u.atb / ATB_MAX) * 100}%` }} />
+                  <div className="ff-gauge-fill" data-full={u.atb >= u.atbMax} style={{ width: `${(u.atb / u.atbMax) * 100}%` }} />
                 </div>
                 {u.tranceCommands.length > 0 && (
                   <div className="ff-gauge h-1">
@@ -51,7 +51,7 @@ export function EnemyList({ enemies }: { enemies: BattleUnit[] }) {
       {enemies
         .filter((u) => u.hp > 0 && u.statuses.death === undefined)
         .map((u) => {
-          const pct = Math.min(1, u.atb / ATB_MAX);
+          const pct = Math.min(1, u.atb / u.atbMax);
           return (
             <div key={u.id} className="flex flex-col gap-0.5 py-0.5">
               <span className="truncate">{u.name}</span>

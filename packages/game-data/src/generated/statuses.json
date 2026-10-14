@@ -4,223 +4,450 @@
   "key": "petrify",
   "name": "Petrify",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [
+   "doom"
+  ],
+  "immunityProvided": [
+   "venom",
+   "virus",
+   "silence",
+   "blind",
+   "trouble",
+   "zombie",
+   "easyKill",
+   "death",
+   "lowHp",
+   "confuse",
+   "berserk",
+   "stop",
+   "autoLife",
+   "trance",
+   "defend",
+   "poison",
+   "sleep",
+   "regen",
+   "haste",
+   "slow",
+   "float",
+   "shell",
+   "protect",
+   "heat",
+   "freeze",
+   "vanish",
+   "doom",
+   "mini",
+   "reflect",
+   "jump",
+   "gradualPetrify"
+  ]
  },
  {
   "id": 1,
   "key": "venom",
   "name": "Venom",
   "tick": 20,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [
+   "defend",
+   "poison"
+  ],
+  "immunityProvided": [
+   "poison"
+  ]
  },
  {
   "id": 2,
   "key": "virus",
   "name": "Virus",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 3,
   "key": "silence",
   "name": "Silence",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 4,
   "key": "blind",
   "name": "Blind",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 5,
   "key": "trouble",
   "name": "Trouble",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 6,
   "key": "zombie",
   "name": "Zombie",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": [
+   "petrify",
+   "trance",
+   "gradualPetrify"
+  ]
  },
  {
   "id": 7,
   "key": "easyKill",
   "name": "EasyKill",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 8,
   "key": "death",
   "name": "Death",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [
+   "venom",
+   "silence",
+   "blind",
+   "trouble",
+   "lowHp",
+   "confuse",
+   "berserk",
+   "stop",
+   "defend",
+   "poison",
+   "sleep",
+   "regen",
+   "haste",
+   "slow",
+   "float",
+   "shell",
+   "protect",
+   "heat",
+   "freeze",
+   "vanish",
+   "doom",
+   "reflect",
+   "jump",
+   "gradualPetrify"
+  ],
+  "immunityProvided": [
+   "petrify",
+   "venom",
+   "virus",
+   "silence",
+   "blind",
+   "trouble",
+   "easyKill",
+   "lowHp",
+   "confuse",
+   "berserk",
+   "stop",
+   "autoLife",
+   "trance",
+   "defend",
+   "poison",
+   "sleep",
+   "regen",
+   "haste",
+   "slow",
+   "float",
+   "shell",
+   "protect",
+   "heat",
+   "freeze",
+   "vanish",
+   "doom",
+   "mini",
+   "reflect",
+   "jump",
+   "gradualPetrify"
+  ]
  },
  {
   "id": 9,
   "key": "lowHp",
   "name": "LowHP",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 10,
   "key": "confuse",
   "name": "Confuse",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 11,
   "key": "berserk",
   "name": "Berserk",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 12,
   "key": "stop",
   "name": "Stop",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 13,
   "key": "autoLife",
   "name": "AutoLife",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 14,
   "key": "trance",
   "name": "Trance",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [
+   "venom",
+   "silence",
+   "blind",
+   "trouble",
+   "confuse",
+   "berserk",
+   "stop",
+   "poison",
+   "sleep",
+   "slow",
+   "heat",
+   "freeze",
+   "doom",
+   "mini",
+   "gradualPetrify"
+  ],
+  "immunityProvided": [
+   "zombie"
+  ]
  },
  {
   "id": 15,
   "key": "defend",
   "name": "Defend",
   "tick": 0,
-  "duration": 0
+  "duration": 0,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 16,
   "key": "poison",
   "name": "Poison",
   "tick": 10,
-  "duration": 30
+  "duration": 30,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 17,
   "key": "sleep",
   "name": "Sleep",
   "tick": 0,
-  "duration": 25
+  "duration": 25,
+  "clearOnApply": [
+   "defend"
+  ],
+  "immunityProvided": []
  },
  {
   "id": 18,
   "key": "regen",
   "name": "Regen",
   "tick": 10,
-  "duration": 45
+  "duration": 45,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 19,
   "key": "haste",
   "name": "Haste",
   "tick": 0,
-  "duration": 40
+  "duration": 40,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 20,
   "key": "slow",
   "name": "Slow",
   "tick": 0,
-  "duration": 40
+  "duration": 40,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 21,
   "key": "float",
   "name": "Float",
   "tick": 0,
-  "duration": 30
+  "duration": 30,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 22,
   "key": "shell",
   "name": "Shell",
   "tick": 0,
-  "duration": 45
+  "duration": 45,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 23,
   "key": "protect",
   "name": "Protect",
   "tick": 0,
-  "duration": 45
+  "duration": 45,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 24,
   "key": "heat",
   "name": "Heat",
   "tick": 0,
-  "duration": 20
+  "duration": 20,
+  "clearOnApply": [
+   "freeze"
+  ],
+  "immunityProvided": []
  },
  {
   "id": 25,
   "key": "freeze",
   "name": "Freeze",
   "tick": 0,
-  "duration": 20
+  "duration": 20,
+  "clearOnApply": [
+   "heat",
+   "vanish"
+  ],
+  "immunityProvided": [
+   "vanish"
+  ]
  },
  {
   "id": 26,
   "key": "vanish",
   "name": "Vanish",
   "tick": 0,
-  "duration": 30
+  "duration": 30,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 27,
   "key": "doom",
   "name": "Doom",
   "tick": 0,
-  "duration": 25
+  "duration": 25,
+  "clearOnApply": [],
+  "immunityProvided": [
+   "gradualPetrify"
+  ]
  },
  {
   "id": 28,
   "key": "mini",
   "name": "Mini",
   "tick": 0,
-  "duration": 20
+  "duration": 20,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 29,
   "key": "reflect",
   "name": "Reflect",
   "tick": 0,
-  "duration": 40
+  "duration": 40,
+  "clearOnApply": [],
+  "immunityProvided": []
  },
  {
   "id": 30,
   "key": "jump",
   "name": "Jump",
   "tick": 0,
-  "duration": 10
+  "duration": 10,
+  "clearOnApply": [],
+  "immunityProvided": [
+   "petrify",
+   "venom",
+   "virus",
+   "silence",
+   "blind",
+   "trouble",
+   "zombie",
+   "easyKill",
+   "death",
+   "lowHp",
+   "confuse",
+   "berserk",
+   "stop",
+   "autoLife",
+   "trance",
+   "defend",
+   "poison",
+   "sleep",
+   "regen",
+   "haste",
+   "slow",
+   "float",
+   "shell",
+   "protect",
+   "heat",
+   "freeze",
+   "vanish",
+   "doom",
+   "mini",
+   "reflect",
+   "gradualPetrify"
+  ]
  },
  {
   "id": 31,
   "key": "gradualPetrify",
   "name": "GradualPetrify",
   "tick": 0,
-  "duration": 25
+  "duration": 25,
+  "clearOnApply": [],
+  "immunityProvided": [
+   "zombie",
+   "doom"
+  ]
  }
 ]

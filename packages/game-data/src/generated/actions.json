@@ -11,7 +11,9 @@
   "rate": 0,
   "category": 0,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 0
  },
  {
   "id": 1,
@@ -25,7 +27,9 @@
   "rate": 0,
   "category": 71,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 1,
+  "vfx": 9
  },
  {
   "id": 2,
@@ -39,7 +43,9 @@
   "rate": 0,
   "category": 71,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 1,
+  "vfx": 162
  },
  {
   "id": 3,
@@ -53,7 +59,9 @@
   "rate": 0,
   "category": 71,
   "statuses": [],
-  "mp": 22
+  "mp": 22,
+  "type": 1,
+  "vfx": 144
  },
  {
   "id": 4,
@@ -69,7 +77,9 @@
   "statuses": [
    "regen"
   ],
-  "mp": 14
+  "mp": 14,
+  "type": 0,
+  "vfx": 32
  },
  {
   "id": 5,
@@ -85,7 +95,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 1,
+  "vfx": 17
  },
  {
   "id": 6,
@@ -101,7 +113,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 24
+  "mp": 24,
+  "type": 1,
+  "vfx": 15
  },
  {
   "id": 7,
@@ -115,7 +129,9 @@
   "rate": 0,
   "category": 71,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 131
  },
  {
   "id": 8,
@@ -132,7 +148,9 @@
    "venom",
    "poison"
   ],
-  "mp": 4
+  "mp": 4,
+  "type": 1,
+  "vfx": 12
  },
  {
   "id": 9,
@@ -149,7 +167,9 @@
    "petrify",
    "gradualPetrify"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 1,
+  "vfx": 13
  },
  {
   "id": 10,
@@ -173,7 +193,9 @@
    "mini",
    "gradualPetrify"
   ],
-  "mp": 20
+  "mp": 20,
+  "type": 1,
+  "vfx": 11
  },
  {
   "id": 11,
@@ -189,7 +211,9 @@
   "statuses": [
    "shell"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 63
  },
  {
   "id": 12,
@@ -205,7 +229,9 @@
   "statuses": [
    "protect"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 123
  },
  {
   "id": 13,
@@ -221,7 +247,9 @@
   "statuses": [
    "haste"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 89
  },
  {
   "id": 14,
@@ -237,7 +265,9 @@
   "statuses": [
    "silence"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 127
  },
  {
   "id": 15,
@@ -253,7 +283,9 @@
   "statuses": [
    "mini"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 124
  },
  {
   "id": 16,
@@ -269,7 +301,9 @@
   "statuses": [
    "reflect"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 79
  },
  {
   "id": 17,
@@ -285,7 +319,9 @@
   "statuses": [
    "confuse"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 97
  },
  {
   "id": 18,
@@ -301,7 +337,9 @@
   "statuses": [
    "berserk"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 140
  },
  {
   "id": 19,
@@ -317,7 +355,9 @@
   "statuses": [
    "blind"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 157
  },
  {
   "id": 20,
@@ -333,7 +373,9 @@
   "statuses": [
    "float"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 76
  },
  {
   "id": 21,
@@ -358,7 +400,9 @@
    "vanish",
    "reflect"
   ],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 128
  },
  {
   "id": 22,
@@ -372,7 +416,9 @@
   "rate": 0,
   "category": 71,
   "statuses": [],
-  "mp": 14
+  "mp": 14,
+  "type": 0,
+  "vfx": 90
  },
  {
   "id": 23,
@@ -386,7 +432,9 @@
   "rate": 50,
   "category": 70,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 201
  },
  {
   "id": 24,
@@ -402,7 +450,9 @@
   "rate": 0,
   "category": 23,
   "statuses": [],
-  "mp": 36
+  "mp": 36,
+  "type": 0,
+  "vfx": 87
  },
  {
   "id": 25,
@@ -418,7 +468,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 70
  },
  {
   "id": 26,
@@ -434,7 +486,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 71
  },
  {
   "id": 27,
@@ -450,7 +504,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 72
  },
  {
   "id": 28,
@@ -466,7 +522,9 @@
   "statuses": [
    "sleep"
   ],
-  "mp": 10
+  "mp": 10,
+  "type": 0,
+  "vfx": 78
  },
  {
   "id": 29,
@@ -482,7 +540,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 62
  },
  {
   "id": 30,
@@ -498,7 +558,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 77
  },
  {
   "id": 31,
@@ -514,7 +576,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 152
  },
  {
   "id": 32,
@@ -530,7 +594,9 @@
   "statuses": [
    "slow"
   ],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 126
  },
  {
   "id": 33,
@@ -546,7 +612,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 66
  },
  {
   "id": 34,
@@ -562,7 +630,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 73
  },
  {
   "id": 35,
@@ -578,7 +648,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 133
  },
  {
   "id": 36,
@@ -594,7 +666,9 @@
   "statuses": [
    "stop"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 149
  },
  {
   "id": 37,
@@ -610,7 +684,9 @@
   "statuses": [
    "poison"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 202
  },
  {
   "id": 38,
@@ -626,7 +702,9 @@
   "statuses": [
    "poison"
   ],
-  "mp": 18
+  "mp": 18,
+  "type": 0,
+  "vfx": 120
  },
  {
   "id": 39,
@@ -640,7 +718,9 @@
   "rate": 0,
   "category": 70,
   "statuses": [],
-  "mp": 2
+  "mp": 2,
+  "type": 0,
+  "vfx": 57
  },
  {
   "id": 40,
@@ -654,7 +734,9 @@
   "rate": 0,
   "category": 86,
   "statuses": [],
-  "mp": 14
+  "mp": 14,
+  "type": 0,
+  "vfx": 132
  },
  {
   "id": 41,
@@ -668,7 +750,9 @@
   "rate": 40,
   "category": 23,
   "statuses": [],
-  "mp": 18
+  "mp": 18,
+  "type": 0,
+  "vfx": 99
  },
  {
   "id": 42,
@@ -682,7 +766,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 56
  },
  {
   "id": 43,
@@ -698,7 +784,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 94
  },
  {
   "id": 44,
@@ -714,7 +802,9 @@
   "statuses": [
    "petrify"
   ],
-  "mp": 18
+  "mp": 18,
+  "type": 0,
+  "vfx": 153
  },
  {
   "id": 45,
@@ -730,7 +820,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 22
+  "mp": 22,
+  "type": 0,
+  "vfx": 95
  },
  {
   "id": 46,
@@ -744,7 +836,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 42
+  "mp": 42,
+  "type": 0,
+  "vfx": 134
  },
  {
   "id": 47,
@@ -758,7 +852,9 @@
   "rate": 0,
   "category": 19,
   "statuses": [],
-  "mp": 40
+  "mp": 40,
+  "type": 0,
+  "vfx": 125
  },
  {
   "id": 48,
@@ -774,7 +870,9 @@
   "rate": 0,
   "category": 18,
   "statuses": [],
-  "mp": 72
+  "mp": 72,
+  "type": 0,
+  "vfx": 308
  },
  {
   "id": 49,
@@ -790,7 +888,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 4,
+  "vfx": 38
  },
  {
   "id": 50,
@@ -806,7 +906,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 212
  },
  {
   "id": 51,
@@ -822,7 +924,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 26
+  "mp": 26,
+  "type": 4,
+  "vfx": 276
  },
  {
   "id": 52,
@@ -838,7 +942,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 213
  },
  {
   "id": 53,
@@ -854,7 +960,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 22
+  "mp": 22,
+  "type": 4,
+  "vfx": 186
  },
  {
   "id": 54,
@@ -870,7 +978,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 30
+  "mp": 30,
+  "type": 0,
+  "vfx": 214
  },
  {
   "id": 55,
@@ -884,7 +994,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 32
+  "mp": 32,
+  "type": 4,
+  "vfx": 184
  },
  {
   "id": 56,
@@ -900,7 +1012,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 218
  },
  {
   "id": 57,
@@ -916,7 +1030,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 219
  },
  {
   "id": 58,
@@ -932,7 +1048,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 28
+  "mp": 28,
+  "type": 4,
+  "vfx": 261
  },
  {
   "id": 59,
@@ -948,7 +1066,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 30
+  "mp": 30,
+  "type": 0,
+  "vfx": 220
  },
  {
   "id": 60,
@@ -964,7 +1084,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 42
+  "mp": 42,
+  "type": 4,
+  "vfx": 179
  },
  {
   "id": 61,
@@ -980,7 +1102,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 215
  },
  {
   "id": 62,
@@ -994,7 +1118,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 56
+  "mp": 56,
+  "type": 4,
+  "vfx": 227
  },
  {
   "id": 63,
@@ -1010,7 +1136,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 216
  },
  {
   "id": 64,
@@ -1026,7 +1154,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 80
+  "mp": 80,
+  "type": 4,
+  "vfx": 381
  },
  {
   "id": 65,
@@ -1042,7 +1172,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 30
+  "mp": 30,
+  "type": 0,
+  "vfx": 217
  },
  {
   "id": 66,
@@ -1058,7 +1190,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 30
+  "mp": 30,
+  "type": 0,
+  "vfx": 210
  },
  {
   "id": 67,
@@ -1074,7 +1208,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 30
+  "mp": 30,
+  "type": 0,
+  "vfx": 226
  },
  {
   "id": 68,
@@ -1090,7 +1226,9 @@
   "statuses": [
    "reflect"
   ],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 177
  },
  {
   "id": 69,
@@ -1106,7 +1244,9 @@
   "statuses": [
    "haste"
   ],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 494
  },
  {
   "id": 70,
@@ -1122,7 +1262,9 @@
   "statuses": [
    "shell"
   ],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 493
  },
  {
   "id": 71,
@@ -1138,7 +1280,9 @@
   "statuses": [
    "vanish"
   ],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 495
  },
  {
   "id": 72,
@@ -1159,7 +1303,9 @@
    "zombie",
    "death"
   ],
-  "mp": 32
+  "mp": 32,
+  "type": 0,
+  "vfx": 211
  },
  {
   "id": 73,
@@ -1175,7 +1321,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 225
  },
  {
   "id": 74,
@@ -1191,7 +1339,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 54
+  "mp": 54,
+  "type": 0,
+  "vfx": 251
  },
  {
   "id": 75,
@@ -1205,7 +1355,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 221
  },
  {
   "id": 76,
@@ -1221,7 +1373,9 @@
   "rate": 0,
   "category": 2,
   "statuses": [],
-  "mp": 26
+  "mp": 26,
+  "type": 0,
+  "vfx": 222
  },
  {
   "id": 77,
@@ -1235,7 +1389,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 2,
+  "vfx": 74
  },
  {
   "id": 78,
@@ -1251,7 +1407,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 20
+  "mp": 20,
+  "type": 2,
+  "vfx": 154
  },
  {
   "id": 79,
@@ -1267,7 +1425,9 @@
   "rate": 4,
   "category": 6,
   "statuses": [],
-  "mp": 22
+  "mp": 22,
+  "type": 2,
+  "vfx": 129
  },
  {
   "id": 80,
@@ -1281,7 +1441,9 @@
   "rate": 3,
   "category": 6,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 2,
+  "vfx": 392
  },
  {
   "id": 81,
@@ -1297,7 +1459,9 @@
   "statuses": [
    "doom"
   ],
-  "mp": 12
+  "mp": 12,
+  "type": 2,
+  "vfx": 236
  },
  {
   "id": 82,
@@ -1313,7 +1477,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 18
+  "mp": 18,
+  "type": 2,
+  "vfx": 237
  },
  {
   "id": 83,
@@ -1329,7 +1495,9 @@
   "rate": 50,
   "category": 6,
   "statuses": [],
-  "mp": 14
+  "mp": 14,
+  "type": 2,
+  "vfx": 28
  },
  {
   "id": 84,
@@ -1346,7 +1514,9 @@
    "shell",
    "protect"
   ],
-  "mp": 64
+  "mp": 64,
+  "type": 2,
+  "vfx": 81
  },
  {
   "id": 85,
@@ -1360,7 +1530,9 @@
   "rate": 20,
   "category": 6,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 2,
+  "vfx": 88
  },
  {
   "id": 86,
@@ -1380,7 +1552,9 @@
    "slow",
    "mini"
   ],
-  "mp": 16
+  "mp": 16,
+  "type": 2,
+  "vfx": 44
  },
  {
   "id": 87,
@@ -1394,7 +1568,9 @@
   "rate": 99,
   "category": 6,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 2,
+  "vfx": 82
  },
  {
   "id": 88,
@@ -1408,7 +1584,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 2,
+  "vfx": 30
  },
  {
   "id": 89,
@@ -1422,7 +1600,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 2,
+  "vfx": 297
  },
  {
   "id": 90,
@@ -1438,7 +1618,9 @@
   "statuses": [
    "sleep"
   ],
-  "mp": 14
+  "mp": 14,
+  "type": 2,
+  "vfx": 501
  },
  {
   "id": 91,
@@ -1454,7 +1636,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 22
+  "mp": 22,
+  "type": 2,
+  "vfx": 178
  },
  {
   "id": 92,
@@ -1470,7 +1654,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 20
+  "mp": 20,
+  "type": 2,
+  "vfx": 390
  },
  {
   "id": 93,
@@ -1484,7 +1670,9 @@
   "rate": 0,
   "category": 70,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 2,
+  "vfx": 45
  },
  {
   "id": 94,
@@ -1498,7 +1686,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 2,
+  "vfx": 228
  },
  {
   "id": 95,
@@ -1512,7 +1702,9 @@
   "rate": 0,
   "category": 70,
   "statuses": [],
-  "mp": 14
+  "mp": 14,
+  "type": 2,
+  "vfx": 41
  },
  {
   "id": 96,
@@ -1528,7 +1720,9 @@
   "statuses": [
    "vanish"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 2,
+  "vfx": 500
  },
  {
   "id": 97,
@@ -1546,7 +1740,9 @@
   "statuses": [
    "freeze"
   ],
-  "mp": 8
+  "mp": 8,
+  "type": 2,
+  "vfx": 150
  },
  {
   "id": 98,
@@ -1562,7 +1758,9 @@
   "statuses": [
    "heat"
   ],
-  "mp": 10
+  "mp": 10,
+  "type": 2,
+  "vfx": 187
  },
  {
   "id": 99,
@@ -1576,7 +1774,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 2
+  "mp": 2,
+  "type": 2,
+  "vfx": 130
  },
  {
   "id": 100,
@@ -1592,7 +1792,9 @@
   "statuses": [
    "autoLife"
   ],
-  "mp": 14
+  "mp": 14,
+  "type": 2,
+  "vfx": 138
  },
  {
   "id": 101,
@@ -1606,7 +1808,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 249
  },
  {
   "id": 102,
@@ -1620,7 +1824,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 250
  },
  {
   "id": 103,
@@ -1634,7 +1840,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 2
+  "mp": 2,
+  "type": 0,
+  "vfx": 399
  },
  {
   "id": 104,
@@ -1648,7 +1856,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 229
  },
  {
   "id": 105,
@@ -1664,7 +1874,9 @@
   "statuses": [
    "trouble"
   ],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 233
  },
  {
   "id": 106,
@@ -1678,7 +1890,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 32
+  "mp": 32,
+  "type": 0,
+  "vfx": 234
  },
  {
   "id": 107,
@@ -1692,7 +1906,9 @@
   "rate": 99,
   "category": 4,
   "statuses": [],
-  "mp": 6
+  "mp": 6,
+  "type": 0,
+  "vfx": 312
  },
  {
   "id": 108,
@@ -1706,7 +1922,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 231
  },
  {
   "id": 109,
@@ -1720,7 +1938,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 0,
+  "vfx": 241
  },
  {
   "id": 110,
@@ -1734,7 +1954,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 242
  },
  {
   "id": 111,
@@ -1748,7 +1970,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 14
+  "mp": 14,
+  "type": 0,
+  "vfx": 243
  },
  {
   "id": 112,
@@ -1762,7 +1986,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 244
  },
  {
   "id": 113,
@@ -1776,7 +2002,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 245
  },
  {
   "id": 114,
@@ -1790,7 +2018,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 32
+  "mp": 32,
+  "type": 0,
+  "vfx": 246
  },
  {
   "id": 115,
@@ -1804,7 +2034,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 48
+  "mp": 48,
+  "type": 0,
+  "vfx": 247
  },
  {
   "id": 116,
@@ -1818,7 +2050,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 60
+  "mp": 60,
+  "type": 0,
+  "vfx": 248
  },
  {
   "id": 117,
@@ -1832,7 +2066,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 0,
+  "vfx": 401
  },
  {
   "id": 118,
@@ -1848,7 +2084,9 @@
   "statuses": [
    "regen"
   ],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 168
  },
  {
   "id": 119,
@@ -1862,7 +2100,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 78
+  "mp": 78,
+  "type": 0,
+  "vfx": 296
  },
  {
   "id": 120,
@@ -1876,7 +2116,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 36
+  "mp": 36,
+  "type": 0,
+  "vfx": 83
  },
  {
   "id": 121,
@@ -1892,7 +2134,9 @@
   "statuses": [
    "berserk"
   ],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 61
  },
  {
   "id": 122,
@@ -1906,7 +2150,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 28
+  "mp": 28,
+  "type": 0,
+  "vfx": 491
  },
  {
   "id": 123,
@@ -1920,7 +2166,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 46
+  "mp": 46,
+  "type": 0,
+  "vfx": 387
  },
  {
   "id": 124,
@@ -1934,7 +2182,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 490
  },
  {
   "id": 125,
@@ -1948,7 +2198,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 85
  },
  {
   "id": 126,
@@ -1962,7 +2214,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 135
  },
  {
   "id": 127,
@@ -1976,7 +2230,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 193
  },
  {
   "id": 128,
@@ -1993,7 +2249,9 @@
    "autoLife",
    "regen"
   ],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 197
  },
  {
   "id": 129,
@@ -2007,7 +2265,9 @@
   "rate": 255,
   "category": 4,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 195
  },
  {
   "id": 130,
@@ -2023,7 +2283,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 137
  },
  {
   "id": 131,
@@ -2037,7 +2299,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 121
  },
  {
   "id": 132,
@@ -2053,7 +2317,9 @@
   "statuses": [
    "doom"
   ],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 385
  },
  {
   "id": 133,
@@ -2067,7 +2333,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 86
  },
  {
   "id": 134,
@@ -2081,7 +2349,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 136
  },
  {
   "id": 135,
@@ -2095,7 +2365,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 194
  },
  {
   "id": 136,
@@ -2112,7 +2384,9 @@
    "autoLife",
    "regen"
   ],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 198
  },
  {
   "id": 137,
@@ -2126,7 +2400,9 @@
   "rate": 255,
   "category": 4,
   "statuses": [],
-  "mp": 12
+  "mp": 12,
+  "type": 0,
+  "vfx": 196
  },
  {
   "id": 138,
@@ -2142,7 +2418,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 421
  },
  {
   "id": 139,
@@ -2156,7 +2434,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 20
+  "mp": 20,
+  "type": 0,
+  "vfx": 122
  },
  {
   "id": 140,
@@ -2172,7 +2452,9 @@
   "statuses": [
    "doom"
   ],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 386
  },
  {
   "id": 141,
@@ -2188,7 +2470,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 188
  },
  {
   "id": 142,
@@ -2202,7 +2486,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 189
  },
  {
   "id": 143,
@@ -2218,7 +2504,9 @@
   "statuses": [
    "death"
   ],
-  "mp": 16
+  "mp": 16,
+  "type": 0,
+  "vfx": 190
  },
  {
   "id": 144,
@@ -2232,7 +2520,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 208
  },
  {
   "id": 145,
@@ -2246,7 +2536,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 92
  },
  {
   "id": 146,
@@ -2260,7 +2552,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 8
+  "mp": 8,
+  "type": 0,
+  "vfx": 209
  },
  {
   "id": 147,
@@ -2274,7 +2568,9 @@
   "rate": 50,
   "category": 12,
   "statuses": [],
-  "mp": 4
+  "mp": 4,
+  "type": 0,
+  "vfx": 46
  },
  {
   "id": 148,
@@ -2288,7 +2584,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 10
+  "mp": 10,
+  "type": 0,
+  "vfx": 398
  },
  {
   "id": 149,
@@ -2304,7 +2602,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 24
+  "mp": 24,
+  "type": 0,
+  "vfx": 191
  },
  {
   "id": 150,
@@ -2318,7 +2618,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 26
+  "mp": 26,
+  "type": 0,
+  "vfx": 207
  },
  {
   "id": 151,
@@ -2332,7 +2634,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 32
+  "mp": 32,
+  "type": 0,
+  "vfx": 397
  },
  {
   "id": 152,
@@ -2346,7 +2650,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 46
+  "mp": 46,
+  "type": 0,
+  "vfx": 192
  },
  {
   "id": 153,
@@ -2362,7 +2668,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 407
  },
  {
   "id": 154,
@@ -2378,7 +2686,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 445
  },
  {
   "id": 155,
@@ -2394,7 +2704,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 415
  },
  {
   "id": 156,
@@ -2408,7 +2720,9 @@
   "rate": 100,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 446
  },
  {
   "id": 157,
@@ -2422,7 +2736,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 424
  },
  {
   "id": 158,
@@ -2438,7 +2754,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 406
  },
  {
   "id": 159,
@@ -2452,7 +2770,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 405
  },
  {
   "id": 160,
@@ -2468,7 +2788,9 @@
   "rate": 0,
   "category": 84,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 447
  },
  {
   "id": 161,
@@ -2482,7 +2804,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 162,
@@ -2496,7 +2820,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 163,
@@ -2510,7 +2836,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 164,
@@ -2524,7 +2852,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 165,
@@ -2538,7 +2868,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 166,
@@ -2552,7 +2884,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 167,
@@ -2566,7 +2900,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 168,
@@ -2580,7 +2916,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 169,
@@ -2594,7 +2932,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 170,
@@ -2608,7 +2948,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 171,
@@ -2622,7 +2964,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 172,
@@ -2636,7 +2980,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 393
  },
  {
   "id": 173,
@@ -2650,7 +2996,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 159
  },
  {
   "id": 174,
@@ -2664,7 +3012,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 377
  },
  {
   "id": 175,
@@ -2678,7 +3028,9 @@
   "rate": 0,
   "category": 4,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 293
  },
  {
   "id": 176,
@@ -2692,7 +3044,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 177,
@@ -2706,7 +3060,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 200
  },
  {
   "id": 178,
@@ -2720,7 +3076,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 393
  },
  {
   "id": 179,
@@ -2736,7 +3094,9 @@
   "statuses": [
    "defend"
   ],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 180,
@@ -2750,7 +3110,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 181,
@@ -2764,7 +3126,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 200
  },
  {
   "id": 182,
@@ -2778,7 +3142,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 183,
@@ -2792,7 +3158,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 254
  },
  {
   "id": 184,
@@ -2806,7 +3174,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 255
  },
  {
   "id": 185,
@@ -2820,7 +3190,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 388
  },
  {
   "id": 186,
@@ -2834,7 +3206,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 389
  },
  {
   "id": 187,
@@ -2850,7 +3224,9 @@
   "rate": 0,
   "category": 22,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 251
  },
  {
   "id": 188,
@@ -2864,7 +3240,9 @@
   "rate": 0,
   "category": 68,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 199
  },
  {
   "id": 189,
@@ -2878,7 +3256,9 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 60
+  "mp": 60,
+  "type": 0,
+  "vfx": 223
  },
  {
   "id": 190,
@@ -2892,7 +3272,9 @@
   "rate": 0,
   "category": 12,
   "statuses": [],
-  "mp": 0
+  "mp": 0,
+  "type": 0,
+  "vfx": 10
  },
  {
   "id": 191,
@@ -2908,6 +3290,8 @@
   "rate": 0,
   "category": 6,
   "statuses": [],
-  "mp": 50
+  "mp": 50,
+  "type": 0,
+  "vfx": 224
  }
 ]

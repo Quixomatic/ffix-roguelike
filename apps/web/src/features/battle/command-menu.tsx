@@ -1,12 +1,20 @@
-import { getBattleAction, type BattleCommand, type BattleEngine, type BattleUnit } from "@ffix-roguelike/game-core";
+import { getBattleAction, isThrowable, type BattleCommand, type BattleEngine, type BattleUnit } from "@ffix-roguelike/game-core";
 import { findItem, type TargetType } from "@ffix-roguelike/game-data";
 import { useEffect, useMemo, useState } from "react";
 
-type Pending = Omit<BattleCommand, "targetIds"> & { label: string; targets: TargetType; forDead: boolean; defaultAlly: boolean };
+type Pending = Omit<BattleCommand, "targetIds"> & {
+  label: string;
+  targets: TargetType;
+  forDead: boolean;
+  defaultAlly: boolean;
+  /** Double Black / Double White: pick a second spell after this one. */
+  double?: { title: string; options: ListOption[] };
+};
+type ListOption = { label: string; sub?: string; disabled?: boolean; pending: Pending };
 
 type Menu =
   | { level: "root" }
-  | { level: "list"; title: string; options: { label: string; sub?: string; disabled?: boolean; pending: Pending }[] }
+  | { level: "list"; title: string; options: ListOption[] }
   | { level: "target"; pending: Pending; side: "ally" | "foe" };
 
 interface Props {
@@ -22,17 +30,38 @@ const NO_PICK: TargetType[] = ["self", "allAlly", "allEnemy", "everyone", "rando
 export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
   const [menu, setMenu] = useState<Menu>({ level: "root" });
   const [cursor, setCursor] = useState(0);
+  /** First half of a Double Black / Double White cast. */
+  const [first, setFirst] = useState<{ actionId: number; targetIds: string[]; label: string } | null>(null);
 
   useEffect(() => {
     setMenu({ level: "root" });
     setCursor(0);
+    setFirst(null);
   }, [actor.id]);
+
+  const reset = () => {
+    setMenu({ level: "root" });
+    setCursor(0);
+    setFirst(null);
+  };
 
   const finish = (p: Pending, targetIds: string[]) => {
     onTargeting([], null);
-    onSubmit({ actorId: actor.id, kind: p.kind, actionId: p.actionId, itemId: p.itemId, targetIds });
-    setMenu({ level: "root" });
-    setCursor(0);
+    if (p.double && !first) {
+      // Pick the second spell (MP for both must be available).
+      const left = actor.mp - engine.mpCost(actor, getBattleAction(p.actionId!));
+      setFirst({ actionId: p.actionId!, targetIds, label: p.label });
+      setMenu({
+        level: "list",
+        title: `${p.double.title} — 2nd`,
+        options: p.double.options.map((o) => ({ ...o, disabled: o.disabled || engine.mpCost(actor, getBattleAction(o.pending.actionId!)) > left })),
+      });
+      setCursor(0);
+      return;
+    }
+    if (first) onSubmit({ actorId: actor.id, kind: "ability", actionId: first.actionId, targetIds: first.targetIds, second: { actionId: p.actionId!, targetIds } });
+    else onSubmit({ actorId: actor.id, kind: p.kind, actionId: p.actionId, itemId: p.itemId, targetIds });
+    reset();
   };
 
   const choose = (p: Pending) => {
@@ -46,7 +75,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
     if (menu.level !== "target") return [];
     const { pending, side } = menu;
     const pool = side === "ally" ? engine.allies(actor) : engine.opponents(actor);
-    return pool.filter((u) => (pending.forDead ? true : engine.isActive(u)));
+    return pool.filter((u) => (pending.forDead ? !u.removed && !u.statuses.jump : engine.isTargetable(u)));
   }, [menu, engine, actor, engine.state.tick]);
 
   const canAll = menu.level === "target" && menu.pending.targets.startsWith("many");
@@ -73,6 +102,30 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
       },
     ];
     for (const cmd of cmds) {
+      if (cmd.id === 15) {
+        // Amarant's Throw: weapons from the bag.
+        const throwable = engine.state.inventory.filter((s) => s.count > 0 && isThrowable(s.itemId));
+        out.push({
+          label: cmd.name,
+          disabled: !throwable.length,
+          run: () => {
+            setMenu({
+              level: "list",
+              title: cmd.name,
+              options: throwable.map((s) => {
+                const item = findItem(s.itemId)!;
+                return {
+                  label: item.name,
+                  sub: `×${s.count}`,
+                  pending: { kind: "throw", itemId: item.id, label: `Throw ${item.name}`, targets: "singleEnemy", forDead: false, defaultAlly: false, actorId: actor.id },
+                };
+              }),
+            });
+            setCursor(0);
+          },
+        });
+        continue;
+      }
       if (!cmd.actionIds.length) {
         out.push({ label: cmd.name, disabled: true, run: () => {} });
         continue;
@@ -90,20 +143,19 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
         label: cmd.name,
         run: () => {
           const silenced = actor.statuses.silence !== undefined;
-          setMenu({
-            level: "list",
-            title: cmd.name,
-            options: cmd.actionIds.map((id) => {
-              const a = getBattleAction(id);
-              const mp = engine.mpCost(actor, a);
-              return {
-                label: a.name,
-                sub: mp ? `${mp} MP` : "",
-                disabled: mp > actor.mp || (silenced && engine.isMagical(a)),
-                pending: { kind: "ability", actionId: a.id, label: a.name, targets: a.targets, forDead: a.forDead, defaultAlly: a.defaultAlly, actorId: actor.id },
-              };
-            }),
+          const options: ListOption[] = cmd.actionIds.map((id) => {
+            const a = getBattleAction(id);
+            const mp = engine.mpCost(actor, a);
+            return {
+              label: a.name,
+              sub: mp ? `${mp} MP` : "",
+              disabled: mp > actor.mp || (silenced && engine.isMagical(a)) || (a.scriptId === 63 && !engine.magicSwordReady(actor)),
+              pending: { kind: "ability", actionId: a.id, label: a.name, targets: a.targets, forDead: a.forDead, defaultAlly: a.defaultAlly, actorId: actor.id },
+            };
           });
+          // Double Black (23) / Double White (21): two spells per turn.
+          if (cmd.id === 21 || cmd.id === 23) for (const o of options) o.pending.double = { title: cmd.name, options };
+          setMenu({ level: "list", title: cmd.name, options });
           setCursor(0);
         },
       });
@@ -143,8 +195,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
       if (["ArrowDown", "ArrowRight"].includes(ev.key)) setCursor((c) => (c + 1) % Math.max(1, len));
       else if (["ArrowUp", "ArrowLeft"].includes(ev.key)) setCursor((c) => (c - 1 + len) % Math.max(1, len));
       else if (ev.key === "Escape" || ev.key === "Backspace") {
-        setMenu({ level: "root" });
-        setCursor(0);
+        reset();
       } else if (ev.key === "Tab" && menu.level === "target" && canSwap) {
         ev.preventDefault();
         setMenu({ ...menu, side: menu.side === "ally" ? "foe" : "ally" });
@@ -182,7 +233,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
         <>
           <div className="ff-title flex justify-between">
             <span>{menu.title}</span>
-            <button className="text-sm opacity-70" onClick={() => setMenu({ level: "root" })}>
+            <button className="text-sm opacity-70" onClick={reset}>
               ✕
             </button>
           </div>
@@ -208,7 +259,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
         <>
           <div className="ff-title flex justify-between">
             <span>{menu.pending.label}</span>
-            <button className="text-sm opacity-70" onClick={() => setMenu({ level: "root" })}>
+            <button className="text-sm opacity-70" onClick={reset}>
               ✕
             </button>
           </div>

@@ -1,11 +1,10 @@
 /** Build battle units from character builds (party) and bestiary entries (enemies). */
-import { getAction, getCharacter, type Status } from "@ffix-roguelike/game-data";
+import { getAction, getCharacter, getItem, type Status } from "@ffix-roguelike/game-data";
 
 import { baseStats, enemyItemId, getEnemy, type EnemyDef } from "../content/enemies";
 import { ff9 } from "../content/enemy-actions";
 import { activeSupports, availableActions, deriveStats, type CharacterBuild } from "../stats";
-import { supportImmunities } from "./effects";
-import type { BattleUnit, CommandDef } from "./types";
+import { atbMaxFor, ENEMY_CATEGORY, type BattleUnit, type CommandDef, type EnemyFamily } from "./types";
 
 /** HP/MP and lasting statuses a party member carries between battles. */
 export interface Vitals {
@@ -13,6 +12,25 @@ export interface Vitals {
   mp: number;
   statuses?: Status[];
 }
+
+/** Status immunities granted by support abilities (StatusInit "ResistStatus"). */
+const STATUS_GUARDS: [number, Status[]][] = [
+  [40, ["heat", "freeze"]], // Body Temp
+  [48, ["sleep"]], // Insomniac
+  [49, ["poison", "venom"]], // Antibody
+  [50, ["blind"]], // Bright Eyes
+  [51, ["silence"]], // Loudmouth
+  [53, ["petrify", "gradualPetrify"]], // Jelly
+  [57, ["stop"]], // Locomotion
+  [58, ["confuse"]], // Clear Headed
+];
+
+export function supportImmunities(supports: number[]): Status[] {
+  return STATUS_GUARDS.filter(([id]) => supports.includes(id)).flatMap(([, s]) => s);
+}
+
+/** Statuses that stay on after a battle (FF9 OutOfBattle): they're carried between fights. */
+export const LASTING_STATUSES: Status[] = ["petrify", "venom", "virus", "silence", "blind", "trouble", "zombie"];
 
 export function partyUnit(build: CharacterBuild, slot: number, vitals?: Vitals): BattleUnit {
   const data = getCharacter(build.key);
@@ -24,12 +42,20 @@ export function partyUnit(build: CharacterBuild, slot: number, vitals?: Vitals):
     cmds
       .filter((c) => c.id !== 0)
       .map((c) => ({
+        id: c.id,
         name: c.name,
-        // Single-ability commands like Steal / Eat / Jump are innate; ability lists are filtered.
-        actionIds: c.actionIds.length === 1 ? c.actionIds : c.actionIds.filter((id) => known.has(id)),
+        // Single-ability commands like Steal / Eat / Jump / Throw are innate; ability lists are filtered.
+        actionIds: c.actionIds.length <= 1 ? c.actionIds : c.actionIds.filter((id) => known.has(id)),
       }));
   const statuses: BattleUnit["statuses"] = {};
-  for (const s of vitals?.statuses ?? []) statuses[s] = { remaining: null, nextTick: 0 };
+  for (const s of vitals?.statuses ?? []) if (LASTING_STATUSES.includes(s)) statuses[s] = {};
+  const weaponId = build.equipment.weapon;
+  const bonusElements = build.equipment
+    ? Object.values(build.equipment)
+        .filter((id): id is number => id != null)
+        .flatMap((id) => getItem(id).bonus?.attackElement ?? [])
+    : [];
+  const hp = Math.min(st.maxHp, vitals?.hp ?? st.maxHp);
   return {
     id: `p${slot}`,
     side: "party",
@@ -37,7 +63,7 @@ export function partyUnit(build: CharacterBuild, slot: number, vitals?: Vitals):
     name: data.name,
     sprite: `hero/${build.key}`,
     level: st.level,
-    hp: Math.min(st.maxHp, vitals?.hp ?? st.maxHp),
+    hp,
     maxHp: st.maxHp,
     mp: Math.min(st.maxMp, vitals?.mp ?? st.maxMp),
     maxMp: st.maxMp,
@@ -51,27 +77,50 @@ export function partyUnit(build: CharacterBuild, slot: number, vitals?: Vitals):
     magicDefence: st.magicDefence,
     magicEvade: st.magicEvade,
     weapon: st.weapon,
-    attackElements: st.attackElements,
+    weaponId: weaponId ?? null,
+    attackElements: st.weapon?.elements ?? [],
+    bonusElements: [...new Set(bonusElements)],
     elements: st.elements,
     statusImmune: supportImmunities(supports),
     statuses,
+    permanent: [],
     atb: 0,
+    atbMax: atbMaxFor(st.speed),
     trance: 0,
     backRow: build.backRow,
     supports,
     turns: 0,
+    busyCommand: false,
+    playerCategory: data.category,
+    enemyCategory: 0,
     commands: filter(data.commands),
     tranceCommands: filter(data.trance),
   };
 }
 
-const STEAL_ODDS = [256, 64, 16, 1];
+const FAMILY_CATEGORY: Record<EnemyFamily, number> = {
+  beast: ENEMY_CATEGORY.beast,
+  bird: ENEMY_CATEGORY.flight,
+  bug: ENEMY_CATEGORY.soul,
+  stone: ENEMY_CATEGORY.stone,
+  undead: ENEMY_CATEGORY.undead,
+  dragon: ENEMY_CATEGORY.dragon,
+  devil: ENEMY_CATEGORY.devil,
+  human: ENEMY_CATEGORY.humanoid,
+  machine: 0,
+  amorphous: 0,
+};
+
+/** FF9 steal rates by slot (common → rare). */
+const STEAL_RATES = [256, 64, 16, 1];
 
 export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
-  const b = baseStats(def.level, tier);
-  const m = (k: keyof NonNullable<EnemyDef["mult"]>) => def.mult?.[k] ?? 1;
-  const hp = Math.round(b.hp * m("hp"));
+  const b = def.stats ?? baseStats(def.level, tier);
+  const m = (k: keyof NonNullable<EnemyDef["mult"]>) => (def.stats ? 1 : (def.mult?.[k] ?? 1));
+  const t = def.stats ? 1 + tier * 0.2 : 1;
+  const hp = Math.round(b.hp * m("hp") * t);
   const mp = Math.round(b.mp * m("mp"));
+  const speed = Math.round(b.speed * m("spd"));
   return {
     id: `e${slot}`,
     side: "enemy",
@@ -83,31 +132,39 @@ export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
     maxHp: hp,
     mp,
     maxMp: mp,
-    speed: Math.round(b.speed * m("spd")),
+    speed,
     strength: Math.round(b.strength * m("str")),
     magic: Math.round(b.magic * m("mag")),
     spirit: b.spirit,
-    attack: Math.round(b.attack * m("atk")),
+    attack: Math.round(b.attack * m("atk") * (def.stats ? 1 + tier * 0.1 : 1)),
     defence: Math.round(b.defence * m("def")),
     evade: Math.min(90, Math.round(b.evade * m("eva"))),
     magicDefence: Math.round(b.magicDefence * m("mdef")),
     magicEvade: Math.min(90, Math.round(b.magicEvade * m("meva"))),
     weapon: null,
-    attackElements: [],
+    weaponId: null,
+    attackElements: def.attackElements ?? [],
+    bonusElements: [],
     elements: { weak: def.weak ?? [], half: def.half ?? [], immune: def.immune ?? [], absorb: def.absorb ?? [] },
     statusImmune: def.statusImmune ?? [],
     statuses: {},
+    permanent: [...(def.autoStatus ?? [])],
     atb: 0,
+    atbMax: atbMaxFor(speed),
     trance: 0,
     backRow: false,
     supports: [],
     turns: 0,
+    busyCommand: false,
+    playerCategory: 0,
+    enemyCategory: def.category ?? FAMILY_CATEGORY[def.family],
     commands: [],
     tranceCommands: [],
     family: def.family,
     ai: def.ai,
+    counters: def.counters,
     usedOnce: [],
-    steal: (def.steal ?? []).map((name, i) => ({ itemId: enemyItemId(name), chance: STEAL_ODDS[i] ?? 1 })),
+    steal: (def.stealSlots ?? (def.steal ?? []).map((name, i) => ({ itemId: enemyItemId(name), chance: STEAL_RATES[i] ?? 1 }))).map((s) => ({ ...s })),
     boss: def.boss,
     eatTeaches: def.eatTeaches ? ff9(def.eatTeaches) : undefined,
   };
