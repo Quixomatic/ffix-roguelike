@@ -1,4 +1,4 @@
-import { createBattle, enemyGroup, newBuild, partyUnit, WORLDS, type BattleState } from "@ffix-roguelike/game-core";
+import { createBattle, encounterNames, encounterUnits, newBuild, partyUnit, WORLDS, type BattleState } from "@ffix-roguelike/game-core";
 import { itemByName } from "@ffix-roguelike/game-data";
 import { useMemo, useState } from "react";
 
@@ -19,12 +19,13 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   const groups = [...w.encounters, ...w.elites, w.boss];
   const group = groups[encounter % groups.length]!;
 
-  const initial = useMemo(
-    () =>
-      createBattle({
+  const initial = useMemo(() => {
+    const encounter = encounterUnits(group, 0);
+    return createBattle({
         seed: Date.now() >>> 0,
         party: ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(newBuild(k, level), i)),
-        enemies: enemyGroup(group),
+        enemies: encounter.units,
+        ...(encounter.scene ? { scene: encounter.scene } : {}),
         inventory: [
           { itemId: itemByName("Potion").id, count: 6 },
           { itemId: itemByName("Hi-Potion").id, count: 2 },
@@ -32,7 +33,8 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
           { itemId: itemByName("Ether").id, count: 2 },
           { itemId: itemByName("Antidote").id, count: 2 },
         ],
-      }),
+      });
+  },
     // A new round re-rolls the seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [world, level, encounter, round],
@@ -57,7 +59,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
             {groups.map((g, i) => (
               <option key={i} value={i}>
                 {i >= w.encounters.length + w.elites.length ? "BOSS: " : i >= w.encounters.length ? "Elite: " : ""}
-                {g.join(", ")}
+                {encounterNames(g).join(", ")}
               </option>
             ))}
           </select>

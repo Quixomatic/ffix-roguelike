@@ -3,7 +3,7 @@ import {
   campSupplies,
   deriveStats,
   getArea,
-  getEnemy,
+  encounterNames,
   JOURNEYS,
   MAX_TIER,
   nextSlotCost,
@@ -121,7 +121,7 @@ export function Camp() {
                   </div>
                   {unlocked && (
                     <div className="text-xs text-[#c8d0ff]">
-                      {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {area.boss.map((id) => getEnemy(id).name).join(" & ")}
+                      {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {encounterNames(area.boss).join(" & ")}
                     </div>
                   )}
                   {unlocked && j.unlocks?.length ? (

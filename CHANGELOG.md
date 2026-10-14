@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.28] - 2026-10-14
+
+Fixes "Unknown enemy @EF_E009" on the camp screen.
+
+### Fixed
+- **Camp crashed with "Unknown enemy @EF_E009"**: journey cards looked up FF9 battle-scene encounters as if they were monster ids. They now show the scene's monsters by name ("Final boss: Plant Brain").
+- The practice battle builds FF9 scene encounters (and lists them by monster name).
+- **Boss kills from FF9 scenes are recorded by the monster's name** (`plant-brain`, `hades`, `ozma`) instead of the scene token, so unlocks and achievements that check boss kills keep working and don't depend on import order.
+
+### Changed
+- A scene encounter without a rolled pattern means its main group (FF9's catch-all pattern).
+
 ## [0.1.27] - 2026-10-14
 
 FF9's real bestiary: every monster, attack and battle scene from the game, stored in Postgres and seeded on server startup. The Disc-1 journeys now fight FF9's actual encounters.

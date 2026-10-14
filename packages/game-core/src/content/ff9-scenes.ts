@@ -12,7 +12,7 @@ import { bestiary, type FF9Enemy, type FF9Scene } from "@ffix-roguelike/game-dat
 
 import type { AiRule, EnemyFamily } from "../battle/types";
 import type { Rng } from "../rng";
-import type { EnemyDef } from "./enemies";
+import { getEnemy, type EnemyDef } from "./enemies";
 import { FF9_ACTION_BASE } from "./ff9";
 
 const sceneById = new Map(bestiary.scenes.map((s) => [s.id, s]));
@@ -104,7 +104,8 @@ export interface SceneGroup {
 export function sceneGroup(token: string): SceneGroup {
   const [sceneId, pat] = token.slice(1).split("#");
   const scene = getScene(sceneId!);
-  const pattern = Math.min(Number(pat ?? 0), scene.patterns.length - 1);
+  // No pattern given: the scene's main group (FF9's last, catch-all pattern).
+  const pattern = pat == null ? scene.patterns.length - 1 : Math.min(Number(pat), scene.patterns.length - 1);
   const enemies: string[] = [];
   const types: number[] = [];
   for (const s of scene.patterns[pattern]?.spawn ?? []) {
@@ -130,6 +131,21 @@ export function rollSceneGroup(rng: Rng, sceneRef: string, cap: number): string 
     if (best == null || size < sceneGroup(`@${scene.id}#${best}`).enemies.length) best = p;
   }
   return `@${scene.id}#${best ?? 0}`;
+}
+
+/**
+ * Stable key for boss-kill records and achievements: FF9 monsters by name ("plant-brain", "hades"), since
+ * "ff9-<uid>" ids depend on import order; hand-made monsters by their id.
+ */
+export function killKey(id: string): string {
+  if (!id.startsWith("ff9-")) return id;
+  const m = bestiary.enemies[Number(id.slice(4))];
+  return m ? m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : id;
+}
+
+/** Display names for an encounter ("Plant Brain", "Goblin & Fang"). */
+export function encounterNames(group: string[]): string[] {
+  return [...new Set(encounterEnemies(group).map((id) => getEnemy(id).name))];
 }
 
 /** Bestiary ids an encounter stands for (scene tokens expanded, plain ids kept). */

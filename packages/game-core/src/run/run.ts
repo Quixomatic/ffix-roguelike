@@ -11,7 +11,7 @@ import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis
 import { createBattle, isThrowable, replayBattle } from "../battle/engine";
 import type { BattleState, BattleUnit, InputRecord } from "../battle/types";
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
-import { isSceneRef, sceneGroup } from "../content/ff9-scenes";
+import { encounterEnemies, isSceneRef, killKey, sceneGroup } from "../content/ff9-scenes";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
@@ -401,7 +401,7 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   const rewards = battleRewards(rng, phase.enemies, next.tier, final);
   const summary = applyRewards(next, rewards, final);
   const boss = phase.nodeKind === "boss";
-  if (boss) next.stats.bossKills.push(...phase.enemies);
+  if (boss) next.stats.bossKills.push(...encounterEnemies(phase.enemies).map(killKey));
   const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : phase.nodeKind === "semiboss" ? 40 : 20, next.unlockedGear);
   next.phase = { kind: "rewards", summary, gearChoices, boss };
   next.rng = rng.state;
