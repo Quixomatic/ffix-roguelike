@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.54] - 2026-10-15
+
+Dev tools for balance testing: put any character on (or off) your roster, and grant Completion Points and gil.
+
+### Added
+- **Dev tools page** (`/dev`, an orange "Dev" link in the header in development builds): every character with **Unlock / Relock** (Zidane always stays) and **+10 CP**; **+10/50/100 CP** for the whole roster; **+1,000/10,000/100,000** banked gil. Roster changes apply to the next run you start.
+- API `dev` router (`setUnlocked`, `grantPoints`, `grantGil`, `enabled`) — refused whenever the server runs with `NODE_ENV=production`.
+
+### Notes
+- For testing two-member starts (e.g. Zidane + Vivi) before deciding whether Vivi should join from the beginning.
+
 ## [0.1.53] - 2026-10-15
 
 Status effects show on the party's sprites the way FFRK draws them: Blind puts the glasses on.

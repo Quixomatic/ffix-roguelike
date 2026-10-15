@@ -3,6 +3,7 @@ import { contentRouter } from "./content";
 import { profileRouter } from "./profile";
 import { runRouter } from "./run";
 import { settingsRouter } from "./settings";
+import { devRouter } from "./dev";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -18,5 +19,6 @@ export const appRouter = router({
   profile: profileRouter,
   run: runRouter,
   settings: settingsRouter,
+  dev: devRouter,
 });
 export type AppRouter = typeof appRouter;

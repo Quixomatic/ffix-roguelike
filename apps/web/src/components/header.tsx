@@ -26,6 +26,11 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          {import.meta.env.DEV && (
+            <Link to="/dev" className="text-sm text-orange-300 opacity-80 hover:opacity-100 [&.active]:opacity-100" title="Dev tools (development only)">
+              Dev
+            </Link>
+          )}
           <Link to="/settings" className="text-lg text-white opacity-80 hover:opacity-100 [&.active]:text-yellow-200" title="Settings" aria-label="Settings">
             ⚙
           </Link>
