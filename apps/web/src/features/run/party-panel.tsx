@@ -146,6 +146,7 @@ function CharacterSheet({
                 onPick={(uid) => actions.equip.mutate({ key: keyName, slot, uid: Number(uid) })}
                 onRemove={slot !== "weapon" && m.build.equipment[slot] != null ? () => actions.equip.mutate({ key: keyName, slot, uid: null }) : undefined}
                 empty="Nothing else fits."
+                compare={m.build}
               />
             )
           }

@@ -51,8 +51,8 @@ export function RunScreen() {
             />}
           </div>
         )}
-        {phase.kind === "rewards" && <RewardsPanel phase={phase} actions={actions} />}
-        {phase.kind === "treasure" && <TreasurePanel phase={phase} actions={actions} />}
+        {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
+        {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "synth" && <SynthPanel run={run} phase={phase} actions={actions} />}
         {phase.kind === "stiltzkin" && <StiltzkinPanel run={run} phase={phase} actions={actions} />}

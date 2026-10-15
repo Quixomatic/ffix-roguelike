@@ -29,6 +29,7 @@ export function StiltzkinPanel({ run, phase, actions }: { run: RunState; phase: 
             <ItemCard
               key={i}
               itemId={o.items[0]!}
+              party={run.party.map((m) => m.build)}
               onClick={!bought && afford && !actions.buyOffer.isPending ? () => actions.buyOffer.mutate({ index: i }) : undefined}
               footer={
                 <div className="flex justify-between text-sm">

@@ -20,7 +20,8 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
 
 const name = (key: string) => getCharacter(key).name;
 
-export function RewardsPanel({ phase, actions }: { phase: Extract<RunPhase, { kind: "rewards" }>; actions: RunActions }) {
+export function RewardsPanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "rewards" }>; actions: RunActions }) {
+  const party = run.party.map((m) => m.build);
   // Runs saved before per-member progress existed have no `members`.
   const s = { ...phase.summary, members: phase.summary.members ?? [] };
   const pending = actions.claim.isPending;
@@ -31,7 +32,7 @@ export function RewardsPanel({ phase, actions }: { phase: Extract<RunPhase, { ki
           <div className="ff-title text-center text-base">Choose one</div>
           <div className="grid gap-3 sm:grid-cols-3">
             {phase.gearChoices.map((id, i) => (
-              <ItemCard key={id} itemId={id} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
+              <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
             ))}
           </div>
           <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
@@ -47,14 +48,15 @@ export function RewardsPanel({ phase, actions }: { phase: Extract<RunPhase, { ki
   );
 }
 
-export function TreasurePanel({ phase, actions }: { phase: Extract<RunPhase, { kind: "treasure" }>; actions: RunActions }) {
+export function TreasurePanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "treasure" }>; actions: RunActions }) {
+  const party = run.party.map((m) => m.build);
   const pending = actions.claim.isPending;
   return (
     <Panel title="Treasure!">
       {phase.gil > 0 && <div className="ff-window p-3 text-lg">Found {phase.gil} gil.</div>}
       <div className="grid gap-3 sm:grid-cols-3">
         {phase.gearChoices.map((id, i) => (
-          <ItemCard key={id} itemId={id} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
+          <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
         ))}
       </div>
       <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
@@ -75,6 +77,7 @@ export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extra
             <ItemCard
               key={i}
               itemId={entry.itemId}
+              party={run.party.map((m) => m.build)}
               onClick={sold || !afford || actions.buy.isPending ? undefined : () => actions.buy.mutate({ index: i })}
               footer={<div className={`text-right ${afford ? "" : "text-red-300"}`}>{sold ? "Sold out" : `${entry.price} gil`}</div>}
             />
@@ -136,6 +139,7 @@ export function SynthPanel({ run, phase, actions }: { run: RunState; phase: Extr
             <ItemCard
               key={r.id}
               itemId={r.result}
+              party={run.party.map((m) => m.build)}
               onClick={ok && !actions.synthesize.isPending ? () => actions.synthesize.mutate({ recipeId: r.id }) : undefined}
               footer={
                 <div className="flex justify-between text-sm">

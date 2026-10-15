@@ -6,7 +6,7 @@ import { getItem } from "@ffix-roguelike/game-data";
 
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
-import { accrueGrowth, deriveStats, gemsMax, newBuild, STARTER_ARMOR } from "../stats";
+import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
 import { applyRunOutcome, buySupply, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
@@ -126,5 +126,28 @@ describe("locked roster", () => {
     expect(locked.map((l) => l.key)).toContain("amarant");
     expect(locked.map((l) => l.key)).not.toContain("zidane");
     expect(lockedCharacters({ ...p, unlocked: [...p.unlocked, "vivi"] }).map((l) => l.key)).not.toContain("vivi");
+  });
+});
+
+describe("gear comparison", () => {
+  test("equipping reports the real stat changes against the current slot, and abilities gained/lost", () => {
+    const b = newBuild("zidane", 10);
+    const z = { ...b, equipment: { ...starterGear(b), armor: 149 } }; // Leather Shirt (Def 6)
+    const c = gearChange(z, 150)!; // Silk Shirt (Def 7; teaches only other characters' abilities)
+    expect(c.slot).toBe("armor");
+    expect(c.replaces).toBe(149);
+    expect(c.canEquip).toBe(true);
+    expect(c.deltas.defence).toBe(1);
+    expect(c.gains).toEqual([]); // abilities count only if this character can learn them
+    // Same item: nothing changes.
+    expect(gearChange(z, 149)!.same).toBe(true);
+    expect(gearChange(z, 149)!.deltas).toEqual({});
+    // Mage Masher over the Dagger: +2 attack, and its second skill (AA:102) becomes usable.
+    const mm = gearChange(z, 2)!;
+    expect(mm.deltas.attack).toBe(2);
+    expect(mm.gains).toEqual(["AA:102"]);
+    expect(gearChange({ ...z, equipment: { ...z.equipment, weapon: 2 } }, 1)!.loses).toEqual(["AA:102"]);
+    // Steiner can't use it.
+    expect(gearChange(newBuild("steiner", 10), 2)!.canEquip).toBe(false);
   });
 });

@@ -1,7 +1,9 @@
+import { gearChange, type CharacterBuild } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import type { ReactNode } from "react";
 
+import { DeltaChips } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { gearSummary } from "@/features/run/item-info";
@@ -147,19 +149,30 @@ function EquipRow({ data, active, onClick }: { data: PaperdollSlot; active: bool
   );
 }
 
-/** A list of gear choices for the selected slot (shared picker look). */
+function PickerDelta({ build, itemId }: { build: CharacterBuild; itemId: number }) {
+  const change = gearChange(build, itemId);
+  return change ? (
+    <div className="mt-0.5">
+      <DeltaChips change={change} />
+    </div>
+  ) : null;
+}
+
+/** A list of gear choices for the selected slot (shared picker look). With `compare`, each shows its stat changes. */
 export function GearPicker({
   title,
   options,
   onPick,
   onRemove,
   empty,
+  compare,
 }: {
   title: string;
   options: { key: string | number; itemId: number; caption?: ReactNode }[];
   onPick(key: string | number): void;
   onRemove?: () => void;
   empty: ReactNode;
+  compare?: CharacterBuild;
 }) {
   return (
     <div className="flex flex-col gap-1 rounded bg-black/25 p-2">
@@ -179,7 +192,11 @@ export function GearPicker({
                 {item.name} {o.caption}
               </div>
               <div className="text-xs text-[#c8d0ff]">{gearSummary(item)}</div>
-              {item.abilities.length > 0 && <div className="text-xs text-yellow-200">{item.abilities.map(abilityName).join(", ")}</div>}
+              {compare ? (
+                <PickerDelta build={compare} itemId={item.id} />
+              ) : (
+                item.abilities.length > 0 && <div className="text-xs text-yellow-200">{item.abilities.map(abilityName).join(", ")}</div>
+              )}
             </button>
           );
         })}

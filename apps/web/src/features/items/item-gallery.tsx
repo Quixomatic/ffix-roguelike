@@ -1,7 +1,11 @@
+import { rosterAtStart } from "@ffix-roguelike/game-core";
 import { getCharacter, items, type ItemData } from "@ffix-roguelike/game-data";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
+import { authClient } from "@/lib/auth-client";
 import { ItemCard } from "@/features/run/item-info";
+import { trpc } from "@/utils/trpc";
 
 import { ItemIcon } from "./item-icon";
 
@@ -24,6 +28,10 @@ export function ItemGallery() {
   const [query, setQuery] = useState("");
   const [size, setSize] = useState(32);
   const [selected, setSelected] = useState<number | null>(null);
+  // Signed in: the selected item compares against your roster as they start a run.
+  const { data: session } = authClient.useSession();
+  const profile = useQuery({ ...trpc.profile.get.queryOptions(), enabled: !!session });
+  const roster = profile.data ? rosterAtStart(profile.data) : undefined;
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -79,7 +87,7 @@ export function ItemGallery() {
 
       {selected != null && (
         <div className="fixed bottom-4 right-4 w-80 drop-shadow-lg">
-          <ItemCard itemId={selected} onClick={() => setSelected(null)} />
+          <ItemCard itemId={selected} party={roster} onClick={() => setSelected(null)} />
         </div>
       )}
     </div>

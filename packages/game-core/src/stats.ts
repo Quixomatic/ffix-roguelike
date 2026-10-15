@@ -375,3 +375,56 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
     gemsUsed: gemsUsed(build),
   };
 }
+
+// ── gear comparison ──────────────────────────────────────────────────────────
+
+/** Stats a gear comparison reports, in display order. */
+export const COMPARED_STATS = ["maxHp", "maxMp", "strength", "magic", "spirit", "speed", "attack", "defence", "evade", "magicDefence", "magicEvade", "gemsMax"] as const;
+export type ComparedStat = (typeof COMPARED_STATS)[number];
+
+export interface GearChange {
+  slot: EquipSlot;
+  /** What's in that slot now (null = empty). */
+  replaces: number | null;
+  /** Already wearing this exact item. */
+  same: boolean;
+  /** Can this character wear it at all (their gear type), and is the slot open for them? */
+  canEquip: boolean;
+  slotLocked: boolean;
+  /** Stat changes from swapping it in (only non-zero ones). */
+  deltas: Partial<Record<ComparedStat, number>>;
+  /** Abilities that become usable / stop being usable (taught by the new / old item). */
+  gains: AbilityRef[];
+  loses: AbilityRef[];
+}
+
+/**
+ * What equipping `itemId` would do to a character, compared with what they wear in that slot now — the full
+ * derived stats (level growth, support abilities, everything), not just the item's own numbers.
+ */
+export function gearChange(build: CharacterBuild, itemId: number): GearChange | null {
+  const item = getItem(itemId);
+  const slot = EQUIP_SLOTS.find((s) => SLOT_KIND[s] === item.kind);
+  if (!slot) return null;
+  const replaces = build.equipment[slot] ?? null;
+  const before = deriveStats(build);
+  const next: CharacterBuild = { ...build, equipment: { ...build.equipment, [slot]: itemId } };
+  const after = deriveStats(next);
+  const deltas: GearChange["deltas"] = {};
+  for (const k of COMPARED_STATS) {
+    const d = after[k] - before[k];
+    if (d) deltas[k] = d;
+  }
+  const had = new Set(availableAbilities(build));
+  const has = new Set(availableAbilities(next));
+  return {
+    slot,
+    replaces,
+    same: replaces === itemId,
+    canEquip: canEquip(build.key, item, slot),
+    slotLocked: !slotUnlocked(build, slot),
+    deltas,
+    gains: [...has].filter((r) => !had.has(r)),
+    loses: [...had].filter((r) => !has.has(r)),
+  };
+}

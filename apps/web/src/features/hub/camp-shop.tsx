@@ -1,4 +1,4 @@
-import { campSupplyStock, gearCatalog, type Profile } from "@ffix-roguelike/game-core";
+import { campSupplyStock, gearCatalog, rosterAtStart, type Profile } from "@ffix-roguelike/game-core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,6 +23,8 @@ export function CampShop({ profile }: { profile: Profile }) {
   const unlock = useMutation(trpc.profile.unlockGear.mutationOptions(opts));
   const stock = tab === "supplies" ? campSupplyStock(profile) : tab === "catalog" ? gearCatalog(profile) : [];
   const busy = buySupply.isPending || unlock.isPending;
+  // Gear unlocks compare against how each character starts a run.
+  const roster = rosterAtStart(profile);
   return (
     <div className="ff-window flex flex-col gap-2 p-3">
       <div className="flex items-baseline justify-between">
@@ -49,6 +51,7 @@ export function CampShop({ profile }: { profile: Profile }) {
             <ItemCard
               key={e.itemId}
               itemId={e.itemId}
+              party={tab === "catalog" ? roster : undefined}
               onClick={
                 profile.gil >= e.price && !busy
                   ? () => (tab === "supplies" ? buySupply.mutate({ itemId: e.itemId }) : unlock.mutate({ itemId: e.itemId }))

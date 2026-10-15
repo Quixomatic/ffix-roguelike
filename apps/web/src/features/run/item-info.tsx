@@ -1,5 +1,7 @@
+import type { CharacterBuild } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, type ItemData } from "@ffix-roguelike/game-data";
 
+import { PartyGearDeltas } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
 
 /** One-line stat summary for a piece of gear, e.g. "Atk 18 · Silence" or "Def 4 · Eva 7 · Str+1". */
@@ -32,7 +34,23 @@ export function gearSummary(item: ItemData): string {
 
 const KIND_LABEL: Record<string, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory", item: "Item" };
 
-export function ItemCard({ itemId, footer, onClick, selected }: { itemId: number; footer?: React.ReactNode; onClick?: () => void; selected?: boolean }) {
+/**
+ * A gear/item card: name, stats, abilities taught, who can equip it. With `party`, gear also shows how it would
+ * change each party member who can wear it (against what they wear now).
+ */
+export function ItemCard({
+  itemId,
+  footer,
+  onClick,
+  selected,
+  party,
+}: {
+  itemId: number;
+  footer?: React.ReactNode;
+  onClick?: () => void;
+  selected?: boolean;
+  party?: CharacterBuild[];
+}) {
   const item = findItem(itemId);
   if (!item) return null;
   const who = item.equippableBy.map((k) => getCharacter(k).name);
@@ -54,6 +72,7 @@ export function ItemCard({ itemId, footer, onClick, selected }: { itemId: number
       <div className="text-sm text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
       {item.abilities.length > 0 && <div className="text-sm text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</div>}
       {who.length > 0 && who.length < 12 && <div className="text-xs opacity-70">{who.join(", ")}</div>}
+      {party && item.kind !== "item" && <PartyGearDeltas party={party} itemId={itemId} />}
       {footer}
     </button>
   );

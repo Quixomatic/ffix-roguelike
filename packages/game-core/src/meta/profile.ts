@@ -78,6 +78,11 @@ export const UNLOCKS: UnlockRule[] = [
   { key: "blank", hint: "Win a run on Tier 1 or higher", check: (p) => p.stats.highestTierWon >= 1 },
 ];
 
+/** Unlocked characters as they start a run (starter gear in their open slots) — what found gear compares against. */
+export function rosterAtStart(p: Pick<Profile, "unlocked" | "builds">): CharacterBuild[] {
+  return p.unlocked.filter((k) => p.builds[k]).map((k) => ({ ...p.builds[k]!, equipment: starterGear(p.builds[k]!) }));
+}
+
 /**
  * Characters not on the roster yet, with how to get them: story recruits in journey order ("Clear The Evil
  * Forest"), then the interim milestone unlocks.

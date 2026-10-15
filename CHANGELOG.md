@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.45] - 2026-10-15
+
+Gear shows what it would actually do to your characters, everywhere you see it.
+
+### Added
+- **Stat comparisons on gear.** `gearChange(build, itemId)` (game-core) works out what equipping an item would change for a character against what they wear in that slot now — from their full derived stats (level, growth, support abilities…), not just the item's own numbers: HP, MP, Str, Mag, Spr, Spd, Atk, Def, Eva, MDef, MEva and magic stones, plus abilities it would make usable or take away. Only for characters who can wear it; a locked slot is flagged.
+- Shown as green/red chips ("+1 Def", "−2 Eva", "+ Mug", struck-through abilities lost):
+  - **Item cards** — loot choices, treasure, shops, synthesis and Stiltzkin compare against each party member who can use the item; the camp gear catalog and the Items page (signed in) compare against your roster as they start a run (`rosterAtStart`).
+  - **The in-run gear picker** compares each option against the character you're equipping.
+
 ## [0.1.44] - 2026-10-15
 
 A Settings page saved to your account — menu font, battle speed, auto battle — and the Wait/Active battle mode finally applies in runs.
