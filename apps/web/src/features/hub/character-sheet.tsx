@@ -1,12 +1,8 @@
 import {
-  activeSupports,
-  apCost,
-  availableAbilities,
   deriveStats,
   EQUIP_SLOTS,
   gemsMax,
   gemsUsed,
-  isMastered,
   nextSlotCost,
   slotUnlocked,
   starterGear,
@@ -14,24 +10,26 @@ import {
   UNLOCKABLE_SLOTS,
   type CharacterBuild,
 } from "@ffix-roguelike/game-core";
-import { abilityName, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
+import { getCharacter, type EquipSlot } from "@ffix-roguelike/game-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AbilityGrid, Panel, StatGrid, StoneMeter, SupportGrid } from "@/features/gear/character-panels";
 import { Paperdoll } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
 
-type Tab = "progress" | "gear" | "abilities";
-
 const SLOT_NAME: Record<EquipSlot, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" };
 
-/** Before a run: spend Completion Points (start level, slot unlocks), see starter gear, choose support abilities. */
+/**
+ * Before a run, everything about a character on one screen: the paperdoll (starter gear) on the left; stats,
+ * Completion Point spending, support abilities and abilities in panels on the right.
+ */
 export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuild; onClose(): void }) {
   // Show the character as they'll start a run: starter gear in unlocked slots.
   const build = { ...saved, equipment: starterGear(saved) };
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("progress");
+  const [slot, setSlot] = useState<EquipSlot | null>(null);
   const opts = {
     onSuccess: () => qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() }),
     onError: (e: { message: string }) => toast.error(e.message),
@@ -45,172 +43,99 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
   const points = build.points ?? 0;
   const levelCost = startLevelCost(build.level);
   const slotCost = nextSlotCost(build);
+  const record = build.record;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div className="ff-window flex max-h-[90vh] w-full max-w-3xl flex-col gap-3 overflow-y-auto p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-baseline justify-between">
-          <div className="text-2xl">
-            {char.name} <span className="ff-title">Start Lv {build.level}</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
+      <div className="ff-window flex max-h-[94vh] w-full max-w-6xl flex-col gap-3 overflow-y-auto p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="ff-display text-2xl">
+            {char.name} <span className="ff-title text-base">Start Lv {build.level}</span>
           </div>
-          <div className="flex items-baseline gap-4">
-            <span className="text-lg text-yellow-200">{points} CP</span>
-            <button onClick={onClose}>✕</button>
-          </div>
-        </div>
-        <div className="text-sm text-[#c8d0ff]">
-          HP {st.maxHp} · MP {st.maxMp} · Str {st.strength} · Mag {st.magic} · Spr {st.spirit} · Spd {st.speed} · Atk {st.attack} · Def {st.defence} · Stones{" "}
-          {st.gemsMax}
-        </div>
-        <div className="flex gap-1">
-          {(["progress", "gear", "abilities"] as Tab[]).map((t) => (
-            <button key={t} className="ff-option capitalize" data-active={tab === t} onClick={() => setTab(t)}>
-              {t}
+          <div className="flex items-center gap-4">
+            <span className="rounded border border-yellow-200/50 bg-black/30 px-2 py-0.5 text-lg text-yellow-200">{points} CP</span>
+            <button className="text-xl" onClick={onClose} aria-label="Close">
+              ✕
             </button>
-          ))}
+          </div>
         </div>
 
-        {tab === "progress" && (
-          <div className="flex flex-col gap-3">
-            <div className="text-sm opacity-80">
-              Runs earn Completion Points for everyone in the party: +1 per level gained, +1 per 3 battles won, +3 per boss defeated, +10 for a win. Levels reset every
-              run — spend CP here to start stronger.
-            </div>
-            <div className="ff-window flex items-center justify-between p-3">
-              <div>
-                <div className="text-lg">Start level {build.level}</div>
-                <div className="text-sm opacity-70">Every run begins at this level.</div>
+        <div className="grid gap-3 lg:grid-cols-[22rem_1fr]">
+          {/* Left: who they are and what they wear */}
+          <Panel title="Equipment" right={<span className="opacity-70">starts every run</span>} className="self-start">
+            <Paperdoll
+              heroKey={build.key}
+              name={char.name}
+              subtitle={`Start Lv ${build.level}`}
+              selected={slot}
+              onSelect={setSlot}
+              slots={EQUIP_SLOTS.map((s) => ({
+                slot: s,
+                itemId: build.equipment[s],
+                locked: !slotUnlocked(build, s),
+                note: s === "weapon" ? "starting weapon" : !slotUnlocked(build, s) ? "locked" : build.equipment[s] == null ? "fill it in a run" : undefined,
+              }))}
+              picker={
+                slot && (
+                  <div className="rounded bg-black/25 p-2 text-sm opacity-80">
+                    Gear isn't chosen here — {char.name} starts every run with this, and equips what they find along the way.
+                  </div>
+                )
+              }
+            />
+          </Panel>
+
+          {/* Right: numbers, progression, abilities */}
+          <div className="grid content-start gap-3 xl:grid-cols-2">
+            <Panel title="Stats" className="xl:col-span-2">
+              <StatGrid stats={st} />
+            </Panel>
+
+            <Panel title="Start level" right={<span className="opacity-70">every run begins here</span>}>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-3xl">Lv {build.level}</span>
+                <button className="ff-window px-4 py-1 disabled:opacity-50" disabled={points < levelCost || raise.isPending} onClick={() => raise.mutate({ key: build.key })}>
+                  → Lv {build.level + 1} · {levelCost} CP
+                </button>
               </div>
-              <button
-                className="ff-window px-4 py-1 disabled:opacity-50"
-                disabled={points < levelCost || raise.isPending}
-                onClick={() => raise.mutate({ key: build.key })}
-              >
-                Lv {build.level + 1} — {levelCost} CP
-              </button>
-            </div>
-            <div className="ff-window flex flex-col gap-2 p-3">
-              <div className="flex items-baseline justify-between">
-                <div className="text-lg">Equipment slots</div>
-                <div className="text-sm opacity-80">{slotCost == null ? "All unlocked" : `Next unlock: ${slotCost} CP`}</div>
+              <div className="text-xs opacity-70">
+                CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run.
               </div>
-              <div className="text-sm opacity-70">
-                Unlocking a slot starts every run with {char.name}'s starter gear there, and lets them equip what they find in it.
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {UNLOCKABLE_SLOTS.map((slot) => {
-                  const open = slotUnlocked(build, slot);
+            </Panel>
+
+            <Panel title="Gear slots" right={<span className="opacity-70">{slotCost == null ? "all unlocked" : `next: ${slotCost} CP`}</span>}>
+              <div className="grid grid-cols-2 gap-1.5">
+                {UNLOCKABLE_SLOTS.map((s) => {
+                  const open = slotUnlocked(build, s);
                   return (
                     <button
-                      key={slot}
-                      className="ff-window px-2 py-1 text-sm disabled:opacity-50 data-[open=true]:bg-none data-[open=true]:bg-[#2a5a2a]"
+                      key={s}
+                      className="rounded border px-2 py-1 text-sm transition disabled:cursor-default data-[open=true]:border-green-400/60 data-[open=true]:bg-green-900/40 data-[open=false]:border-white/20 data-[open=false]:bg-black/25 enabled:hover:brightness-125"
                       data-open={open}
                       disabled={open || slotCost == null || points < slotCost || unlock.isPending}
-                      onClick={() => unlock.mutate({ key: build.key, slot: slot as "head" | "wrist" | "armor" | "accessory" })}
+                      onClick={() => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" })}
                     >
-                      {SLOT_NAME[slot]} {open ? "✓" : `— ${slotCost} CP`}
+                      {SLOT_NAME[s]} {open ? "✓" : <span className="opacity-70">· {slotCost} CP</span>}
                     </button>
                   );
                 })}
               </div>
-            </div>
-            <div className="text-xs opacity-60">
-              With {char.name}: {build.record?.runs ?? 0} runs · {build.record?.wins ?? 0} wins · {build.record?.bossKills ?? 0} bosses
+              <div className="text-xs opacity-70">An open slot starts each run with {char.name}'s starter gear and holds what they find.</div>
+            </Panel>
+
+            <Panel title="Support abilities" right={<StoneMeter used={gemsUsed(build)} max={gemsMax(build)} />} className="xl:col-span-2">
+              <SupportGrid build={build} onToggle={(supports) => supportsM.mutate({ key: build.key, supports })} />
+            </Panel>
+
+            <Panel title="Abilities" right={<span className="opacity-70">learned ones are yours forever</span>} className="xl:col-span-2">
+              <AbilityGrid build={build} />
+            </Panel>
+
+            <div className="text-xs opacity-60 xl:col-span-2">
+              With {char.name}: {record?.runs ?? 0} runs · {record?.wins ?? 0} wins · {record?.bossKills ?? 0} bosses
             </div>
           </div>
-        )}
-
-        {tab === "gear" && <GearTab build={build} />}
-
-        {tab === "abilities" && (
-          <AbilitiesTab build={build} onToggle={(supports) => supportsM.mutate({ key: build.key, supports })} stones={[gemsUsed(build), gemsMax(build)]} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-function GearTab({ build }: { build: CharacterBuild }) {
-  const [slot, setSlot] = useState<EquipSlot | null>(null);
-  const name = getCharacter(build.key).name;
-  return (
-    <Paperdoll
-      heroKey={build.key}
-      name={name}
-      subtitle="Starting gear for every run"
-      selected={slot}
-      onSelect={setSlot}
-      slots={EQUIP_SLOTS.map((s) => ({
-        slot: s,
-        itemId: build.equipment[s],
-        locked: !slotUnlocked(build, s),
-        note: s === "weapon" ? "starting weapon" : slotUnlocked(build, s) ? (build.equipment[s] == null ? "open — fill it in a run" : "starter gear") : "unlock in Progress",
-      }))}
-      picker={
-        slot && (
-          <div className="rounded bg-black/25 p-2 text-sm opacity-80">
-            Gear isn't chosen here — {name} starts every run with this, and equips what they find along the way.
-          </div>
-        )
-      }
-    />
-  );
-}
-
-function apLabel(build: CharacterBuild, ref: AbilityRef) {
-  const cost = apCost(getCharacter(build.key), ref);
-  const have = build.ap[ref] ?? 0;
-  return have >= cost ? "Learned" : `${have}/${cost} AP`;
-}
-
-function AbilitiesTab({ build, onToggle, stones }: { build: CharacterBuild; onToggle(supports: number[]): void; stones: [number, number] }) {
-  const char = getCharacter(build.key);
-  const available = availableAbilities(build);
-  const active = activeSupports(build);
-  const supports = char.abilities.filter((a) => parseAbilityRef(a.ref).kind === "support");
-  const actives = char.abilities.filter((a) => parseAbilityRef(a.ref).kind === "active");
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <div>
-        <div className="ff-title mb-1">
-          Support abilities — stones {stones[0]}/{stones[1]}
         </div>
-        <div className="flex max-h-72 flex-col overflow-y-auto text-sm">
-          {supports.map((a) => {
-            const id = parseAbilityRef(a.ref).id;
-            const has = available.includes(a.ref);
-            const on = active.has(id);
-            const sa = getSupportAbility(id);
-            return (
-              <label key={a.ref} className={`flex items-center justify-between gap-2 ${has ? "" : "opacity-40"}`}>
-                <span className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    disabled={!has}
-                    checked={on}
-                    onChange={() => onToggle(on ? build.supports.filter((x) => x !== id) : [...build.supports, id])}
-                  />
-                  {sa.name}
-                </span>
-                <span className="opacity-70">
-                  ◆{sa.gems} · {apLabel(build, a.ref)}
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      </div>
-      <div>
-        <div className="ff-title mb-1">Abilities</div>
-        <div className="flex max-h-72 flex-col overflow-y-auto text-sm">
-          {actives.map((a) => (
-            <div key={a.ref} className={`flex justify-between ${available.includes(a.ref) ? "" : "opacity-40"}`}>
-              <span>{abilityName(a.ref)}</span>
-              <span className={isMastered(build, a.ref) ? "text-yellow-200" : "opacity-70"}>{apLabel(build, a.ref)}</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 text-xs opacity-70">Learned abilities are yours forever. Others work while gear that teaches them is equipped.</div>
       </div>
     </div>
   );

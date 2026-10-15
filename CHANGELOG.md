@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.43] - 2026-10-15
+
+The camp's Manage screen is one readable panel, the paperdoll is laid out WoW-style, and the menu font is your choice.
+
+### Changed
+- **Manage character is one screen, no tabs.** Left: the paperdoll and equipment list. Right, in a grid of panels: Stats (every stat in its own cell), Start level (with the CP rules), Gear slots (unlock buttons), Support abilities (toggle cards with gem cost and AP progress, a magic-stone meter in the header) and Abilities (cards with AP bars / ★ Learned).
+- **Paperdoll, WoW-style**: the slots sit around the figure — head above it, body and arm on its left, weapon on its right, accessory at its feet — as icon tiles (hover for stats), with a readable list of what's equipped underneath (icon, name, stats, notes). The in-run character sheet uses it too, and its stats are the same cell grid (current/max HP and MP, EXP).
+
+### Added
+- **Menu font picker** (header dropdown, saved per browser): **Rounded** (Nunito text, pixel headings — the new default, much easier to read), **Classic pixel** (the old Pixelify Sans everywhere), **Retro JRPG** (DotGothic16), **Storybook** (Alegreya Sans with Cinzel headings). Fonts are CSS variables (`--ff-font`, `--ff-display`), and `.ff-display` marks headings.
+
 ## [0.1.42] - 2026-10-15
 
 Garnet's rackets look like rackets, and the staves have the right icons.

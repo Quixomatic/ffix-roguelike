@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { FontPicker } from "./font-picker";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 
@@ -15,7 +16,7 @@ export default function Header() {
   return (
     <header className="border-b-2 border-[#e8e8f4]/70 bg-gradient-to-b from-[#24317a] to-[#141b52] shadow-[0_2px_0_rgba(0,0,0,0.6)]">
       <div className="flex flex-row items-center justify-between px-3 py-1.5">
-        <nav className="flex items-center gap-5 font-['Pixelify_Sans'] text-lg text-white [text-shadow:2px_2px_0_#000]">
+        <nav className="flex items-center gap-5 ff-display text-lg text-white [text-shadow:2px_2px_0_#000]">
           <Link to="/" className="mr-2 text-xl tracking-wide">
             FFIX <span className="text-yellow-200">Roguelike</span>
           </Link>
@@ -26,6 +27,7 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <FontPicker />
           <ModeToggle />
           <UserMenu />
         </div>

@@ -1,11 +1,41 @@
 @import "@ffix-roguelike/ui/globals.css";
 
+/* ── Fonts (picked in the header, saved per browser; default "rounded") ──── */
+:root {
+  --ff-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --ff-display: "Pixelify Sans", ui-monospace, monospace;
+  --ff-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.6);
+  --ff-weight: 600;
+}
+:root[data-font="classic"] {
+  --ff-font: "Pixelify Sans", ui-monospace, monospace;
+  --ff-display: "Pixelify Sans", ui-monospace, monospace;
+  --ff-shadow: 2px 2px 0 #000;
+  --ff-weight: 400;
+}
+:root[data-font="storybook"] {
+  --ff-font: "Alegreya Sans", ui-serif, Georgia, serif;
+  --ff-display: "Cinzel", ui-serif, Georgia, serif;
+  --ff-weight: 500;
+}
+:root[data-font="pixel"] {
+  --ff-font: "DotGothic16", ui-monospace, monospace;
+  --ff-display: "Pixelify Sans", ui-monospace, monospace;
+  --ff-shadow: 2px 2px 0 #000;
+  --ff-weight: 400;
+}
+.ff-display {
+  font-family: var(--ff-display);
+  font-weight: 600;
+}
+
 /* ── FF9-style menu windows ─────────────────────────────────────────────── */
 
 .ff-window {
-  font-family: "Pixelify Sans", ui-monospace, monospace;
+  font-family: var(--ff-font);
+  font-weight: var(--ff-weight);
   color: #fff;
-  text-shadow: 2px 2px 0 #000;
+  text-shadow: var(--ff-shadow);
   background: linear-gradient(180deg, #3a4fb0 0%, #24317a 45%, #141b52 100%);
   border: 2px solid #e8e8f4;
   border-radius: 6px;

@@ -24,12 +24,21 @@ const SLOT_META: Record<EquipSlot, { label: string; glyph: string }> = {
   accessory: { label: "Accessory", glyph: "💍" },
 };
 
-const LEFT: EquipSlot[] = ["head", "armor", "wrist"];
-const RIGHT: EquipSlot[] = ["weapon", "accessory"];
+/** Where each slot sits around the figure (WoW-style): head above, body/arm left, weapon right, accessory at the feet. */
+const PLACE: Record<EquipSlot, string> = {
+  head: "col-start-2 row-start-1",
+  armor: "col-start-1 row-start-2",
+  wrist: "col-start-1 row-start-3",
+  weapon: "col-start-3 row-start-2 row-span-2",
+  accessory: "col-start-2 row-start-4",
+};
+
+const ORDER: EquipSlot[] = ["weapon", "head", "wrist", "armor", "accessory"];
 
 /**
- * WoW-style character panel: the sprite in the middle, equipment tiles around it. Hover a tile for its stats;
- * click to pick gear for that slot (the picker renders below via `picker`).
+ * WoW-style character panel: the sprite in the middle with its equipment slots around it, and a readable list of
+ * what's equipped below. Hover a slot for its stats; click a slot (or a list row) to pick gear for it — the picker
+ * renders below via `picker`.
  */
 export function Paperdoll({
   heroKey,
@@ -51,58 +60,56 @@ export function Paperdoll({
   footer?: ReactNode;
 }) {
   const bySlot = new Map(slots.map((s) => [s.slot, s]));
-  const tile = (slot: EquipSlot) => {
-    const s = bySlot.get(slot) ?? { slot, itemId: null };
-    return <SlotTile key={slot} data={s} active={selected === slot} onClick={() => onSelect(selected === slot ? null : slot)} />;
-  };
+  const get = (slot: EquipSlot) => bySlot.get(slot) ?? { slot, itemId: null };
+  const toggle = (slot: EquipSlot) => onSelect(selected === slot ? null : slot);
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-        <div className="flex flex-col items-end gap-3">{LEFT.map(tile)}</div>
-        <div className="flex flex-col items-center gap-2">
-          <div className="relative flex h-56 w-44 items-end justify-center rounded-lg bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.18),transparent_70%)]">
-            <div className="absolute bottom-3 h-3 w-24 rounded-[50%] bg-black/40" />
-            <HeroSprite heroKey={heroKey} size={192} className="relative drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-          </div>
-          <div className="text-center">
-            <div className="text-xl">{name}</div>
-            {subtitle && <div className="ff-title">{subtitle}</div>}
-          </div>
-        </div>
-        <div className="flex flex-col items-start gap-3">
-          {RIGHT.map(tile)}
-          {footer}
-        </div>
+      <div className="text-center">
+        <div className="ff-display text-2xl">{name}</div>
+        {subtitle && <div className="ff-title">{subtitle}</div>}
       </div>
+
+      <div className="mx-auto grid grid-cols-[4.5rem_11rem_4.5rem] grid-rows-[auto_5rem_5rem_auto] place-items-center gap-x-2 gap-y-1">
+        <div className="col-start-2 row-span-2 row-start-2 flex h-full w-full items-end justify-center rounded-lg bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.18),transparent_70%)]">
+          <div className="relative flex flex-col items-center">
+            <HeroSprite heroKey={heroKey} size={160} className="relative drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
+            <div className="-mt-3 h-3 w-24 rounded-[50%] bg-black/40" />
+          </div>
+        </div>
+        {ORDER.map((slot) => (
+          <SlotTile key={slot} data={get(slot)} active={selected === slot} onClick={() => toggle(slot)} className={PLACE[slot]} />
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        {ORDER.map((slot) => (
+          <EquipRow key={slot} data={get(slot)} active={selected === slot} onClick={() => toggle(slot)} />
+        ))}
+      </div>
+      {footer}
       {selected && picker}
     </div>
   );
 }
 
-function SlotTile({ data, active, onClick }: { data: PaperdollSlot; active: boolean; onClick(): void }) {
+/** A square slot around the figure: the item's icon, its slot name under it, stats on hover. */
+function SlotTile({ data, active, onClick, className }: { data: PaperdollSlot; active: boolean; onClick(): void; className: string }) {
   const meta = SLOT_META[data.slot];
   const item = data.itemId != null ? findItem(data.itemId) : undefined;
   return (
-    <div className="group relative">
+    <div className={`group relative flex flex-col items-center gap-0.5 ${className}`}>
       <button
-        className="ff-window flex w-48 items-center gap-2 p-1.5 text-left transition enabled:hover:brightness-125 disabled:opacity-45 data-[active=true]:outline data-[active=true]:outline-2 data-[active=true]:outline-yellow-300"
+        className={`flex h-16 w-16 items-center justify-center rounded-md border-2 text-2xl transition enabled:hover:brightness-125 disabled:opacity-45 data-[active=true]:border-yellow-300 data-[active=true]:shadow-[0_0_8px_rgba(255,224,102,0.7)] ${
+          item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/25 bg-black/30"
+        }`}
         data-active={active}
         disabled={data.locked}
         onClick={onClick}
+        title={item ? undefined : meta.label}
       >
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded border text-2xl ${
-            item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/20 bg-black/30 opacity-60"
-          }`}
-        >
-          {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={32} /> : meta.glyph}
-        </span>
-        <span className="min-w-0">
-          <span className="ff-title block text-[0.7rem]">{meta.label}</span>
-          <span className="block truncate text-sm">{item ? item.name : data.locked ? "Locked" : "Empty"}</span>
-          {data.note && <span className={`block text-[0.65rem] ${data.noteTone === "warn" ? "text-orange-300" : "opacity-60"}`}>{data.note}</span>}
-        </span>
+        {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={48} /> : <span className="opacity-50">{meta.glyph}</span>}
       </button>
+      <span className="ff-title text-[0.7rem]">{meta.label}</span>
       {item && (
         <div className="pointer-events-none absolute left-1/2 top-full z-20 mt-1 hidden w-60 -translate-x-1/2 group-hover:block">
           <div className="ff-window p-2 text-sm">
@@ -113,6 +120,30 @@ function SlotTile({ data, active, onClick }: { data: PaperdollSlot; active: bool
         </div>
       )}
     </div>
+  );
+}
+
+/** One line of the equipment list: slot, icon, name, stats, note. */
+function EquipRow({ data, active, onClick }: { data: PaperdollSlot; active: boolean; onClick(): void }) {
+  const meta = SLOT_META[data.slot];
+  const item = data.itemId != null ? findItem(data.itemId) : undefined;
+  return (
+    <button
+      className="grid grid-cols-[4.5rem_1.25rem_1fr] items-center gap-2 rounded px-2 py-1 text-left text-sm transition enabled:hover:bg-white/10 disabled:opacity-45 data-[active=true]:bg-white/15"
+      data-active={active}
+      disabled={data.locked}
+      onClick={onClick}
+    >
+      <span className="ff-title">{meta.label}</span>
+      <span className="flex justify-center">{item ? <ItemIcon itemId={item.id} size={16} /> : null}</span>
+      <span className="min-w-0">
+        <span className="block truncate">
+          {item ? item.name : data.locked ? "Locked" : <span className="opacity-60">Empty</span>}
+          {data.note && <span className={`ml-2 text-xs ${data.noteTone === "warn" ? "text-orange-300" : "opacity-60"}`}>{data.note}</span>}
+        </span>
+        {item && <span className="block truncate text-xs text-[#c8d0ff]">{gearSummary(item) || "—"}</span>}
+      </span>
+    </button>
   );
 }
 

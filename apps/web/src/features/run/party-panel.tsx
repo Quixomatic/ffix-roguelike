@@ -15,6 +15,7 @@ import {
 import { abilityName, findItem, getCharacter, getItem, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
 import { useState } from "react";
 
+import { StatGrid } from "@/features/gear/character-panels";
 import { GearPicker, Paperdoll } from "@/features/gear/paperdoll";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
@@ -109,20 +110,7 @@ function CharacterSheet({
           </div>
           <button onClick={onClose}>✕</button>
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-0.5 text-base sm:grid-cols-4">
-          <div>HP {m.hp}/{st.maxHp}</div>
-          <div>MP {m.mp}/{st.maxMp}</div>
-          <div>Speed {st.speed}</div>
-          <div>Strength {st.strength}</div>
-          <div>Magic {st.magic}</div>
-          <div>Spirit {st.spirit}</div>
-          <div>Attack {st.attack}</div>
-          <div>Defence {st.defence}</div>
-          <div>Evade {st.evade}</div>
-          <div>M.Def {st.magicDefence}</div>
-          <div>M.Eva {st.magicEvade}</div>
-          <div>EXP {m.build.exp}</div>
-        </div>
+        <StatGrid stats={st} current={{ hp: m.hp, mp: m.mp }} extra={[["EXP", m.build.exp]]} />
 
         <Paperdoll
           heroKey={keyName}
