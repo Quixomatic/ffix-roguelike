@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 
 import { PNG } from "pngjs";
 
-import { ITEM_ICONS } from "./item-icon-map";
+import { ITEM_ICONS, type IconSource } from "./item-icon-map";
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PACK = path.resolve(WEB, "../../.docs/assets/finalbossblues/icons_8.13.20");
@@ -29,30 +29,83 @@ const ATLAS_COLS = 16;
 if (!fs.existsSync(SHEET)) throw new Error(`Time Fantasy icon sheet not found at ${SHEET} (unzip icons_8.13.20.zip there)`);
 const sheet = PNG.sync.read(fs.readFileSync(SHEET));
 
-// One cell per distinct sheet icon.
-const cells: [number, number][] = [];
+/** One 16×16 icon as RGBA bytes: a sheet cell, or a generated one. */
+function iconPixels(src: IconSource): Uint8Array {
+  const [r, c] = Array.isArray(src) ? src : MIRROR;
+  const px = new Uint8Array(CELL * CELL * 4);
+  for (let y = 0; y < CELL; y++)
+    for (let x = 0; x < CELL; x++) {
+      const si = ((r * CELL + y) * sheet.width + c * CELL + x) * 4;
+      for (let k = 0; k < 4; k++) px[(y * CELL + x) * 4 + k] = sheet.data[si + k]!;
+    }
+  if (!Array.isArray(src)) racketize(px, src.racket);
+  return px;
+}
+
+/** The hand mirror the rackets are made from: a round frame on a short diagonal handle. */
+const MIRROR: [number, number] = [26, 6];
+
+/**
+ * Mirror → racket: the glass (light blues/whites inside the frame) becomes a string mesh, and the gold frame and
+ * handle are recoloured. Outline pixels (very dark) are kept.
+ */
+function racketize(px: Uint8Array, recolor: number | "silver") {
+  for (let i = 0; i < CELL * CELL; i++) {
+    const o = i * 4;
+    if (px[o + 3]! < 10) continue;
+    const [r, g, b] = [px[o]!, px[o + 1]!, px[o + 2]!];
+    const x = i % CELL, y = Math.floor(i / CELL);
+    const glass = b > r + 30 || (r > 230 && g > 230 && b > 200);
+    if (glass) {
+      const string = (x + y) % 2 === 0;
+      px.set(string ? [236, 232, 220] : [96, 104, 128], o);
+      continue;
+    }
+    if (Math.max(r, g, b) < 60) continue; // outline
+    const [h, s, l] = rgbToHsl(r, g, b);
+    const next = recolor === "silver" ? hslToRgb(h, s * 0.12, l) : hslToRgb((h + recolor + 360) % 360, recolor === 0 ? s : s * 0.75, l);
+    px.set(next, o);
+  }
+}
+
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  const h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return [h * 60, s, l];
+}
+
+function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+}
+
+// One cell per distinct icon.
+const cells: IconSource[] = [];
 const cellOf = new Map<string, number>();
 const index: Record<number, number> = {};
-for (const [id, rc] of Object.entries(ITEM_ICONS).sort((a, b) => Number(a[0]) - Number(b[0]))) {
-  const k = rc.join(",");
+for (const [id, src] of Object.entries(ITEM_ICONS).sort((a, b) => Number(a[0]) - Number(b[0]))) {
+  const k = JSON.stringify(src);
   if (!cellOf.has(k)) {
     cellOf.set(k, cells.length);
-    cells.push(rc);
+    cells.push(src);
   }
   index[Number(id)] = cellOf.get(k)!;
 }
 
 const rows = Math.ceil(cells.length / ATLAS_COLS);
 const atlas = new PNG({ width: ATLAS_COLS * CELL, height: rows * CELL });
-cells.forEach(([r, c], i) => {
+cells.forEach((src, i) => {
   const ox = (i % ATLAS_COLS) * CELL;
   const oy = Math.floor(i / ATLAS_COLS) * CELL;
+  const px = iconPixels(src);
   for (let y = 0; y < CELL; y++)
-    for (let x = 0; x < CELL; x++) {
-      const si = ((r * CELL + y) * sheet.width + c * CELL + x) * 4;
-      const di = ((oy + y) * atlas.width + ox + x) * 4;
-      for (let k = 0; k < 4; k++) atlas.data[di + k] = sheet.data[si + k]!;
-    }
+    for (let x = 0; x < CELL; x++) for (let k = 0; k < 4; k++) atlas.data[((oy + y) * atlas.width + ox + x) * 4 + k] = px[(y * CELL + x) * 4 + k]!;
 });
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 fs.writeFileSync(OUT, PNG.sync.write(atlas));

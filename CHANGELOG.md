@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.42] - 2026-10-15
+
+Garnet's rackets look like rackets, and the staves have the right icons.
+
+### Fixed
+- **Staves were off by one column** on the icon sheet — Flame Staff showed the ice staff, and so on. Vivi: Flame Staff → flame staff, Ice Staff → ice staff, Lightning Staff → gold-sparkle wand, Oak Staff → leafy staff, Cypress Pile → grey leafy staff, Octagon Rod → dark blue-orb staff, High Mage Staff → red-orb staff, Mace of Zeus → purple staff. Garnet's Wizard Rod and Whale Whisker moved to their intended icons.
+- **Rackets were a harp.** The pack has no racket, so the build now makes one from its hand mirror: the glass becomes a string mesh and the frame is recoloured per racket — Priest's gold, Air green, Multina silver, Magic purple, Mythril blue, Tiger orange (`{ racket: hue }` entries in `item-icon-map.ts`).
+
 ## [0.1.41] - 2026-10-15
 
 Every item has a pixel-art icon, and a new Items page shows them all.

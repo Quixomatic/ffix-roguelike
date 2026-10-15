@@ -7,8 +7,13 @@
  * 40 armour · 41 robes · 43 cloaks · 44 helmets · 45 hats · 46 gloves/armguards · 47–48 shoes/boots ·
  * 49 belts/necklaces · 50 rings/earrings · 51 ribbons/jewellery · 53 stones · 54 feathers · 57 orbs ·
  * 60 ore · 61–62 gemstones.
+ *
+ * An entry can also be a generated icon: `{ racket: hue }` turns the pack's hand mirror (26,6) into a racket —
+ * the glass becomes a string mesh and the gold frame is recoloured (hue shift in degrees; "silver" desaturates).
  */
-export const ITEM_ICONS: Record<number, [number, number]> = {
+export type IconSource = [number, number] | { racket: number | "silver" };
+
+export const ITEM_ICONS: Record<number, IconSource> = {
   // ── Weapons ────────────────────────────────────────────────────────────────
   0: [58, 0], // Hammer (Cinna)
   // Zidane: daggers, then thief swords
@@ -65,20 +70,20 @@ export const ITEM_ICONS: Record<number, [number, number]> = {
   48: [32, 1], // Kaiser Knuckles
   49: [32, 4], // Duel Claws
   50: [32, 5], // Rune Claws
-  // Garnet: rackets (the pack has no racket; its framed harp reads closest), then rods
-  51: [25, 2], // Air Racket
-  52: [25, 2], // Multina Racket
-  53: [25, 2], // Magic Racket
-  54: [25, 2], // Mythril Racket
-  55: [25, 2], // Priest's Racket
-  56: [25, 2], // Tiger Racket
+  // Garnet: rackets (generated from the hand mirror, one frame colour each), then rods
+  51: { racket: 90 }, // Air Racket — green
+  52: { racket: "silver" }, // Multina Racket
+  53: { racket: 250 }, // Magic Racket — purple
+  54: { racket: 170 }, // Mythril Racket — blue
+  55: { racket: 0 }, // Priest's Racket — gold
+  56: { racket: -20 }, // Tiger Racket — orange
   57: [31, 3], // Rod
   58: [31, 6], // Mythril Rod
   59: [31, 2], // Stardust Rod
   60: [31, 1], // Healing Rod
   61: [31, 7], // Asura's Rod
-  62: [30, 11], // Wizard Rod
-  63: [30, 12], // Whale Whisker
+  62: [30, 9], // Wizard Rod
+  63: [30, 10], // Whale Whisker
   // Eiko: flutes
   64: [25, 7], // Golem's Flute
   65: [25, 6], // Lamia's Flute
@@ -88,14 +93,14 @@ export const ITEM_ICONS: Record<number, [number, number]> = {
   69: [25, 1], // Angel Flute
   // Vivi: staves
   70: [30, 4], // Mage Staff
-  71: [30, 14], // Flame Staff
-  72: [30, 15], // Ice Staff
-  73: [30, 12], // Lightning Staff
-  74: [30, 1], // Oak Staff
-  75: [30, 0], // Cypress Pile
-  76: [30, 11], // Octagon Rod
-  77: [30, 8], // High Mage Staff
-  78: [30, 13], // Mace of Zeus
+  71: [30, 13], // Flame Staff
+  72: [30, 14], // Ice Staff
+  73: [30, 11], // Lightning Staff
+  74: [30, 5], // Oak Staff
+  75: [30, 6], // Cypress Pile
+  76: [30, 8], // Octagon Rod
+  77: [30, 7], // High Mage Staff
+  78: [30, 15], // Mace of Zeus
   // Quina: forks (tridents)
   79: [29, 12], // Fork
   80: [29, 6], // Needle Fork
