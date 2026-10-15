@@ -8,7 +8,8 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "test": "bun test",
-    "sim": "bun scripts/sim.ts"
+    "sim": "bun scripts/sim.ts",
+    "sweep": "bun scripts/sweep-scenes.ts"
   },
   "dependencies": {
     "@ffix-roguelike/game-data": "workspace:*"

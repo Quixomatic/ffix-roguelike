@@ -214,6 +214,7 @@ describe("battle AI VM", () => {
 
   test("Plant Brain at 0 HP is held for its script, which brings in its second phase", () => {
     const state = battle("EF_E009", { level: 12 });
+    state.mode = "active"; // the party never acts here; Wait mode would stop the clock for them
     const e = new BattleEngine(state);
     for (let i = 0; i < 40; i++) e.step();
     const pb = e.state.units.find((u) => u.side === "enemy")!;
@@ -251,6 +252,42 @@ describe("battle AI VM", () => {
     expect(replayed.tick).toBe(done.tick);
     expect(replayed.units.map((u) => u.hp)).toEqual(done.units.map((u) => u.hp));
     expect(replayed.ai).toEqual(done.ai);
+  });
+
+  test("a script's long intro plays out at once (Valia Pira's nine taunts)", () => {
+    const e = new BattleEngine(battle("SP_E053", { level: 60 }));
+    e.state.mode = "active";
+    const events: BattleEvent[] = [];
+    for (let i = 0; i < 15 * 3; i++) events.push(...e.step());
+    // FF9 spends ~33 s on these lines; with no text window to read there's nothing to wait for.
+    expect(events.filter((x) => x.type === "scriptText").length).toBeGreaterThanOrEqual(9);
+    expect(e.state.ai!.phase).toBe(4);
+  });
+
+  test("hidden is not untargetable: Sealion can be hit before Black Waltz No.1 calls it in", () => {
+    const e = new BattleEngine(battle("IC_E011", { level: 15 }));
+    const sealion = e.state.units.find((u) => u.name === "Sealion")!;
+    for (let i = 0; i < 5; i++) e.step();
+    expect(sealion.hidden).toBe(true);
+    expect(e.isTargetable(sealion)).toBe(true);
+    expect(e.isShown(sealion)).toBe(true);
+    const { engine } = play(battle("IC_E011", { level: 15 }), 15 * 600);
+    expect(engine.state.outcome).toBe("victory");
+  });
+
+  test("script props that are hidden and untargetable aren't shown (Masked Man's masks)", () => {
+    const e = new BattleEngine(battle("TH_E001", { level: 5 }));
+    for (let i = 0; i < 5; i++) e.step();
+    const masks = e.state.units.filter((u) => u.name.startsWith("Baku's Mask"));
+    expect(masks.length).toBe(2);
+    for (const m of masks) expect(e.isShown(m) || e.isTargetable(m)).toBe(false);
+  });
+
+  test("a fight stuck on a story event that can't happen ends instead of freezing (Prison Cage)", () => {
+    const { engine, events } = play(battle("EF_E007", { level: 15 }), 15 * 120);
+    expect(engine.state.outcome).toBe("victory");
+    expect(events.some((x) => x.type === "message" && x.text === "The enemy withdrew")).toBe(true);
+    expect(engine.state.tick).toBeLessThan(15 * 60);
   });
 
   test("scenes without a registered script fall back to the AI rules", () => {

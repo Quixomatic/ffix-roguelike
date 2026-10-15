@@ -302,6 +302,7 @@ describe("trance & character specials", () => {
       u.atb = 0;
       e.state.units[1]!.atb = 0;
       u.trance = 255;
+      e.state.lastAction = e.state.tick; // nobody else acts in this test: keep the stall watchdog out of it
       events.push(...e.step());
     }
     expect(events.some((x) => x.type === "actionStart" && x.name === "Diamond Dust")).toBe(true);

@@ -70,7 +70,7 @@ export const PHASE = { INIT: 0, EVENT: 1, ENTER: 2, MENU_ON: 3, NORMAL: 4, MENU_
 const LOAD = { BBG: 1, NPC: 2, CHR: 4, INITNPC: 8, INITCHR: 16, FADENPC: 32, FADECHR: 64 } as const;
 
 /** Ticks a "dying" boss waits for its script to end the battle before it simply dies. */
-export const DYING_TIMEOUT = 15 * 30;
+export const DYING_TIMEOUT = 15 * 6;
 /** Ticks outside the normal phase before the VM forces the battle to resume (stuck intro/cutscene safety). */
 const EVENT_TIMEOUT = 15 * 120;
 /** Instructions per object run before the VM assumes an infinite loop and yields. */
@@ -287,6 +287,15 @@ export class BattleAi {
   /** A command starts playing (FF9 cur_cmd). */
   commandStart(info: AiCommandInfo) {
     this.s.cur = info;
+  }
+
+  /**
+   * The move's animation sequence ran (btlseq): the only part of it scripts can observe is ToggleStandAnimation,
+   * the caster's idle stance (bi.def_idle → STAND_ANIMATION) — Zorn & Thorn's and Black Waltz No.3's AI branch on it.
+   */
+  sequencePlayed(caster: BattleUnit, slot: number) {
+    const stance = this.scene?.stance?.[slot];
+    if (stance != null && caster.side === "enemy") this.s.mem[`${btlIndex(caster)}:69`] = stance;
   }
 
   /** KO hook: a buffered boss at 0 HP is held "dying" for its script. Returns true if the death is held. */
@@ -817,7 +826,7 @@ export class BattleAi {
       }
       return;
     }
-    const command: BattleCommand = { actorId: u.id, kind: "ability", actionId, targetIds: unitsFromBits(eng, targets).map((t) => t.id), scripted: true };
+    const command: BattleCommand = { actorId: u.id, kind: "ability", actionId, targetIds: unitsFromBits(eng, targets).map((t) => t.id), scripted: true, ff9Slot: slot };
     eng.enqueue(command, source as CommandSource);
     if (source === "main") u.busyCommand = true;
   }
@@ -827,7 +836,7 @@ export class BattleAi {
     if (!u) return;
     const actionId = this.actionFor(slot);
     if (actionId == null) return this.warn(-3, `${this.s.scene}: special attack slot ${slot} not in the scene's attack table`);
-    const command: BattleCommand = { actorId: u.id, kind: "ability", actionId, targetIds: unitsFromBits(this.eng, targets).map((t) => t.id), scripted: true };
+    const command: BattleCommand = { actorId: u.id, kind: "ability", actionId, targetIds: unitsFromBits(this.eng, targets).map((t) => t.id), scripted: true, ff9Slot: slot };
     const ticks = this.eng.executeScripted(u, command);
     this.eng.state.busy = Math.max(this.eng.state.busy, ticks);
   }

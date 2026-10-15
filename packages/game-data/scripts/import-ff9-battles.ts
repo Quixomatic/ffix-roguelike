@@ -218,12 +218,21 @@ for (const dir of scenes) {
     if (!entry.attacks.length) entry.attacks = acts;
     typeUids.push(entry.uid);
   }
+  // Attack sequences (.seq, one per attack slot) that switch the caster's idle stance (ToggleStandAnimation →
+  // bi.def_idle, which scripts read as STAND_ANIMATION: Zorn & Thorn, Black Waltz No.3…). Last toggle wins.
+  const stance: (0 | 1 | null)[] = acts.map(() => null);
+  for (const f of readdirSync(base).filter((x) => x.endsWith(".seq"))) {
+    const slot = Number(f.slice(0, 2));
+    const last = readFileSync(join(base, f), "utf8").split(/\r?\n/).filter((l) => l.includes("ToggleStandAnimation")).at(-1);
+    if (last && slot < stance.length) stance[slot] = last.includes("Alternate=True") ? 1 : 0;
+  }
   sceneTable.push({
     id: scene,
     flags: main.flags.map((f) => f.replace(/\(\d+\)/, "")),
     types: typeUids,
     attacks: acts,
     patterns: patterns.map((p) => ({ rate: p.rate ?? 0, ap: p.ap ?? 0, spawn: (p.spawn ?? []).slice(0, p.enemyCount ?? 4).map((s) => ({ typeNo: s.typeNo, targetable: s.flags.some((f) => f.startsWith("Target")) })) })),
+    ...(stance.some((x) => x != null) ? { stance } : {}),
   });
 }
 for (const e of enemies) {

@@ -8,7 +8,7 @@
  */
 import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
-import { createBattle, isThrowable, replayBattle } from "../battle/engine";
+import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
 import type { BattleState, BattleUnit, InputRecord } from "../battle/types";
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
 import { encounterEnemies, isSceneRef, killKey, sceneGroup } from "../content/ff9-scenes";
@@ -786,8 +786,8 @@ export function learnedActive(build: CharacterBuild): AbilityRef[] {
 
 /** Bring a stored RunState from an older version up to date (fields added since it was saved). */
 export function upgradeRunState(run: RunState): RunState {
-  // A fight saved under the pre-v0.1.24 engine can't be replayed by the FF9 engine: start that fight over.
-  if (run.phase.kind === "battle" && run.phase.battle.units.some((u) => u.atbMax == null)) {
+  // A fight saved under older battle rules can't be replayed exactly by this engine: start that fight over.
+  if (run.phase.kind === "battle" && run.phase.battle.rules !== BATTLE_RULES) {
     const next = structuredClone(run);
     const p = next.phase as Extract<RunState["phase"], { kind: "battle" }>;
     const rng = rngOf(next).fork(`upgrade:${p.nodeId}`);

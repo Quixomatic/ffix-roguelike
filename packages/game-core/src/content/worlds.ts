@@ -118,10 +118,12 @@ export const WORLDS: WorldDef[] = [
     subtitle: "I Want to Be Your Canary",
     theme: "grassland",
     // FF9's first random encounters (Mu, Goblin/Python, Goblin/Fang). The prologue's scripted set pieces (King Leo,
-    // Blank, Haagen & Weimar, the Bomb) end on story cues, so they stay out of the pools.
+    // Blank, Haagen & Weimar, the Bomb) end on story cues, so they stay out of the pools. So does the Masked Man:
+    // that's the prologue's staged fight (no game over in FF9, the masks are script props). The boss is Baku's own
+    // fight instead (BR_E008) — Zidane alone against the boss of Tantalus, with a real game over.
     encounters: [["@WM_0000"], ["@WM_0004"], ["@EF_R007"], ["@WM_0001"], ["@WM_0005"], ["@EF_R004"]],
     elites: [["@WM_0006"], ["@WM_0008"]],
-    boss: ["@TH_E001"],
+    boss: ["@BR_E008"],
     gearPrice: [50, 600],
     shops: [0],
     itemStores: [25],

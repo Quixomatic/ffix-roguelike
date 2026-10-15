@@ -164,6 +164,8 @@ export interface BattleCommand {
   second?: { actionId: number; targetIds: string[] };
   /** Chosen by an FF9 battle script: its targets are used as given. */
   scripted?: boolean;
+  /** The scene attack slot an FF9 script picked (its animation sequence can switch the caster's stance). */
+  ff9Slot?: number;
 }
 
 /**
@@ -210,9 +212,13 @@ export interface ConsumableStock {
 }
 
 export interface BattleState {
+  /** Battle rules version (engine BATTLE_RULES); missing = before v0.1.34. */
+  rules?: number;
   seed: number;
   rng: number;
   tick: number;
+  /** Tick of the last real action (stall watchdog). */
+  lastAction?: number;
   mode: "wait" | "active";
   units: BattleUnit[];
   /** Party members whose gauge is full and who are waiting for a command, in order. */

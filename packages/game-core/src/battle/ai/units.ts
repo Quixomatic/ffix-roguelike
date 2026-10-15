@@ -150,6 +150,8 @@ export function getMember(ai: AiState, u: BattleUnit, kind: number): number {
     case 68:
     case 113:
       return u.side === "enemy" ? u.enemyCategory : 1;
+    case 69: // STAND_ANIMATION (bi.def_idle): starts at 0; scripts and attack sequences switch it
+      return ai.mem[`${btlIndex(u)}:69`] ?? 0;
     case 70:
       return u.side === "enemy" ? (u.ff9Type ?? 0) : 0;
     case 72:

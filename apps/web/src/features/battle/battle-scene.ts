@@ -2,7 +2,7 @@
  * The battlefield: draws units and animates engine events. Game logic lives in game-core's BattleEngine —
  * this scene only reads state and plays effects; clicks on units are reported back for targeting.
  */
-import { type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
+import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
 import { drawBattleBackground, ensurePlaceholder } from "@/features/sprites/sprites";
@@ -109,7 +109,8 @@ export class BattleScene extends Phaser.Scene {
       if (!v) continue;
       const down = u.hp <= 0 || u.statuses.death !== undefined;
       const stone = u.statuses.petrify !== undefined;
-      if (u.side === "enemy") v.sprite.setAlpha(down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
+      const shown = isShownUnit(u);
+      if (u.side === "enemy") v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
       else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
       if (stone) v.sprite.setTint(0x888888);
       else if (u.statuses.trance) v.sprite.setTint(0xff99cc);
@@ -121,7 +122,7 @@ export class BattleScene extends Phaser.Scene {
       v.cursor.y = v.home.y - v.sprite.displayHeight / 2 - 18 + Math.sin(time / 120) * 3;
       // Idle bob for living units.
       if (!down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
-      this.drawGauge(v, u, time, down || stone);
+      this.drawGauge(v, u, time, down || stone || !shown);
     }
   }
 

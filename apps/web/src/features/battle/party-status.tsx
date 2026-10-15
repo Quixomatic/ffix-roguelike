@@ -1,4 +1,4 @@
-import { TRANCE_MAX, type BattleUnit } from "@ffix-roguelike/game-core";
+import { isShownUnit, TRANCE_MAX, type BattleUnit } from "@ffix-roguelike/game-core";
 
 const SHOWN_STATUSES = ["poison", "venom", "blind", "silence", "sleep", "slow", "haste", "regen", "protect", "shell", "float", "berserk", "confuse", "doom", "mini", "reflect", "stop", "zombie"] as const;
 
@@ -49,7 +49,7 @@ export function EnemyList({ enemies }: { enemies: BattleUnit[] }) {
   return (
     <div className="ff-window w-52 p-2 text-base">
       {enemies
-        .filter((u) => u.hp > 0 && u.statuses.death === undefined)
+        .filter((u) => u.hp > 0 && u.statuses.death === undefined && isShownUnit(u))
         .map((u) => {
           const pct = Math.min(1, u.atb / u.atbMax);
           return (

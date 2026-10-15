@@ -34,6 +34,16 @@ import {
 
 /** Hard cap so a stalemate can't run forever (15 minutes). */
 export const MAX_TICKS = 15 * 900;
+/**
+ * Battle rules version, stored in every battle. A fight saved under older rules can't be replayed exactly, so
+ * the run restarts it (upgradeRunState). 2: FF9 targeting ignores "disappear", script pauses play out instantly,
+ * the stall watchdog.
+ */
+export const BATTLE_RULES = 2;
+/** No command for this long (and no one waiting for the player) = the fight is stuck on something that can't happen. */
+export const STALL_TICKS = 15 * 45;
+/** VM frames a script pause may run within one tick when nothing is animating. */
+const PAUSE_FRAMES_PER_TICK = 2400;
 
 export const POSITIVE_STATUSES: Status[] = ["autoLife", "trance", "defend", "regen", "haste", "float", "shell", "protect", "vanish", "reflect"];
 const NEGATIVE_STATUSES: Status[] = ["petrify", "venom", "virus", "silence", "blind", "trouble", "zombie", "death", "confuse", "stop", "poison", "sleep", "slow", "heat", "freeze", "doom", "mini", "gradualPetrify"];
@@ -67,6 +77,11 @@ function statusInfoOf(s: Status): StatusInfo | undefined {
     statusIndexed = gameDataVersion;
   }
   return statusIndex.get(s);
+}
+
+/** Drawn on the battlefield: script props that are both hidden and untargetable (Masked Man's masks) aren't. */
+export function isShownUnit(u: BattleUnit): boolean {
+  return !u.removed && !(u.hidden && u.untargetable);
 }
 
 export function getBattleAction(id: number): BattleAction {
@@ -110,9 +125,11 @@ export function createBattle(opts: CreateBattleOptions): BattleState {
     else if (!alert && rng.int(0, 255) < 24) start = "back";
   }
   const state: BattleState = {
+    rules: BATTLE_RULES,
     seed: opts.seed,
     rng: 0,
     tick: 0,
+    lastAction: 0,
     mode: opts.mode ?? "wait",
     units,
     ready: [],
@@ -228,9 +245,16 @@ export class BattleEngine {
     return this.isAlive(u) && !this.has(u, "petrify") && !u.removed;
   }
 
-  /** Can be picked as a target (Jumping units are out of reach). */
+  /**
+   * Can be picked as a target (Jumping units are out of reach). FF9 only checks the "targetable" flag: a script's
+   * "disappear" is a rendering switch (e.g. Sealion before Black Waltz No.1 calls it in), not a targeting one.
+   */
   isTargetable(u: BattleUnit): boolean {
-    return this.isActive(u) && !this.has(u, "jump") && !u.untargetable && !u.hidden && !u.ff9Dying;
+    return this.isActive(u) && !this.has(u, "jump") && !u.untargetable && !u.ff9Dying;
+  }
+
+  isShown(u: BattleUnit): boolean {
+    return isShownUnit(u);
   }
 
   canAct(u: BattleUnit): boolean {
@@ -447,6 +471,8 @@ export class BattleEngine {
   // ── simulation ─────────────────────────────────────────────────────────────
   emit(e: BattleEvent) {
     this.events.push(e);
+    // Progress for the stall watchdog: a monster acting, or a party member doing more than Defend/Change.
+    if (e.type === "actionStart" && (e.kind !== "defend" && e.kind !== "change" || this.unit(e.actorId).side === "enemy")) this.state.lastAction = this.state.tick;
   }
 
   afterCommand(fn: () => void) {
@@ -472,10 +498,19 @@ export class BattleEngine {
     for (const u of s.units) this.checkPoint(u);
     if (ai && !s.outcome) {
       ai.frame();
+      // Script pauses (intros, battle dialogue, staged deaths) play out at once while nothing is animating: we
+      // don't show FF9's battle text or camera work, so sitting through them would look like a frozen fight.
+      for (let n = 0; n < PAUSE_FRAMES_PER_TICK && !s.outcome && !ai.isNormal() && s.busy === 0 && s.queue.length === 0; n++) ai.frame();
       for (const u of s.units) this.checkPoint(u);
     }
     this.checkEnd();
     if (!s.outcome && s.tick >= MAX_TICKS) this.finish("defeat");
+    // Watchdog: nothing has happened for a long time and no one is waiting for the player — the script is waiting
+    // on a story event that can't happen here. End the fight rather than freeze it.
+    if (!s.outcome && s.ready.length === 0 && s.tick - (s.lastAction ?? 0) >= STALL_TICKS) {
+      this.emit({ type: "message", text: "The enemy withdrew" });
+      this.finish("victory");
+    }
     s.rng = this.rng.state;
     return this.events;
   }
@@ -790,6 +825,7 @@ export class BattleEngine {
       let targetBits = 0;
       for (const h of hits) targetBits |= ai.bit(h.target);
       ai.commandStart({ cmd: cmdNo, sub, caster: ai.bit(actor), targets: targetBits, element: elementBits(action.elements), weaponElement: elementBits(actor.attackElements) });
+      if (cmd.ff9Slot != null) ai.sequencePlayed(actor, cmd.ff9Slot);
     }
 
     // Items are used up as the action starts (Throw too).

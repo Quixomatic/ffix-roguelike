@@ -2,6 +2,29 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.34] - 2026-10-15
+
+No more frozen fights: battles play FF9's phases straight through, and a fight can never hang on a story event that can't happen here.
+
+### Fixed
+- **Black Waltz No.1 + Sealion (Ice Cavern boss) never ended.** Our engine treated a unit the script had made invisible as untargetable; in FF9 only the "targetable" flag decides that ("disappear" just stops it being drawn until Black Waltz No.1 calls the Sealion in). The Sealion can be hit again and the fight plays out.
+- **Long frozen stretches in scripted fights.** Intros, battle dialogue and staged deaths now play out at once while nothing is animating — e.g. Valia Pira's nine taunts (~33 s of nothing on screen), the Chaos guardians' openings, Plant Brain's phase change. Animations still take their time.
+- **Monsters whose AI depends on their stance** (Zorn & Thorn, Black Waltz No.3 and ~130 other scenes) repeated "Continue" forever: the stance is switched by FF9's attack animations, which we don't run. The importer now records which attack switches it, and the battle AI applies it; scripts also read the stance as FF9 does (it starts at 0).
+- A boss at 0 HP whose script never stages its ending is held for 6 s instead of 30 s before it simply dies.
+- **Masked Man's script props showed as enemies**: the hidden, untargetable masks are no longer drawn or listed.
+
+### Changed
+- **Alexandria's boss is Baku** (FF9's real Baku fight, BR_E008 — Zidane against the boss of Tantalus, with a real game over). Masked Man is out: in FF9 it's the prologue's staged fight (no game over, the masks are props).
+- **Stall watchdog**: if nothing happens for 45 s and no one is waiting for the player, the fight ends ("The enemy withdrew") instead of freezing. It only ever fires on FF9 story set pieces, which stay out of the pools; the encounter test fails if any area fight needs it.
+- A fight saved mid-battle under the old rules restarts under the new ones (battle rules version 2).
+
+### Added
+- `pnpm -F @ffix-roguelike/game-core sweep [SCENE…]` — plays every FF9 battle scene and reports stalls, watchdog endings, long idle stretches, pauses and held deaths.
+- The encounter test now covers every area's bosses too (209 fights). New VM tests: Valia Pira's intro, the hidden-but-targetable Sealion, Masked Man's props, the Prison Cage watchdog.
+
+### Notes
+- Gizamaluke isn't bugged: his script raises his HP to 65,535 and he falls after 13,875 damage (FF9's own trick). The 0% in the balance sim was a party in starter gear. Same for Zorn & Thorn.
+
 ## [0.1.33] - 2026-10-14
 
 All of FF9's data now lives in Postgres — the character, ability and item tables join the battle data.

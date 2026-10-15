@@ -302,6 +302,8 @@ export interface FF9Scene {
   /** Attack slot (the index the AI script picks) → bestiary action uid. */
   attacks: number[];
   patterns: { rate: number; ap: number; spawn: { typeNo: number; targetable: boolean }[] }[];
+  /** Attack slot → the caster's idle stance after the move's animation (FF9 def_idle / STAND_ANIMATION); null = unchanged. */
+  stance?: (0 | 1 | null)[];
 }
 
 export interface FF9Bestiary {
