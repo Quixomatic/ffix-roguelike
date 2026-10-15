@@ -1,0 +1,16 @@
+/// A user's preferences (menus and battle presentation). One row per user, created on first save; missing = defaults.
+model UserSettings {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Menu font id — the web app's font sets in index.css: rounded | classic | pixel | storybook.
+  menuFont    String  @default("rounded")
+  /// Battle animation speed multiplier the battle screen starts at (1, 2 or 4).
+  battleSpeed Int     @default(1)
+  /// Start battles with the Auto battle toggle on.
+  autoBattle  Boolean @default(false)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("user_settings")
+}

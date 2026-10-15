@@ -119,6 +119,8 @@ export interface RunState {
   stats: RunStats;
   /** Gear the player has unlocked into drop pools (snapshot at run start). */
   unlockedGear: number[];
+  /** Wait (time stops while choosing) or Active battles — the player's setting; missing = wait. */
+  battleMode?: "wait" | "active";
 }
 
 export interface StartRunInput {
@@ -132,6 +134,8 @@ export interface StartRunInput {
   unlockedGear?: number[];
   /** Journey to play (default: the first one). */
   journey?: string;
+  /** Wait or Active battles (default wait). */
+  battleMode?: "wait" | "active";
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -186,6 +190,11 @@ function healParty(run: RunState, percent: number, revive: boolean) {
 const partyKeys = (run: RunState) => run.party.map((m) => m.build.key);
 
 // ── lifecycle ────────────────────────────────────────────────────────────────
+/** Switch Wait/Active battles for the rest of the run (from the next battle; a fight in progress keeps its mode). */
+export function setRunBattleMode(run: RunState, mode: "wait" | "active"): RunState {
+  return { ...run, battleMode: mode };
+}
+
 export function startRun(input: StartRunInput): RunState {
   if (!input.party.length || input.party.length > 4) throw new RunError("Pick 1–4 party members");
   const rng = Rng.fromSeed(input.seed);
@@ -225,6 +234,7 @@ export function startRun(input: StartRunInput): RunState {
     phase: { kind: "map" },
     stats: { battles: 0, bossKills: [], eaten: 0, steals: 0 },
     unlockedGear: [...(input.unlockedGear ?? [])],
+    battleMode: input.battleMode ?? "wait",
   };
 }
 
@@ -336,6 +346,7 @@ function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, en
     enemies: encounter.units,
     ...(encounter.scene ? { scene: encounter.scene } : {}),
     inventory: [...run.consumables.filter((c) => c.count > 0), ...throwables(run)],
+    mode: run.battleMode ?? "wait",
     canFlee: nodeKind === "battle",
     noSurprise: nodeKind !== "battle",
     meta: { gil: run.gil, thefts: run.stats.steals, dragonKills: run.stats.dragonKills ?? 0, tonberryKills: run.stats.tonberryKills ?? 0 },

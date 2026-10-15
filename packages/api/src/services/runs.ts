@@ -30,7 +30,8 @@ export function toTrpcError(e: unknown): never {
 }
 
 export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string) {
-  const { id: profileId, profile } = await loadProfile(db, userId);
+  const loaded = await loadProfile(db, userId);
+  const { id: profileId, profile } = loaded;
   if (await getActiveRun(db, profileId)) throw new TRPCError({ code: "CONFLICT", message: "Finish or abandon your current run first" });
   if (new Set(partyKeys).size !== partyKeys.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Duplicate party member" });
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
@@ -42,7 +43,15 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   const supplies = campSupplies(profile);
   let state: RunState;
   try {
-    state = coreStartRun({ seed, tier, party: partyKeys.map((k) => profile.builds[k]!), supplies, unlockedGear: profile.gearUnlocked ?? [], journey });
+    state = coreStartRun({
+      seed,
+      tier,
+      party: partyKeys.map((k) => profile.builds[k]!),
+      supplies,
+      unlockedGear: profile.gearUnlocked ?? [],
+      journey,
+      battleMode: loaded.battleMode === "ACTIVE" ? "active" : "wait",
+    });
   } catch (e) {
     toTrpcError(e);
   }

@@ -1,6 +1,8 @@
 import { autoCommand, BattleEngine, TICKS_PER_SECOND, type BattleCommand, type BattleEvent, type BattleState } from "@ffix-roguelike/game-core";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useSettings } from "@/features/settings/use-settings";
+
 export interface BattleLogLine {
   id: number;
   text: string;
@@ -15,8 +17,10 @@ export function useBattle(initial: BattleState, opts: { onEvents?: (e: BattleEve
   if (!engineRef.current) engineRef.current = new BattleEngine(structuredClone(initial));
   const engine = engineRef.current;
   const [, setVersion] = useState(0);
-  const [auto, setAuto] = useState(false);
-  const [speed, setSpeed] = useState(1);
+  // Battles start at the player's saved speed and Auto setting (Settings page); changing them here is per fight.
+  const { settings } = useSettings();
+  const [auto, setAuto] = useState(settings.autoBattle);
+  const [speed, setSpeed] = useState<number>(settings.battleSpeed);
   const [banner, setBanner] = useState<string | null>(null);
   const optsRef = useRef(opts);
   optsRef.current = opts;

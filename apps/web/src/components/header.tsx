@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 
-import { FontPicker } from "./font-picker";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 
@@ -27,7 +26,9 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <FontPicker />
+          <Link to="/settings" className="text-lg text-white opacity-80 hover:opacity-100 [&.active]:text-yellow-200" title="Settings" aria-label="Settings">
+            ⚙
+          </Link>
           <ModeToggle />
           <UserMenu />
         </div>

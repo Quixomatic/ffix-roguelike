@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.44] - 2026-10-15
+
+A Settings page saved to your account — menu font, battle speed, auto battle — and the Wait/Active battle mode finally applies in runs.
+
+### Added
+- **Settings page** (`/settings`, ⚙ in the header): menu font (four sets, each with a live sample), battle mode (Wait/Active), battle speed (×1/×2/×4, what battles start at) and auto battle (start fights with Auto on).
+- **`user_settings` table** (migration `user_settings`): one row per user — `menuFont`, `battleSpeed`, `autoBattle` — created on first save; a missing row means defaults. API: `settings.get`, `settings.update` (any subset).
+- The menu font follows your account across browsers: it's applied before first paint from the browser's cached choice, then synced from the account when settings load.
+
+### Fixed
+- **Wait/Active did nothing in runs** (every run battle was Wait). A run now records the player's battle mode when it starts, every battle it creates uses it (the server's replay check uses the same mode), and switching it in Settings mid-run applies from the next battle.
+
+### Changed
+- The header's font dropdown (v0.1.43) moved into Settings.
+
 ## [0.1.43] - 2026-10-15
 
 The camp's Manage screen is one readable panel, the paperdoll is laid out WoW-style, and the menu font is your choice.

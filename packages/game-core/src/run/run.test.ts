@@ -15,6 +15,7 @@ import {
   moveTo,
   nextWorld,
   runOutcome,
+  setRunBattleMode,
   startRun,
   useConsumable,
   type RunState,
@@ -102,6 +103,19 @@ describe("run", () => {
     expect(a.world).toBe(b.world);
     expect(a.visited).toEqual(b.visited);
     expect(a.party.map((m) => m.build.exp)).toEqual(b.party.map((m) => m.build.exp));
+  });
+
+  test("battles use the run's Wait/Active setting, and a switch applies from the next battle", () => {
+    const profile = newProfile();
+    let run = startRun({ seed: "mode", tier: 0, party: [profile.builds.zidane!], battleMode: "active" });
+    run = moveTo(run, getNode(run.map, run.position).next[0]!);
+    expect(run.phase.kind).toBe("battle");
+    if (run.phase.kind !== "battle") return;
+    expect(run.phase.battle.mode).toBe("active");
+    const switched = setRunBattleMode(run, "wait");
+    expect(switched.battleMode).toBe("wait");
+    expect(switched.phase.kind === "battle" && switched.phase.battle.mode).toBe("active"); // the fight in progress keeps its mode
+    expect(startRun({ seed: "mode", tier: 0, party: [profile.builds.zidane!] }).battleMode).toBe("wait");
   });
 
   test("forged battle logs are rejected", () => {

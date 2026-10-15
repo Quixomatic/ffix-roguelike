@@ -1,11 +1,11 @@
-import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
 import { loadProfile, saveProfile } from "../services/profile";
-import { getActiveRun, toTrpcError } from "../services/runs";
+import { act, getActiveRun, toTrpcError } from "../services/runs";
 
 /**
  * Apply a game-core rule to the player's profile and persist it. Loadout/points/shop changes are only allowed
@@ -38,6 +38,9 @@ export const profileRouter = router({
 
   setBattleMode: protectedProcedure.input(z.object({ mode: z.enum(["WAIT", "ACTIVE"]) })).mutation(async ({ ctx, input }) => {
     await ctx.db.playerProfile.update({ where: { userId: ctx.session.user.id }, data: { battleMode: input.mode } });
+    // A run in progress switches from its next battle.
+    const loaded = await loadProfile(ctx.db, ctx.session.user.id);
+    if (await getActiveRun(ctx.db, loaded.id)) await act(ctx.db, ctx.session.user.id, (run) => setRunBattleMode(run, input.mode === "ACTIVE" ? "active" : "wait"));
   }),
 
   /** Spend Completion Points on +1 start level. */

@@ -6,6 +6,7 @@ import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "@/components/header";
+import { SettingsSync } from "@/features/settings/use-settings";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
 
@@ -55,6 +56,7 @@ function RootComponent() {
       >
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
+          <SettingsSync />
           <Outlet />
         </div>
         <Toaster richColors />

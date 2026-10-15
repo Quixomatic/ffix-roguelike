@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <script>
-      // Apply the saved menu font before first paint (see src/components/font-picker.tsx).
+      // Apply the saved menu font before first paint (see src/features/settings/use-settings.ts).
       try {
         document.documentElement.dataset.font = localStorage.getItem("ff-font") || "rounded";
       } catch {
