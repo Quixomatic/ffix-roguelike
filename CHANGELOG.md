@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.39] - 2026-10-15
+
+FFRK asset tooling: every party, boss and enemy sheet with its frame data, the battle weapon sprites, and gear icons.
+
+### Added
+- `pnpm -F web ffrk:fetch weapons` — FFRK's 408 battle weapon sprites (`equip/weapon/100001…`, the pool characters swing; FFRK names them only by number).
+- `pnpm -F web ffrk:fetch icons [--all-realms]` — every relic's menu art (48/112/256 px) from the community Enlir database's relic list (`.refs/enlir/relics.csv`), with `icons/relics.json` (id → name, type, slot, realm, rarity). FF9's by default.
+- `.refs/` (git-ignored) for third-party reference repos and data: the FFRK sprite grabber, ffrk-json, FFRK Inspector (ffrkx), lynchpt/FFRK, ffrk-proxy, and the Enlir database export.
+
+### Notes
+- Downloaded so far (in `.docs/assets/FFRK-data`, git-ignored): 471 party sheets, 2,335 boss sheets (+ animation files), 1,292 enemy sheets, 408 weapon sprites. 229 party and 652 boss sheets matched the Spriters Resource rips by pixels (43 of the 53 FF9 bosses).
+- Only 29 of FF9's 238 gear pieces exist as FF9 relics in FFRK (most of FF9's signature weapons never became relics), so same-named relics from other games will stand in where FF9's is missing.
+
 ## [0.1.38] - 2026-10-15
 
 The party's sprites now use FFRK's own frame data: every pose is the one FFRK intended, and Blank has a sprite too.

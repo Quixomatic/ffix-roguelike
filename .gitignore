@@ -63,3 +63,6 @@ temp
 # Local-only docs (overview, vision, design, session summaries)
 .docs/
 
+
+# Third-party reference repos and data dumps (FFRK tools, Enlir database)
+.refs/
