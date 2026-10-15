@@ -24,6 +24,9 @@ export interface BattleBridge {
 }
 
 interface UnitView {
+  /** Party slot (0–3) — party members are laid out as a column in real pixels, not stretched. */
+  partySlot?: number;
+  backRow?: boolean;
   /** Where the unit stands in the 960×540 reference layout (scaled to the canvas in `layout`). */
   ref: { x: number; y: number };
   /** Placeholder scale at the reference size. */
@@ -102,6 +105,9 @@ export class BattleScene extends Phaser.Scene {
       const x = 690 + i * 30 + (u.backRow ? 60 : 0);
       const y = 95 + i * 66;
       this.addUnit(u, x, y, 1.6);
+      const v = this.views.get(u.id)!;
+      v.partySlot = i;
+      v.backRow = u.backRow;
     });
 
     this.bridge.play = (events) => this.playEvents(events);
@@ -117,9 +123,16 @@ export class BattleScene extends Phaser.Scene {
     this.heroScale = heroScaleFor(h);
     this.background?.destroy();
     this.background = drawBattleBackground(this, this.bridge.theme, w, h);
+    // The party: an FF-style column on the right — spaced by sprite size, a slight step right per member, kept in
+    // the upper part of the field (the menus cover the bottom).
+    const partyViews = [...this.views.values()].filter((v) => v.partySlot != null);
+    const spacing = HERO_CELL * this.heroScale * 0.8;
+    const top = Math.max(spacing * 0.6, h * 0.36 - (spacing * (partyViews.length - 1)) / 2);
     for (const v of this.views.values()) {
-      // Spread across the full width; keep the reference proportions vertically.
-      v.home = { x: (v.ref.x / BATTLE_W) * w, y: (v.ref.y / BATTLE_H) * h };
+      v.home =
+        v.partySlot != null
+          ? { x: w * 0.74 + v.partySlot * 8 * this.k + (v.backRow ? 36 * this.k : 0), y: top + v.partySlot * spacing }
+          : { x: (v.ref.x / BATTLE_W) * w, y: (v.ref.y / BATTLE_H) * h };
       this.tweens.killTweensOf(v.sprite);
       v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.baseScale * this.k);
       v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
@@ -204,6 +217,14 @@ export class BattleScene extends Phaser.Scene {
 
   update(time: number) {
     const state = this.bridge.getState();
+    // Change Row moves a party member back/forward.
+    if (state.units.some((u) => this.views.get(u.id)?.partySlot != null && !!this.views.get(u.id)!.backRow !== !!u.backRow)) {
+      for (const u of state.units) {
+        const v = this.views.get(u.id);
+        if (v?.partySlot != null) v.backRow = u.backRow;
+      }
+      this.layout(this.scale.width, this.scale.height);
+    }
     for (const u of state.units) {
       const v = this.views.get(u.id);
       if (!v) continue;

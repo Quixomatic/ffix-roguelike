@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.52] - 2026-10-15
+
+The party stands in a tidy column again on a full-screen battlefield.
+
+### Fixed
+- **The party formed a steep diagonal** once the battlefield filled the screen (their positions were stretched with the canvas). They now stand in an FF-style column on the right, spaced by sprite size with just a slight step right per member, kept above the menus.
+- **Change Row** now visibly moves the character back (or forward) during the fight.
+
 ## [0.1.51] - 2026-10-15
 
 Battles fill the screen like the overworld does.
