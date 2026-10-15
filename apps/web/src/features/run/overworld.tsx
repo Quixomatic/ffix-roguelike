@@ -39,9 +39,9 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
       onHover: setHover,
       onSelect: (id) => {
         if (busyRef.current) return;
-        bridge.walkTo?.(id);
-        // Let the walk play before the stage opens.
-        setTimeout(() => onMoveRef.current(id), 420);
+        // Let the walk along the road play before the stage opens.
+        const walk = bridge.walkTo?.(id) ?? 0;
+        setTimeout(() => onMoveRef.current(id), walk + 120);
       },
     };
     const game: Phaser.Game = createMapGame(hostRef.current, bridge);
@@ -50,7 +50,7 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
   }, [run.map, run.position, run.visited, run.party, world.theme]);
 
   return (
-    <div className="relative mx-auto aspect-video w-full max-w-[1200px] overflow-hidden rounded-lg bg-black">
+    <div className="relative h-full w-full overflow-hidden bg-black">
       <div ref={hostRef} className="absolute inset-0" />
       <div className="pointer-events-none absolute left-3 top-3 ff-window px-4 py-2">
         <div className="text-xl">
@@ -61,6 +61,9 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
       {hover && (
         <div className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
       )}
+      <div className="pointer-events-none absolute bottom-2 right-3 text-xs text-white/60 [text-shadow:0_1px_2px_#000]">
+        Click a glowing stage · ←↑↓→ choose · Enter go
+      </div>
     </div>
   );
 }

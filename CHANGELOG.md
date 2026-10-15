@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.47] - 2026-10-15
+
+The overworld is a Super Mario World–style map: stages on a tile grid joined by roads that run up, down, left and right with L-turns, and a zoomed-in camera following the party.
+
+### Added
+- **Map layout & routing** (`features/run/map/layout.ts`, pure TypeScript): every stage gets a tile position (left→right by column, with a little deterministic wobble for SMW-style jogs), and every connection is routed as an orthogonal road — straight runs, Z and L shapes, a "staircase" for roads that swap rows. Candidates are scored (never through another stage, avoid running alongside unrelated roads, prefer shared stretches where roads branch from or merge into the same stage) and the best combination is searched per map (~3 ms). Checked on 500 generated maps: no road through a stage, no unrelated roads overlapping. The map data in saved runs is unchanged — this is presentation only, so procedural terrain can be built around it later.
+- **New map rendering**: beaded roads (open roads from your stage shimmer, walked roads darken), level dots for battles/events/treasure, little houses for shops, synthesis, Stiltzkin, Chocobo and Moogles, a fortress and a castle for the bosses; cleared stages fade, reachable ones pulse.
+- **Camera** zoomed in (about 4–5 columns across), following the party; the map fills the middle of the run screen and resizes with the window.
+- The party walks the routed road corner by corner (walk animation, facing the way it's going); the stage opens when the walk actually ends.
+
+### Notes
+- Keyboard: ←↑↓→/WASD choose among the next stages, Enter/Space goes. Free SMW-style walking (stop at forks, walk back before committing) is next.
+
 ## [0.1.46] - 2026-10-15
 
 The run screen is laid out like a proper game HUD: party on the left, the map filling the middle, slide-out panels on the right.
