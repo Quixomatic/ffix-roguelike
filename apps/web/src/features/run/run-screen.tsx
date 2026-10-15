@@ -42,16 +42,19 @@ export function RunScreen() {
 
   if (phase.kind === "battle")
     return (
-      <div className="flex min-h-0 flex-col gap-2 overflow-y-auto p-3">
-        {actions.finishBattle.isPending && <div className="ff-window mx-auto px-4 py-1">Verifying battle…</div>}
-        {!scriptReady && <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>}
+      <div className="relative flex h-full min-h-0 flex-col p-2">
+        {(actions.finishBattle.isPending || !scriptReady) && (
+          <div className="ff-window absolute left-1/2 top-4 z-30 -translate-x-1/2 px-4 py-1">{scriptReady ? "Verifying battle…" : "Loading battle…"}</div>
+        )}
         {scriptReady && (
-          <BattleView
-            key={`${phase.nodeId}-${run.stats.battles}`}
-            initial={phase.battle}
-            theme={WORLDS[run.world]!.theme}
-            onEnd={(final) => actions.finishBattle.mutate({ inputs: final.inputs })}
-          />
+          <div className="min-h-0 flex-1">
+            <BattleView
+              key={`${phase.nodeId}-${run.stats.battles}`}
+              initial={phase.battle}
+              theme={WORLDS[run.world]!.theme}
+              onEnd={(final) => actions.finishBattle.mutate({ inputs: final.inputs })}
+            />
+          </div>
         )}
       </div>
     );

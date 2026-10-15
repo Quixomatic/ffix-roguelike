@@ -8,6 +8,7 @@ import Phaser from "phaser";
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame } from "@/features/sprites/hero-sheets";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
+/** The reference layout size: unit positions are designed at 960×540 and scaled to the real canvas. */
 export const BATTLE_W = 960;
 export const BATTLE_H = 540;
 
@@ -23,6 +24,10 @@ export interface BattleBridge {
 }
 
 interface UnitView {
+  /** Where the unit stands in the 960×540 reference layout (scaled to the canvas in `layout`). */
+  ref: { x: number; y: number };
+  /** Placeholder scale at the reference size. */
+  baseScale: number;
   sprite: Phaser.GameObjects.Sprite;
   home: { x: number; y: number };
   /** Centre to the top of the figure (where the cursor hangs). */
@@ -40,8 +45,8 @@ interface UnitView {
 
 const GAUGE_W = 56;
 const GAUGE_H = 6;
-/** FFRK strips are tiny (≈16×24); integer scale keeps the pixels crisp. */
-const HERO_SCALE = 3;
+/** FFRK strips are tiny (≈16×24); hero scale is an integer (crisp pixels) picked from the canvas height. */
+const heroScaleFor = (h: number) => Phaser.Math.Clamp(Math.floor((3 * h) / BATTLE_H), 2, 5);
 /** Empty cell rows above a standing hero's head. */
 const HERO_HEADROOM = 8;
 
@@ -61,6 +66,10 @@ const ACTION_POSE: Record<string, { anim: HeroAnim; ms: number }> = {
 export class BattleScene extends Phaser.Scene {
   private bridge!: BattleBridge;
   private views = new Map<string, UnitView>();
+  private background?: Phaser.GameObjects.Graphics;
+  /** Canvas size relative to the 960×540 reference, and the current integer hero scale. */
+  private k = 1;
+  private heroScale = 3;
 
   constructor() {
     super("battle");
@@ -76,7 +85,6 @@ export class BattleScene extends Phaser.Scene {
   }
 
   create() {
-    drawBattleBackground(this, this.bridge.theme, BATTLE_W, BATTLE_H);
     const state = this.bridge.getState();
     const enemies = state.units.filter((u) => u.side === "enemy");
     const party = state.units.filter((u) => u.side === "party");
@@ -97,23 +105,46 @@ export class BattleScene extends Phaser.Scene {
     });
 
     this.bridge.play = (events) => this.playEvents(events);
+    // Fill the space we're given: lay out for the current size, and again whenever it changes.
+    this.layout(this.scale.width, this.scale.height);
+    this.scale.on("resize", (size: Phaser.Structs.Size) => this.layout(size.width, size.height));
+  }
+
+  /** Fit the battlefield to a canvas of w×h: background, unit positions and sizes. */
+  private layout(w: number, h: number) {
+    this.cameras.main.setSize(w, h);
+    this.k = Math.min(w / BATTLE_W, h / BATTLE_H);
+    this.heroScale = heroScaleFor(h);
+    this.background?.destroy();
+    this.background = drawBattleBackground(this, this.bridge.theme, w, h);
+    for (const v of this.views.values()) {
+      // Spread across the full width; keep the reference proportions vertically.
+      v.home = { x: (v.ref.x / BATTLE_W) * w, y: (v.ref.y / BATTLE_H) * h };
+      this.tweens.killTweensOf(v.sprite);
+      v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.baseScale * this.k);
+      v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
+      v.cursor.setPosition(v.home.x, v.home.y - v.top - 18);
+      v.rig?.weapon.setScale(this.heroScale);
+      v.rig?.arm.setScale(this.heroScale);
+    }
   }
 
   private addUnit(u: BattleUnit, x: number, y: number, scale: number) {
     const animated = u.side === "party" && ensureHeroAnims(this, u.sprite);
     const key = animated ? u.sprite : ensurePlaceholder(this, u.sprite, { family: u.family, boss: u.boss });
-    const sprite = this.add.sprite(x, y, key).setScale(animated ? HERO_SCALE : u.side === "party" ? scale : u.boss ? 1.6 : 1.3);
+    const baseScale = u.side === "party" ? scale : u.boss ? 1.6 : 1.3;
+    const sprite = this.add.sprite(x, y, key).setScale(animated ? this.heroScale : baseScale);
     if (u.side === "enemy") sprite.setFlipX(true);
     if (animated) sprite.play(heroAnimKey(u.sprite, "idle"));
     sprite.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.bridge.onUnitClick(u.id));
-    const top = animated ? (HERO_CELL / 2 - HERO_HEADROOM) * HERO_SCALE : sprite.displayHeight / 2;
+    const top = animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : sprite.displayHeight / 2;
     const cursor = this.add
       .text(x, y - top - 18, "▼", { fontFamily: "monospace", fontSize: "20px", color: "#ffffff" })
       .setOrigin(0.5)
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    this.views.set(u.id, { sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
   }
 
   /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
@@ -121,8 +152,8 @@ export class BattleScene extends Phaser.Scene {
     const sheet = heroSheetForSprite(spriteKey);
     const w = sheet && weaponSprite(sheet.info.weapon);
     if (!sheet || !w || !this.textures.exists(w.key)) return undefined;
-    const weapon = this.add.image(0, 0, w.key).setScale(HERO_SCALE).setOrigin(w.grip[0] / HERO_CELL, w.grip[1] / HERO_CELL).setDepth(body.depth + 1).setVisible(false);
-    const arm = this.add.sprite(0, 0, spriteKey).setScale(HERO_SCALE).setDepth(body.depth + 2).setVisible(false);
+    const weapon = this.add.image(0, 0, w.key).setScale(this.heroScale).setOrigin(w.grip[0] / HERO_CELL, w.grip[1] / HERO_CELL).setDepth(body.depth + 1).setVisible(false);
+    const arm = this.add.sprite(0, 0, spriteKey).setScale(this.heroScale).setDepth(body.depth + 2).setVisible(false);
     return { frames: sheet.info.rig, weapon, grip: w.grip, arm };
   }
 
@@ -137,7 +168,7 @@ export class BattleScene extends Phaser.Scene {
     if (!frame) return;
     const s = v.sprite;
     rig.weapon
-      .setPosition(s.x + (frame.hand[0] - HERO_CELL / 2) * HERO_SCALE, s.y + (frame.hand[1] - HERO_CELL / 2) * HERO_SCALE)
+      .setPosition(s.x + (frame.hand[0] - HERO_CELL / 2) * this.heroScale, s.y + (frame.hand[1] - HERO_CELL / 2) * this.heroScale)
       .setAngle(frame.angle)
       .setAlpha(s.alpha);
     rig.arm.setPosition(s.x, s.y).setFrame(frame.arm).setAlpha(s.alpha);
@@ -154,19 +185,21 @@ export class BattleScene extends Phaser.Scene {
     const g = v.gauge;
     g.clear();
     if (down) return;
-    const x = v.home.x - GAUGE_W / 2;
+    const gw = GAUGE_W * Math.max(1, this.k);
+    const gh = GAUGE_H * Math.max(1, this.k);
+    const x = v.home.x - gw / 2;
     const y = v.home.y + v.sprite.displayHeight / 2 + 4;
     const pct = Math.min(1, u.atb / u.atbMax);
     const frozen = u.statuses.stop || u.statuses.sleep || u.statuses.petrify || u.statuses.freeze;
     g.fillStyle(0x000000, 0.65);
-    g.fillRect(x - 1, y - 1, GAUGE_W + 2, GAUGE_H + 2);
+    g.fillRect(x - 1, y - 1, gw + 2, gh + 2);
     let color = u.side === "party" ? 0xffe066 : 0xff8a3a;
     // Enemies about to act flash red; full gauges glow white.
     if (pct >= 1) color = 0xffffff;
     else if (u.side === "enemy" && pct > 0.8) color = Math.sin(time / 80) > 0 ? 0xff3030 : 0xff8a3a;
     if (frozen) color = 0x8888aa;
     g.fillStyle(color, 1);
-    g.fillRect(x, y, GAUGE_W * pct, GAUGE_H);
+    g.fillRect(x, y, gw * pct, gh);
   }
 
   update(time: number) {
@@ -240,7 +273,7 @@ export class BattleScene extends Phaser.Scene {
           if (!v) break;
           const dir = this.bridge.getState().units.find((u) => u.id === ev.actorId)?.side === "party" ? -1 : 1;
           this.act(ev.actorId, ev.kind);
-          this.tweens.add({ targets: v.sprite, x: v.home.x + dir * 40, duration: 140, yoyo: true, ease: "Quad.easeOut" });
+          this.tweens.add({ targets: v.sprite, x: v.home.x + dir * 40 * this.k, duration: 140, yoyo: true, ease: "Quad.easeOut" });
           break;
         }
         case "damage":
@@ -298,13 +331,13 @@ export class BattleScene extends Phaser.Scene {
     const t = this.add
       .text(v.home.x + (index % 2) * 10, v.home.y - 10 - (index % 3) * 6, text, {
         fontFamily: '"Pixelify Sans", monospace',
-        fontSize: `${big ? size + 8 : size}px`,
+        fontSize: `${Math.round((big ? size + 8 : size) * Math.max(1, this.k))}px`,
         color,
       })
       .setOrigin(0.5)
       .setStroke("#000000", 5)
       .setDepth(100);
-    this.tweens.add({ targets: t, y: t.y - 46, duration: 300, ease: "Back.easeOut" });
+    this.tweens.add({ targets: t, y: t.y - 46 * this.k, duration: 300, ease: "Back.easeOut" });
     this.tweens.add({ targets: t, alpha: 0, delay: 900, duration: 300, onComplete: () => t.destroy() });
   }
 }
@@ -317,7 +350,8 @@ export function createBattleGame(parent: HTMLElement, bridge: BattleBridge): Pha
     height: BATTLE_H,
     pixelArt: true,
     backgroundColor: "#000000",
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    // Fill the host element; the scene lays itself out for the real size (see BattleScene.layout).
+    scale: { mode: Phaser.Scale.RESIZE },
     scene: [],
     callbacks: {
       postBoot: (game) => {

@@ -13,7 +13,7 @@ interface Props {
   onEnd(state: BattleState): void;
 }
 
-/** A full battle: Phaser battlefield with FF9-style menu windows on top. */
+/** A full battle: Phaser battlefield (filling its parent — give it a height) with FF9-style menu windows on top. */
 export function BattleView({ initial, theme, onEnd }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<BattleBridge | null>(null);
@@ -52,7 +52,7 @@ export function BattleView({ initial, theme, onEnd }: Props) {
   const enemies = state.units.filter((u) => u.side === "enemy");
 
   return (
-    <div className="relative mx-auto aspect-video w-full max-w-[1200px] select-none overflow-hidden rounded-lg bg-black">
+    <div className="relative h-full min-h-[360px] w-full select-none overflow-hidden rounded-lg bg-black">
       <div ref={hostRef} className="absolute inset-0" />
 
       {battle.banner && (

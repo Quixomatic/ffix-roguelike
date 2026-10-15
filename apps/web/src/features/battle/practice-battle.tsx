@@ -45,7 +45,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-3 p-3">
+    <div className="flex h-full min-h-0 flex-col gap-3 p-3">
       <div className="ff-window flex flex-wrap items-center gap-4 px-3 py-2 text-base">
         <label className="flex items-center gap-2">
           World
@@ -95,11 +95,13 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
           </span>
         )}
       </div>
-      {initial ? (
-        <BattleView key={`${world}-${level}-${encounter}-${round}`} initial={initial} theme={w.theme} onEnd={setResult} />
-      ) : (
-        <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
-      )}
+      <div className="min-h-0 flex-1">
+        {initial ? (
+          <BattleView key={`${world}-${level}-${encounter}-${round}`} initial={initial} theme={w.theme} onEnd={setResult} />
+        ) : (
+          <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
+        )}
+      </div>
       <p className="text-center text-sm text-muted-foreground">
         Arrows + Enter to choose, Esc to go back, Tab to swap target side · click a ready party member to switch who acts
       </p>

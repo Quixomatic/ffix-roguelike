@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.51] - 2026-10-15
+
+Battles fill the screen like the overworld does.
+
+### Changed
+- **The battlefield uses all the space it's given** instead of a letterboxed 16:9 box capped at 1200 px. The canvas resizes with the window (Phaser RESIZE); unit positions are kept as proportions of the original 960×540 layout and recomputed for the real size, heroes scale by whole numbers (2×–5×, from the height) so the pixel art stays crisp, and monsters, ATB gauges, damage popups and the step-forward on actions scale with it. The background redraws at full size.
+- Run battles fill the screen below the header; the practice battle fills the page under its controls. "Loading/Verifying battle…" floats over the field instead of pushing it down.
+
 ## [0.1.50] - 2026-10-15
 
 Hides the TanStack Router and React Query devtools buttons from the corners of the screen.
