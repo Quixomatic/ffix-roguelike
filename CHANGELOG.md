@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.41] - 2026-10-15
+
+Every item has a pixel-art icon, and a new Items page shows them all.
+
+### Added
+- **Item icons for all 255 FF9 items** — weapons, armour, helmets, hats, gloves, boots, rings, ribbons, gems, potions — from the Time Fantasy "1000+ Fantasy RPG Icons" pack (finalbossblues; 16×16 pixel art in the FF6 vein). Each item is mapped by hand to the closest icon (`apps/web/scripts/item-icon-map.ts`): Zidane's daggers and thief swords, Vivi's staves (Flame Staff → the fire staff), Freya's spears, Amarant's claws, Quina's forks (tridents), Garnet's rods and rackets, Eiko's flutes, Phoenix Down → a red feather, gems → matching gemstones.
+- `pnpm -F web sprites:items [--tf]` packs only the mapped icons (209 distinct) into `public/sprites/items.png` + `item-icons.gen.ts`; `--tf` uses the pack's muted Time Fantasy palette. The pack itself stays in `.docs/assets/finalbossblues` (git-ignored).
+- **`/items` page** (header: Items): every item with its icon — filter by slot and character, search, view at 16/32/48/64 px, click for stats.
+- Icons in the menus: item cards (rewards, shops, gear), the paperdoll's slots and the gear picker.
+
 ## [0.1.40] - 2026-10-15
 
 The party swings weapons: an FFRK-style weapon rig draws a weapon in each hero's hand during attacks.

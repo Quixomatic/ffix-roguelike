@@ -9,6 +9,7 @@ export default function Header() {
     { to: "/run", label: "Run" },
     { to: "/achievements", label: "Achievements" },
     { to: "/battle", label: "Practice" },
+    { to: "/items", label: "Items" },
   ] as const;
 
   return (

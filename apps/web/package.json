@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.40",
+  "version": "0.1.41",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
     "check-types": "vite build && tsc --noEmit",
     "env:generate": "varlock codegen",
     "sprites:heroes": "bun scripts/slice-hero-sprites.ts",
+    "sprites:items": "bun scripts/build-item-icons.ts",
     "ffrk:fetch": "bun scripts/fetch-ffrk-atlases.ts",
     "ffrk:organize": "bun scripts/organize-ffrk-atlases.ts"
   },

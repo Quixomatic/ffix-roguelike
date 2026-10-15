@@ -1,5 +1,7 @@
 import { abilityName, findItem, getCharacter, type ItemData } from "@ffix-roguelike/game-data";
 
+import { ItemIcon } from "@/features/items/item-icon";
+
 /** One-line stat summary for a piece of gear, e.g. "Atk 18 · Silence" or "Def 4 · Eva 7 · Str+1". */
 export function gearSummary(item: ItemData): string {
   const parts: string[] = [];
@@ -42,8 +44,11 @@ export function ItemCard({ itemId, footer, onClick, selected }: { itemId: number
       data-active={selected}
       className="ff-window flex w-full flex-col gap-1 p-3 text-left transition enabled:hover:brightness-125 data-[active=true]:outline data-[active=true]:outline-2 data-[active=true]:outline-yellow-300"
     >
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-lg">{item.name}</span>
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 text-lg">
+          <ItemIcon itemId={itemId} size={32} />
+          {item.name}
+        </span>
         <span className="ff-title">{KIND_LABEL[item.kind] ?? item.kind}</span>
       </div>
       <div className="text-sm text-[#c8d0ff]">{gearSummary(item) || "—"}</div>

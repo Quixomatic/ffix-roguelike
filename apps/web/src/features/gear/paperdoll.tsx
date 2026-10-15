@@ -1,6 +1,8 @@
 import { abilityName, findItem, type EquipSlot } from "@ffix-roguelike/game-data";
+
 import type { ReactNode } from "react";
 
+import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { gearSummary } from "@/features/run/item-info";
 
@@ -93,7 +95,7 @@ function SlotTile({ data, active, onClick }: { data: PaperdollSlot; active: bool
             item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/20 bg-black/30 opacity-60"
           }`}
         >
-          {data.locked ? "🔒" : meta.glyph}
+          {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={32} /> : meta.glyph}
         </span>
         <span className="min-w-0">
           <span className="ff-title block text-[0.7rem]">{meta.label}</span>
@@ -141,7 +143,8 @@ export function GearPicker({
           const item = findItem(o.itemId)!;
           return (
             <button key={o.key} className="ff-option text-left" onClick={() => onPick(o.key)}>
-              <div>
+              <div className="flex items-center gap-1.5">
+                <ItemIcon itemId={item.id} size={16} />
                 {item.name} {o.caption}
               </div>
               <div className="text-xs text-[#c8d0ff]">{gearSummary(item)}</div>
