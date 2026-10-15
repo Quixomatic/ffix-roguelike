@@ -5,7 +5,7 @@
 import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
-import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame } from "@/features/sprites/hero-sheets";
+import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 /** The reference layout size: unit positions are designed at 960×540 and scaled to the real canvas. */
@@ -39,6 +39,8 @@ interface UnitView {
   animated: boolean;
   /** A one-shot pose (attack, hurt…) holds until this scene time. */
   holdUntil: number;
+  /** Showing a single status pose (stone/sleep): the next animation must restart. */
+  still?: boolean;
   cursor: Phaser.GameObjects.Text;
   /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
   gauge: Phaser.GameObjects.Graphics;
@@ -175,7 +177,8 @@ export class BattleScene extends Phaser.Scene {
     const rig = v.rig;
     if (!rig) return;
     const anim = v.sprite.anims.currentAnim;
-    const frame = anim?.key.endsWith(":attack") && v.sprite.visible ? rig.frames[(v.sprite.anims.currentFrame?.index ?? 1) - 1] : null;
+    // Mini's tiny sprites swing nothing (the weapon is drawn for full-size poses only).
+    const frame = anim?.key.endsWith(":attack") && !anim.key.includes(":mini:") && v.sprite.visible ? rig.frames[(v.sprite.anims.currentFrame?.index ?? 1) - 1] : null;
     rig.weapon.setVisible(!!frame);
     rig.arm.setVisible(!!frame);
     if (!frame) return;
@@ -236,7 +239,7 @@ export class BattleScene extends Phaser.Scene {
         v.sprite.setAlpha(u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
         this.pose(v, u, state);
       } else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
-      if (stone) v.sprite.setTint(0x888888);
+      if (stone && !(v.animated && heroSheetForSprite(u.sprite)?.info.poses.stone != null)) v.sprite.setTint(0x888888);
       else if (u.statuses.trance) v.sprite.setTint(0xff99cc);
       else if (u.statuses.poison || u.statuses.venom) v.sprite.setTint(0xaaddaa);
       else v.sprite.clearTint();
@@ -263,16 +266,34 @@ export class BattleScene extends Phaser.Scene {
     return "idle";
   }
 
+  /** FFRK's status looks: Mini's small sprites, Blind's glasses. */
+  private variantOf(u: BattleUnit): HeroVariant | null {
+    if (u.statuses.mini !== undefined) return "mini";
+    if (u.statuses.blind !== undefined) return "blind";
+    return null;
+  }
+
   private pose(v: UnitView, u: BattleUnit, state: BattleState) {
+    // Petrify and Sleep have their own single FFRK poses (stone statue, asleep) when the KO pose isn't showing.
+    const poses = heroSheetForSprite(u.sprite)?.info.poses;
+    const still = u.hp > 0 && u.statuses.death === undefined ? (u.statuses.petrify !== undefined ? poses?.stone : u.statuses.sleep !== undefined ? poses?.sleep : undefined) : undefined;
+    if (still != null) {
+      v.sprite.anims.stop();
+      v.sprite.setFrame(still);
+      v.still = true;
+      return;
+    }
+    const wasStill = v.still;
+    v.still = false;
     const frozen = u.statuses.petrify || u.statuses.stop || u.statuses.freeze || u.statuses.sleep;
     if (frozen) {
       if (v.sprite.anims.isPlaying) v.sprite.anims.pause();
       return;
     }
     if (v.sprite.anims.isPaused) v.sprite.anims.resume();
-    if (this.time.now < v.holdUntil) return;
-    const key = heroAnimKey(u.sprite, this.restingPose(u, state));
-    if (v.sprite.anims.currentAnim?.key !== key) v.sprite.play(key);
+    if (this.time.now < v.holdUntil && !wasStill) return;
+    const key = heroAnimKey(u.sprite, this.restingPose(u, state), this.variantOf(u));
+    if (wasStill || v.sprite.anims.currentAnim?.key !== key) v.sprite.play(key);
   }
 
   /** Play a one-shot pose on a hero (no-op for enemies, placeholders and the fallen). */
@@ -281,7 +302,7 @@ export class BattleScene extends Phaser.Scene {
     const p = ACTION_POSE[what];
     const u = this.bridge.getState().units.find((x) => x.id === id);
     if (!v?.animated || !p || !u || u.hp <= 0) return;
-    v.sprite.play(heroAnimKey(u.sprite, p.anim));
+    v.sprite.play(heroAnimKey(u.sprite, p.anim, this.variantOf(u)));
     v.holdUntil = this.time.now + p.ms;
   }
 

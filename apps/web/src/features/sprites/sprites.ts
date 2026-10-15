@@ -6,7 +6,7 @@
  */
 import type Phaser from "phaser";
 
-import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim } from "./hero-sheets";
+import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroVariant } from "./hero-sheets";
 import { HERO_GRID, heroPixels } from "./pixels";
 
 const FAMILY_COLORS: Record<string, number> = {
@@ -72,7 +72,9 @@ export function loadHeroSheets(scene: Phaser.Scene, spriteKeys: Iterable<string>
   }
 }
 
-export const heroAnimKey = (spriteKey: string, anim: HeroAnim) => `${spriteKey}:${anim}`;
+/** Animation key for a hero pose, optionally in a status look (Blind's glasses, Mini). */
+export const heroAnimKey = (spriteKey: string, anim: HeroAnim, variant?: HeroVariant | null) =>
+  variant ? `${spriteKey}:${variant}:${anim}` : `${spriteKey}:${anim}`;
 
 /**
  * Register a hero's animations once its strip has loaded. False when the hero has no strip (or it failed to
@@ -84,8 +86,13 @@ export function ensureHeroAnims(scene: Phaser.Scene, spriteKey: string): boolean
   if (!sheet || !scene.textures.exists(spriteKey) || scene.textures.get(spriteKey).frameTotal < sheet.info.frames) return false;
   for (const [anim, a] of Object.entries(sheet.info.anims)) {
     const key = heroAnimKey(spriteKey, anim as HeroAnim);
-    if (scene.anims.exists(key)) continue;
-    scene.anims.create({ key, frames: scene.anims.generateFrameNumbers(spriteKey, { frames: a.frames }), frameRate: a.frameRate, repeat: a.repeat });
+    if (!scene.anims.exists(key)) scene.anims.create({ key, frames: scene.anims.generateFrameNumbers(spriteKey, { frames: a.frames }), frameRate: a.frameRate, repeat: a.repeat });
+    // The same pose in each status look (same timing, the variant's frames).
+    for (const [variant, byAnim] of Object.entries(sheet.info.variants ?? {})) {
+      const vkey = heroAnimKey(spriteKey, anim as HeroAnim, variant as HeroVariant);
+      const frames = byAnim[anim as HeroAnim];
+      if (frames && !scene.anims.exists(vkey)) scene.anims.create({ key: vkey, frames: scene.anims.generateFrameNumbers(spriteKey, { frames }), frameRate: a.frameRate, repeat: a.repeat });
+    }
   }
   return true;
 }

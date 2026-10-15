@@ -76,7 +76,7 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
           disabled={!canManage}
           title={canManage ? "Equipment & abilities" : undefined}
         >
-          <HeroSprite heroKey={m.build.key} size={48} ko={down} anim={lowHp ? "dying" : undefined} />
+          <HeroSprite heroKey={m.build.key} size={48} ko={down} anim={lowHp ? "dying" : undefined} variant={m.statuses?.includes("blind") ? "blind" : null} />
         </button>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between">

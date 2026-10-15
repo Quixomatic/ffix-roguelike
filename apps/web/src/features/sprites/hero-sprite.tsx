@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 
-import { HERO_CELL, heroSheet, type HeroAnim, type HeroSheet } from "./hero-sheets";
+import { HERO_CELL, heroSheet, type HeroAnim, type HeroSheet, type HeroVariant } from "./hero-sheets";
 import { HERO_GRID, heroPixels, hex } from "./pixels";
 
 /** Standing FFRK heroes are ~24px tall; the strip is drawn at the integer scale that fits `size`. */
@@ -17,6 +17,7 @@ export function HeroSprite({
   ko,
   silhouette,
   anim = "idle",
+  variant,
 }: {
   heroKey: string;
   /** Rendered height in px. */
@@ -28,11 +29,13 @@ export function HeroSprite({
   silhouette?: boolean;
   /** Pose to loop (strip heroes only; `ko` wins). */
   anim?: HeroAnim;
+  /** Status look (FFRK's Blind glasses / Mini sprites). */
+  variant?: HeroVariant | null;
 }) {
   const width = Math.round((size * HERO_GRID.w) / HERO_GRID.h);
   const sheet = heroSheet(heroKey);
   const filter = ko ? "grayscale(0.8) brightness(0.7)" : silhouette ? "brightness(0) drop-shadow(0 0 2px #8890c0)" : undefined;
-  if (sheet) return <StripSprite sheet={sheet} size={size} width={width} className={className} anim={ko ? "ko" : anim} still={silhouette} filter={filter} />;
+  if (sheet) return <StripSprite sheet={sheet} size={size} width={width} className={className} anim={ko ? "ko" : anim} variant={variant} still={silhouette} filter={filter} />;
   return (
     <svg
       width={width}
@@ -56,6 +59,7 @@ function StripSprite({
   width,
   className,
   anim,
+  variant,
   still,
   filter,
 }: {
@@ -64,11 +68,13 @@ function StripSprite({
   width: number;
   className?: string;
   anim: HeroAnim;
+  variant?: HeroVariant | null;
   still?: boolean;
   filter?: string;
 }) {
   const a = sheet.info.anims[anim];
-  const frame = useFrame(a.frames, a.frameRate, a.repeat, !still);
+  const frames = (variant && sheet.info.variants?.[variant]?.[anim]) || a.frames;
+  const frame = useFrame(frames, a.frameRate, a.repeat, !still);
   const cell = HERO_CELL * Math.max(1, Math.floor(size / FIGURE_H));
   // Feet on the bottom edge, centred on whole pixels; wide poses (KO) may spill past the box sideways.
   const style: CSSProperties = {

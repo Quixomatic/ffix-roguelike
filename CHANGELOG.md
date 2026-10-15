@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.53] - 2026-10-15
+
+Status effects show on the party's sprites the way FFRK draws them: Blind puts the glasses on.
+
+### Added
+- **Blind** — every pose switches to FFRK's "glass" set (the shades), in battle and on the run sidebar's portraits (Blind lasts between battles).
+- **Mini** — the party member shrinks to FFRK's tiny sprite set (idle, ready, walk, attack, hurt, kneel, KO); no weapon is drawn on the tiny sprite.
+- **Sleep** and **Petrify** use FFRK's own asleep and stone-statue poses instead of freezing the current frame (Petrify no longer just tints grey for heroes with the pose).
+- The slicer packs these sets into each hero strip (`variants` per animation + single `poses` in `hero-sheets.gen.ts`); `heroAnimKey(sprite, anim, variant)` and `HeroSprite`'s `variant` prop pick them.
+
 ## [0.1.52] - 2026-10-15
 
 The party stands in a tidy column again on a full-screen battlefield.

@@ -3,9 +3,9 @@
  * both the Phaser scenes and the React HeroSprite read the same frames. Heroes without a strip return
  * null and keep the pixel-art placeholder.
  */
-import { HERO_CELL, HERO_SHEETS, WEAPON_GRIPS, type HeroAnim, type HeroRigFrame, type HeroSheetInfo } from "./hero-sheets.gen";
+import { HERO_CELL, HERO_SHEETS, WEAPON_GRIPS, type HeroAnim, type HeroRigFrame, type HeroSheetInfo, type HeroVariant } from "./hero-sheets.gen";
 
-export { HERO_CELL, type HeroAnim, type HeroRigFrame };
+export { HERO_CELL, type HeroAnim, type HeroRigFrame, type HeroVariant };
 
 /** Keys that share another hero's strip. */
 const ALIASES: Record<string, string> = { dagger: "garnet" };

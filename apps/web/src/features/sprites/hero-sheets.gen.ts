@@ -5,6 +5,8 @@ export const HERO_CELL = 32;
 
 export type HeroAnim = "idle" | "ready" | "walk" | "attack" | "chant" | "cast" | "item" | "defend" | "hurt" | "dying" | "ko" | "victory" | "evade";
 
+export type HeroVariant = "blind" | "mini";
+
 /** The weapon during one attack frame: the arm piece drawn over it (strip frame), the hand (cell px) and angle. */
 export interface HeroRigFrame {
   arm: number;
@@ -15,6 +17,10 @@ export interface HeroRigFrame {
 export interface HeroSheetInfo {
   frames: number;
   anims: Record<HeroAnim, { frames: number[]; frameRate: number; repeat: number }>;
+  /** Status looks: Blind (FFRK's glasses set) and Mini — per animation, the frames to show instead. */
+  variants: Record<HeroVariant, Record<HeroAnim, number[]>>;
+  /** Single-frame status poses. */
+  poses: { sleep?: number; stone?: number };
   /** Per attack-animation frame. */
   rig: (HeroRigFrame | null)[];
   /** Stand-in weapon sprite (/sprites/weapons/<id>.png). */
@@ -23,7 +29,7 @@ export interface HeroSheetInfo {
 
 export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
   zidane: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -39,11 +45,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100001,
   },
   garnet: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -59,11 +70,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [19, 7.5], angle: 90 }, { arm: 11, hand: [19, 7.5], angle: 90 }, { arm: 12, hand: [11.5, 20.5], angle: 0 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, null],
     weapon: 100012,
   },
   vivi: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -79,11 +95,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [18.5, 13.5], angle: 90 }, { arm: 11, hand: [18.5, 13.5], angle: 90 }, { arm: 12, hand: [12.5, 22.5], angle: 0 }, { arm: 12, hand: [12.5, 22.5], angle: -90 }, { arm: 12, hand: [12.5, 22.5], angle: -90 }, null],
     weapon: 100009,
   },
   steiner: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -99,11 +120,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100002,
   },
   freya: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -119,11 +145,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [19.5, 7.5], angle: 90 }, { arm: 11, hand: [19.5, 7.5], angle: 90 }, { arm: 12, hand: [11.5, 20.5], angle: 0 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, null],
     weapon: 100066,
   },
   quina: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -139,11 +170,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100066,
   },
   eiko: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -159,11 +195,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [17.5, 13.5], angle: 90 }, { arm: 11, hand: [17.5, 13.5], angle: 90 }, { arm: 12, hand: [11.5, 22.5], angle: 0 }, { arm: 12, hand: [11.5, 22.5], angle: -90 }, { arm: 12, hand: [11.5, 22.5], angle: -90 }, null],
     weapon: 100012,
   },
   amarant: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -179,11 +220,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100008,
   },
   beatrix: {
-    frames: 13,
+    frames: 33,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -199,11 +245,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
     rig: [null, { arm: 11, hand: [19, 7.5], angle: 90 }, { arm: 11, hand: [19, 7.5], angle: 90 }, { arm: 12, hand: [11.5, 20.5], angle: 0 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, { arm: 12, hand: [11.5, 20.5], angle: -90 }, null],
     weapon: 100003,
   },
   marcus: {
-    frames: 13,
+    frames: 26,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -219,11 +270,16 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [0], ready: [1], walk: [2, 0], attack: [2, 3, 3, 4, 4, 4, 1], chant: [5, 6], cast: [5, 6, 5, 6, 7, 7, 7], item: [1, 7, 7, 7], defend: [1], hurt: [8, 8, 8], dying: [9], ko: [10], victory: [7, 0], evade: [2, 2, 0] },
+    },
+    poses: { sleep: 24, stone: 25 },
     rig: [null, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100002,
   },
   blank: {
-    frames: 13,
+    frames: 26,
     anims: {
       idle: { frames: [0], frameRate: 1, repeat: -1 },
       ready: { frames: [1], frameRate: 1, repeat: -1 },
@@ -239,6 +295,11 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
       victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
       evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
     },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [0], ready: [1], walk: [2, 0], attack: [2, 3, 3, 4, 4, 4, 1], chant: [5, 6], cast: [5, 6, 5, 6, 7, 7, 7], item: [1, 7, 7, 7], defend: [1], hurt: [8, 8, 8], dying: [9], ko: [10], victory: [7, 0], evade: [2, 2, 0] },
+    },
+    poses: { sleep: 24, stone: 25 },
     rig: [null, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100002,
   },

@@ -85,6 +85,33 @@ const ATTACK_RIG: ({ arm: "left_arm_3" | "left_arm_4"; angle: number } | null)[]
 ];
 const ARMS = ["left_arm_3", "left_arm_4"] as const;
 
+/**
+ * Status looks. FFRK draws Blind as a full "glass_*" pose set (shades on), Mini as a small "mini_*" set, and single
+ * "sleep" / "stone" poses. Each variant maps the base animation frames to its own frames (falling back to base).
+ */
+const MINI_FOR: Record<string, string> = {
+  idle: "mini_idle",
+  ready: "mini_ready",
+  walk: "mini_walk",
+  left_arm_1: "mini_attack",
+  left_arm_2: "mini_attack",
+  right_arm_1: "mini_attack",
+  right_arm_2: "mini_attack",
+  chant_1: "mini_ready",
+  chant_2: "mini_ready",
+  hands_up: "mini_ready",
+  damage: "mini_damage",
+  fatal: "mini_fatal",
+  dead: "mini_dead",
+};
+const VARIANTS: Record<string, (base: string, has: (name: string) => boolean) => string> = {
+  blind: (n, has) => (has(`glass_${n}`) ? `glass_${n}` : `base_${n}`),
+  mini: (n, has) => {
+    const m = MINI_FOR[n] ?? "mini_idle";
+    return has(m) ? m : `base_${n}`;
+  },
+};
+
 interface AtlasFrame {
   frame: { x: number; y: number; w: number; h: number };
   rotated: boolean;
@@ -102,6 +129,10 @@ interface Built {
   strip: PNG;
   frames: number;
   anims: Record<string, { frames: number[]; frameRate: number; repeat: number }>;
+  /** Status variants: per animation, the strip frames to show instead (same timing as `anims`). */
+  variants: Record<string, Record<string, number[]>>;
+  /** Single-frame status poses (strip frame), if the sheet has them. */
+  poses: { sleep?: number; stone?: number };
   rig: (RigFrame | null)[];
   weapon: number;
 }
@@ -159,18 +190,30 @@ function buildWeapon(id: number): { cell: PNG; grip: [number, number] } {
 function build(key: string, hero: (typeof HEROES)[string]): Built {
   const sheet = PNG.sync.read(fs.readFileSync(path.join(RAW, "characters", `${hero.sheet}.png`)));
   const atlas = readAtlas(path.join(RAW, "characters", `${hero.sheet}.json`));
-  const names = [...new Set([...Object.values(ANIMS).flatMap((a) => a.frames), ...ARMS])];
-  for (const n of names) if (!atlas.frames[`base_${n}.png`]) throw new Error(`${key} (${hero.sheet}): no base_${n} frame`);
-  const strip = new PNG({ width: names.length * CELL, height: CELL });
-  names.forEach((n, cell) => blitCell(strip, sheet, atlas.frames[`base_${n}.png`]!, cell));
-  const anims = Object.fromEntries(Object.entries(ANIMS).map(([a, def]) => [a, { ...def, frames: def.frames.map((n) => names.indexOf(n)) }]));
+  const has = (name: string) => !!atlas.frames[`${name}.png`];
+  // Every atlas frame the strip needs, by its full FFRK name: base poses and arm pieces, then the status sets.
+  const baseNames = [...new Set([...Object.values(ANIMS).flatMap((a) => a.frames), ...ARMS])];
+  for (const n of baseNames) if (!has(`base_${n}`)) throw new Error(`${key} (${hero.sheet}): no base_${n} frame`);
+  const cells: string[] = baseNames.map((n) => `base_${n}`);
+  const cellOf = (name: string) => {
+    let i = cells.indexOf(name);
+    if (i < 0) i = cells.push(name) - 1;
+    return i;
+  };
+  const anims = Object.fromEntries(Object.entries(ANIMS).map(([a, def]) => [a, { ...def, frames: def.frames.map((n) => cellOf(`base_${n}`)) }]));
+  const variants = Object.fromEntries(
+    Object.entries(VARIANTS).map(([v, pick]) => [v, Object.fromEntries(Object.entries(ANIMS).map(([a, def]) => [a, def.frames.map((n) => cellOf(pick(n, has)))]))]),
+  );
+  const poses = { sleep: has("sleep") ? cellOf("sleep") : undefined, stone: has("stone") ? cellOf("stone") : undefined };
+  const strip = new PNG({ width: cells.length * CELL, height: CELL });
+  cells.forEach((n, cell) => blitCell(strip, sheet, atlas.frames[`${n}.png`]!, cell));
   const rig = ATTACK_RIG.map((r) => {
     if (!r) return null;
-    const arm = names.indexOf(r.arm);
+    const arm = cellOf(`base_${r.arm}`);
     const [x, y] = handOf(strip, arm, r.arm === "left_arm_3");
     return { arm, hand: [Math.round(x * 2) / 2, Math.round(y * 2) / 2] as [number, number], angle: r.angle };
   });
-  return { strip, frames: names.length, anims, rig, weapon: hero.weapon };
+  return { strip, frames: cells.length, anims, variants, poses, rig, weapon: hero.weapon };
 }
 
 /** Preview: each animation as a row, the attack with the weapon and arm piece layered in. */
@@ -223,7 +266,7 @@ function main() {
   for (const [key, hero] of Object.entries(HEROES)) {
     const b = build(key, hero);
     fs.writeFileSync(path.join(OUT, `${key}.png`), PNG.sync.write(b.strip));
-    gen[key] = { frames: b.frames, anims: b.anims, rig: b.rig, weapon: b.weapon };
+    gen[key] = { frames: b.frames, anims: b.anims, variants: b.variants, poses: b.poses, rig: b.rig, weapon: b.weapon };
     if (previewDir) preview(key, b, weapons.get(hero.weapon)!, previewDir);
   }
 
@@ -233,7 +276,14 @@ function main() {
         .map(([n, a]) => `      ${n}: { frames: [${a.frames.join(", ")}], frameRate: ${a.frameRate}, repeat: ${a.repeat} },`)
         .join("\n");
       const rig = g.rig.map((r) => (r ? `{ arm: ${r.arm}, hand: [${r.hand.join(", ")}], angle: ${r.angle} }` : "null")).join(", ");
-      return `  ${key}: {\n    frames: ${g.frames},\n    anims: {\n${anims}\n    },\n    rig: [${rig}],\n    weapon: ${g.weapon},\n  },`;
+      const variants = Object.entries(g.variants)
+        .map(([v, byAnim]) => `      ${v}: { ${Object.entries(byAnim).map(([a, fr]) => `${a}: [${fr.join(", ")}]`).join(", ")} },`)
+        .join("\n");
+      const poses = Object.entries(g.poses)
+        .filter(([, v]) => v != null)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(", ");
+      return `  ${key}: {\n    frames: ${g.frames},\n    anims: {\n${anims}\n    },\n    variants: {\n${variants}\n    },\n    poses: { ${poses} },\n    rig: [${rig}],\n    weapon: ${g.weapon},\n  },`;
     })
     .join("\n");
   const grips = [...weapons].map(([id, w]) => `  ${id}: [${w.grip.map((v) => Math.round(v * 2) / 2).join(", ")}],`).join("\n");
@@ -243,9 +293,12 @@ function main() {
       `/** Each hero strip is a row of CELL×CELL frames at /sprites/heroes/<key>.png, feet on the bottom row. */\n` +
       `export const HERO_CELL = ${CELL};\n\n` +
       `export type HeroAnim = ${Object.keys(ANIMS).map((n) => `"${n}"`).join(" | ")};\n\n` +
+      `export type HeroVariant = ${Object.keys(VARIANTS).map((n) => `"${n}"`).join(" | ")};\n\n` +
       `/** The weapon during one attack frame: the arm piece drawn over it (strip frame), the hand (cell px) and angle. */\n` +
       `export interface HeroRigFrame {\n  arm: number;\n  hand: [number, number];\n  angle: number;\n}\n\n` +
       `export interface HeroSheetInfo {\n  frames: number;\n  anims: Record<HeroAnim, { frames: number[]; frameRate: number; repeat: number }>;\n` +
+      `  /** Status looks: Blind (FFRK's glasses set) and Mini — per animation, the frames to show instead. */\n  variants: Record<HeroVariant, Record<HeroAnim, number[]>>;\n` +
+      `  /** Single-frame status poses. */\n  poses: { sleep?: number; stone?: number };\n` +
       `  /** Per attack-animation frame. */\n  rig: (HeroRigFrame | null)[];\n  /** Stand-in weapon sprite (/sprites/weapons/<id>.png). */\n  weapon: number;\n}\n\n` +
       `export const HERO_SHEETS: Record<string, HeroSheetInfo> = {\n${body}\n};\n\n` +
       `/** Weapon sprite id → grip point in its 32×32 cell (sprites are drawn tip up-left). */\n` +
