@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.46] - 2026-10-15
+
+The run screen is laid out like a proper game HUD: party on the left, the map filling the middle, slide-out panels on the right.
+
+### Changed
+- **Run screen layout.** Full height, three parts:
+  - **Party sidebar (left)**: area, journey progress and gil on top, then the four party members filling the height — animated portrait (kneels at Low HP, down when KO'd), Lv, HP/MP/EXP bars, Atk/Def/Mag/Spd, lasting statuses, equipped gear icons, and quick actions: **Manage** and one-click field items (Potion, Ether, Phoenix Down…) on that member. "Optimize gear" at the bottom.
+  - **Main area**: the map (or the current stage's screen — shop, rewards, Moogle…) fills the rest.
+  - **Dock (right edge)**: Items (use a field item on anyone), Gear (everything the party carries — who wears it, found vs safe) and Run (journey route, stats, Abandon run) slide out over the map.
+- **The in-run character sheet** matches the camp one: paperdoll and gear picker (with stat comparisons) on the left; stats, field items, support abilities (stone meter) and abilities in panels on the right.
+
 ## [0.1.45] - 2026-10-15
 
 Gear shows what it would actually do to your characters, everywhere you see it.
