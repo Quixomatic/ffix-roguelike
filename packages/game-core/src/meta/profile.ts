@@ -78,6 +78,19 @@ export const UNLOCKS: UnlockRule[] = [
   { key: "blank", hint: "Win a run on Tier 1 or higher", check: (p) => p.stats.highestTierWon >= 1 },
 ];
 
+/**
+ * Characters not on the roster yet, with how to get them: story recruits in journey order ("Clear The Evil
+ * Forest"), then the interim milestone unlocks.
+ */
+export function lockedCharacters(p: Profile): { key: string; hint: string }[] {
+  const out: { key: string; hint: string }[] = [];
+  for (const j of JOURNEYS)
+    for (const key of j.unlocks ?? [])
+      if (!p.unlocked.includes(key) && !out.some((x) => x.key === key)) out.push({ key, hint: `Clear the journey "${j.name.replace(/^\d+ · /, "")}"` });
+  for (const u of UNLOCKS) if (!p.unlocked.includes(u.key) && !out.some((x) => x.key === u.key)) out.push({ key: u.key, hint: u.hint });
+  return out;
+}
+
 export function newProfile(): Profile {
   const builds: Record<string, CharacterBuild> = {};
   for (const key of [...MAIN_CAST, "beatrix", "blank"]) builds[key] = newBuild(key, 1);

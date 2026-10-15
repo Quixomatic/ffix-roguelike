@@ -7,7 +7,7 @@ import { getItem } from "@ffix-roguelike/game-data";
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gemsMax, newBuild, STARTER_ARMOR } from "../stats";
-import { applyRunOutcome, buySupply, completionPoints, gearCatalog, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, buySupply, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -114,5 +114,17 @@ describe("FF9 growth (ff9level.cs)", () => {
     const plain = deriveStats(newBuild("zidane", 33));
     expect(deriveStats(b).strength).toBe(plain.strength + 3);
     expect(gemsMax(b)).toBe(18 + Math.floor((33 * 4) / 10) + 5);
+  });
+});
+
+describe("locked roster", () => {
+  test("lists story recruits in journey order, then milestone unlocks", () => {
+    const p = newProfile();
+    const locked = lockedCharacters(p);
+    expect(locked.slice(0, 5).map((l) => l.key)).toEqual(["vivi", "steiner", "garnet", "freya", "quina"]);
+    expect(locked[0]!.hint).toBe('Clear the journey "The Evil Forest"');
+    expect(locked.map((l) => l.key)).toContain("amarant");
+    expect(locked.map((l) => l.key)).not.toContain("zidane");
+    expect(lockedCharacters({ ...p, unlocked: [...p.unlocked, "vivi"] }).map((l) => l.key)).not.toContain("vivi");
   });
 });

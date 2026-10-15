@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.37] - 2026-10-15
+
+The camp roster shows every character you haven't recruited yet, including the story recruits.
+
+### Fixed
+- **Vivi, Steiner, Garnet, Freya and Quina were missing from the camp roster until they joined.** The greyed "???" cards only came from the interim milestone unlocks (Amarant, Eiko, Beatrix, Blank); story recruits join by clearing journeys 1–5 and weren't listed at all. The roster now shows them in journey order with how to get them ("Clear the journey "The Evil Forest""), then the milestone ones (`lockedCharacters` in game-core; `profile.get` uses it).
+- Changelog correction for v0.1.36: hero idle is the plain standing frame (no blink) until the FFRK pose labels are fixed — the "blink" frames turned out to be FF9's Blind-status sprites.
+
 ## [0.1.36] - 2026-10-15
 
 The party has real sprites: FF Record Keeper's FF9 sheets, animated in battle, on the overworld and in every menu.

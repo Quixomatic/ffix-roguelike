@@ -1,4 +1,4 @@
-import { buySupply, raiseStartLevel, setProfileSupports, unlockGear, unlockSlot, UNLOCKS, type Profile } from "@ffix-roguelike/game-core";
+import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -32,7 +32,7 @@ export const profileRouter = router({
       ...loaded.profile,
       battleMode: loaded.battleMode,
       activeRunId: active?.id ?? null,
-      locked: UNLOCKS.filter((u) => !loaded.profile.unlocked.includes(u.key)).map((u) => ({ key: u.key, hint: u.hint })),
+      locked: lockedCharacters(loaded.profile),
     };
   }),
 
