@@ -15,6 +15,9 @@ export function RunScreen() {
   const active = useActiveRun();
   const actions = useRunActions();
   const run = active.data?.state;
+  // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs. Hooks stay above
+  // the early returns so every render calls the same ones.
+  const scriptReady = useBattleScript(run?.phase.kind === "battle" ? run.phase.battle.scene : undefined);
 
   if (active.isPending) return <div className="p-6">Loading…</div>;
   if (!run) {
@@ -30,8 +33,6 @@ export function RunScreen() {
 
   const phase = run.phase;
   const inBattle = phase.kind === "battle";
-  // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs.
-  const scriptReady = useBattleScript(phase.kind === "battle" ? phase.battle.scene : undefined);
   const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (

@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.35] - 2026-10-15
+
+Fixes "Rendered more hooks than during the previous render" when reloading or starting a run.
+
+### Fixed
+- **The run screen crashed with "Something went wrong! Rendered more hooks than during the previous render"** on reload and when a run started. The hook that loads a battle's FF9 AI script (v0.1.31) ran after the "Loading…" early return, so the first render and the next one called different hooks. It now runs before any early return.
+
 ## [0.1.34] - 2026-10-15
 
 No more frozen fights: battles play FF9's phases straight through, and a fight can never hang on a story event that can't happen here.
