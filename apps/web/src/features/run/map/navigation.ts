@@ -3,10 +3,12 @@
  * `layout.branchesFrom(stage)`:
  *  - at a stage or a fork the walker rests; pressing the direction of a branch walks it;
  *  - corners inside a branch are auto-walked; the walker stops at the next fork (unless the held direction
- *    names one of its branches, so holding feels continuous) or arrives at a stage, which commits;
- *  - until it arrives it may reverse (press the opposite of its heading) back toward the stage it left, and
- *    stops there; there's no road back past that stage;
- *  - `goTo(stage)` auto-walks there, taking the right branch at every fork (walking back first if needed).
+ *    names one of its branches, so holding feels continuous) or at the next stage, where it *stands*;
+ *  - standing on a stage doesn't commit: `confirm()` (Enter/Space/click) enters it; until then it may reverse
+ *    (press the opposite of its heading) back toward the stage it left, and stops there; there's no road back
+ *    past that stage, and no road on from a stage it hasn't entered;
+ *  - `goTo(stage)` auto-walks there, taking the right branch at every fork (walking back first if needed), and
+ *    enters it on arrival (a click is already a choice).
  */
 import { OPPOSITE, stepDir, type Branch, type Dir, type TilePoint } from "./layout";
 
@@ -17,7 +19,9 @@ export class Walker {
   s = 0;
   /** 1 forward, -1 back toward the stage, 0 resting. */
   moving: 0 | 1 | -1 = 0;
-  /** Set once a stage is reached: the walker is done. */
+  /** Standing on a stage it walked to, not entered yet. */
+  standing: string | null = null;
+  /** Set once a stage is entered (confirmed): the walker is done. */
   arrived: string | null = null;
   /** Auto-walk destination (click). */
   target: string | null = null;
@@ -37,7 +41,7 @@ export class Walker {
 
   /** Branches you can take from where the walker rests (none while moving). */
   options(): Branch[] {
-    if (this.moving || this.arrived) return [];
+    if (this.moving || this.arrived || this.standing) return [];
     const top = this.top;
     return top ? top.children : this.roots;
   }
@@ -87,10 +91,19 @@ export class Walker {
       return true;
     }
     if (this.backDir() === dir) {
+      this.standing = null;
       this.moving = -1;
       return true;
     }
     return false;
+  }
+
+  /** Enter the stage the walker is standing on. Returns it (the move to commit), or null. */
+  confirm(): string | null {
+    if (this.arrived || this.moving || !this.standing) return null;
+    this.arrived = this.standing;
+    this.standing = null;
+    return this.arrived;
   }
 
   /** Auto-walk to a destination stage reachable from the starting stage. */
@@ -98,6 +111,7 @@ export class Walker {
     if (this.arrived || this.moving) return false;
     if (!this.roots.some((b) => b.stages.includes(stage))) return false;
     this.target = stage;
+    this.standing = null;
     this.steer();
     return true;
   }
@@ -130,9 +144,14 @@ export class Walker {
         this.s = len;
         if (top.to) {
           this.moving = 0;
-          this.arrived = top.to;
-          this.target = null;
-          return top.to;
+          // A click (target) enters straight away; walking by keys stops on the stage to be confirmed.
+          if (this.target) {
+            this.arrived = top.to;
+            this.target = null;
+            return top.to;
+          }
+          this.standing = top.to;
+          return null;
         }
         if (this.target) {
           this.moving = 0;

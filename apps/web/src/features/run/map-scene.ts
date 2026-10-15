@@ -17,7 +17,7 @@ export interface MapBridge {
   visited: string[];
   leader: string;
   theme: string;
-  /** The party arrived at a next stage (by keys or a click): commit the move. */
+  /** The party entered a next stage (Enter/Space/click on the stage it stands on, or a click from afar): commit the move. */
   onSelect(nodeId: string): void;
   onHover(node: MapNode | null): void;
   /** True while a server move is in flight: the map ignores input. */
@@ -94,7 +94,7 @@ export class MapScene extends Phaser.Scene {
   private animated = false;
   private walker!: Walker;
   private keys!: Record<"up" | "down" | "left" | "right" | "w" | "a" | "s" | "d", Phaser.Input.Keyboard.Key>;
-  private hints: Phaser.GameObjects.Graphics[] = [];
+  private hints: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[] = [];
   private walkingNow = false;
   private lastHeading: Dir | null = null;
   private spriteKey = "";
@@ -345,6 +345,15 @@ export class MapScene extends Phaser.Scene {
 
   private onKey(ev: KeyboardEvent) {
     if (this.locked() || typingElsewhere()) return;
+    // Enter/Space enters the stage the party is standing on.
+    if (ev.key === "Enter" || ev.key === " ") {
+      const id = this.walker.confirm();
+      if (id) {
+        ev.preventDefault();
+        this.commit(id);
+      }
+      return;
+    }
     const dir = KEY_DIR[ev.key.toLowerCase()];
     if (!dir) return;
     ev.preventDefault();
@@ -354,7 +363,28 @@ export class MapScene extends Phaser.Scene {
 
   private clickStage(id: string) {
     if (this.locked()) return;
+    // Clicking the stage the party stands on enters it; clicking another reachable stage walks there and enters.
+    if (this.walker.standing === id) {
+      const entered = this.walker.confirm();
+      if (entered) this.commit(entered);
+      return;
+    }
     if (this.walker.goTo(id)) this.afterMoveChange();
+  }
+
+  /** Enter a stage: tell React (server move), and recover if the move never lands. */
+  private commit(id: string) {
+    this.placeParty();
+    this.setWalking(false);
+    this.showHints();
+    this.bridge.onSelect(id);
+    // If the move never lands (server error), let the player try again from the stage they left.
+    this.time.delayedCall(6000, () => {
+      if (!this.scene.isActive()) return;
+      this.walker = new Walker(this.walker.start, this.walker.roots);
+      this.placeParty();
+      this.showHints();
+    });
   }
 
   update(_time: number, delta: number) {
@@ -371,17 +401,7 @@ export class MapScene extends Phaser.Scene {
         if (heading === "right" || heading === "left") this.partySprite.setFlipX(heading === "right");
       }
       if (arrived) {
-        this.placeParty();
-        this.setWalking(false);
-        this.showHints();
-        this.bridge.onSelect(arrived);
-        // If the move never lands (server error), let the player try again from the stage they left.
-        this.time.delayedCall(6000, () => {
-          if (!this.scene.isActive()) return;
-          this.walker = new Walker(this.walker.start, this.walker.roots);
-          this.placeParty();
-          this.showHints();
-        });
+        this.commit(arrived);
         return;
       }
       if (!w.moving && this.walkingNow) {
@@ -447,7 +467,18 @@ export class MapScene extends Phaser.Scene {
     };
     for (const b of this.walker.options()) add(b.dir, 1);
     const back = this.walker.backDir();
-    if (back) add(back, 0.45);
+    if (back) add(back, this.walker.standing ? 0.8 : 0.45);
+    // Standing on a stage it hasn't entered: prompt to enter.
+    if (this.walker.standing) {
+      const label = this.add
+        .text(here.x * TILE + TILE / 2, here.y * TILE - TILE * 0.9, "Enter ⏎", { fontFamily: "monospace", fontSize: "40px", color: "#fff6c8", stroke: "#000000", strokeThickness: 8 })
+        .setOrigin(0.5, 1)
+        .setScale(0.25)
+        .setDepth(13);
+      label.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+      this.tweens.add({ targets: label, y: label.y - 2, duration: 420, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      this.hints.push(label);
+    }
   }
 }
 

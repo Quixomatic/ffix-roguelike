@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.49] - 2026-10-15
+
+Walking onto a stage no longer enters it: you stop there and choose.
+
+### Changed
+- **Stages wait for you.** Walking onto a stage (WASD/arrows) leaves the party standing on it with an "Enter ⏎" prompt; **Enter or Space** (or clicking that stage) goes in. Until then you can walk back the way you came. Clicking a different reachable stage still walks there and goes straight in — a click is already a choice.
+- Navigation tests re-run with the new step (400 maps, 7,384 stages, 2,840 forks): every unentered stage can be walked back from, and confirming enters exactly that stage.
+
 ## [0.1.48] - 2026-10-15
 
 Walk the overworld like Super Mario World: WASD/arrows move the party along the roads, stopping at forks.
