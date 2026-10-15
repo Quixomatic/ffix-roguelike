@@ -5,7 +5,7 @@
 import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
-import { HERO_CELL, type HeroAnim } from "@/features/sprites/hero-sheets";
+import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame } from "@/features/sprites/hero-sheets";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 export const BATTLE_W = 960;
@@ -34,6 +34,8 @@ interface UnitView {
   cursor: Phaser.GameObjects.Text;
   /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
   gauge: Phaser.GameObjects.Graphics;
+  /** FFRK-style weapon rig: the weapon drawn between the body and the arm piece during attack frames. */
+  rig?: { frames: (HeroRigFrame | null)[]; weapon: Phaser.GameObjects.Image; grip: [number, number]; arm: Phaser.GameObjects.Sprite };
 }
 
 const GAUGE_W = 56;
@@ -111,7 +113,41 @@ export class BattleScene extends Phaser.Scene {
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    this.views.set(u.id, { sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge });
+    this.views.set(u.id, { sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+  }
+
+  /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
+  private addRig(spriteKey: string, body: Phaser.GameObjects.Sprite): UnitView["rig"] {
+    const sheet = heroSheetForSprite(spriteKey);
+    const w = sheet && weaponSprite(sheet.info.weapon);
+    if (!sheet || !w || !this.textures.exists(w.key)) return undefined;
+    const weapon = this.add.image(0, 0, w.key).setScale(HERO_SCALE).setOrigin(w.grip[0] / HERO_CELL, w.grip[1] / HERO_CELL).setDepth(body.depth + 1).setVisible(false);
+    const arm = this.add.sprite(0, 0, spriteKey).setScale(HERO_SCALE).setDepth(body.depth + 2).setVisible(false);
+    return { frames: sheet.info.rig, weapon, grip: w.grip, arm };
+  }
+
+  /** Show the weapon in the hero's hand on attack frames: body → weapon (grip on the hand, angled) → arm piece. */
+  private syncRig(v: UnitView) {
+    const rig = v.rig;
+    if (!rig) return;
+    const anim = v.sprite.anims.currentAnim;
+    const frame = anim?.key.endsWith(":attack") && v.sprite.visible ? rig.frames[(v.sprite.anims.currentFrame?.index ?? 1) - 1] : null;
+    rig.weapon.setVisible(!!frame);
+    rig.arm.setVisible(!!frame);
+    if (!frame) return;
+    const s = v.sprite;
+    rig.weapon
+      .setPosition(s.x + (frame.hand[0] - HERO_CELL / 2) * HERO_SCALE, s.y + (frame.hand[1] - HERO_CELL / 2) * HERO_SCALE)
+      .setAngle(frame.angle)
+      .setAlpha(s.alpha);
+    rig.arm.setPosition(s.x, s.y).setFrame(frame.arm).setAlpha(s.alpha);
+    if (s.isTinted) {
+      rig.weapon.setTint(s.tintTopLeft);
+      rig.arm.setTint(s.tintTopLeft);
+    } else {
+      rig.weapon.clearTint();
+      rig.arm.clearTint();
+    }
   }
 
   private drawGauge(v: UnitView, u: BattleUnit, time: number, down: boolean) {
@@ -156,6 +192,7 @@ export class BattleScene extends Phaser.Scene {
       v.cursor.y = v.home.y - v.top - 18 + Math.sin(time / 120) * 3;
       // Idle bob for living units (animated heroes breathe on their own).
       if (!v.animated && !down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
+      this.syncRig(v);
       this.drawGauge(v, u, time, down || stone || !shown);
     }
   }

@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.40] - 2026-10-15
+
+The party swings weapons: an FFRK-style weapon rig draws a weapon in each hero's hand during attacks.
+
+### Added
+- **Weapons in hand.** FFRK draws the weapon as its own sprite between the body and a separate arm piece, so the hand closes over the grip. The hero strips now carry those arm pieces (`left_arm_3` raised, `left_arm_4` extended), and attacks play raise → forward → slash: the weapon starts raised behind (90°), comes up and forward (0°), and ends in a downward slash (−90°), always in 90° steps so the pixels stay crisp.
+- The slicer finds each hero's hand on the arm pieces (top of the raised arm, front of the extended one) and each weapon's grip (weapons are all drawn tip up-left), and records them in `hero-sheets.gen.ts` (`rig` per attack frame, `WEAPON_GRIPS`). Weapon cells go to `public/sprites/weapons/<id>.png`.
+- **Stand-in weapons for now** (one per hero, from FFRK's weapon sprite pool): Zidane a dagger, Vivi a staff, Garnet and Eiko a rod, Steiner, Blank and Marcus a sword, Beatrix a long sword, Freya and Quina a spear, Amarant claws. Next: the equipped FF9 weapon picks its own sprite.
+
+### Changed
+- The attack animation uses FFRK's raise/swing poses (`left_arm_1` → `left_arm_2`) instead of the off-hand `right_arm` frames.
+
 ## [0.1.39] - 2026-10-15
 
 FFRK asset tooling: every party, boss and enemy sheet with its frame data, the battle weapon sprites, and gear icons.

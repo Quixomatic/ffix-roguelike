@@ -6,7 +6,7 @@
  */
 import type Phaser from "phaser";
 
-import { HERO_CELL, heroSheetForSprite, type HeroAnim } from "./hero-sheets";
+import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim } from "./hero-sheets";
 import { HERO_GRID, heroPixels } from "./pixels";
 
 const FAMILY_COLORS: Record<string, number> = {
@@ -67,6 +67,8 @@ export function loadHeroSheets(scene: Phaser.Scene, spriteKeys: Iterable<string>
   for (const key of new Set(spriteKeys)) {
     const sheet = heroSheetForSprite(key);
     if (sheet && !scene.textures.exists(key)) scene.load.spritesheet(key, sheet.url, { frameWidth: HERO_CELL, frameHeight: HERO_CELL });
+    const weapon = sheet && weaponSprite(sheet.info.weapon);
+    if (weapon && !scene.textures.exists(weapon.key)) scene.load.image(weapon.key, weapon.url);
   }
 }
 
