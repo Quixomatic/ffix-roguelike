@@ -1,9 +1,7 @@
 import { Toaster } from "@ffix-roguelike/ui/components/sonner";
 import { registerBestiary, registerGameData } from "@ffix-roguelike/game-data";
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import Header from "@/components/header";
 import { SettingsSync } from "@/features/settings/use-settings";
@@ -61,8 +59,6 @@ function RootComponent() {
         </div>
         <Toaster richColors />
       </ThemeProvider>
-      <TanStackRouterDevtools position="bottom-left" />
-      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </>
   );
 }

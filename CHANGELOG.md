@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.50] - 2026-10-15
+
+Hides the TanStack Router and React Query devtools buttons from the corners of the screen.
+
+### Changed
+- Removed the TanStack Router (bottom-left) and React Query (bottom-right) devtools overlays from the app root. The packages stay installed; re-add the two components in `routes/__root.tsx` to debug with them.
+
 ## [0.1.49] - 2026-10-15
 
 Walking onto a stage no longer enters it: you stop there and choose.
