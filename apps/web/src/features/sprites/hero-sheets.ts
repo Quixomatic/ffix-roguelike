@@ -1,6 +1,6 @@
 /**
  * The FFRK hero strips (sliced by scripts/slice-hero-sprites.ts into public/sprites/heroes). Framework-free so
- * both the Phaser scenes and the React HeroSprite read the same frames. Heroes without a strip (Blank) return
+ * both the Phaser scenes and the React HeroSprite read the same frames. Heroes without a strip return
  * null and keep the pixel-art placeholder.
  */
 import { HERO_CELL, HERO_SHEETS, type HeroAnim, type HeroSheetInfo } from "./hero-sheets.gen";

@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.37",
+  "version": "0.1.38",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,9 @@
     "start": "vite",
     "check-types": "vite build && tsc --noEmit",
     "env:generate": "varlock codegen",
-    "sprites:heroes": "bun scripts/slice-hero-sprites.ts"
+    "sprites:heroes": "bun scripts/slice-hero-sprites.ts",
+    "ffrk:fetch": "bun scripts/fetch-ffrk-atlases.ts",
+    "ffrk:organize": "bun scripts/organize-ffrk-atlases.ts"
   },
   "dependencies": {
     "@ffix-roguelike/api": "workspace:*",

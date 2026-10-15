@@ -8,7 +8,7 @@ const FIGURE_H = 24;
 
 /**
  * A character's sprite: its FFRK frames (integer-scaled, pixelated, gently animated) when it has a strip, else
- * the crisp SVG pixel-art placeholder the Phaser scenes also fall back to (Blank).
+ * the crisp SVG pixel-art placeholder the Phaser scenes also fall back to.
  */
 export function HeroSprite({
   heroKey,

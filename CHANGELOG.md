@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.38] - 2026-10-15
+
+The party's sprites now use FFRK's own frame data: every pose is the one FFRK intended, and Blank has a sprite too.
+
+### Fixed
+- **Wrong poses** (e.g. Zidane's Blind-status frames showing as blinks, guessed attack/hurt frames). FFRK's server still hosts each sheet's TexturePacker atlas, which names every frame (`base_idle`, `base_ready`, `base_walk`, `base_left_arm_1` → `base_right_arm_1/2` for the swing, `base_chant_1/2`, `base_hands_up`, `base_damage`, `base_fatal`, `base_dead`; `glass_*` = Blind, `frog_*`, `mini_*`, `sleep`, `stone`). The slicer now builds every strip from those names and FFRK's own 32×32 placement, so poses line up exactly.
+
+### Added
+- **Blank's sprite** (FFRK sheet 109066) — the whole party now uses FFRK art.
+- `pnpm -F web ffrk:fetch [characters|bosses|enemies]` downloads FFRK's sheets + atlases (and the boss animation files) into `.docs/assets/FFRK-data/_raw` (git-ignored); `pnpm -F web ffrk:organize` matches them to the Spriters Resource rips by pixels and lays them out like `.docs/assets/FFRK` (`<rip name>.png/.json/.anim.json/.id`, unmatched sheets under `_unmatched/<id>`, `index.json`).
+
+### Changed
+- `pnpm -F web sprites:heroes` reads the downloaded atlases (hero → FFRK id map in the script). Animations: attack = step, raise, swing; cast = chant loop then hands up; item = hands up; victory = cheer; hurt, Low HP kneel, KO from their own frames.
+
 ## [0.1.37] - 2026-10-15
 
 The camp roster shows every character you haven't recruited yet, including the story recruits.
