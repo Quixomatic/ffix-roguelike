@@ -43,6 +43,62 @@ export interface MapLayout {
   nodes: Map<string, TilePoint>;
   routes: EdgeRoute[];
   route(from: string, to: string): EdgeRoute | undefined;
+  /** The roads out of a stage as a branching tree (shared stretches merged; forks where they split). */
+  branchesFrom(stage: string): Branch[];
+}
+
+export type Dir = "up" | "down" | "left" | "right";
+
+/**
+ * One stretch of road between decision points: from a stage or a fork to the next fork or a stage. Routes out of
+ * the same stage that share tiles from the start are merged; where they split is a fork.
+ */
+export interface Branch {
+  /** Tiles from the decision point it leaves (inclusive) to the fork/stage it ends at (inclusive). */
+  tiles: TilePoint[];
+  /** Direction of its first step out of the decision point. */
+  dir: Dir;
+  /** Every destination stage reachable along it. */
+  stages: string[];
+  /** The stage it ends at (leaf), if any. */
+  to?: string;
+  /** Branches out of the fork it ends at (empty for a leaf). */
+  children: Branch[];
+}
+
+export function stepDir(a: TilePoint, b: TilePoint): Dir {
+  return b.x > a.x ? "right" : b.x < a.x ? "left" : b.y > a.y ? "down" : "up";
+}
+
+export const OPPOSITE: Record<Dir, Dir> = { up: "down", down: "up", left: "right", right: "left" };
+
+/** Merge routes that leave the same stage into a branch tree (prefix-sharing tiles become one road). */
+export function buildBranches(routes: EdgeRoute[], start = 0): Branch[] {
+  const groups = new Map<string, EdgeRoute[]>();
+  for (const r of routes) {
+    const t = r.tiles[start + 1];
+    if (!t) continue;
+    const k = `${t.x},${t.y}`;
+    groups.set(k, [...(groups.get(k) ?? []), r]);
+  }
+  return [...groups.values()].map((group) => {
+    let end = start + 1;
+    for (;;) {
+      const nxt = group[0]!.tiles[end + 1];
+      if (!nxt || !group.every((r) => r.tiles[end + 1]?.x === nxt.x && r.tiles[end + 1]?.y === nxt.y)) break;
+      end++;
+    }
+    const first = group[0]!;
+    const tiles = first.tiles.slice(start, end + 1);
+    const leaf = group.find((r) => r.tiles.length === end + 1);
+    return {
+      tiles,
+      dir: stepDir(tiles[0]!, tiles[1]!),
+      stages: group.map((r) => r.to),
+      to: leaf?.to,
+      children: leaf ? [] : buildBranches(group, end),
+    };
+  });
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -260,7 +316,16 @@ export function buildMapLayout(map: WorldMap): MapLayout {
   const routes: EdgeRoute[] = chosen.map(({ edge, raster }) => ({ from: edge.from, to: edge.to, tiles: raster.tiles, corners: routeCorners(raster.tiles) }));
 
   const routeIndex = new Map(routes.map((r) => [`${r.from}>${r.to}`, r]));
-  return { cols, rows, nodes, routes, route: (from, to) => routeIndex.get(`${from}>${to}`) };
+  const trees = new Map<string, Branch[]>();
+  const branchesFrom = (stage: string) => {
+    let t = trees.get(stage);
+    if (!t) {
+      t = buildBranches(routes.filter((r) => r.from === stage));
+      trees.set(stage, t);
+    }
+    return t;
+  };
+  return { cols, rows, nodes, routes, route: (from, to) => routeIndex.get(`${from}>${to}`), branchesFrom };
 }
 
 /** Corner points of a route (tile coordinates), for walking segment by segment. */

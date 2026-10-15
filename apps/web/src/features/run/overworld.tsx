@@ -37,11 +37,11 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
       leader: run.party[0]!.build.key,
       theme: world.theme,
       onHover: setHover,
+      isBusy: () => busyRef.current,
+      // The scene calls this once the party has walked onto the stage: commit the move.
       onSelect: (id) => {
         if (busyRef.current) return;
-        // Let the walk along the road play before the stage opens.
-        const walk = bridge.walkTo?.(id) ?? 0;
-        setTimeout(() => onMoveRef.current(id), walk + 120);
+        onMoveRef.current(id);
       },
     };
     const game: Phaser.Game = createMapGame(hostRef.current, bridge);
@@ -62,7 +62,7 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
         <div className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
       )}
       <div className="pointer-events-none absolute bottom-2 right-3 text-xs text-white/60 [text-shadow:0_1px_2px_#000]">
-        Click a glowing stage · ←↑↓→ choose · Enter go
+        WASD / arrows to walk · click a glowing stage to travel there
       </div>
     </div>
   );

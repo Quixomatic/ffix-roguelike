@@ -8,7 +8,8 @@ import Phaser from "phaser";
 
 import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
-import { buildMapLayout, COL_STEP, TILE, type EdgeRoute, type MapLayout, type TilePoint } from "./map/layout";
+import { buildMapLayout, COL_STEP, TILE, type Dir, type MapLayout, type TilePoint } from "./map/layout";
+import { Walker } from "./map/navigation";
 
 export interface MapBridge {
   map: WorldMap;
@@ -16,10 +17,11 @@ export interface MapBridge {
   visited: string[];
   leader: string;
   theme: string;
+  /** The party arrived at a next stage (by keys or a click): commit the move. */
   onSelect(nodeId: string): void;
   onHover(node: MapNode | null): void;
-  /** Set by the scene: walk the party to a node along its road; returns how long the walk takes (ms). */
-  walkTo?: (nodeId: string) => number;
+  /** True while a server move is in flight: the map ignores input. */
+  isBusy(): boolean;
 }
 
 const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number }> = {
@@ -90,10 +92,12 @@ export class MapScene extends Phaser.Scene {
   private partySprite!: Phaser.GameObjects.Sprite;
   private bob?: Phaser.Tweens.Tween;
   private animated = false;
-  private walking = false;
-  private cursor?: Phaser.GameObjects.Text;
-  private selected: string | null = null;
-  private reachable: MapNode[] = [];
+  private walker!: Walker;
+  private keys!: Record<"up" | "down" | "left" | "right" | "w" | "a" | "s" | "d", Phaser.Input.Keyboard.Key>;
+  private hints: Phaser.GameObjects.Graphics[] = [];
+  private walkingNow = false;
+  private lastHeading: Dir | null = null;
+  private spriteKey = "";
 
   constructor() {
     super("map");
@@ -101,8 +105,9 @@ export class MapScene extends Phaser.Scene {
 
   init(data: { bridge: MapBridge }) {
     this.bridge = data.bridge;
-    this.walking = false;
-    this.selected = null;
+    this.hints = [];
+    this.walkingNow = false;
+    this.lastHeading = null;
   }
 
   preload() {
@@ -120,7 +125,6 @@ export class MapScene extends Phaser.Scene {
     const byId = new Map(b.map.nodes.map((n) => [n.id, n]));
     const here = byId.get(b.position)!;
     const reachableIds = new Set(here?.next ?? []);
-    this.reachable = here ? here.next.map((id) => byId.get(id)!).filter(Boolean) : [];
     const visited = new Set(b.visited);
 
     this.drawGround(theme, worldW, worldH);
@@ -130,7 +134,7 @@ export class MapScene extends Phaser.Scene {
 
     // The party: the lead's FFRK strip (feet on the stage), or the placeholder.
     const start = center(L.nodes.get(b.position)!);
-    const spriteKey = `hero/${b.leader}`;
+    const spriteKey = (this.spriteKey = `hero/${b.leader}`);
     this.animated = ensureHeroAnims(this, spriteKey);
     const key = this.animated ? spriteKey : ensurePlaceholder(this, spriteKey);
     this.party = this.add.container(start.x, start.y).setDepth(10);
@@ -140,14 +144,8 @@ export class MapScene extends Phaser.Scene {
     if (this.animated) this.partySprite.play(heroAnimKey(spriteKey, "idle"));
     this.startBob();
 
-    // Keyboard cursor over the selected next stage.
-    this.cursor = smooth(this.add
-      .text(0, 0, "▼", { fontFamily: "serif", fontSize: "10px", color: "#fff2a8", resolution: TEXT_RES })
-      .setOrigin(0.5, 1)
-      .setStroke("#000000", 3)
-      .setDepth(20)
-      .setVisible(false));
-    this.tweens.add({ targets: this.cursor, y: "-=3", duration: 350, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    this.walker = new Walker(L.nodes.get(b.position)!, L.branchesFrom(b.position));
+    this.showHints();
 
     // Camera: zoomed in, clamped to the map, following the party; starts centred on it.
     const cam = this.cameras.main;
@@ -159,9 +157,20 @@ export class MapScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
 
-    this.input.keyboard?.on("keydown", this.onKey, this);
-
-    b.walkTo = (nodeId) => this.walk(nodeId, spriteKey);
+    // Held keys are polled (not captured, so the rest of the page keeps its keys); presses come as events.
+    const kb = this.input.keyboard!;
+    const K = Phaser.Input.Keyboard.KeyCodes;
+    this.keys = {
+      up: kb.addKey(K.UP, false),
+      down: kb.addKey(K.DOWN, false),
+      left: kb.addKey(K.LEFT, false),
+      right: kb.addKey(K.RIGHT, false),
+      w: kb.addKey(K.W, false),
+      a: kb.addKey(K.A, false),
+      s: kb.addKey(K.S, false),
+      d: kb.addKey(K.D, false),
+    };
+    kb.on("keydown", this.onKey, this);
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -281,8 +290,8 @@ export class MapScene extends Phaser.Scene {
 
     const hit = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 11, 0xffffff, 0.001).setDepth(6).setInteractive({ useHandCursor: can });
     hit.on("pointerover", () => b.onHover(n));
-    hit.on("pointerout", () => b.onHover(this.selected ? (this.reachable.find((r) => r.id === this.selected) ?? null) : null));
-    if (can) hit.on("pointerdown", () => this.go(n.id));
+    hit.on("pointerout", () => b.onHover(null));
+    if (can) hit.on("pointerdown", () => this.clickStage(n.id));
   }
 
   /** 2×2-tile castle standing on the boss stage. */
@@ -317,62 +326,98 @@ export class MapScene extends Phaser.Scene {
   }
 
   // ---------------------------------------------------------------------------------------------------------
-  // Input
+  // Input + walking (SMW-style: see ./map/navigation)
+
+  private locked() {
+    return this.walker.arrived !== null || this.bridge.isBusy();
+  }
+
+  /** The direction held on the keyboard, unless the player is typing somewhere. */
+  private heldDir(): Dir | null {
+    if (typingElsewhere()) return null;
+    const k = this.keys;
+    if (k.left.isDown || k.a.isDown) return "left";
+    if (k.right.isDown || k.d.isDown) return "right";
+    if (k.up.isDown || k.w.isDown) return "up";
+    if (k.down.isDown || k.s.isDown) return "down";
+    return null;
+  }
 
   private onKey(ev: KeyboardEvent) {
-    if (this.walking || !this.reachable.length) return;
-    // Leave keys alone while the player is typing or using a control elsewhere on the page.
-    const target = ev.target as HTMLElement | null;
-    if (target?.closest?.("input, textarea, select, button, a, [contenteditable='true'], [role='dialog']")) return;
-    const k = ev.key.toLowerCase();
-    const dir = k === "arrowup" || k === "w" ? "up" : k === "arrowdown" || k === "s" ? "down" : k === "arrowright" || k === "d" ? "right" : k === "arrowleft" || k === "a" ? "left" : null;
-    if (dir) {
-      ev.preventDefault();
-      this.moveSelection(dir);
-      return;
+    if (this.locked() || typingElsewhere()) return;
+    const dir = KEY_DIR[ev.key.toLowerCase()];
+    if (!dir) return;
+    ev.preventDefault();
+    // Fresh presses can turn the party around mid-road; held keys only start/continue walking (in update).
+    if (this.walker.press(dir)) this.afterMoveChange();
+  }
+
+  private clickStage(id: string) {
+    if (this.locked()) return;
+    if (this.walker.goTo(id)) this.afterMoveChange();
+  }
+
+  update(_time: number, delta: number) {
+    if (!this.walker) return;
+    const w = this.walker;
+    if (!this.locked()) {
+      const held = this.heldDir();
+      if (!w.moving && held && w.press(held)) this.afterMoveChange();
+      const arrived = w.update((WALK_SPEED / TILE) * (delta / 1000), held);
+      const heading = w.heading();
+      if (heading && heading !== this.lastHeading && w.moving) {
+        this.lastHeading = heading;
+        // The strips face left; mirror when heading right. Up/down keep the last facing.
+        if (heading === "right" || heading === "left") this.partySprite.setFlipX(heading === "right");
+      }
+      if (arrived) {
+        this.placeParty();
+        this.setWalking(false);
+        this.showHints();
+        this.bridge.onSelect(arrived);
+        // If the move never lands (server error), let the player try again from the stage they left.
+        this.time.delayedCall(6000, () => {
+          if (!this.scene.isActive()) return;
+          this.walker = new Walker(this.walker.start, this.walker.roots);
+          this.placeParty();
+          this.showHints();
+        });
+        return;
+      }
+      if (!w.moving && this.walkingNow) {
+        this.setWalking(false);
+        this.showHints();
+      }
     }
-    if ((k === "enter" || k === " ") && this.selected) {
-      ev.preventDefault();
-      this.go(this.selected);
+    this.placeParty();
+  }
+
+  /** Called whenever a press/click changed what the walker is doing. */
+  private afterMoveChange() {
+    if (this.walker.moving) {
+      this.setWalking(true);
+      this.showHints();
     }
   }
 
-  /** Arrow keys pick among the next stages: up/down step through them by height, right picks the straightest. */
-  private moveSelection(dir: "up" | "down" | "left" | "right") {
-    const L = this.layout;
-    const here = L.nodes.get(this.bridge.position)!;
-    const sorted = [...this.reachable].sort((a, b) => L.nodes.get(a.id)!.y - L.nodes.get(b.id)!.y);
-    const cur = sorted.findIndex((n) => n.id === this.selected);
-    let next: MapNode | undefined;
-    if (dir === "left") next = undefined;
-    else if (dir === "right" || cur < 0) {
-      next =
-        dir === "up" ? sorted[0]
-        : dir === "down" ? sorted[sorted.length - 1]
-        : [...sorted].sort((a, b) => Math.abs(L.nodes.get(a.id)!.y - here.y) - Math.abs(L.nodes.get(b.id)!.y - here.y))[0];
-    } else next = sorted[Phaser.Math.Clamp(cur + (dir === "up" ? -1 : 1), 0, sorted.length - 1)];
-    this.select(next?.id ?? null);
+  private placeParty() {
+    const p = this.walker.position();
+    this.party.setPosition(p.x * TILE + TILE / 2, p.y * TILE + TILE / 2);
   }
 
-  private select(id: string | null) {
-    this.selected = id;
-    const node = id ? this.reachable.find((n) => n.id === id) : undefined;
-    if (node && this.cursor) {
-      const p = center(this.layout.nodes.get(node.id)!);
-      this.tweens.killTweensOf(this.cursor);
-      this.cursor.setPosition(p.x, p.y - (node.kind === "boss" ? 26 : 10)).setVisible(true);
-      this.tweens.add({ targets: this.cursor, y: "-=3", duration: 350, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
-    } else this.cursor?.setVisible(false);
-    this.bridge.onHover(node ?? null);
+  private setWalking(on: boolean) {
+    if (this.walkingNow === on) return;
+    this.walkingNow = on;
+    this.lastHeading = null;
+    if (on) {
+      this.bob?.remove();
+      this.partySprite.y = -PARTY_LIFT;
+      if (this.animated) this.partySprite.play(heroAnimKey(this.spriteKey, "walk"));
+    } else {
+      if (this.animated) this.partySprite.play(heroAnimKey(this.spriteKey, "idle"));
+      this.startBob();
+    }
   }
-
-  private go(id: string) {
-    if (this.walking) return;
-    this.bridge.onSelect(id);
-  }
-
-  // ---------------------------------------------------------------------------------------------------------
-  // Walking
 
   private startBob() {
     this.bob?.remove();
@@ -380,39 +425,49 @@ export class MapScene extends Phaser.Scene {
     this.bob = this.tweens.add({ targets: this.partySprite, y: -PARTY_LIFT - 2, duration: 400, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
   }
 
-  private walk(nodeId: string, spriteKey: string): number {
-    const L = this.layout;
-    const route: EdgeRoute | undefined = L.route(this.bridge.position, nodeId);
-    const target = L.nodes.get(nodeId);
-    if (!target) return 0;
-    const points = (route?.corners ?? [L.nodes.get(this.bridge.position)!, target]).map(center);
-    this.walking = true;
-    this.cursor?.setVisible(false);
-    this.bob?.remove();
-    this.partySprite.y = -PARTY_LIFT;
-    if (this.animated) this.partySprite.play(heroAnimKey(spriteKey, "walk"));
-
-    let total = 0;
-    const steps = points.slice(1).map((p, i) => {
-      const from = points[i]!;
-      const duration = (Math.abs(p.x - from.x) + Math.abs(p.y - from.y)) / WALK_SPEED * 1000;
-      total += duration;
-      return { p, from, duration };
-    });
-    const run = (i: number) => {
-      const step = steps[i];
-      if (!step) {
-        if (this.animated) this.partySprite.play(heroAnimKey(spriteKey, "idle"));
-        this.startBob();
-        return;
-      }
-      // The strips face left; mirror when heading right. Up/down keep the last facing.
-      if (step.p.x !== step.from.x) this.partySprite.setFlipX(step.p.x > step.from.x);
-      this.tweens.add({ targets: this.party, x: step.p.x, y: step.p.y, duration: step.duration, ease: "Linear", onComplete: () => run(i + 1) });
+  /** Little arrows on the roads you can take from where the party rests (plus a dim one for the way back). */
+  private showHints() {
+    for (const h of this.hints) {
+      this.tweens.killTweensOf(h);
+      h.destroy();
+    }
+    this.hints = [];
+    if (this.walker.moving || this.walker.arrived) return;
+    const here = this.walker.position();
+    const add = (dir: Dir, alpha: number) => {
+      const v = DIR_VEC[dir];
+      const x = (here.x + v.x * 0.95) * TILE + TILE / 2;
+      const y = (here.y + v.y * 0.95) * TILE + TILE / 2;
+      const g = this.add.graphics({ x, y }).setDepth(12).setAlpha(alpha);
+      g.fillStyle(0x000000, 1).fillTriangle(-4.5, -3.5, 4.5, -3.5, 0, 4.5);
+      g.fillStyle(OPEN_PATH, 1).fillTriangle(-3, -2.5, 3, -2.5, 0, 2.5);
+      g.setAngle({ down: 0, left: 90, up: 180, right: 270 }[dir]);
+      this.tweens.add({ targets: g, x: x + v.x * 2, y: y + v.y * 2, duration: 380, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      this.hints.push(g);
     };
-    run(0);
-    return Math.round(total);
+    for (const b of this.walker.options()) add(b.dir, 1);
+    const back = this.walker.backDir();
+    if (back) add(back, 0.45);
   }
+}
+
+const KEY_DIR: Record<string, Dir> = {
+  arrowup: "up",
+  w: "up",
+  arrowdown: "down",
+  s: "down",
+  arrowleft: "left",
+  a: "left",
+  arrowright: "right",
+  d: "right",
+};
+
+const DIR_VEC: Record<Dir, { x: number; y: number }> = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
+
+/** True while focus is in a text field (keys belong to it then). */
+function typingElsewhere(): boolean {
+  const el = document.activeElement as HTMLElement | null;
+  return !!el && (el.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName));
 }
 
 export function createMapGame(parent: HTMLElement, bridge: MapBridge): Phaser.Game {

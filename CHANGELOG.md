@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.48] - 2026-10-15
+
+Walk the overworld like Super Mario World: WASD/arrows move the party along the roads, stopping at forks.
+
+### Added
+- **Free walking**: press a direction at your stage and the party walks the road that leaves that way — taking corners on its own — until it reaches the next stage or a fork. At a fork it stops and bouncing arrows show the branches; press one to go on (holding a direction that's one of the branches rolls straight through). Before you arrive you can turn around and walk back to the stage you left; arriving at a stage is what commits the move (that's when the stage opens), and there's no road back to earlier stages.
+- Clicking a glowing stage still walks there on its own, taking the right branches.
+- **Road graph** (`map/layout.ts` `branchesFrom`): roads leaving a stage that share tiles are merged, so forks sit exactly where they split. **Navigation** (`map/navigation.ts`) is a pure state machine (walk, forks, reversing, auto-walk) — checked on 400 generated maps (7,384 stages, 2,840 forks): every key path reaches only the stage's next stages and all of them are reachable, reversing always returns home.
+- Smooth constant-speed walking (no stutter at corners), facing the way it's going, camera following. Held keys are polled, the arrows don't scroll the page, and typing in inputs is left alone. If a move never lands (server error), the party returns to its stage after 6 s.
+
+### Changed
+- The choose-then-Enter keyboard control is replaced by free walking.
+
 ## [0.1.47] - 2026-10-15
 
 The overworld is a Super Mario World–style map: stages on a tile grid joined by roads that run up, down, left and right with L-turns, and a zoomed-in camera following the party.
