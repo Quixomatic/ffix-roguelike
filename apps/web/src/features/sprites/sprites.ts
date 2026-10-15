@@ -1,10 +1,12 @@
 /**
  * Sprite manifest. Every unit references a sprite key (`hero/zidane`, `enemy/goblin`, `boss/garland`).
- * Until the FFRK sheets are imported, `ensurePlaceholder` draws a pixel-art stand-in for each key, so real
- * art can drop in later by registering a texture with the same key — no game code changes.
+ * Heroes with an FFRK strip load it under that key (`loadHeroSheets` in preload, `ensureHeroAnims` in create);
+ * everything else gets a pixel-art stand-in from `ensurePlaceholder`, so real art drops in by registering a
+ * texture with the same key — no game code changes.
  */
 import type Phaser from "phaser";
 
+import { HERO_CELL, heroSheetForSprite, type HeroAnim } from "./hero-sheets";
 import { HERO_GRID, heroPixels } from "./pixels";
 
 const FAMILY_COLORS: Record<string, number> = {
@@ -58,6 +60,32 @@ export function ensurePlaceholder(scene: Phaser.Scene, key: string, opts: Placeh
   }
   g.destroy();
   return key;
+}
+
+/** Queue the FFRK strips for any `hero/<key>` sprite keys that have one (call from a scene's preload). */
+export function loadHeroSheets(scene: Phaser.Scene, spriteKeys: Iterable<string>) {
+  for (const key of new Set(spriteKeys)) {
+    const sheet = heroSheetForSprite(key);
+    if (sheet && !scene.textures.exists(key)) scene.load.spritesheet(key, sheet.url, { frameWidth: HERO_CELL, frameHeight: HERO_CELL });
+  }
+}
+
+export const heroAnimKey = (spriteKey: string, anim: HeroAnim) => `${spriteKey}:${anim}`;
+
+/**
+ * Register a hero's animations once its strip has loaded. False when the hero has no strip (or it failed to
+ * load) — draw it with `ensurePlaceholder` instead. The strips face left, toward the enemies.
+ */
+export function ensureHeroAnims(scene: Phaser.Scene, spriteKey: string): boolean {
+  const sheet = heroSheetForSprite(spriteKey);
+  // A placeholder generated under the same key is a single frame, not a strip.
+  if (!sheet || !scene.textures.exists(spriteKey) || scene.textures.get(spriteKey).frameTotal < sheet.info.frames) return false;
+  for (const [anim, a] of Object.entries(sheet.info.anims)) {
+    const key = heroAnimKey(spriteKey, anim as HeroAnim);
+    if (scene.anims.exists(key)) continue;
+    scene.anims.create({ key, frames: scene.anims.generateFrameNumbers(spriteKey, { frames: a.frames }), frameRate: a.frameRate, repeat: a.repeat });
+  }
+  return true;
 }
 
 const THEMES: Record<string, [number, number, number]> = {

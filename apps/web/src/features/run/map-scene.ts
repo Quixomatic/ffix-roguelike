@@ -5,7 +5,7 @@
 import type { MapNode, NodeKind, WorldMap } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
-import { ensurePlaceholder } from "@/features/sprites/sprites";
+import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 export const MAP_W = 960;
 export const MAP_H = 540;
@@ -67,7 +67,7 @@ const toPx = (n: { x: number; y: number }) => ({ x: (n.x / 100) * MAP_W, y: 60 +
 
 export class MapScene extends Phaser.Scene {
   private bridge!: MapBridge;
-  private party!: Phaser.GameObjects.Image;
+  private party!: Phaser.GameObjects.Sprite;
   private pulses: Phaser.GameObjects.Arc[] = [];
 
   constructor() {
@@ -77,6 +77,10 @@ export class MapScene extends Phaser.Scene {
   init(data: { bridge: MapBridge }) {
     this.bridge = data.bridge;
     this.pulses = [];
+  }
+
+  preload() {
+    loadHeroSheets(this, [`hero/${this.bridge.leader}`]);
   }
 
   create() {
@@ -146,8 +150,12 @@ export class MapScene extends Phaser.Scene {
     }
 
     const here = toPx(byId.get(b.position)!);
-    const key = ensurePlaceholder(this, `hero/${b.leader}`);
-    this.party = this.add.image(here.x, here.y - 26, key).setScale(0.9).setDepth(10);
+    // The lead character walks the map: its FFRK strip at 2× (feet on the node), or the placeholder.
+    const spriteKey = `hero/${b.leader}`;
+    const animated = ensureHeroAnims(this, spriteKey);
+    const key = animated ? spriteKey : ensurePlaceholder(this, spriteKey);
+    this.party = this.add.sprite(here.x, here.y - 26, key).setScale(animated ? 2 : 0.9).setDepth(10);
+    if (animated) this.party.play(heroAnimKey(spriteKey, "idle"));
     this.tweens.add({ targets: this.party, y: here.y - 30, duration: 400, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
 
     b.walkTo = (nodeId) => {
@@ -155,7 +163,20 @@ export class MapScene extends Phaser.Scene {
       if (!target) return;
       const t = toPx(target);
       this.tweens.killTweensOf(this.party);
-      this.tweens.add({ targets: this.party, x: t.x, y: t.y - 26, duration: 450, ease: "Quad.easeInOut" });
+      if (animated) {
+        // The strips face left; mirror when heading right.
+        this.party.setFlipX(t.x > this.party.x).play(heroAnimKey(spriteKey, "walk"));
+      }
+      this.tweens.add({
+        targets: this.party,
+        x: t.x,
+        y: t.y - 26,
+        duration: 450,
+        ease: "Quad.easeInOut",
+        onComplete: () => {
+          if (animated) this.party.play(heroAnimKey(spriteKey, "idle"));
+        },
+      });
     };
   }
 

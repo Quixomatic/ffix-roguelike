@@ -62,7 +62,7 @@ function MemberCard({ member: m, delay }: { member: MemberProgress; delay: numbe
     <div className="ff-window flex flex-col gap-2 p-3">
       <div className="flex items-end gap-3">
         <div className={`relative ${leveled ? "ff-hop" : ""}`} key={leveled ? `lv${level}` : "idle"}>
-          <HeroSprite heroKey={m.key} size={72} ko={!m.alive} />
+          <HeroSprite heroKey={m.key} size={72} ko={!m.alive} anim="victory" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-lg">{name}</div>

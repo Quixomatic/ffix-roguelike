@@ -5,7 +5,8 @@
 import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
-import { drawBattleBackground, ensurePlaceholder } from "@/features/sprites/sprites";
+import { HERO_CELL, type HeroAnim } from "@/features/sprites/hero-sheets";
+import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 export const BATTLE_W = 960;
 export const BATTLE_H = 540;
@@ -22,8 +23,14 @@ export interface BattleBridge {
 }
 
 interface UnitView {
-  sprite: Phaser.GameObjects.Image;
+  sprite: Phaser.GameObjects.Sprite;
   home: { x: number; y: number };
+  /** Centre to the top of the figure (where the cursor hangs). */
+  top: number;
+  /** Party member drawn from an FFRK strip: plays poses instead of the placeholder's tilt and bob. */
+  animated: boolean;
+  /** A one-shot pose (attack, hurt…) holds until this scene time. */
+  holdUntil: number;
   cursor: Phaser.GameObjects.Text;
   /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
   gauge: Phaser.GameObjects.Graphics;
@@ -31,6 +38,23 @@ interface UnitView {
 
 const GAUGE_W = 56;
 const GAUGE_H = 6;
+/** FFRK strips are tiny (≈16×24); integer scale keeps the pixels crisp. */
+const HERO_SCALE = 3;
+/** Empty cell rows above a standing hero's head. */
+const HERO_HEADROOM = 8;
+
+/** One-shot hero poses by command kind (or "damage"/"miss"), and how long each holds before the resting pose (ms). */
+const ACTION_POSE: Record<string, { anim: HeroAnim; ms: number }> = {
+  attack: { anim: "attack", ms: 650 },
+  throw: { anim: "attack", ms: 650 },
+  ability: { anim: "cast", ms: 900 },
+  item: { anim: "item", ms: 700 },
+  defend: { anim: "defend", ms: 500 },
+  change: { anim: "ready", ms: 400 },
+  flee: { anim: "ready", ms: 400 },
+  damage: { anim: "hurt", ms: 450 },
+  miss: { anim: "evade", ms: 400 },
+};
 
 export class BattleScene extends Phaser.Scene {
   private bridge!: BattleBridge;
@@ -43,6 +67,10 @@ export class BattleScene extends Phaser.Scene {
   init(data: { bridge: BattleBridge }) {
     this.bridge = data.bridge;
     this.views.clear();
+  }
+
+  preload() {
+    loadHeroSheets(this, this.bridge.getState().units.filter((u) => u.side === "party").map((u) => u.sprite));
   }
 
   create() {
@@ -70,17 +98,20 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private addUnit(u: BattleUnit, x: number, y: number, scale: number) {
-    const key = ensurePlaceholder(this, u.sprite, { family: u.family, boss: u.boss });
-    const sprite = this.add.image(x, y, key).setScale(u.side === "party" ? scale : u.boss ? 1.6 : 1.3);
+    const animated = u.side === "party" && ensureHeroAnims(this, u.sprite);
+    const key = animated ? u.sprite : ensurePlaceholder(this, u.sprite, { family: u.family, boss: u.boss });
+    const sprite = this.add.sprite(x, y, key).setScale(animated ? HERO_SCALE : u.side === "party" ? scale : u.boss ? 1.6 : 1.3);
     if (u.side === "enemy") sprite.setFlipX(true);
+    if (animated) sprite.play(heroAnimKey(u.sprite, "idle"));
     sprite.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.bridge.onUnitClick(u.id));
+    const top = animated ? (HERO_CELL / 2 - HERO_HEADROOM) * HERO_SCALE : sprite.displayHeight / 2;
     const cursor = this.add
-      .text(x, y - sprite.displayHeight / 2 - 18, "▼", { fontFamily: "monospace", fontSize: "20px", color: "#ffffff" })
+      .text(x, y - top - 18, "▼", { fontFamily: "monospace", fontSize: "20px", color: "#ffffff" })
       .setOrigin(0.5)
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    this.views.set(u.id, { sprite, home: { x, y }, cursor, gauge });
+    this.views.set(u.id, { sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge });
   }
 
   private drawGauge(v: UnitView, u: BattleUnit, time: number, down: boolean) {
@@ -111,7 +142,10 @@ export class BattleScene extends Phaser.Scene {
       const stone = u.statuses.petrify !== undefined;
       const shown = isShownUnit(u);
       if (u.side === "enemy") v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
-      else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
+      else if (v.animated) {
+        v.sprite.setAlpha(u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
+        this.pose(v, u, state);
+      } else v.sprite.setAngle(down ? 90 : 0).setAlpha(down ? 0.6 : u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
       if (stone) v.sprite.setTint(0x888888);
       else if (u.statuses.trance) v.sprite.setTint(0xff99cc);
       else if (u.statuses.poison || u.statuses.venom) v.sprite.setTint(0xaaddaa);
@@ -119,11 +153,45 @@ export class BattleScene extends Phaser.Scene {
       const targeted = this.bridge.highlighted.has(u.id);
       v.cursor.setVisible(targeted || this.bridge.activeId === u.id);
       v.cursor.setColor(targeted ? "#ffe066" : "#ffffff");
-      v.cursor.y = v.home.y - v.sprite.displayHeight / 2 - 18 + Math.sin(time / 120) * 3;
-      // Idle bob for living units.
-      if (!down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
+      v.cursor.y = v.home.y - v.top - 18 + Math.sin(time / 120) * 3;
+      // Idle bob for living units (animated heroes breathe on their own).
+      if (!v.animated && !down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
       this.drawGauge(v, u, time, down || stone || !shown);
     }
+  }
+
+  /** The pose a hero rests in when no one-shot is holding: KO, victory, guard, turn ready, chanting, Low HP. */
+  private restingPose(u: BattleUnit, state: BattleState): HeroAnim {
+    if (u.hp <= 0 || u.statuses.death !== undefined) return "ko";
+    if (state.outcome === "victory") return "victory";
+    if (u.statuses.defend) return "defend";
+    if (state.queue.some((q) => q.command.actorId === u.id && q.command.kind === "ability")) return "chant";
+    if (state.ready.includes(u.id) || this.bridge.activeId === u.id || u.busyCommand) return "ready";
+    // FF9's Low HP: under a sixth of max HP.
+    if (u.statuses.lowHp !== undefined || u.hp < u.maxHp / 6) return "dying";
+    return "idle";
+  }
+
+  private pose(v: UnitView, u: BattleUnit, state: BattleState) {
+    const frozen = u.statuses.petrify || u.statuses.stop || u.statuses.freeze || u.statuses.sleep;
+    if (frozen) {
+      if (v.sprite.anims.isPlaying) v.sprite.anims.pause();
+      return;
+    }
+    if (v.sprite.anims.isPaused) v.sprite.anims.resume();
+    if (this.time.now < v.holdUntil) return;
+    const key = heroAnimKey(u.sprite, this.restingPose(u, state));
+    if (v.sprite.anims.currentAnim?.key !== key) v.sprite.play(key);
+  }
+
+  /** Play a one-shot pose on a hero (no-op for enemies, placeholders and the fallen). */
+  private act(id: string, what: string) {
+    const v = this.views.get(id);
+    const p = ACTION_POSE[what];
+    const u = this.bridge.getState().units.find((x) => x.id === id);
+    if (!v?.animated || !p || !u || u.hp <= 0) return;
+    v.sprite.play(heroAnimKey(u.sprite, p.anim));
+    v.holdUntil = this.time.now + p.ms;
   }
 
   private playEvents(events: BattleEvent[]) {
@@ -134,18 +202,23 @@ export class BattleScene extends Phaser.Scene {
           const v = this.views.get(ev.actorId);
           if (!v) break;
           const dir = this.bridge.getState().units.find((u) => u.id === ev.actorId)?.side === "party" ? -1 : 1;
+          this.act(ev.actorId, ev.kind);
           this.tweens.add({ targets: v.sprite, x: v.home.x + dir * 40, duration: 140, yoyo: true, ease: "Quad.easeOut" });
           break;
         }
         case "damage":
           this.popup(ev.targetId, ev.amount === 0 ? "0" : String(ev.amount), ev.mp ? "#c58cff" : ev.crit ? "#ffd84a" : "#ffffff", popupIndex++, ev.crit);
-          if (!ev.mp && ev.amount > 0) this.shake(ev.targetId);
+          if (!ev.mp && ev.amount > 0) {
+            this.shake(ev.targetId);
+            this.act(ev.targetId, "damage");
+          }
           break;
         case "heal":
           this.popup(ev.targetId, String(ev.amount), ev.mp ? "#9ad0ff" : "#7dff8a", popupIndex++);
           break;
         case "miss":
           this.popup(ev.targetId, "Miss", "#dddddd", popupIndex++);
+          this.act(ev.targetId, "miss");
           break;
         case "guard":
           this.popup(ev.targetId, "Guard", "#bbbbff", popupIndex++);
@@ -153,9 +226,12 @@ export class BattleScene extends Phaser.Scene {
         case "statusOn":
           if (ev.status !== "defend" && ev.status !== "trance" && ev.status !== "lowHp" && ev.status !== "jump") this.popup(ev.targetId, ev.status.toUpperCase(), "#ffb3e6", popupIndex++, false, 14);
           break;
-        case "revive":
+        case "revive": {
           this.popup(ev.targetId, "Revived", "#7dff8a", popupIndex++);
+          const v = this.views.get(ev.targetId);
+          if (v) v.holdUntil = 0;
           break;
+        }
         case "tranceStart":
           this.popup(ev.unitId, "TRANCE!", "#ff66cc", popupIndex++, true);
           this.cameras.main.flash(250, 255, 120, 200);

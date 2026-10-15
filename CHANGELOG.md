@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.36] - 2026-10-15
+
+The party has real sprites: FF Record Keeper's FF9 sheets, animated in battle, on the overworld and in every menu.
+
+### Added
+- **Party sprites from FFRK** for Zidane, Vivi, Garnet, Steiner, Freya, Quina, Eiko, Amarant and Beatrix (plus Marcus). Each hero is a 32×32-cell strip in `apps/web/public/sprites/heroes/` with the same animations: idle (with blinks), ready, walk, attack, chant, cast, item, defend, hurt, dying (Low HP kneel), KO, victory and evade. Blank has no FFRK sheet and keeps the placeholder.
+- **Battle**: heroes stand in the pose their state calls for (KO, victory, defend, chanting while a spell waits, ready when their turn comes, kneeling below ⅙ HP, otherwise idle), and play attack/cast/item/defend on their actions, hurt when hit and evade on a miss. Petrify, Stop, Freeze and Sleep freeze the animation; Trance/poison/stone tints still apply.
+- **Overworld**: the lead character idles and walks between stages.
+- **Menus** (camp roster, paperdoll, title screen, party panel, stage panels, results screens): the real sprite at a crisp integer scale with an idle/blink loop; the victory screen plays the victory pose.
+- `pnpm -F web sprites:heroes [--preview <dir>]` re-slices the sheets from `.docs/assets/FFRK` (`apps/web/scripts/slice-hero-sprites.ts`; the poses' positions on each sheet are a per-hero manifest in the script).
+
+### Notes
+- Weapons aren't drawn yet (FFRK draws them as separate overlay pieces).
+
 ## [0.1.35] - 2026-10-15
 
 Fixes "Rendered more hooks than during the previous render" when reloading or starting a run.
