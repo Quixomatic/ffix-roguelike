@@ -11,6 +11,9 @@ import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRi
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
+/** Texture key of the target glove (public/sprites/ui/hand-down.png, from the Time Fantasy icon pack). */
+const HAND = "ui-hand-down";
+
 /** The reference layout size: unit positions are designed at 960×540 and scaled to the real canvas. */
 export const BATTLE_W = 960;
 export const BATTLE_H = 540;
@@ -21,8 +24,12 @@ export interface BattleBridge {
   onUnitClick(id: string): void;
   /** Set by the scene; the React side pushes engine events through it. */
   play?: (events: BattleEvent[]) => void;
-  /** Units currently highlighted as possible targets. */
+  /** Units currently highlighted as possible targets (yellow markers). */
   highlighted: Set<string>;
+  /** The target(s) the menu is aiming at right now (the pointing glove): one unit, or all of them for "All". */
+  aimed: Set<string>;
+  /** Hovering a unit on the field aims at it (set by the battle view while choosing a target). */
+  onUnitHover?: (id: string) => void;
   activeId: string | null;
   /** Battle speed (×1/×2/×4): effects play this much faster. */
   speed: number;
@@ -57,6 +64,8 @@ interface UnitView {
   /** Showing a single status pose (stone/sleep): the next animation must restart. */
   still?: boolean;
   cursor: Phaser.GameObjects.Text;
+  /** FF9-style pointing glove over the unit being aimed at. */
+  hand: Phaser.GameObjects.Image;
   /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
   gauge: Phaser.GameObjects.Graphics;
   /** Monster drawn from an FFRK sheet (idle/attack/damage/dead, white hit-flash cell). */
@@ -105,6 +114,7 @@ export class BattleScene extends Phaser.Scene {
   preload() {
     const units = this.bridge.getState().units;
     loadHeroSheets(this, units.filter((u) => u.side === "party").map((u) => u.sprite));
+    this.load.image(HAND, "/sprites/ui/hand-down.png");
     loadEnemySheets(this, units.filter((u) => u.side === "enemy").map((u) => u.sprite));
   }
 
@@ -159,6 +169,7 @@ export class BattleScene extends Phaser.Scene {
       v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.ffrk ? this.enemyScale() : v.baseScale * this.k);
       v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
       v.cursor.setPosition(v.home.x, v.home.y - v.top - 18);
+      v.hand.setScale(Math.max(2, this.heroScale)).setPosition(v.home.x, v.home.y - v.top - 6);
       v.rig?.weapon.setScale(this.heroScale);
       v.rig?.arm.setScale(this.heroScale);
     }
@@ -180,7 +191,10 @@ export class BattleScene extends Phaser.Scene {
     if (u.side === "enemy" && !ffrk) sprite.setFlipX(true);
     if (animated) sprite.play(heroAnimKey(u.sprite, "idle"));
     if (ffrk) sprite.play(enemyAnimKey(ffrk.info, "idle"));
-    sprite.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.bridge.onUnitClick(u.id));
+    sprite
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", () => this.bridge.onUnitClick(u.id))
+      .on("pointerover", () => this.bridge.onUnitHover?.(u.id));
     const top = animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : sprite.displayHeight / 2;
     const cursor = this.add
       .text(x, y - top - 18, "▼", { fontFamily: "monospace", fontSize: "20px", color: "#ffffff" })
@@ -188,7 +202,8 @@ export class BattleScene extends Phaser.Scene {
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    const hand = this.add.image(x, y - top - 6, HAND).setOrigin(0.5, 1).setScale(Math.max(2, this.heroScale)).setDepth(40).setVisible(false);
+    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
   }
 
   /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
@@ -280,9 +295,13 @@ export class BattleScene extends Phaser.Scene {
       else if (u.statuses.poison || u.statuses.venom) v.sprite.setTint(0xaaddaa);
       else v.sprite.clearTint();
       const targeted = this.bridge.highlighted.has(u.id);
-      v.cursor.setVisible(targeted || this.bridge.activeId === u.id);
+      const aimed = this.bridge.aimed.has(u.id) && shown;
+      // Yellow markers: every valid target; the glove points at the one(s) being aimed at.
+      v.cursor.setVisible((targeted && !aimed) || (!targeted && this.bridge.activeId === u.id));
       v.cursor.setColor(targeted ? "#ffe066" : "#ffffff");
       v.cursor.y = v.home.y - v.top - 18 + Math.sin(time / 120) * 3;
+      v.hand.setVisible(aimed);
+      if (aimed) v.hand.y = v.home.y - v.top - 6 + Math.abs(Math.sin(time / 140)) * -6 * Math.max(1, this.k);
       // Idle bob for living units (animated heroes breathe on their own).
       if (!v.animated && !down && !stone && !u.statuses.stop && (v.ffrk?.anims.idle?.frames.length ?? 1) <= 1) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
       this.syncRig(v);

@@ -22,6 +22,7 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
   const hostRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<BattleBridge | null>(null);
   const pickRef = useRef<((id: string) => void) | null>(null);
+  const aimRef = useRef<((id: string) => void) | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const battle = useBattle(initial, {
@@ -45,6 +46,8 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
       impactAt: new Map(),
       settleAt: 0,
       highlighted: new Set(),
+      aimed: new Set(),
+      onUnitHover: (id) => aimRef.current?.(id),
       activeId: null,
       onUnitClick: (id) => pickRef.current?.(id),
     };
@@ -95,9 +98,11 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
               battle.submit(cmd);
               setSelectedId(null);
             }}
-            onTargeting={(ids, pick) => {
+            onTargeting={(ids, pick, aimed, aim) => {
               bridgeRef.current!.highlighted = new Set(ids);
+              bridgeRef.current!.aimed = new Set(aimed);
               pickRef.current = pick;
+              aimRef.current = aim;
             }}
           />
         ) : null}

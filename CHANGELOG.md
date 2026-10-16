@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.76] - 2026-10-16
+
+An FF9-style pointing glove shows exactly who you're about to hit.
+
+### Added
+- **Target glove**: while choosing a target, a gloved hand (Time Fantasy icon pack) bobs over the unit you're aiming at — the highlighted name in the target list, or every candidate when **All** is highlighted. The yellow markers stay on the other valid targets, so you still see your options.
+- **Hovering a unit on the battlefield aims at it** (moves the menu's cursor), like hovering its name; clicking still picks it.
+- `pnpm -F web sprites:ui` (`scripts/build-ui-icons.ts`) ships just the UI icons used (`public/sprites/ui/`): the target glove and a right-pointing menu glove.
+
+### Fixed
+- **"All" in the target list didn't highlight on hover** (it had no hover handler); it does now, and moves the glove onto every target.
+
 ## [0.1.75] - 2026-10-16
 
 Music, sounds and spell effects are cached in the browser, so they load instantly after the first time — even after a hard reload.

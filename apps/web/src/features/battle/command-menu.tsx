@@ -21,8 +21,11 @@ interface Props {
   engine: BattleEngine;
   actor: BattleUnit;
   onSubmit(cmd: BattleCommand): void;
-  /** Lets the battlefield highlight candidate targets and route clicks back here. */
-  onTargeting(ids: string[], pick: ((id: string) => void) | null): void;
+  /**
+   * Lets the battlefield mark candidate targets, point the glove at the aimed one(s), and route clicks and hovers on
+   * units back here.
+   */
+  onTargeting(ids: string[], pick: ((id: string) => void) | null, aimed: string[], aim: ((id: string) => void) | null): void;
 }
 
 const NO_PICK: TargetType[] = ["self", "allAlly", "allEnemy", "everyone", "random", "randomAlly", "randomEnemy", "automatic", "all"];
@@ -46,7 +49,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
   };
 
   const finish = (p: Pending, targetIds: string[]) => {
-    onTargeting([], null);
+    onTargeting([], null, [], null);
     if (p.double && !first) {
       // Pick the second spell (MP for both must be available).
       const left = actor.mp - engine.mpCost(actor, getBattleAction(p.actionId!));
@@ -83,15 +86,21 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
 
   useEffect(() => {
     if (menu.level !== "target") {
-      onTargeting([], null);
+      onTargeting([], null, [], null);
       return;
     }
+    const ids = candidates.map((c) => c.id);
     onTargeting(
-      candidates.map((c) => c.id),
+      ids,
       (id) => finish(menu.pending, [id]),
+      cursor >= candidates.length ? (canAll ? ids : []) : [candidates[cursor]!.id],
+      (id) => {
+        const i = ids.indexOf(id);
+        if (i >= 0) setCursor(i);
+      },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menu, candidates.map((c) => c.id).join()]);
+  }, [menu, cursor, canAll, candidates.map((c) => c.id).join()]);
 
   const rootOptions = useMemo(() => {
     const cmds = engine.commandsOf(actor);
@@ -269,7 +278,12 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
             </button>
           ))}
           {canAll && (
-            <button className="ff-option" data-active={cursor === candidates.length} onClick={() => finish(menu.pending, candidates.map((c) => c.id))}>
+            <button
+              className="ff-option"
+              data-active={cursor === candidates.length}
+              onMouseEnter={() => setCursor(candidates.length)}
+              onClick={() => finish(menu.pending, candidates.map((c) => c.id))}
+            >
               All
             </button>
           )}
