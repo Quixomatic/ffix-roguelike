@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.86] - 2026-10-16
+
+### Changed
+- Badges are muted tints instead of solid colours (`Badge` tones `neutral`, `good`, `bad`, `highlight`, `info`): an ability lost is a dark-red chip with red text (struck through), an ability gained a dark-yellow chip with yellow text — the look gear comparisons had before.
+
 ## [0.1.85] - 2026-10-16
 
 Gear comparisons are built from reusable badge components.

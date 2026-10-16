@@ -31,13 +31,13 @@ export function DeltaChips({ change }: { change: GearChange }) {
         <StatDelta key={k} value={change.deltas[k]!} label={STAT_LABEL[k]} />
       ))}
       {change.gains.map((r) => (
-        <Badge key={r} tone="gain" title="Ability this would let them use">
+        <Badge key={r} tone="highlight" title="Ability this would let them use">
           + {abilityName(r)}
         </Badge>
       ))}
       {change.loses.map((r) => (
-        <Badge key={r} tone="loss" title="Ability they'd lose">
-          <span className="line-through decoration-white/70">{abilityName(r)}</span>
+        <Badge key={r} tone="bad" title="Ability they'd lose">
+          <span className="line-through decoration-red-300/60">{abilityName(r)}</span>
         </Badge>
       ))}
     </span>

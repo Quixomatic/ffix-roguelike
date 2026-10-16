@@ -1,14 +1,17 @@
 import type { ReactNode } from "react";
 
-/** Badge colours: `neutral` is the subtle default; the others are fully coloured to match what they report. */
-export type BadgeTone = "neutral" | "gain" | "loss" | "info" | "warn";
+/**
+ * Badge colours: `neutral` is the subtle default; the others are muted tints (dark tinted background, light text)
+ * matching what they report — `good` (green), `bad` (red), `highlight` (yellow, e.g. abilities gained), `info`.
+ */
+export type BadgeTone = "neutral" | "good" | "bad" | "highlight" | "info";
 
 const TONES: Record<BadgeTone, string> = {
   neutral: "bg-white/10 text-white",
-  gain: "bg-green-600/80 text-white",
-  loss: "bg-red-600/80 text-white",
-  info: "bg-indigo-500/80 text-white",
-  warn: "bg-amber-500/85 text-black",
+  good: "bg-green-900/50 text-green-300",
+  bad: "bg-red-900/50 text-red-300",
+  highlight: "bg-yellow-900/40 text-yellow-200",
+  info: "bg-indigo-900/50 text-indigo-200",
 };
 
 /** A small inline label (chip). */
