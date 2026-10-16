@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.19] - 2026-10-16
+
+### Fixed
+- **Going back played two sounds** (the cancel plus a cursor tick: the page change moves the sidebar's highlight, which ticks). Backing out now plays only FF9's cancel; the cursor tick is held back for a moment. Applies to the browser's Back, close buttons and `data-sound="cancel"` links.
+- **The browser's Forward played the cancel sound.** Only Back does now. The router numbers history entries (`__TSR_index`), so the entry being left tells a Back (lower) from a Forward (higher). Forward keeps the normal cursor tick.
+
 ## [0.2.18] - 2026-10-16
 
 ### Changed
