@@ -123,30 +123,36 @@ export function EffectsGallery() {
     const keys = Object.keys(item.phases);
     setPhase(keys.find((k) => k === "hit") ?? keys.find((k) => k.startsWith("hit")) ?? keys.sort(phaseSort)[0] ?? "hit");
   }
-  async function save(next: EffectMap) {
-    setMap(next);
+  /** Sends only the changed moves; the dev server merges them into the file and returns the whole map, so a stale tab
+   *  never overwrites assignments made elsewhere (e.g. by `effects:seed`). */
+  async function save(set: EffectMap["abilities"], remove: string[] = []) {
+    const abilities = { ...map.abilities, ...set };
+    for (const key of remove) delete abilities[key];
+    setMap({ abilities });
     setSaving(true);
-    await fetch(`${EFFECT_BASE}/__map`, { method: "PUT", body: `${JSON.stringify(next, null, 2)}\n` });
-    setSaving(false);
+    try {
+      const res = await fetch(`${EFFECT_BASE}/__map`, { method: "PUT", body: JSON.stringify({ set, remove }) });
+      if (res.ok) setMap((await res.json()) as EffectMap);
+    } finally {
+      setSaving(false);
+    }
   }
   /** Assign the whole recipe (named FFRK ability) or the current file as one phase. */
   function assign(moveKey: string, as: "recipe" | string) {
     if (!selected) return;
     const cur = map.abilities[moveKey]?.phases ?? {};
     const phases = as === "recipe" ? { ...selected.phases } : path ? { ...cur, [as]: path } : cur;
-    void save({ abilities: { ...map.abilities, [moveKey]: { phases, from: selected.label } } });
+    void save({ [moveKey]: { phases, from: selected.label } });
   }
   /** Assign the selected candidate's recipe to every FF9 move (party and monster) with this spell's name. */
   function useForSpell(spell: string) {
     if (!selected) return;
-    const abilities = { ...map.abilities };
-    for (const m of moves.filter((m) => m.name === spell)) abilities[m.key] = { phases: { ...selected.phases }, from: `${spell}: ${selected.label.replace(" (first pick)", "")} — ${selected.sub}` };
-    void save({ abilities });
+    const set: EffectMap["abilities"] = {};
+    for (const m of moves.filter((m) => m.name === spell)) set[m.key] = { phases: { ...selected.phases }, from: `${spell}: ${selected.label.replace(" (first pick)", "")} — ${selected.sub}` };
+    void save(set);
   }
   function unassign(moveKey: string) {
-    const abilities = { ...map.abilities };
-    delete abilities[moveKey];
-    void save({ abilities });
+    void save({}, [moveKey]);
   }
 
   if (!import.meta.env.DEV) return <div className="p-6">The effects gallery only runs in development (it reads the downloaded FFRK library).</div>;

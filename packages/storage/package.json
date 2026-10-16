@@ -1,0 +1,14 @@
+{
+  "name": "@ffix-roguelike/storage",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@ffix-roguelike/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.98] - 2026-10-16
+
+Cloudflare R2 storage for game assets and user uploads, and the effects gallery can no longer wipe assignments.
+
+### Added
+- **`@ffix-roguelike/storage`** (`packages/storage`): Cloudflare R2 (S3-compatible) through Bun's built-in S3 client, so it needs no SDK. `storageFromEnv()` returns `put` / `exists` / `delete` / `list` / `publicUrl`, or null when R2 isn't configured. `KEYS.asset(path)` → `assets/…` and `KEYS.userAvatar(userId, ext)` → `avatars/users/<id>.<ext>` namespace the one public bucket. It is a package rather than server code because both the API (Hono: avatars and other uploads) and the web build's asset upload script use it.
+- Optional env vars, using GuideEngine's names:
+  - **server**: `CLOUDFLARE_R2_ACCOUNT_ID`, `CLOUDFLARE_R2_ACCESS_KEY_ID`, `CLOUDFLARE_R2_SECRET_ACCESS_KEY`, `CLOUDFLARE_R2_BUCKET_NAME`, `CLOUDFLARE_R2_PUBLIC_URL`.
+  - **web**: `VITE_ASSET_BASE_URL`, where the game's assets will be served from (unset = the app's own files).
+
+### Fixed
+- **The effects gallery could erase assignments**: it saved its whole in-memory map, so a tab opened before v0.1.96 wrote its old 161 entries over the 310 (restored). It now sends only the moves it changed, the dev server merges them into the file on disk and returns the result.
+
 ## [0.1.97] - 2026-10-16
 
 The FFRK scrapers share one proper downloader — progress bars, parallel downloads with timeouts, no memory blow-ups — and effect sounds are fetched only for moves the game uses.
