@@ -178,6 +178,16 @@
   color: #fff;
   text-shadow: var(--ff-shadow);
 }
+/* The frame of a game view (the overworld map, stage screens, battles): an FF window's white double border, rounding
+   and drop shadow, over a dark fill (the view draws its own content). */
+.ff-frame {
+  background: #070a1f;
+  border: 2px solid #e8e8f4;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 2px #0c1238,
+    0 3px 0 rgba(0, 0, 0, 0.6);
+}
 /* Selected (e.g. picked for the party): FF9's green window, like the old camp's party cards. */
 .ff-panel[data-on="true"] {
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);

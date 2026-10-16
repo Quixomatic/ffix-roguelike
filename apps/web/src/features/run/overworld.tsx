@@ -54,7 +54,7 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
   }, [run.map, run.position, run.visited, run.party, world.theme]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-black">
+    <div className="relative h-full w-full overflow-hidden">
       {/* The area, map and journey are in the party sidebar. */}
       <div ref={hostRef} className="absolute inset-0" />
       {hover && (

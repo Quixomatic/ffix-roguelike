@@ -73,7 +73,7 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
   const enemies = state.units.filter((u) => u.side === "enemy");
 
   return (
-    <div className="relative h-full min-h-[360px] w-full select-none overflow-hidden rounded-lg bg-black">
+    <div className="ff-frame relative h-full min-h-[360px] w-full select-none overflow-hidden">
       <div ref={hostRef} className="absolute inset-0" />
 
       {battle.banner && (

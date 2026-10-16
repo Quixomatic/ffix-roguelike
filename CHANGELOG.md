@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.51] - 2026-10-16
+
+### Changed
+- **The game views have the FF window frame** like everything else: the overworld map / stage screens and battles get the white double border, rounding and drop shadow (`.ff-frame`), over a dark night-blue fill, instead of plain rounded black boxes.
+
 ## [0.2.50] - 2026-10-16
 
 ### Changed

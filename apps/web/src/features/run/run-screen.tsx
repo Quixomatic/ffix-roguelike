@@ -93,7 +93,7 @@ export function RunScreen() {
     // right). The map /
     // stage on the left, the party on the right (the hub's own sidebar slides in on the left).
     <div className="grid h-svh min-h-0 gap-3 py-4 pl-16 pr-4 lg:grid-cols-[1fr_17rem]">
-      <main className="relative min-h-[60vh] overflow-hidden rounded-lg bg-black/40">
+      <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
             <Overworld run={run} busy={actions.move.isPending} onMove={(nodeId) => actions.move.mutate({ nodeId })} />
