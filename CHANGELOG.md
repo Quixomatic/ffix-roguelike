@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.82] - 2026-10-16
+
+### Changed
+- **Gear comparisons use carets instead of badges**: a green ▲ for a stat that goes up and a red ▼ for one that goes down ("▲2 Def", "▼1 Eva"), as plain coloured text; abilities gained show "▲ Mug" in yellow and lost ones "▼ ~~Steal~~" in red. Everywhere gear is compared: the gear picker, item cards (rewards, shops, synthesis, treasure, Stiltzkin), the camp catalog and the Items page.
+
 ## [0.1.81] - 2026-10-16
 
 Swapping gear in a run is a grid of proper tiles.

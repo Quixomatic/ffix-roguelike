@@ -24,24 +24,24 @@ export function DeltaChips({ change }: { change: GearChange }) {
   const stats = COMPARED_STATS.filter((k) => change.deltas[k]);
   if (!stats.length && !change.gains.length && !change.loses.length) return <span className="text-xs opacity-60">No change</span>;
   return (
-    <span className="flex flex-wrap gap-1">
+    <span className="flex flex-wrap gap-x-2.5 gap-y-0.5 text-xs">
       {stats.map((k) => {
         const d = change.deltas[k]!;
         return (
-          <span key={k} className={`rounded px-1 text-xs ${d > 0 ? "bg-green-900/50 text-green-300" : "bg-red-900/50 text-red-300"}`}>
-            {d > 0 ? "+" : "−"}
+          <span key={k} className={`whitespace-nowrap tabular-nums ${d > 0 ? "text-green-300" : "text-red-300"}`}>
+            <span aria-label={d > 0 ? "up" : "down"}>{d > 0 ? "▲" : "▼"}</span>
             {Math.abs(d)} {STAT_LABEL[k]}
           </span>
         );
       })}
       {change.gains.map((r) => (
-        <span key={r} className="rounded bg-yellow-900/40 px-1 text-xs text-yellow-200">
-          + {abilityName(r)}
+        <span key={r} className="whitespace-nowrap text-yellow-200">
+          ▲ {abilityName(r)}
         </span>
       ))}
       {change.loses.map((r) => (
-        <span key={r} className="rounded bg-red-900/40 px-1 text-xs text-red-300 line-through decoration-red-300/60">
-          {abilityName(r)}
+        <span key={r} className="whitespace-nowrap text-red-300">
+          ▼ <span className="line-through decoration-red-300/60">{abilityName(r)}</span>
         </span>
       ))}
     </span>
