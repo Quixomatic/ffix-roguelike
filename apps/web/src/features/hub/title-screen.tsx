@@ -1,6 +1,7 @@
 import { MAIN_CAST } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
+import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { authClient } from "@/lib/auth-client";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
@@ -10,9 +11,7 @@ export function TitleScreen() {
   const { data: session, isPending } = authClient.useSession();
   useMusic(MUSIC_SLOTS.title);
   return (
-    <div className="relative flex min-h-full flex-col items-center justify-center gap-8 overflow-hidden bg-[radial-gradient(ellipse_at_top,#2a3a8a_0%,#0b0f2e_60%,#05060f_100%)] px-4 py-10">
-      {/* drifting "memoria" motes */}
-      <div className="pointer-events-none absolute inset-0 opacity-50 [background-image:radial-gradient(#ffffff_1px,transparent_1px)] [background-size:48px_48px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+    <MemoriaBackdrop className="flex flex-col items-center justify-center gap-8 overflow-hidden px-4 py-10">
 
       <div className="relative text-center font-['Pixelify_Sans'] text-white [text-shadow:3px_3px_0_#000]">
         <div className="ff-title text-base tracking-[0.3em]">A ROGUELITE</div>
@@ -51,6 +50,6 @@ export function TitleScreen() {
           </>
         )}
       </div>
-    </div>
+    </MemoriaBackdrop>
   );
 }

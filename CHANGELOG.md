@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.11] - 2026-10-16
+
+### Added
+- **`MemoriaBackdrop`** (`components/memoria-backdrop.tsx`): the title screen's background (the deep-blue radial sky and the drifting "memoria" motes fading toward the bottom) as a reusable wrapper. It draws behind its children in its own stacking layer, so content needs no z-index; it fills at least the page area and grows with long pages, and `className` sets the container's layout.
+
+### Changed
+- **Camp uses the title screen's backdrop** (and while it loads). The title screen now uses the component too; it looks the same.
+
 ## [0.2.10] - 2026-10-16
 
 ### Fixed
