@@ -12,7 +12,7 @@ import { GearCatalogGrid } from "./gear-catalog";
 import { CharacterCard, rosterEntries } from "./roster";
 import { PageTitle } from "./story";
 
-/** Mockup of the Party page: the whole roster as cards; recruited ones open their own page. */
+/** The Party page: the whole roster as cards; recruited ones open their own page. */
 export function PartyPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
@@ -23,7 +23,7 @@ export function PartyPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {rosterEntries(p).map((e) =>
           e.unlocked ? (
-            <Link key={e.key} to="/mock/party/$character" params={{ character: e.key }} className="ff-panel ff-lift p-3">
+            <Link key={e.key} to="/party/$character" params={{ character: e.key }} className="ff-panel ff-lift p-3">
               <CharacterCard entry={e} footer={<div className="text-xs text-yellow-200/80">Manage ▸</div>} />
             </Link>
           ) : (
@@ -37,7 +37,7 @@ export function PartyPage() {
   );
 }
 
-/** Mockup of a character's own page (/mock/party/:character): the camp character sheet as a page, not a dialog. */
+/** A character's own page (/party/:character): the camp character sheet as a page, not a dialog. */
 export function CharacterPage({ characterKey }: { characterKey: string }) {
   const profile = useQuery(trpc.profile.get.queryOptions());
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
       <div className="mx-auto max-w-xl p-8">
         <div className="ff-panel p-5">
           {characterKey in profile.data.builds ? `${getCharacter(characterKey).name} hasn't joined yet.` : "No such character."}{" "}
-          <Link to="/mock/party" className="text-yellow-200 underline">
+          <Link to="/party" className="text-yellow-200 underline">
             Back to the roster
           </Link>
         </div>
@@ -56,12 +56,12 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
     );
   return (
     <div className="h-svh p-4">
-      <CharacterSheet inline build={build} onClose={() => navigate({ to: "/mock/party" })} />
+      <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
     </div>
   );
 }
 
-/** Mockup of the Shops page: the camp's two shop dialogs as tabs. */
+/** The Shops page: supply ranks and the gear catalog as tabs. */
 export function ShopsPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
@@ -93,7 +93,7 @@ export function ShopsPage() {
   );
 }
 
-/** Mockup of the Challenges page: the challenge achievements as goals, and the modes still to come. */
+/** The Challenges page: the challenge achievements as goals, and the modes still to come. */
 export function ChallengesPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;

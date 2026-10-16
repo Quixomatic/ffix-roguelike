@@ -178,6 +178,11 @@
   color: #fff;
   text-shadow: var(--ff-shadow);
 }
+/* Selected (e.g. picked for the party): FF9's green window, like the old camp's party cards. */
+.ff-panel[data-on="true"] {
+  background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
+  border-color: #c8f0c8;
+}
 /* Hover glow for big clickable windows (hub cards). */
 .ff-lift {
   transition:

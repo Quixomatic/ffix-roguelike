@@ -10,7 +10,7 @@ import { ItemDetails } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
 /**
- * Mockup of the gear catalog as a grid of icon tiles: what you can unlock now (price; click to unlock), then what's
+ * The gear catalog as a grid of icon tiles: what you can unlock now (price; click to unlock), then what's
  * already unlocked (✓). Hovering a tile shows the item's full card — stats, FF9's help, abilities, who can wear it and
  * what it would change for each character.
  */

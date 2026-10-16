@@ -45,8 +45,8 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
-  // The /mock layout (sidebar shell) brings its own navigation instead of the header bar.
-  const shell = useRouterState({ select: (s) => s.location.pathname.startsWith("/mock") }) ? "sidebar" : "header";
+  // The hub's layout (sidebar shell) brings its own navigation instead of the header bar.
+  const shell = useRouterState({ select: (s) => s.matches.some((m) => m.staticData?.shell === "sidebar") }) ? "sidebar" : "header";
   return (
     <>
       <HeadContent />

@@ -13,7 +13,7 @@ import { CharacterCard, rosterEntries } from "./roster";
 type StoryProfile = { maxTier: number; journeysCleared?: string[] } & Parameters<typeof availableJourneys>[0];
 
 /**
- * The tiers a journey can be played at (mockup of per-journey tiers): Tier 0 always; higher ones once that journey
+ * The tiers a journey can be played at (per journey): Tier 0 always; higher ones once that journey
  * is cleared — capped for now by the account's unlocked tier, until the rules track a tier per journey.
  */
 export function journeyTiers(p: StoryProfile, journeyId: string): number[] {
@@ -24,7 +24,7 @@ export function journeyTiers(p: StoryProfile, journeyId: string): number[] {
 
 const tierLabel = (t: number) => (t === 0 ? "Normal" : `Tier ${t}`);
 
-/** Mockup of the Story page: every journey as a card with its tier pips; choose one to pick a party for it. */
+/** The Story page: every journey as a card with its tier pips; choose one to pick a party for it. */
 export function StoryPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
@@ -39,7 +39,7 @@ export function StoryPage() {
         ))}
       </div>
       <p className="text-xs text-[#c8d0ff]">
-        Mockup: tiers here are per journey (Normal always; higher once that journey is cleared). Until the rules track a tier per journey, higher tiers are capped by your account's current tier ({tierLabel(Math.min(MAX_TIER, p.maxTier))}).
+        Tiers are per journey: Normal always, higher once that journey is cleared. Until the rules track a tier per journey, higher tiers are capped by your account's current tier ({tierLabel(Math.min(MAX_TIER, p.maxTier))}).
       </p>
     </div>
   );
@@ -90,7 +90,7 @@ function JourneyCard({ journey: j, unlocked, cleared, tiers }: { journey: Journe
         </div>
         <button
           disabled={!unlocked}
-          onClick={() => navigate({ to: "/mock/story/$journey", params: { journey: j.id }, search: { tier } })}
+          onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier } })}
           className="ff-panel ff-lift px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
         >
           Choose ▸
@@ -103,7 +103,7 @@ function JourneyCard({ journey: j, unlocked, cleared, tiers }: { journey: Journe
 const LAST_PARTY = "ffix-mock-last-party";
 
 /**
- * Mockup of the in-between page after choosing a journey: the journey and tier, four party slots, and the roster to
+ * The in-between page after choosing a journey: the journey and tier, four party slots, and the roster to
  * pick from (the last party is remembered). "Begin run" starts the run for real, as camp does.
  */
 export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string; tier: number }) {
@@ -142,7 +142,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
       <div className="mx-auto max-w-xl p-8">
         <div className="ff-panel p-5">
           That journey isn't open yet.{" "}
-          <Link to="/mock/story" className="text-yellow-200 underline">
+          <Link to="/story" className="text-yellow-200 underline">
             Back to Story
           </Link>
         </div>
@@ -163,7 +163,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <Link to="/mock/story" className="self-start text-sm text-[#c8d0ff] hover:text-white">
+      <Link to="/story" className="self-start text-sm text-[#c8d0ff] hover:text-white">
         ◂ Journeys
       </Link>
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
@@ -179,7 +179,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
           {tiers.map((t) => (
             <Link
               key={t}
-              to="/mock/story/$journey"
+              to="/story/$journey"
               params={{ journey: j.id }}
               search={{ tier: t }}
               replace
@@ -238,7 +238,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
               key={e.key}
               disabled={!e.unlocked}
               onClick={() => toggle(e.key)}
-              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${chosen ? "outline outline-2 outline-yellow-300" : ""} ${e.unlocked ? "" : "opacity-60"}`}
+              data-on={chosen}
+              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${e.unlocked ? "" : "opacity-60"}`}
             >
               <CharacterCard entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
             </button>

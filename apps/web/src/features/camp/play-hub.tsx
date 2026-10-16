@@ -15,7 +15,7 @@ import { canSpend, RosterLine } from "./roster";
 const SHOP_ICONS = [236, 240];
 
 /**
- * Mockup of the Play hub (replaces camp's single long page): the player's currency top right with a floating stack
+ * The Play hub (replaces camp's single long page): the player's currency top right with a floating stack
  * of quick links, a "continue" banner during a run, the cast in a line (hover for a card, click to manage), and
  * four big cards — Story, Party, Shops, Challenges.
  */
@@ -61,7 +61,7 @@ export function PlayHub() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <HubCard
-          to="/mock/story"
+          to="/story"
           title="Story"
           art={<HeroSprite heroKey="zidane" size={88} anim="walk" />}
           lines={[
@@ -77,7 +77,7 @@ export function PlayHub() {
           blurb="Follow FF9's story as roguelite journeys. Each clear recruits someone new."
         />
         <HubCard
-          to="/mock/party"
+          to="/party"
           title="Party"
           art={
             <div className="flex -space-x-6">
@@ -90,7 +90,7 @@ export function PlayHub() {
           blurb="Spend Completion Points, unlock gear slots, learn abilities."
         />
         <HubCard
-          to="/mock/shops"
+          to="/shops"
           title="Shops"
           art={
             <div className="flex gap-2">
@@ -104,7 +104,7 @@ export function PlayHub() {
           disabled={!!p.activeRunId}
         />
         <HubCard
-          to="/mock/challenges"
+          to="/challenges"
           title="Challenges"
           art={<Trophy className="size-16 text-yellow-200 drop-shadow-[2px_2px_0_#000]" />}
           lines={[`${challengesDone} of ${challengeDefs.length} challenges done`, "Boss Gauntlet · coming soon"]}

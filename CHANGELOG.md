@@ -2,6 +2,26 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.16] - 2026-10-16
+
+The new hub is the game's camp: Play, Story, Party, Shops and Challenges in the sidebar layout, at their own paths. The old single-page camp is tucked away at /legacy/camp.
+
+### Changed
+- **The hub replaces camp** (from the v0.2.13 mockup):
+  - **`/play`** is the Play hub (the title screen's Play, "Go to camp" and the header's Camp all land there).
+  - **`/story`**, **`/story/:journey`** (pick the party), **`/party`**, **`/party/:character`**, **`/shops`** and **`/challenges`**.
+  - **Achievements** and **Settings** moved into the hub layout too.
+  - Routes live under a pathless layout, `_auth/_hub`, whose `staticData.shell = "sidebar"` tells the root to show the sidebar instead of the header bar. Code lives in `features/camp/` (was `features/mockup/`).
+- **Picked party cards turn FF9 green** on the embark page, like the old camp's (`.ff-panel[data-on="true"]`).
+- The sidebar's version line drops "mockup"; a small **Legacy camp** link sits above the player card.
+- Pages outside the hub keep the header bar: title, login, runs and battles, Items, Dev, the effects gallery, practice battle.
+
+### Kept
+- **The old camp** (`features/hub/camp.tsx`, its shop dialogs and character sheet) at **`/legacy/camp`**, unchanged.
+
+### Removed
+- `/mock` (its pages are the real ones now).
+
 ## [0.2.15] - 2026-10-16
 
 ### Changed

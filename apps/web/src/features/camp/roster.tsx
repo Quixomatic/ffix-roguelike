@@ -47,7 +47,7 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
             closeDelay={50}
             render={
               e.unlocked ? (
-                <Link to="/mock/party/$character" params={{ character: e.key }} aria-label={getCharacter(e.key).name} />
+                <Link to="/party/$character" params={{ character: e.key }} aria-label={getCharacter(e.key).name} />
               ) : (
                 <span role="img" aria-label="Locked character" />
               )
