@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.48] - 2026-10-16
+
+### Changed
+- **The run's frames clear the menu button**: inset 4rem on both sides (the button ends 3.25rem from the left edge), symmetrical left and right; battles too.
+
 ## [0.2.47] - 2026-10-16
 
 ### Changed
