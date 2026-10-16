@@ -13,6 +13,8 @@ import {
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
+
+import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -25,6 +27,7 @@ import { CharacterSheet } from "./character-sheet";
 
 /** Between runs: roster (spend CP, gear, abilities), party picker, difficulty tier, shop and workshop. */
 export function Camp() {
+  useMusic(MUSIC_SLOTS.camp);
   const profile = useQuery(trpc.profile.get.queryOptions());
   const qc = useQueryClient();
   const navigate = useNavigate();

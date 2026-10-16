@@ -2,6 +2,8 @@ import type { BattleState } from "@ffix-roguelike/game-core";
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
+import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
+
 import { createBattleGame, type BattleBridge } from "./battle-scene";
 import { CommandMenu } from "./command-menu";
 import { EnemyList, PartyStatus } from "./party-status";
@@ -11,10 +13,12 @@ interface Props {
   initial: BattleState;
   theme: string;
   onEnd(state: BattleState): void;
+  /** The fight's music (FF9 track id); defaults to the Battle Theme. Victory and defeat switch to their own. */
+  music?: string;
 }
 
 /** A full battle: Phaser battlefield (filling its parent — give it a height) with FF9-style menu windows on top. */
-export function BattleView({ initial, theme, onEnd }: Props) {
+export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<BattleBridge | null>(null);
   const pickRef = useRef<((id: string) => void) | null>(null);
@@ -25,6 +29,7 @@ export function BattleView({ initial, theme, onEnd }: Props) {
     onEnd,
   });
   const { engine, state } = battle;
+  useMusic(state.outcome === "victory" ? MUSIC_SLOTS.victory : state.outcome === "defeat" ? MUSIC_SLOTS.gameOver : music);
 
   if (!bridgeRef.current) {
     bridgeRef.current = {

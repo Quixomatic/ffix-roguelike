@@ -1,12 +1,14 @@
 import { MAIN_CAST } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
+import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { authClient } from "@/lib/auth-client";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
 /** The title screen: the cast on parade, and the way in. */
 export function TitleScreen() {
   const { data: session, isPending } = authClient.useSession();
+  useMusic(MUSIC_SLOTS.title);
   return (
     <div className="relative flex min-h-full flex-col items-center justify-center gap-8 overflow-hidden bg-[radial-gradient(ellipse_at_top,#2a3a8a_0%,#0b0f2e_60%,#05060f_100%)] px-4 py-10">
       {/* drifting "memoria" motes */}

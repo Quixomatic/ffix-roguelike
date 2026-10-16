@@ -9,6 +9,10 @@ model UserSettings {
   battleSpeed Int     @default(1)
   /// Start battles with the Auto battle toggle on.
   autoBattle  Boolean @default(false)
+  /// Music volume, 0–100 (0 = off).
+  musicVolume Int     @default(60)
+  /// Sound effect volume, 0–100 (0 = off).
+  sfxVolume   Int     @default(80)
 
   updatedAt DateTime @updatedAt
 

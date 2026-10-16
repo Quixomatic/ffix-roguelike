@@ -66,3 +66,6 @@ temp
 
 # Third-party reference repos and data dumps (FFRK tools, Enlir database)
 .refs/
+
+# FF9 music, built from the local FF9 install (python apps/web/scripts/extract-ff9-music.py && pnpm -F web audio:music); served from the asset CDN later
+apps/web/public/music/

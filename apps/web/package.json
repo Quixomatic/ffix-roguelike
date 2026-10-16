@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.69",
+  "version": "0.1.70",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,7 +18,8 @@
     "ffrk:effects": "bun scripts/fetch-ffrk-effects.ts",
     "ffrk:effect-names": "bun scripts/name-ffrk-effects.ts",
     "effects:seed": "bun scripts/seed-ability-effects.ts",
-    "sprites:enemies": "bun scripts/build-enemy-sprites.ts"
+    "sprites:enemies": "bun scripts/build-enemy-sprites.ts",
+    "audio:music": "bun scripts/build-music.ts"
   },
   "dependencies": {
     "@ffix-roguelike/api": "workspace:*",

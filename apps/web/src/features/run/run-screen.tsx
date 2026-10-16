@@ -2,6 +2,7 @@ import { WORLDS } from "@ffix-roguelike/game-core";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { AREA_MUSIC, MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { BattleView } from "@/features/battle/battle-view";
 import { useBattleScript } from "@/features/battle/use-battle-script";
 
@@ -25,6 +26,19 @@ export function RunScreen() {
   // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs. Hooks stay above
   // the early returns so every render calls the same ones.
   const scriptReady = useBattleScript(run?.phase.kind === "battle" ? run.phase.battle.scene : undefined);
+  // Music: the area's theme on the map and its stages; battles pick their own (BattleView); the fanfare carries on
+  // through the rewards; a finished run plays the fanfare or Game Over.
+  useMusic(
+    !run || run.phase.kind === "battle"
+      ? undefined
+      : run.phase.kind === "rewards"
+        ? MUSIC_SLOTS.victory
+        : run.phase.kind === "over"
+          ? run.phase.won
+            ? MUSIC_SLOTS.victory
+            : MUSIC_SLOTS.gameOver
+          : (AREA_MUSIC[WORLDS[run.world]!.id] ?? MUSIC_SLOTS.overworld),
+  );
 
   if (active.isPending) return <div className="p-6">Loading…</div>;
   if (!run) {
@@ -52,6 +66,7 @@ export function RunScreen() {
               key={`${phase.nodeId}-${run.stats.battles}`}
               initial={phase.battle}
               theme={WORLDS[run.world]!.theme}
+              music={phase.nodeKind === "boss" || phase.nodeKind === "semiboss" ? MUSIC_SLOTS.boss : MUSIC_SLOTS.battle}
               onEnd={(final) => actions.finishBattle.mutate({ inputs: final.inputs })}
             />
           </div>

@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { setMusicVolume } from "@/features/audio/music";
 
 import { Panel } from "@/features/gear/character-panels";
 import { trpc } from "@/utils/trpc";
@@ -71,6 +74,18 @@ export function SettingsPage() {
           <div className="text-xs opacity-70">The speed battles start at (you can still change it during a fight).</div>
         </Panel>
 
+        <Panel title="Music">
+          <div data-music>
+            <Volume value={settings.musicVolume} onChange={(v) => update({ musicVolume: v })} />
+          </div>
+          <div className="text-xs opacity-70">FF9's own soundtrack. 0 turns it off.</div>
+        </Panel>
+
+        <Panel title="Sound effects">
+          <Volume value={settings.sfxVolume} onChange={(v) => update({ sfxVolume: v })} />
+          <div className="text-xs opacity-70">Spell and ability sounds. 0 turns them off.</div>
+        </Panel>
+
         <Panel title="Auto battle">
           <div className="flex gap-2">
             <Choice on={!settings.autoBattle} onClick={() => update({ autoBattle: false })}>
@@ -83,6 +98,32 @@ export function SettingsPage() {
           <div className="text-xs opacity-70">Start battles with Auto on (the party picks its own commands).</div>
         </Panel>
       </div>
+    </div>
+  );
+}
+
+/** A 0–100 volume slider; saves when released. */
+function Volume({ value, onChange }: { value: number; onChange(v: number): void }) {
+  const [v, setV] = useState(value);
+  useEffect(() => setV(value), [value]);
+  return (
+    <div className="flex items-center gap-3">
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={5}
+        value={v}
+        className="flex-1 accent-yellow-300"
+        onChange={(e) => {
+          setV(Number(e.target.value));
+          // Hear it as you drag (the saved value updates on release).
+          if (e.target.closest("[data-music]")) setMusicVolume(Number(e.target.value));
+        }}
+        onPointerUp={() => onChange(v)}
+        onKeyUp={() => onChange(v)}
+      />
+      <span className="w-10 text-right tabular-nums">{v}</span>
     </div>
   );
 }

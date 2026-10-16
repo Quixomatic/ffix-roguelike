@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
+import { setMusicVolume } from "@/features/audio/music";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
@@ -17,9 +18,13 @@ export interface Settings {
   menuFont: MenuFont;
   battleSpeed: 1 | 2 | 4;
   autoBattle: boolean;
+  /** 0–100. */
+  musicVolume: number;
+  /** 0–100. */
+  sfxVolume: number;
 }
 
-export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", battleSpeed: 1, autoBattle: false };
+export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 60, sfxVolume: 80 };
 
 /**
  * Apply a menu font now and cache it in the browser, so index.html can apply it before the first paint next time
@@ -47,16 +52,20 @@ export function useSettings() {
   const settings: Settings = { ...DEFAULT_SETTINGS, ...(query.data as Partial<Settings> | undefined) };
   const update = (patch: Partial<Settings>) => {
     if (patch.menuFont) applyMenuFont(patch.menuFont);
+    if (patch.musicVolume != null) setMusicVolume(patch.musicVolume);
     if (session) mutation.mutate(patch);
   };
   return { settings, loaded: query.isSuccess, signedIn: !!session, update, saving: mutation.isPending };
 }
 
-/** Mounted once in the root: applies the account's saved menu font when settings load. */
+/** Mounted once in the root: applies the account's saved menu font and music volume when settings load. */
 export function SettingsSync() {
   const { settings, loaded } = useSettings();
   useEffect(() => {
     if (loaded) applyMenuFont(settings.menuFont);
   }, [loaded, settings.menuFont]);
+  useEffect(() => {
+    setMusicVolume(settings.musicVolume);
+  }, [settings.musicVolume]);
   return null;
 }

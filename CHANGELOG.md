@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.70] - 2026-10-16
+
+Music: FF9's own soundtrack plays everywhere — title, camp, each area's overworld, battles, bosses, the victory fanfare and Game Over.
+
+### Added
+- **FF9's soundtrack**, extracted from the game's install (`python apps/web/scripts/extract-ff9-music.py`): all 109 tracks from FF9's sound bundle, with the **Moguri remasters** (13 tracks) where installed, and FF9's own track names (92, read from the PC version's audio exporter table).
+- **Where each track plays** (`apps/web/scripts/music-map.ts`):
+  - Title: *Title Music* · Camp: *Memories of that Day*
+  - Overworld: each area's FF9 theme — Alexandria *Queen of the Abyss*, Evil Forest, Ice Cavern, Dali Village, Lindblum, Festival of the Hunt *Hunter's Chance*, Qu's Marsh, Gizamaluke's Grotto *Freya's Theme*; *Crossing those Hills* (the world map theme) elsewhere
+  - Battles: *Battle Theme*; bosses and fortress semi-bosses: *Boss Battle Theme*
+  - Winning a fight: *Victory Fanfare*, carrying on through the rewards; losing: *Game Over*; a finished run plays the fanfare or Game Over.
+- **Seamless loops at FF9's own loop points** (read from each track's AKB header) and crossfades between tracks (Web Audio). Music starts on your first click or key press (browsers block sound until then).
+- **Settings**: Music and Sound effects volume sliders (0 = off), saved to your account (`user_settings.musicVolume` / `sfxVolume`, migration `audio_settings`).
+- `pnpm -F web audio:music` (`scripts/build-music.ts`) copies just the used tracks to `public/music/` with their loop points (`music.gen.ts`).
+
+### Notes
+- `public/music/` (39 MB) is git-ignored and built from the local FF9 install; it moves to the asset CDN with the rest of the assets.
+- Restart `pnpm dev` (the database schema changed).
+
 ## [0.1.69] - 2026-10-16
 
 Damage, KOs and deaths wait for the spell to actually hit.
