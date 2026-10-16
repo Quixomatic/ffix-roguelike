@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.27] - 2026-10-16
+
+### Changed
+- **Space works like Enter in every menu**: it presses the focused control, links included (browsers only press buttons with Space, so the hub cards and the sidebar did nothing), once, on release, and never scrolls the page. Text fields keep their spaces; the battle menu and the overworld already treated Space as Enter.
+
 ## [0.2.26] - 2026-10-16
 
 Keyboard and controller navigation, step 2: every hub page.

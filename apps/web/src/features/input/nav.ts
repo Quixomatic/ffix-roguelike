@@ -3,7 +3,8 @@
  *
  * - **Move**: ←↑→↓ or WASD move the focus to the nearest control in that direction (`FocusItem`s, grouped by
  *   `FocusSection`s, which remember their last focused item). The first arrow press on a page focuses its first item.
- * - **Confirm**: Enter / Space — the browser's own: they press the focused button or link (Norigin's Enter is unused).
+ * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the focused control
+ *   (Norigin's Enter is unused).
  * - **Back**: Escape backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
  * - **Controller**: the D-pad / left stick send arrow-key events (repeating while held), A presses the focused control
  *   (or sends Enter where the screen has its own controls), B sends Escape — so battles and the overworld, which already
@@ -92,6 +93,31 @@ export function startNav() {
         e.stopImmediatePropagation();
         void setFocus(doesFocusableExist(PAGE_FOCUS) ? PAGE_FOCUS : SIDEBAR_FOCUS);
       }
+    },
+    true,
+  );
+  // Space = Enter in menus: it presses the focused control (links included — browsers only do buttons), once, on release
+  // (as browsers press buttons), and never scrolls the page. Text fields keep their spaces; screens with their own
+  // controls (battle menu, map) already treat Space as Enter.
+  const spaceTarget = (e: KeyboardEvent) => {
+    if (e.code !== "Space" || e.ctrlKey || e.metaKey || e.altKey || navPaused() || isEditable(e.target as Element)) return null;
+    const el = document.activeElement as HTMLElement | null;
+    return el && el !== document.body && el.matches("button, a[href], [role='button'], summary") ? el : null;
+  };
+  window.addEventListener(
+    "keydown",
+    (e) => {
+      if (spaceTarget(e) || (e.code === "Space" && !navPaused() && !isEditable(e.target as Element))) e.preventDefault();
+    },
+    true,
+  );
+  window.addEventListener(
+    "keyup",
+    (e) => {
+      const el = spaceTarget(e);
+      if (!el) return;
+      e.preventDefault();
+      if (!(el as HTMLButtonElement).disabled) el.click();
     },
     true,
   );
