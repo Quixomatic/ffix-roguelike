@@ -3,6 +3,7 @@ import { abilityName, findItem, type EquipSlot } from "@ffix-roguelike/game-data
 
 import type { ReactNode } from "react";
 
+import { HoverTip } from "@/components/hover-tip";
 import { DeltaChips } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
@@ -117,8 +118,15 @@ function SlotTile({
       </div>
     );
   }
+  const tip = item ? (
+    <div className="ff-window p-2 text-sm">
+      <div className="text-base">{item.name}</div>
+      <div className="text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
+      {item.abilities.length > 0 && <div className="text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</div>}
+    </div>
+  ) : null;
   return (
-    <div className={`group relative flex flex-col items-center gap-0.5 ${className}`}>
+    <HoverTip tip={tip} className={`flex flex-col items-center gap-0.5 ${className}`}>
       <button
         className={`flex h-16 w-16 items-center justify-center rounded-md border-2 text-2xl transition enabled:hover:brightness-125 disabled:opacity-45 data-[active=true]:border-yellow-300 data-[active=true]:shadow-[0_0_8px_rgba(255,224,102,0.7)] ${
           item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/25 bg-black/30"
@@ -131,16 +139,7 @@ function SlotTile({
         {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={48} /> : <span className="opacity-50">{meta.glyph}</span>}
       </button>
       <span className="ff-title text-[0.7rem]">{meta.label}</span>
-      {item && (
-        <div className="pointer-events-none absolute left-1/2 top-full z-20 mt-1 hidden w-60 -translate-x-1/2 group-hover:block">
-          <div className="ff-window p-2 text-sm">
-            <div className="text-base">{item.name}</div>
-            <div className="text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
-            {item.abilities.length > 0 && <div className="text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</div>}
-          </div>
-        </div>
-      )}
-    </div>
+    </HoverTip>
   );
 }
 

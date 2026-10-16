@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.61] - 2026-10-15
+
+Gear tooltips on the paperdoll no longer get cut off.
+
+### Fixed
+- **Paperdoll slot tooltips clipped at the column edge** (they were drawn inside the scrolling column). They now render at page level (`HoverTip`, `components/hover-tip.tsx`): below the slot, or above it when there's no room, and always kept inside the window.
+
 ## [0.1.60] - 2026-10-15
 
 Start level reads like the other training rows, and gear slots unlock right on the paperdoll.
