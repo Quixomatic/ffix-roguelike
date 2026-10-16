@@ -276,7 +276,7 @@ export function EffectsGallery() {
   const canAssign = !!selected && selected.key !== targetItem?.key;
 
   return (
-    <div className="grid h-[calc(100vh-4rem)] grid-cols-[28rem_minmax(0,1fr)_30rem] gap-3 p-3">
+    <div className="grid h-full grid-cols-[28rem_minmax(0,1fr)_30rem] gap-3 p-3">
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
         <div className="flex gap-1">
           {(Object.keys(TAB_LABEL) as Tab[]).map((t) => (

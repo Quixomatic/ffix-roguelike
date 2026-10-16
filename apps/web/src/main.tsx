@@ -10,6 +10,8 @@ const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   scrollRestoration: true,
+  // Pages scroll inside the app shell's <main> (the header stays put), not the window.
+  scrollToTopSelectors: ["#main"],
   defaultPendingComponent: () => <Loader />,
   context: { trpc, queryClient },
   Wrap: function WrapComponent({ children }: { children: React.ReactNode }) {

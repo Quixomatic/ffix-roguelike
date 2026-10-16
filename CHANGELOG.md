@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.9] - 2026-10-16
+
+The header stays put: pages scroll in their own area under it.
+
+### Changed
+- **App shell**: the header bar, then `<main>` as the page's one scroll area (`grid-rows-[auto_minmax(0,1fr)]`, main `min-h-0 overflow-y-auto`). Camp, Settings, Achievements, Items and the other long pages scroll under the header instead of scrolling it out of view. Full-screen pages (the run's map and stages, battles, the effects gallery) fill the area exactly, as before.
+- Navigating to another page starts it at the top, and back/forward restores where you were: the router resets and restores the main area's scroll (`scrollToTopSelectors`, `data-scroll-restoration-id`), not the window's.
+- The effects gallery fills the area (`h-full`) instead of guessing the header's height.
+
 ## [0.2.8] - 2026-10-16
 
 FF9's own menu sounds: the cursor tick, cancel, the "can't do that" buzzer and the shop purchase chime, across the whole app.
