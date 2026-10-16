@@ -18,28 +18,28 @@ const TABS: { id: DockTab; label: string; glyph: string }[] = [
 ];
 
 /**
- * Right edge of the run screen: tabs that slide a panel out over the map — the item bag, every piece of gear the
+ * Bottom centre of the run screen: tabs that slide a panel out over the map (on the right) — the item bag, every piece of gear the
  * party carries, and the run's progress (with Abandon).
  */
 export function RunDock({ run, actions, canManage }: { run: RunState; actions: RunActions; canManage: boolean }) {
   const [tab, setTab] = useState<DockTab | null>(null);
   return (
     <>
-      <div className="absolute right-2 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-1">
+      <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1">
         {TABS.map((t) => (
           <button
             key={t.id}
-            className="ff-window flex w-14 flex-col items-center py-1.5 text-xs data-[on=true]:text-yellow-200 data-[on=true]:brightness-125"
+            className="ff-window flex items-center gap-1.5 px-3 py-1 text-sm data-[on=true]:text-yellow-200 data-[on=true]:brightness-125"
             data-on={tab === t.id}
             onClick={() => setTab(tab === t.id ? null : t.id)}
           >
-            <span className="text-lg leading-none">{t.glyph}</span>
+            <span className="text-base leading-none">{t.glyph}</span>
             {t.label}
           </button>
         ))}
       </div>
       {tab && (
-        <div className="ff-window absolute bottom-2 right-[4.5rem] top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
+        <div className="ff-window absolute bottom-14 right-2 top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
           <div className="flex items-center justify-between">
             <span className="ff-display text-lg">{TABS.find((t) => t.id === tab)!.label}</span>
             <button onClick={() => setTab(null)} aria-label="Close">

@@ -59,9 +59,9 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
         <div className="ff-title">{getJourney(run.journey).name}</div>
       </div>
       {hover && (
-        <div className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
+        <div className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
       )}
-      <div className="pointer-events-none absolute bottom-2 right-3 text-xs text-white/60 [text-shadow:0_1px_2px_#000]">
+      <div className="pointer-events-none absolute bottom-14 right-3 text-xs text-white/60 [text-shadow:0_1px_2px_#000]">
         WASD / arrows to walk · Enter / Space to enter a stage · or click a glowing stage
       </div>
     </div>

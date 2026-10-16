@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.63] - 2026-10-15
+
+The run dock moves to the bottom centre.
+
+### Changed
+- The Items / Gear / Run tabs sit in a row at the bottom centre of the map instead of floating on the right edge; their panels still slide out on the right, stopping above the tabs.
+- The map's stage description (on hover) and the controls hint moved up so they never sit under the tabs; stage screens keep clear space at the bottom for them.
+
 ## [0.1.62] - 2026-10-15
 
 Party cards in the run sidebar stop growing.

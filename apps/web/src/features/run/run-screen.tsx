@@ -77,7 +77,7 @@ export function RunScreen() {
             <Overworld run={run} busy={actions.move.isPending} onMove={(nodeId) => actions.move.mutate({ nodeId })} />
           </div>
         ) : (
-          <div className="absolute inset-0 overflow-y-auto p-3 pr-20">
+          <div className="absolute inset-0 overflow-y-auto p-3 pb-16">
             {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}
