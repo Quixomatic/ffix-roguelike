@@ -302,7 +302,8 @@ export interface SheetTab {
 
 /**
  * The character sheet window: a fixed header, then the paperdoll figure on the left and tabbed panels on the
- * right. Only the body scrolls (each side on its own), never the header.
+ * right. Only the body scrolls (each side on its own), never the header. `inline` renders it as a page (filling its
+ * container, no overlay; close = back) instead of a dialog.
  */
 export function CharacterModal({
   title,
@@ -312,7 +313,9 @@ export function CharacterModal({
   tab,
   onTab,
   onClose,
+  inline,
 }: {
+  inline?: boolean;
   title: ReactNode;
   headerRight?: ReactNode;
   doll: ReactNode;
@@ -322,15 +325,14 @@ export function CharacterModal({
   onClose(): void;
 }) {
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
-      <div className="ff-window flex h-[90vh] w-[95vw] max-w-[1400px] flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+  const window = (
+      <div className={`ff-window flex flex-col overflow-hidden ${inline ? "h-full w-full" : "h-[90vh] w-[95vw] max-w-[1400px]"}`} onClick={(e) => e.stopPropagation()}>
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/15 px-4 py-3">
           <div className="ff-display text-2xl">{title}</div>
           <div className="flex items-center gap-4">
             {headerRight}
-            <button className="text-xl" onClick={onClose} aria-label="Close">
-              ✕
+            <button className={inline ? "rounded border border-white/40 px-3 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
+              {inline ? "← Back" : "✕"}
             </button>
           </div>
         </div>
@@ -352,6 +354,11 @@ export function CharacterModal({
           </div>
         </div>
       </div>
+  );
+  if (inline) return window;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
+      {window}
     </div>
   );
 }

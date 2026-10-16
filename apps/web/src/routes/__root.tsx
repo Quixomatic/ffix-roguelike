@@ -1,7 +1,7 @@
 import { Toaster } from "@ffix-roguelike/ui/components/sonner";
 import { registerBestiary, registerGameData } from "@ffix-roguelike/game-data";
 import type { QueryClient } from "@tanstack/react-query";
-import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, Outlet, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
 
 import Header from "@/components/header";
 import { AssetGate } from "@/components/asset-gate";
@@ -45,6 +45,8 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
+  // The /mock layout (sidebar shell) brings its own navigation instead of the header bar.
+  const shell = useRouterState({ select: (s) => s.location.pathname.startsWith("/mock") }) ? "sidebar" : "header";
   return (
     <>
       <HeadContent />
@@ -56,8 +58,8 @@ function RootComponent() {
       >
         {/* App shell: the header stays put; <main> is the one scroll area. Its single row is at least the full height
             (pages stretch to fill it, whether or not they set h-full) and grows with taller pages, which then scroll. */}
-        <div className="grid h-svh grid-rows-[auto_minmax(0,1fr)]">
-          <Header />
+        <div className={`grid h-svh ${shell === "header" ? "grid-rows-[auto_minmax(0,1fr)]" : "grid-rows-[minmax(0,1fr)]"}`}>
+          {shell === "header" && <Header />}
           <SettingsSync />
           <main id="main" data-scroll-restoration-id="main" className="grid min-h-0 grid-rows-[minmax(100%,max-content)] overflow-y-auto">
             <AssetGate>

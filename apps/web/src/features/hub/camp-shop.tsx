@@ -10,7 +10,7 @@ import { uiSound } from "@/features/audio/ui-sounds";
 import { HelpText, ItemCard, itemEffectText } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
-type Shop = "supplies" | "catalog";
+export type Shop = "supplies" | "catalog";
 
 /** Potion and a Mythril Sword: the big buttons' icons. */
 const SHOP_ICON: Record<Shop, number> = { supplies: 236, catalog: 22 };
@@ -48,6 +48,15 @@ function ShopButton({ shop, title, hint, onClick }: { shop: Shop; title: string;
 }
 
 function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; onClose(): void }) {
+  return (
+    <GameDialog title={shop === "supplies" ? "Supplies" : "Gear catalog"} headerRight={<span className="text-lg">{profile.gil} gil</span>} onClose={onClose}>
+      <ShopContents shop={shop} profile={profile} />
+    </GameDialog>
+  );
+}
+
+/** A camp shop's contents (what its dialog shows): the supply ranks, or the gear catalog — usable on a page too. */
+export function ShopContents({ shop, profile }: { shop: Shop; profile: Profile }) {
   const qc = useQueryClient();
   const opts = {
     onSuccess: () => qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() }),
@@ -62,7 +71,7 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
   // Gear unlocks compare against how each character starts a run.
   const roster = rosterAtStart(profile);
   return (
-    <GameDialog title={shop === "supplies" ? "Supplies" : "Gear catalog"} headerRight={<span className="text-lg">{profile.gil} gil</span>} onClose={onClose}>
+    <>
       <div className="mb-3 text-sm opacity-75">
         {shop === "catalog"
           ? "Unlocking gear adds it to future runs' drops, shops and treasure for its world. Reach further worlds to see more."
@@ -89,7 +98,7 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
           {!stock.length && <div className="text-sm opacity-60">Nothing here yet — reach further worlds.</div>}
         </div>
       )}
-    </GameDialog>
+    </>
   );
 }
 

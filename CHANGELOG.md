@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.13] - 2026-10-16
+
+A mockup of the new hub layout at **/mock**, alongside the current camp (which is unchanged): a sidebar shell, an FF theme for shadcn, the Play hub, and Story, Embark, Party, character, Shops and Challenges pages.
+
+### Added
+- **`/mock` sidebar shell** (`features/mockup/shell.tsx`):
+  - **Sidebar:** logo and name, the version as the separator line, the game's destinations (Play, Story, Party, Shops, Challenges; the FF9 glove marks the current one), the account pages (Items, Achievements, Settings), a way back to the current camp, and the player (avatar, gil) at the bottom.
+  - **Layout:** the page scrolls beside it over the title screen's backdrop (dimmed); the header bar is hidden on `/mock`.
+- **FF theme for shadcn** (`.theme-ff` in `index.css`): shadcn's tokens re-pointed to FF9's menu colours, so Popover, Dialog, Tabs, HoverCard, Tooltip and Button come out in FF9 colours. Also `.ff-panel` (FF9's gradient window with the double border, for shadcn content), `.ff-lift` (hover glow for big cards) and `.ff-chip` (currency).
+- **shadcn components** in `packages/ui`: dialog, popover, hover-card, tabs, separator, progress (Base UI).
+- **Play hub** (`/mock`):
+  - gil and CP top right, with a floating stack of round shortcuts (Items, Achievements, Settings) with tooltips
+  - a "Continue run" banner when a run is in progress
+  - the **cast line**
+  - four big cards with live details: **Story** (next journey, journeys cleared), **Party** (recruited, who can spend CP), **Shops** (gil banked), **Challenges** (challenges done)
+- **Cast line** (`RosterLine`): everyone in FF9's order. Recruited characters hop and have a ★ when they can spend CP; the rest are silhouettes. Hovering shows their card in an FF popover (`CharacterCard`): start level, HP/MP/Str/Mag, starter gear, gear slots and CP, or how to recruit them. Clicking a recruited character opens **/mock/party/:character**.
+- **Story** (`/mock/story`): every journey as a card (maps, final boss, the hero it recruits) with **per-journey tier pips**. Normal is always open; higher tiers open once that journey is cleared, for now capped by the account's tier until the rules track a tier per journey. **Choose ▸** goes to the embark page.
+- **Embark** (`/mock/story/:journey?tier=N`): the journey and its tier, four **party slots**, and the roster as cards to pick from (up to four; the last party is remembered). **Begin run ▶** starts the run for real, as camp does.
+- **Party** (`/mock/party`): the roster as cards; **/mock/party/:character** is the camp character sheet as a page (paperdoll, training, gear, abilities; spending works).
+- **Shops** (`/mock/shops`): Supplies and Gear catalog as tabs.
+- **Challenges** (`/mock/challenges`): Boss Gauntlet, Solo runs and Higher tiers (coming soon), and the challenge achievements as goals.
+
+### Changed
+- `CharacterModal` / `CharacterSheet` take `inline` (render as a page instead of a dialog). `ShopContents` is the shop dialogs' body, exported. The current camp and run screens are unchanged.
+
 ## [0.2.12] - 2026-10-16
 
 ### Changed

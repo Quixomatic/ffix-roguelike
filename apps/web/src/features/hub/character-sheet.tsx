@@ -24,7 +24,7 @@ import { trpc } from "@/utils/trpc";
  * Before a run: the paperdoll (starter gear) on the left; Training (all CP spending), Equipment, Abilities, Support and Record tabs on
  * the right.
  */
-export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuild; onClose(): void }) {
+export function CharacterSheet({ build: saved, onClose, inline }: { build: CharacterBuild; onClose(): void; inline?: boolean }) {
   // Show the character as they'll start a run: starter gear in unlocked slots.
   const build = { ...saved, equipment: starterGear(saved) };
   const qc = useQueryClient();
@@ -59,6 +59,7 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
 
   return (
     <CharacterModal
+      inline={inline}
       title={
         <>
           {char.name} <span className="ff-title text-base">Start Lv {build.level}</span>

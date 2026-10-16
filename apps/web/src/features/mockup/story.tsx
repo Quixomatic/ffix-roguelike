@@ -1,0 +1,260 @@
+import { availableJourneys, encounterNames, getArea, JOURNEYS, MAX_TIER, type JourneyDef } from "@ffix-roguelike/game-core";
+import { getCharacter } from "@ffix-roguelike/game-data";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { HeroSprite } from "@/features/sprites/hero-sprite";
+import { trpc } from "@/utils/trpc";
+
+import { CharacterCard, rosterEntries } from "./roster";
+
+type StoryProfile = { maxTier: number; journeysCleared?: string[] } & Parameters<typeof availableJourneys>[0];
+
+/**
+ * The tiers a journey can be played at (mockup of per-journey tiers): Tier 0 always; higher ones once that journey
+ * is cleared — capped for now by the account's unlocked tier, until the rules track a tier per journey.
+ */
+export function journeyTiers(p: StoryProfile, journeyId: string): number[] {
+  const cleared = (p.journeysCleared ?? []).includes(journeyId);
+  const top = cleared ? Math.min(MAX_TIER, p.maxTier) : 0;
+  return Array.from({ length: top + 1 }, (_, i) => i);
+}
+
+const tierLabel = (t: number) => (t === 0 ? "Normal" : `Tier ${t}`);
+
+/** Mockup of the Story page: every journey as a card with its tier pips; choose one to pick a party for it. */
+export function StoryPage() {
+  const profile = useQuery(trpc.profile.get.queryOptions());
+  if (!profile.data) return <div className="p-6">Loading…</div>;
+  const p = profile.data;
+  const open = availableJourneys(p);
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
+      <PageTitle kicker="STORY" title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {JOURNEYS.map((j) => (
+          <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} cleared={(p.journeysCleared ?? []).includes(j.id)} tiers={journeyTiers(p, j.id)} />
+        ))}
+      </div>
+      <p className="text-xs text-[#c8d0ff]">
+        Mockup: tiers here are per journey (Normal always; higher once that journey is cleared). Until the rules track a tier per journey, higher tiers are capped by your account's current tier ({tierLabel(Math.min(MAX_TIER, p.maxTier))}).
+      </p>
+    </div>
+  );
+}
+
+function JourneyCard({ journey: j, unlocked, cleared, tiers }: { journey: JourneyDef; unlocked: boolean; cleared: boolean; tiers: number[] }) {
+  const navigate = useNavigate();
+  const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
+  const [tier, setTier] = useState(tiers[tiers.length - 1] ?? 0);
+  return (
+    <div className={`ff-panel flex flex-col gap-3 p-4 ${unlocked ? "" : "opacity-75"}`}>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
+          <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
+        </div>
+        {cleared ? <span className="ff-chip text-xs">Cleared ✓</span> : !unlocked && <span className="ff-chip text-xs opacity-80">🔒</span>}
+      </div>
+      <div className="text-sm">
+        {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
+      </div>
+      {!!j.unlocks?.length && (
+        <div className="flex items-end gap-2">
+          {j.unlocks.map((k) => (
+            <HeroSprite key={k} heroKey={k} size={40} silhouette={!cleared} />
+          ))}
+          <span className="pb-1 text-xs text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
+        </div>
+      )}
+      <div className="mt-auto flex items-center gap-2">
+        <div className="flex flex-1 flex-wrap gap-1" role="radiogroup" aria-label="Tier">
+          {Array.from({ length: MAX_TIER + 1 }, (_, t) => {
+            const ok = unlocked && tiers.includes(t);
+            return (
+              <button
+                key={t}
+                role="radio"
+                aria-checked={tier === t}
+                disabled={!ok}
+                title={ok ? tierLabel(t) : t === 0 ? "Locked" : "Clear the tier below on this journey"}
+                onClick={() => setTier(t)}
+                className={`size-7 rounded border text-xs transition ${tier === t && ok ? "border-yellow-300 bg-yellow-300/20 text-yellow-200" : ok ? "border-white/40 hover:bg-white/10" : "border-white/10 text-white/30"}`}
+              >
+                {t}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          disabled={!unlocked}
+          onClick={() => navigate({ to: "/mock/story/$journey", params: { journey: j.id }, search: { tier } })}
+          className="ff-panel ff-lift px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
+        >
+          Choose ▸
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const LAST_PARTY = "ffix-mock-last-party";
+
+/**
+ * Mockup of the in-between page after choosing a journey: the journey and tier, four party slots, and the roster to
+ * pick from (the last party is remembered). "Begin run" starts the run for real, as camp does.
+ */
+export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string; tier: number }) {
+  const profile = useQuery(trpc.profile.get.queryOptions());
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const [party, setParty] = useState<string[] | null>(null);
+  const start = useMutation(
+    trpc.run.start.mutationOptions({
+      onSuccess: async () => {
+        await qc.invalidateQueries({ queryKey: trpc.run.active.queryKey() });
+        await qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() });
+        navigate({ to: "/run" });
+      },
+      onError: (e) => toast.error(e.message),
+    }),
+  );
+  // Start from the last party used (still recruited), else the first four on the roster.
+  useEffect(() => {
+    if (!profile.data || party) return;
+    let last: string[] = [];
+    try {
+      last = JSON.parse(localStorage.getItem(LAST_PARTY) ?? "[]") as string[];
+    } catch {
+      /* no saved party */
+    }
+    const ok = last.filter((k) => profile.data.unlocked.includes(k)).slice(0, 4);
+    setParty(ok.length ? ok : profile.data.unlocked.slice(0, 4));
+  }, [profile.data, party]);
+
+  if (!profile.data || !party) return <div className="p-6">Loading…</div>;
+  const p = profile.data;
+  const j = JOURNEYS.find((x) => x.id === journeyId);
+  if (!j || !availableJourneys(p).includes(j.id))
+    return (
+      <div className="mx-auto max-w-xl p-8">
+        <div className="ff-panel p-5">
+          That journey isn't open yet.{" "}
+          <Link to="/mock/story" className="text-yellow-200 underline">
+            Back to Story
+          </Link>
+        </div>
+      </div>
+    );
+  const tiers = journeyTiers(p, j.id);
+  const tier = tiers.includes(wantedTier) ? wantedTier : tiers[tiers.length - 1]!;
+  const toggle = (k: string) => setParty((cur) => (cur!.includes(k) ? cur!.filter((x) => x !== k) : cur!.length >= 4 ? cur : [...cur!, k]));
+  const begin = () => {
+    try {
+      localStorage.setItem(LAST_PARTY, JSON.stringify(party));
+    } catch {
+      /* not remembered */
+    }
+    start.mutate({ party, tier, journey: j.id });
+  };
+  const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
+      <Link to="/mock/story" className="self-start text-sm text-[#c8d0ff] hover:text-white">
+        ◂ Journeys
+      </Link>
+      <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
+        <div>
+          <div className="ff-title tracking-[0.25em]">EMBARK</div>
+          <div className="ff-display text-3xl">{j.name}</div>
+          <div className="text-sm text-[#c8d0ff]">
+            {j.subtitle} · {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {boss}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-[#c8d0ff]">Tier</span>
+          {tiers.map((t) => (
+            <Link
+              key={t}
+              to="/mock/story/$journey"
+              params={{ journey: j.id }}
+              search={{ tier: t }}
+              replace
+              className={`rounded border px-2.5 py-1 text-sm ${t === tier ? "border-yellow-300 bg-yellow-300/20 text-yellow-200" : "border-white/40 hover:bg-white/10"}`}
+            >
+              {tierLabel(t)}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="ff-panel flex flex-wrap items-center gap-4 px-5 py-4">
+        <div className="ff-display mr-2 text-xl">Party</div>
+        <div className="flex flex-1 flex-wrap gap-3">
+          {Array.from({ length: 4 }, (_, i) => {
+            const k = party[i];
+            return (
+              <button
+                key={i}
+                onClick={() => k && toggle(k)}
+                title={k ? `Remove ${getCharacter(k).name}` : "Empty slot"}
+                className={`flex h-24 w-24 flex-col items-center justify-end rounded border-2 pb-1 ${k ? "border-yellow-300/70 bg-black/30 hover:bg-black/40" : "border-dashed border-white/25 bg-black/15"}`}
+              >
+                {k ? (
+                  <>
+                    <HeroSprite heroKey={k} size={56} />
+                    <span className="text-xs">{getCharacter(k).name}</span>
+                  </>
+                ) : (
+                  <span className="pb-6 text-xs opacity-50">Slot {i + 1}</span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
+          {start.isPending ? "Setting out…" : "Begin run ▶"}
+        </button>
+      </div>
+      {p.activeRunId && (
+        <div className="text-sm text-pink-200">
+          A run is already in progress —{" "}
+          <Link to="/run" className="underline">
+            continue it
+          </Link>{" "}
+          first.
+        </div>
+      )}
+
+      <div className="text-sm text-[#c8d0ff]">Pick up to four. Click a card to add or remove them.</div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {rosterEntries(p).map((e) => {
+          const chosen = party.includes(e.key);
+          return (
+            <button
+              key={e.key}
+              disabled={!e.unlocked}
+              onClick={() => toggle(e.key)}
+              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${chosen ? "outline outline-2 outline-yellow-300" : ""} ${e.unlocked ? "" : "opacity-60"}`}
+            >
+              <CharacterCard entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function PageTitle({ kicker, title, sub }: { kicker: string; title: string; sub?: string }) {
+  return (
+    <div>
+      <div className="ff-title tracking-[0.25em]">{kicker}</div>
+      <h1 className="ff-display text-4xl text-white [text-shadow:3px_3px_0_#000]">{title}</h1>
+      {sub && <div className="max-w-3xl text-sm text-[#c8d0ff]">{sub}</div>}
+    </div>
+  );
+}

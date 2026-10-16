@@ -1,0 +1,107 @@
+import { Separator } from "@ffix-roguelike/ui/components/separator";
+import { useQuery } from "@tanstack/react-query";
+import { Link, Outlet } from "@tanstack/react-router";
+import { BookOpen, Home, Package, Settings, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
+import type { ComponentType } from "react";
+
+import { MemoriaBackdrop } from "@/components/memoria-backdrop";
+import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
+import { Avatar } from "@/features/settings/avatar-panel";
+import { authClient } from "@/lib/auth-client";
+import { trpc } from "@/utils/trpc";
+
+import pkg from "../../../package.json";
+
+type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }>; exact?: boolean };
+
+/** The game's own destinations (the hub's four cards), then the account-wide pages. */
+const GAME_NAV: NavItem[] = [
+  { to: "/mock", label: "Play", icon: Home, exact: true },
+  { to: "/mock/story", label: "Story", icon: BookOpen },
+  { to: "/mock/party", label: "Party", icon: Users },
+  { to: "/mock/shops", label: "Shops", icon: Store },
+  { to: "/mock/challenges", label: "Challenges", icon: Swords },
+];
+const MORE_NAV: NavItem[] = [
+  { to: "/items", label: "Items", icon: Package },
+  { to: "/achievements", label: "Achievements", icon: Trophy },
+  { to: "/settings", label: "Settings", icon: Settings },
+];
+
+/**
+ * Mockup of the hub layout: a sidebar instead of the header bar (logo, name and version, the game's destinations,
+ * the account pages, the player at the bottom), and the page beside it, scrolling on its own over the title
+ * screen's backdrop. Lives at /mock; the current camp and header are untouched.
+ */
+export function MockShell() {
+  useMusic(MUSIC_SLOTS.camp);
+  return (
+    <div className="theme-ff grid h-full grid-cols-[15rem_minmax(0,1fr)] bg-background">
+      <Sidebar />
+      <div className="min-h-0 overflow-y-auto" data-scroll-restoration-id="mock-main">
+        <MemoriaBackdrop dim={0.55}>
+          <Outlet />
+        </MemoriaBackdrop>
+      </div>
+    </div>
+  );
+}
+
+function Sidebar() {
+  const { data: session } = authClient.useSession();
+  const profile = useQuery(trpc.profile.get.queryOptions());
+  return (
+    <aside className="flex min-h-0 flex-col gap-3 border-r-2 border-[#e8e8f4]/40 bg-gradient-to-b from-[#1b2466] via-[#10164a] to-[#070a1f] p-3 text-sidebar-foreground">
+      <Link to="/mock" className="flex flex-col items-center gap-1 pt-2 text-center [text-shadow:2px_2px_0_#000]">
+        <span className="ff-display text-3xl leading-none text-yellow-200">IX</span>
+        <span className="ff-display text-lg leading-tight text-white">Final Fantasy</span>
+        <span className="ff-title text-xs tracking-[0.3em]">A ROGUELITE</span>
+      </Link>
+      {/* The name/version line as the separator, like Pokelike's. */}
+      <div className="flex items-center gap-2 text-[0.7rem] text-[#c8d0ff]">
+        <Separator className="flex-1 bg-white/25" />
+        <span>v{pkg.version} · mockup</span>
+        <Separator className="flex-1 bg-white/25" />
+      </div>
+
+      <nav className="flex flex-col gap-0.5">
+        {GAME_NAV.map((n) => (
+          <NavLink key={n.to} item={n} />
+        ))}
+      </nav>
+      <Separator className="bg-white/15" />
+      <nav className="flex flex-col gap-0.5">
+        {MORE_NAV.map((n) => (
+          <NavLink key={n.to} item={n} />
+        ))}
+        <Link to="/play" className="flex items-center gap-3 rounded px-3 py-1.5 text-sm text-[#c8d0ff] hover:bg-white/10 hover:text-white">
+          <Undo2 className="size-4" />
+          Current camp
+        </Link>
+      </nav>
+
+      <div className="mt-auto flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2">
+        <Avatar image={session?.user.image} name={session?.user.name} size={32} />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm">{session?.user.name ?? "…"}</div>
+          <div className="text-xs text-yellow-200">{profile.data ? `${profile.data.gil.toLocaleString()} gil` : ""}</div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function NavLink({ item }: { item: NavItem }) {
+  const Icon = item.icon;
+  return (
+    <Link
+      to={item.to}
+      activeOptions={{ exact: !!item.exact }}
+      className="ff-option flex items-center gap-3 rounded py-1.5 text-base hover:bg-white/10"
+      activeProps={{ "data-active": "true", className: "text-yellow-200" }}
+    >
+      <Icon className="size-4 shrink-0" />
+      {item.label}
+    </Link>
+  );
+}
