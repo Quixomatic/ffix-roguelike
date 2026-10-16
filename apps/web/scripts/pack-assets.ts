@@ -13,7 +13,7 @@
  *   music    public/music/                 (audio:music) — one pack per track ("music/music006"), so a track
  *            downloads when it's first played, not with the whole soundtrack
  *
- * Writes `apps/web/.assets/packs/<name>.<hash>.pack` and `apps/web/.assets/manifest.json` (git-ignored). Names
+ * Writes `apps/web/.assets/packs/<name>.<hash>.pack.gz` (gzipped) and `apps/web/.assets/manifest.json` (git-ignored). Names
  * carry a hash of the pack's contents: re-running after local files change rewrites only the packs whose
  * contents changed (the rest print "unchanged"), and old versions of a pack are removed. Format:
  * `src/lib/asset-pack.ts`.
@@ -22,6 +22,7 @@
  *   bun scripts/pack-assets.ts effects music    only these classes (the manifest keeps the others)
  */
 import { createHash } from "node:crypto";
+import { gzipSync } from "node:zlib";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -157,7 +158,7 @@ function build(name: string, sources: Source[]) {
   return { hash: hash.digest("hex").slice(0, 12), bytes: Buffer.concat([prefix, header, ...blobs]), files: files.length };
 }
 
-const fileName = (name: string, hash: string) => `${name.replaceAll("/", "-")}.${hash}.pack`;
+const fileName = (name: string, hash: string) => `${name.replaceAll("/", "-")}.${hash}.pack.gz`;
 const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
 
 const wanted = process.argv.slice(2);
@@ -184,11 +185,13 @@ for (const cls of classes) {
   for (const [name, sources] of packs) {
     const { hash, bytes, files } = build(name, sources);
     const out = fileName(name, hash);
-    const fresh = !existsSync(join(PACKS, out));
-    if (fresh) writeFileSync(join(PACKS, out), bytes);
+    const path = join(PACKS, out);
+    const fresh = !existsSync(path);
+    if (fresh) writeFileSync(path, gzipSync(bytes, { level: 9 }));
     fresh ? written++ : unchanged++;
-    manifest.packs[name] = { file: out, hash, bytes: bytes.length, files };
-    lines.push(`${name.padEnd(18)} ${String(files).padStart(5)} files  ${mb(bytes.length).padStart(8)}  ${out}${fresh ? "" : "  (unchanged)"}`);
+    const gz = statSync(path).size;
+    manifest.packs[name] = { file: out, hash, bytes: gz, size: bytes.length, encoding: "gzip", files };
+    lines.push(`${name.padEnd(18)} ${String(files).padStart(5)} files  ${mb(bytes.length).padStart(8)} → ${mb(gz).padStart(8)} gz  ${out}${fresh ? "" : "  (unchanged)"}`);
     bar?.tick();
   }
   bar?.done();

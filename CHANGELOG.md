@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.4] - 2026-10-16
+
+Asset packs are gzipped: the first-visit download drops from 44 MB to 25 MB.
+
+### Changed
+- **`assets:pack` gzips every pack** (`<name>.<hash>.pack.gz`). The manifest records the download size, the unpacked size and `encoding: "gzip"`. Savings:
+  - effect rigs and particle files (JSON): 9.7 MB → 1.1 MB
+  - the monster sheets (mostly empty space in the boss frame grids): 23.7 MB → 13.7 MB
+  - effect PNGs and sounds, music: barely change; they're already compressed
+- **The loader unzips with the browser's own gzip decoder** (`DecompressionStream`, no library). The progress bar counts the compressed bytes actually downloaded, and Cache Storage keeps the unzipped pack, so later visits don't unzip again. Packs cached in the old format are cleared on the next visit.
+- Every pack was re-uploaded and the old ones pruned. Checked from the CDN: the downloads match the manifest sizes and unzip to byte-identical files.
+
 ## [0.2.3] - 2026-10-16
 
 ### Fixed

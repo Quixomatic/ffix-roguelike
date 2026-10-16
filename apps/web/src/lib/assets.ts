@@ -55,31 +55,26 @@ export function assetManifest(): Promise<AssetManifest> {
 
 const openCache = () => (typeof caches === "undefined" ? Promise.resolve(null) : caches.open(PACK_CACHE).catch(() => null));
 
-/** Download a pack (or read it from Cache Storage), reporting bytes as they arrive. */
-async function packBytes(url: string, onBytes: (n: number) => void): Promise<ArrayBuffer> {
+/** Download a pack (or read it from Cache Storage, where it's kept unzipped), reporting bytes as they arrive. */
+async function packBytes(url: string, gzip: boolean, onBytes: (n: number) => void): Promise<ArrayBuffer> {
   const cache = await openCache();
   const hit = await cache?.match(url).catch(() => undefined);
   if (hit) return hit.arrayBuffer();
   const res = await fetch(url);
   if (!res.ok || !res.body) throw new Error(`Asset pack ${url}: HTTP ${res.status}`);
   const reader = res.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
+  const chunks: Uint8Array<ArrayBuffer>[] = [];
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
-    chunks.push(value);
-    size += value.byteLength;
+    chunks.push(value as Uint8Array<ArrayBuffer>);
     onBytes(value.byteLength);
   }
-  const buf = new Uint8Array(size);
-  let at = 0;
-  for (const c of chunks) {
-    buf.set(c, at);
-    at += c.byteLength;
-  }
+  const blob = new Blob(chunks);
+  // The browser's own gzip decoder (no library).
+  const buf = gzip ? await new Response(blob.stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer() : await blob.arrayBuffer();
   await cache?.put(url, new Response(buf)).catch(() => undefined);
-  return buf.buffer;
+  return buf;
 }
 
 export interface PackProgress {
@@ -105,7 +100,7 @@ export async function loadPacks(names: string[], onProgress?: (p: PackProgress) 
       let mine = 0;
       const run =
         loaded.get(name) ??
-        packBytes(`${BASE}/packs/${pack.file}`, (n) => {
+        packBytes(`${BASE}/packs/${pack.file}`, pack.encoding === "gzip", (n) => {
           mine += n;
           done += n;
           report();

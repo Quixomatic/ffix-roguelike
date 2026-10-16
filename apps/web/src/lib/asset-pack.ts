@@ -3,7 +3,8 @@
  * read in the browser to fill the asset cache.
  *
  * Layout: `FFXP` · u32 format version · u32 header length · header JSON (UTF-8) · the files' bytes, back to back.
- * Integers are little-endian; each entry's `offset` is from the start of the data section.
+ * Integers are little-endian; each entry's `offset` is from the start of the data section. Packs are stored and
+ * downloaded gzipped (`.pack.gz`, manifest `encoding: "gzip"`) — effect JSON shrinks ~9×, the monster sheets ~40%.
  */
 export const PACK_MAGIC = "FFXP";
 export const PACK_VERSION = 1;
@@ -25,10 +26,14 @@ export interface PackHeader {
 
 /** One pack in the manifest. */
 export interface ManifestPack {
-  /** File name under `packs/`, content-hashed: "heroes.3f9a1c2b7d4e.pack". */
+  /** File name under `packs/`, content-hashed: "heroes.3f9a1c2b7d4e.pack.gz". */
   file: string;
   hash: string;
+  /** Download size (compressed when `encoding` is set). */
   bytes: number;
+  /** Unpacked size. */
+  size?: number;
+  encoding?: "gzip";
   files: number;
 }
 
