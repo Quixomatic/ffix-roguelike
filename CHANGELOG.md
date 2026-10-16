@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.72] - 2026-10-16
+
+Every monster move plays an FFRK effect and sound — not just the handful assigned by name.
+
+### Added
+- **Default effects for FF9 monster moves** that have no assignment yet, from what each move is (its FF9 battle script, category and element):
+  - physical hits → FFRK's claw swipe (Bite/Fang/Chomp-like names → FFRK's Bite); fire/thunder/shadow physicals → Fire Strike / Thunder Strike / Dark Buster
+  - elemental magic → FFRK's matching spell: fire → Fira, ice/water → Blizzara, thunder → Thundara, wind → Aerospark, earth → Quake, holy → Holy, shadow → Dark Buster
+  - heals → Curaga's sparkle; Protect/Shell/Haste/Berserk → their FFRK spells; poison/venom → Venom Buster; other statuses → a status sparkle; drains/Osmose → dark; Comet/Meteor → Meteor Crush
+  - FF9's script-only staging moves (taunts, phase changes) play nothing.
+- Assignments made in the effects gallery always win over these defaults; the art-based mapping of the full effect library (after the download finishes) will replace defaults with closer matches.
+
 ## [0.1.71] - 2026-10-16
 
 Battles have sound, and plain attacks swing with their weapon's own effect.
