@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.87] - 2026-10-16
+
+### Changed
+- Stat changes show a signed number again instead of carets: "+2 Def" with a green "+2", "−1 Eva" with a red "−1" (the stat name in plain text, on the subtle badge).
+
 ## [0.1.86] - 2026-10-16
 
 ### Changed
