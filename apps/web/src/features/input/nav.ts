@@ -33,6 +33,8 @@ import { useEffect } from "react";
 /** Focus keys of the shell's two sections: the page's content and the sidebar. */
 export const PAGE_FOCUS = "page";
 export const SIDEBAR_FOCUS = "sidebar";
+/** The page's content (inside PAGE_FOCUS, beside the menu button and shortcuts): where arriving on a page lands. */
+export const CONTENT_FOCUS = "page-content";
 /** Window event for the menu control (M, or the controller's Start): the hub shell opens / closes its sidebar. */
 export const MENU_EVENT = "ffix:menu";
 

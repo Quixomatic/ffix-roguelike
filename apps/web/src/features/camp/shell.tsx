@@ -11,7 +11,7 @@ import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { FocusItem, FocusSection } from "@/features/input/focus";
-import { MENU_EVENT, PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
+import { CONTENT_FOCUS, MENU_EVENT, PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -90,7 +90,7 @@ export function HubShell() {
         <Sidebar open={open} />
       </div>
       {/* The page's cursor section holds the menu button and the shortcuts too, so ↑ from the top of a page reaches them. */}
-      <FocusSection key={path} focusKey={PAGE_FOCUS} autoFocus>
+      <FocusSection key={path} focusKey={PAGE_FOCUS} preferredChild={CONTENT_FOCUS} autoFocus>
       <div className="relative min-h-0">
         {/* Always on screen, inset on the page: slides the sidebar in and out (or M / Start). */}
         <FocusItem>
@@ -106,12 +106,15 @@ export function HubShell() {
           </button>
         </FocusItem>
         <QuickLinks />
-        <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
-          {/* Room at the top for the menu button. */}
-          <MemoriaBackdrop dim={dim} className="pt-10">
-            <Outlet />
-          </MemoriaBackdrop>
-        </div>
+        {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
+        <FocusSection focusKey={CONTENT_FOCUS}>
+          <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
+            {/* Room at the top for the menu button. */}
+            <MemoriaBackdrop dim={dim} className="pt-10">
+              <Outlet />
+            </MemoriaBackdrop>
+          </div>
+        </FocusSection>
       </div>
       </FocusSection>
     </div>

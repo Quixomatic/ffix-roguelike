@@ -80,6 +80,7 @@ export function FocusSection({
   autoFocus,
   boundary,
   disabled = false,
+  preferredChild,
 }: {
   children: ReactElement<ChildProps>;
   focusKey?: string;
@@ -89,12 +90,15 @@ export function FocusSection({
   boundary?: boolean;
   /** Take the whole section off the cursor's map (it's hidden, e.g. a slid-away sidebar). */
   disabled?: boolean;
+  /** Focus key of the child to land on when the section is entered (else its first / last focused item). */
+  preferredChild?: string;
 }) {
   const { ref, focusKey: key, focusSelf } = useFocusable<object, HTMLElement>({
     focusKey,
     trackChildren: true,
     saveLastFocusedChild: true,
     isFocusBoundary: boundary,
+    preferredChildFocusKey: preferredChild,
   });
   useEffect(() => {
     if (autoFocus) focusSelf();

@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.34] - 2026-10-16
+
+### Fixed
+- **Arriving on a hub page put the cursor on the menu button** (since v0.2.33 the button sits in the page's cursor section, and it came first). The page's content is now its own section, preferred when the page is entered (`FocusSection preferredChild`): the cursor lands on the content's first item, and ↑ from the top still reaches the menu button and the shortcuts.
+
 ## [0.2.33] - 2026-10-16
 
 The title screen and the Items page join the hub's sidebar layout, the currency and shortcuts are on every hub page, and the menu has a key.
