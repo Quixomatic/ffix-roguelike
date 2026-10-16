@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.85] - 2026-10-16
+
+Gear comparisons are built from reusable badge components.
+
+### Added
+- `components/badge.tsx` — **`Badge`**, a small inline chip with tones: `neutral` (the subtle default background) and fully coloured `gain` (green), `loss` (red), `info`, `warn`.
+- `components/stat-delta.tsx` — **`StatDelta`**: a stat change on a neutral badge with only the caret and number coloured ("▲2" green / "▼1" red) and the stat name in plain text.
+
+### Changed
+- Gear comparisons (`DeltaChips`, everywhere gear is compared) use them: stat changes are subtle `StatDelta` badges; abilities gained are green **gain** badges ("+ Mug"), abilities lost red **loss** badges (struck through); "Equipped" and "No change" are neutral badges.
+
 ## [0.1.84] - 2026-10-16
 
 ### Changed

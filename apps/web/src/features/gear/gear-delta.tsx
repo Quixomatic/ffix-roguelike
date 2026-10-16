@@ -1,6 +1,8 @@
 import { COMPARED_STATS, gearChange, type CharacterBuild, type ComparedStat, type GearChange } from "@ffix-roguelike/game-core";
 import { abilityName, getCharacter } from "@ffix-roguelike/game-data";
 
+import { Badge } from "@/components/badge";
+import { StatDelta } from "@/components/stat-delta";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
 const STAT_LABEL: Record<ComparedStat, string> = {
@@ -20,32 +22,23 @@ const STAT_LABEL: Record<ComparedStat, string> = {
 
 /** The stat and ability changes of one gear swap as coloured chips ("+3 Def", "−1 Eva", "+ Steal"). */
 export function DeltaChips({ change }: { change: GearChange }) {
-  if (change.same) return <span className="text-xs opacity-60">Equipped</span>;
+  if (change.same) return <Badge>Equipped</Badge>;
   const stats = COMPARED_STATS.filter((k) => change.deltas[k]);
-  if (!stats.length && !change.gains.length && !change.loses.length) return <span className="text-xs opacity-60">No change</span>;
+  if (!stats.length && !change.gains.length && !change.loses.length) return <Badge>No change</Badge>;
   return (
-    <span className="flex flex-wrap gap-x-2.5 gap-y-0.5 text-xs">
-      {stats.map((k) => {
-        const d = change.deltas[k]!;
-        return (
-          <span key={k} className="whitespace-nowrap tabular-nums">
-            <span className={d > 0 ? "text-green-300" : "text-red-300"}>
-              <span aria-label={d > 0 ? "up" : "down"}>{d > 0 ? "▲" : "▼"}</span>
-              {Math.abs(d)}
-            </span>{" "}
-            {STAT_LABEL[k]}
-          </span>
-        );
-      })}
+    <span className="flex flex-wrap gap-1">
+      {stats.map((k) => (
+        <StatDelta key={k} value={change.deltas[k]!} label={STAT_LABEL[k]} />
+      ))}
       {change.gains.map((r) => (
-        <span key={r} className="whitespace-nowrap text-yellow-200">
+        <Badge key={r} tone="gain" title="Ability this would let them use">
           + {abilityName(r)}
-        </span>
+        </Badge>
       ))}
       {change.loses.map((r) => (
-        <span key={r} className="whitespace-nowrap text-red-300 line-through decoration-red-300/60">
-          {abilityName(r)}
-        </span>
+        <Badge key={r} tone="loss" title="Ability they'd lose">
+          <span className="line-through decoration-white/70">{abilityName(r)}</span>
+        </Badge>
       ))}
     </span>
   );
