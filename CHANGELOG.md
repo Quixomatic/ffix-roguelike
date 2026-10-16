@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.57] - 2026-10-15
+
+The paperdoll has room to breathe.
+
+### Fixed
+- **The head slot and its label overlapped the sprite**: the figure's middle rows were barely as tall as the sprite. They're taller now, with more space between rows.
+- **The right slot pressed against the column edge**: the doll was wider than its column. The left column is wider (25rem), and the doll fits inside it with even padding on both sides.
+
 ## [0.1.56] - 2026-10-15
 
 The equipment list is back under the paperdoll.

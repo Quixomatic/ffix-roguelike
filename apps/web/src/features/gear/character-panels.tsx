@@ -200,7 +200,7 @@ export function CharacterModal({
             </button>
           </div>
         </div>
-        <div className="grid min-h-0 flex-1 md:grid-cols-[22rem_1fr]">
+        <div className="grid min-h-0 flex-1 md:grid-cols-[25rem_1fr]">
           <div className="min-h-0 overflow-y-auto border-white/15 p-4 md:border-r">{doll}</div>
           <div className="flex min-h-0 flex-col">
             <div className="flex shrink-0 gap-1 border-b border-white/15 px-3 pt-2">

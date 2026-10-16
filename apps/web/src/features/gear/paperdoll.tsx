@@ -61,7 +61,7 @@ export function DollFigure({
 }) {
   const get = slotMap(slots);
   return (
-    <div className="mx-auto grid grid-cols-[4.5rem_11rem_4.5rem] grid-rows-[auto_5.5rem_5.5rem_auto] place-items-center gap-x-2 gap-y-1">
+    <div className="mx-auto grid w-full max-w-[22rem] grid-cols-[4.5rem_1fr_4.5rem] grid-rows-[auto_6.75rem_6.75rem_auto] place-items-center gap-x-2 gap-y-2 px-1">
       <div className="col-start-2 row-span-2 row-start-2 flex h-full w-full items-end justify-center rounded-lg bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.18),transparent_70%)]">
         <div className="relative flex flex-col items-center">
           <HeroSprite heroKey={heroKey} size={168} variant={variant} className="relative drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
