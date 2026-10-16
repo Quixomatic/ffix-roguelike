@@ -198,7 +198,7 @@ const PAD_KEYS = {
   escape: ["Escape", "Escape"],
   menu: ["m", "KeyM"],
 } as const;
-type PadKey = keyof typeof PAD_KEYS;
+export type PadKey = keyof typeof PAD_KEYS;
 const REPEAT_DELAY = 350;
 const REPEAT_EVERY = 120;
 
@@ -228,27 +228,66 @@ function confirm() {
   else sendKey("enter");
 }
 
+/** Connected controllers (the browser only lists one after a button on it is pressed with the page focused). */
+export function connectedPads(): Gamepad[] {
+  if (typeof navigator === "undefined" || !navigator.getGamepads) return [];
+  try {
+    return [...navigator.getGamepads()].filter((p): p is Gamepad => !!p?.connected);
+  } catch {
+    return []; // not a secure context (http:// on a LAN address): no controllers
+  }
+}
+
+/**
+ * A controller's D-pad, read both ways: "standard" pads have buttons 12–15; many others (DirectInput / generic) report
+ * a hat switch as one axis (usually axes[9]: −1 up, −0.43 right, 0.14 down, 0.71 left, in between for diagonals,
+ * and > 1 at rest).
+ */
+function dpad(pad: Gamepad) {
+  const b = (i: number) => !!pad.buttons[i]?.pressed;
+  const out = { up: b(12), down: b(13), left: b(14), right: b(15) };
+  if (pad.mapping !== "standard") {
+    const hat = pad.axes[9];
+    if (hat != null && hat >= -1.05 && hat <= 1.05) {
+      const near = (v: number) => Math.abs(hat - v) < 0.2;
+      out.up ||= near(-1) || near(-0.71) || near(1);
+      out.right ||= near(-0.71) || near(-0.43) || near(-0.14);
+      out.down ||= near(-0.14) || near(0.14) || near(0.43);
+      out.left ||= near(0.43) || near(0.71) || near(1);
+    }
+  }
+  return out;
+}
+
+/** What every connected controller is pressing, merged (Windows often adds idle virtual pads next to the real one). */
+export function padInput(): Record<PadKey, boolean> {
+  const out: Record<PadKey, boolean> = { up: false, down: false, left: false, right: false, enter: false, escape: false, menu: false };
+  for (const pad of connectedPads()) {
+    const b = (i: number) => !!pad.buttons[i]?.pressed;
+    const [x = 0, y = 0] = pad.axes;
+    const d = dpad(pad);
+    out.up ||= d.up || y < -0.5;
+    out.down ||= d.down || y > 0.5;
+    out.left ||= d.left || x < -0.5;
+    out.right ||= d.right || x > 0.5;
+    out.enter ||= b(0);
+    out.escape ||= b(1);
+    out.menu ||= b(9);
+  }
+  return out;
+}
+
 function startGamepad() {
   const held = new Map<PadKey, number>();
   let running = false;
   const loop = () => {
-    const pad = [...navigator.getGamepads()].find((p) => p?.connected);
-    if (!pad) {
+    // Keep polling while any controller is connected (a pad can read as missing for a frame).
+    if (!connectedPads().length) {
       running = false;
       held.clear();
       return;
     }
-    const b = (i: number) => !!pad.buttons[i]?.pressed;
-    const [x = 0, y = 0] = pad.axes;
-    const down: Record<PadKey, boolean> = {
-      up: b(12) || y < -0.5,
-      down: b(13) || y > 0.5,
-      left: b(14) || x < -0.5,
-      right: b(15) || x > 0.5,
-      enter: b(0),
-      escape: b(1),
-      menu: b(9),
-    };
+    const down = padInput();
     const now = performance.now();
     for (const k of Object.keys(down) as PadKey[]) {
       if (!down[k]) {
@@ -272,6 +311,11 @@ function startGamepad() {
     running = true;
     requestAnimationFrame(loop);
   };
-  window.addEventListener("gamepadconnected", start);
-  if ([...navigator.getGamepads()].some((p) => p?.connected)) start();
+  window.addEventListener("gamepadconnected", (e) => {
+    console.info(`[controller] connected: "${e.gamepad.id}" (slot ${e.gamepad.index}, mapping "${e.gamepad.mapping || "none"}")`);
+    start();
+  });
+  // Already connected (e.g. after a hot reload), or a pad the browser lists without firing the event.
+  if (connectedPads().length) start();
+  window.addEventListener("focus", () => connectedPads().length && start());
 }

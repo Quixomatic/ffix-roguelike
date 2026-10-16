@@ -9,6 +9,7 @@ import { trpc } from "@/utils/trpc";
 import { FocusItem } from "@/features/input/focus";
 
 import { AvatarPanel } from "./avatar-panel";
+import { ControllerPanel } from "./controller-panel";
 import { MENU_FONTS, useSettings, type Settings } from "./use-settings";
 
 /** General settings: menu font, battle presentation, battle mode. Saved to the player's account. */
@@ -33,6 +34,8 @@ export function SettingsPage() {
 
       <div className="ff-window grid gap-3 p-3 md:grid-cols-2">
         <AvatarPanel />
+
+        <ControllerPanel />
 
         <Panel title="Menu font" className="md:col-span-2">
           <div className="grid gap-2 sm:grid-cols-2">

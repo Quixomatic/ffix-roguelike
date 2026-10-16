@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.38] - 2026-10-16
+
+### Fixed
+- **Controllers didn't navigate, in menus or in the game.** The poller read only the first connected pad, and Windows often lists idle virtual pads (Steam Input, Xbox adapters…) ahead of the real one. It also stopped for good if a pad read as missing for a frame, waiting for a "connected" event that never came again. It now merges the input of every connected controller, keeps polling while any is connected, and restarts when the window regains focus.
+- **D-pads on non-standard controllers** (DirectInput / generic pads report the D-pad as one "hat" axis, not buttons 12–15) now move the cursor too.
+
+### Added
+- **Settings → Controller**: what the browser reports, live.
+  - It says when the page can't use controllers at all (not on localhost / https) or hasn't been shown one yet: browsers only reveal a controller after a button on it is pressed with the page focused.
+  - For every connected pad: slot, name, layout, buttons pressed, axis values, and what the game reads from them (move / confirm / back / menu).
+  - The browser console logs each controller as it connects.
+
+### Notes
+- Mapping: D-pad / left stick move, A (button 0) confirms, B (1) backs out, Start (9) opens the menu. In battles and on the overworld map they arrive as arrow / Enter / Escape key presses, which those screens already handle.
+
 ## [0.2.37] - 2026-10-16
 
 ### Fixed
