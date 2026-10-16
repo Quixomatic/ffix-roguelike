@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.12] - 2026-10-16
+
+### Changed
+- **`MemoriaBackdrop` has a `dim` setting** (0 to 1): a black veil over the sky and motes. The title screen stays at full strength (0). **Camp uses 0.6** (`CAMP_DIM` in `hub/camp.tsx`), since at full strength the blue tinted all of its windows.
+
 ## [0.2.11] - 2026-10-16
 
 ### Added

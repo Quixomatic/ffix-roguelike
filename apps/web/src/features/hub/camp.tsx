@@ -26,6 +26,9 @@ import { trpc } from "@/utils/trpc";
 import { CampShops } from "./camp-shop";
 import { CharacterSheet } from "./character-sheet";
 
+/** How much darker camp's backdrop is than the title screen (0–1): its many windows look blue at full strength. */
+const CAMP_DIM = 0.6;
+
 /** Between runs: roster (spend CP, gear, abilities), party picker, difficulty tier, shop and workshop. */
 export function Camp() {
   useMusic(MUSIC_SLOTS.camp);
@@ -50,7 +53,7 @@ export function Camp() {
 
   if (profile.isPending)
     return (
-      <MemoriaBackdrop>
+      <MemoriaBackdrop dim={CAMP_DIM}>
         <div className="p-6">Loading…</div>
       </MemoriaBackdrop>
     );
@@ -70,7 +73,7 @@ export function Camp() {
     });
 
   return (
-    <MemoriaBackdrop>
+    <MemoriaBackdrop dim={CAMP_DIM}>
       <div className="mx-auto flex max-w-5xl flex-col gap-4 p-4">
         <div className="ff-window flex flex-wrap items-center justify-between gap-3 px-5 py-3">
           <div>
