@@ -36,12 +36,12 @@ export function DeltaChips({ change }: { change: GearChange }) {
       })}
       {change.gains.map((r) => (
         <span key={r} className="whitespace-nowrap text-yellow-200">
-          ▲ {abilityName(r)}
+          + {abilityName(r)}
         </span>
       ))}
       {change.loses.map((r) => (
-        <span key={r} className="whitespace-nowrap text-red-300">
-          ▼ <span className="line-through decoration-red-300/60">{abilityName(r)}</span>
+        <span key={r} className="whitespace-nowrap text-red-300 line-through decoration-red-300/60">
+          {abilityName(r)}
         </span>
       ))}
     </span>

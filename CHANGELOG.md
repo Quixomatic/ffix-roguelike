@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.83] - 2026-10-16
+
+### Changed
+- Carets are for stats only: abilities a piece of gear would add show as "+ Mug" (yellow) and ones it would take away as struck-through red text, as before.
+
 ## [0.1.82] - 2026-10-16
 
 ### Changed
