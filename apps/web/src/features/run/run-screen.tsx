@@ -59,7 +59,7 @@ export function RunScreen() {
 
   if (phase.kind === "battle")
     return (
-      <div className="relative flex h-svh min-h-0 flex-col py-4 pl-16 pr-4">
+      <div className="relative flex h-svh min-h-0 flex-col p-4">
         {(actions.finishBattle.isPending || !scriptReady) && (
           <div className="ff-window absolute left-1/2 top-4 z-30 -translate-x-1/2 px-4 py-1">{scriptReady ? "Verifying battle…" : "Loading battle…"}</div>
         )}
@@ -89,10 +89,9 @@ export function RunScreen() {
   const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
-    // Fills the window (no top strip: the 4rem left inset clears the menu button, left-3 and 2.5rem wide; 1rem on the
-    // right). The map /
-    // stage on the left, the party on the right (the hub's own sidebar slides in on the left).
-    <div className="grid h-svh min-h-0 gap-3 py-4 pl-16 pr-4 lg:grid-cols-[1fr_17rem]">
+    // Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
+    // The map / stage on the left, the party on the right (the hub's own sidebar slides in on the left).
+    <div className="grid h-svh min-h-0 gap-3 p-4 lg:grid-cols-[1fr_17rem]">
       <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
@@ -102,7 +101,8 @@ export function RunScreen() {
           // Each stage's screen is its own cursor section (inside the hub's page section — its own key, never "page"):
           // arriving on it puts the cursor on its first item.
           <FocusSection key={`${run.world}-${run.position}-${phase.kind}`} focusKey="run-stage" autoFocus>
-          <div className="absolute inset-0 overflow-y-auto p-3 pb-16">
+          <div className="absolute inset-0 overflow-y-auto p-3 pb-16 pt-14">
+            {/* pt-14: room for the menu button floating in the frame's corner. */}
             {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "shop" && <ShopPanel run={run} phase={phase} actions={actions} />}

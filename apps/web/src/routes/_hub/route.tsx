@@ -14,6 +14,8 @@ declare module "@tanstack/react-router" {
     quickLinks?: boolean;
     /** Hub pages: leave a strip at the top for the menu button (default true; false when the page clears it sideways). */
     topInset?: boolean;
+    /** Hub pages: where the menu button sits — "corner" (default) or "inset", floating inside a game frame's corner. */
+    menuButton?: "corner" | "inset";
     /** Hub pages: how dark the backdrop is (0–1; default 0.55). */
     backdropDim?: number;
   }

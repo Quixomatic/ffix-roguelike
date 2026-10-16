@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.52] - 2026-10-16
+
+### Changed
+- **On the run, the menu button floats inside the game frame's top-left corner**, over the map / battle, instead of needing a 4rem gutter. The run now has an even 1rem margin on all sides. Stage screens leave room at the top so the button doesn't cover their first line. Routes choose where the button sits (`staticData.menuButton`: "corner", the default, or "inset").
+
 ## [0.2.51] - 2026-10-16
 
 ### Changed

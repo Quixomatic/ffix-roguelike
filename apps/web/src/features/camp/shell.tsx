@@ -104,6 +104,7 @@ export function HubShell() {
   });
   const dim = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.backdropDim != null)?.staticData.backdropDim ?? 0.55 });
   const quickLinks = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.quickLinks != null)?.staticData.quickLinks ?? true });
+  const menuInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.menuButton)?.staticData.menuButton === "inset" });
   const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
@@ -138,7 +139,7 @@ export function HubShell() {
             aria-label={open ? "Hide the menu (M)" : "Show the menu (M)"}
             title={open ? "Hide the menu (M)" : "Show the menu (M)"}
             aria-expanded={open}
-            className="ff-panel ff-lift absolute left-3 top-3 z-20 flex size-10 items-center justify-center rounded-full"
+            className={`ff-panel ff-lift absolute z-30 flex size-10 items-center justify-center rounded-full ${menuInset ? "left-7 top-7" : "left-3 top-3"}`}
           >
             <Menu className="size-5" />
           </button>
