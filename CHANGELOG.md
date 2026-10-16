@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.44] - 2026-10-16
+
+### Fixed
+- **The run screen froze the browser** (since v0.2.42): moving it into the hub layout nested its stage screen's cursor section inside the hub's page section, and both were keyed "page". A section with its own key as its parent sent the navigation library round that chain forever. The run's sections have their own keys now ("run-stage", "run-over"); arriving on a stage still puts the cursor on its first item.
+
 ## [0.2.43] - 2026-10-16
 
 ### Changed

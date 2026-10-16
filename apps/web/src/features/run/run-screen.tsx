@@ -6,7 +6,6 @@ import { AREA_MUSIC, MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { BattleView } from "@/features/battle/battle-view";
 import { useBattleScript } from "@/features/battle/use-battle-script";
 import { FocusItem, FocusSection } from "@/features/input/focus";
-import { PAGE_FOCUS } from "@/features/input/nav";
 
 import { Overworld } from "./overworld";
 import { PartySidebar } from "./party-sidebar";
@@ -80,7 +79,7 @@ export function RunScreen() {
 
   if (phase.kind === "over")
     return (
-      <FocusSection key="over" focusKey={PAGE_FOCUS} autoFocus>
+      <FocusSection key="over" focusKey="run-over" autoFocus>
         <div className="min-h-0 overflow-y-auto p-3">
           <RunOverPanel run={run} report={actions.report} />
         </div>
@@ -99,8 +98,9 @@ export function RunScreen() {
             <Overworld run={run} busy={actions.move.isPending} onMove={(nodeId) => actions.move.mutate({ nodeId })} />
           </div>
         ) : (
-          // Each stage's screen is the page's cursor section: arriving on it puts the cursor on its first item.
-          <FocusSection key={`${run.world}-${run.position}-${phase.kind}`} focusKey={PAGE_FOCUS} autoFocus>
+          // Each stage's screen is its own cursor section (inside the hub's page section — its own key, never "page"):
+          // arriving on it puts the cursor on its first item.
+          <FocusSection key={`${run.world}-${run.position}-${phase.kind}`} focusKey="run-stage" autoFocus>
           <div className="absolute inset-0 overflow-y-auto p-3 pb-16">
             {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
