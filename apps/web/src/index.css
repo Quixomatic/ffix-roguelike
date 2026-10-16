@@ -57,11 +57,17 @@
   position: relative;
   border-radius: 3px;
 }
+/* FF9's menu hand: a pixel glove pointing at the highlighted option (Time Fantasy icon, public/sprites/ui). */
 .ff-option[data-active="true"]::before {
-  content: "☛";
+  content: "";
   position: absolute;
   left: 0;
-  color: #fff6c8;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  background: url("/sprites/ui/hand-right.png") no-repeat center / 16px 16px;
+  image-rendering: pixelated;
 }
 .ff-option[data-active="true"] {
   background: rgba(255, 255, 255, 0.08);

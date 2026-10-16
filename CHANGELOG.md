@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.78] - 2026-10-16
+
+FF9's menu hand: the highlighted menu option has a pixel glove pointing at it.
+
+### Changed
+- Menus (battle commands, ability/item lists, target lists, and every other `.ff-option` list) point at the highlighted option with the pixel glove from the Time Fantasy icon pack instead of the "☛" text character — the menu-side partner of the target glove.
+
 ## [0.1.77] - 2026-10-16
 
 The target glove is marker-sized.
