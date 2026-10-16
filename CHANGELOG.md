@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.36] - 2026-10-16
+
+### Changed
+- **← from the page goes to the menu button first**: from the content's left edge, ← lands on the menu button; ← again goes into the sidebar, only when it's out (a slid-away sidebar's links are off the cursor's map, so ← stops at the menu button). ↑ still reaches the menu button too.
+
 ## [0.2.35] - 2026-10-16
 
 ### Fixed

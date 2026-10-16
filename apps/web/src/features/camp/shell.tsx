@@ -45,14 +45,15 @@ const SIDEBAR_KEY = "ffix-sidebar-open";
 /**
  * How the cursor moves between the page's three parts — the content, the menu button (top left) and the shortcuts
  * (top right) — which float over each other, so geometry alone can't. Within the content it moves as usual; this is
- * for leaving it. null: leave the page (e.g. ← from the content's left edge to the sidebar).
+ * for leaving it. ← from the content goes to the menu button first; ← again leaves the page for the sidebar (only when
+ * it's out — a slid-away sidebar's links are off the cursor's map). null: leave the page.
  */
 const pageResolver: NextFocusResolver = (direction, from, siblings) => {
   const byKey = (k: string) => siblings.find((s) => s.focusKey === k) ?? null;
   const quick = siblings.filter((s) => s.focusKey.startsWith("quick-")).sort((a, b) => a.focusKey.localeCompare(b.focusKey));
   const content = byKey(CONTENT_FOCUS);
   if (from === CONTENT_FOCUS) {
-    if (direction === "up") return byKey(MENU_BUTTON_FOCUS);
+    if (direction === "up" || direction === "left") return byKey(MENU_BUTTON_FOCUS);
     if (direction === "right") return quick[0] ?? null;
     return null;
   }
