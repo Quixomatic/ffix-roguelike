@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.42] - 2026-10-16
+
+### Changed
+- **The run screen uses the hub layout**: the dimmed title-screen backdrop instead of a black page, the slide-away sidebar (tuck it away for a bigger map) and the menu button. The header bar is gone from runs.
+  - The run keeps its own music (each area's theme, the battle and boss themes): routes can declare no music (`staticData.music: null`), and the layout then leaves it alone.
+  - The gil / CP chips and round shortcuts stay off the run screen so they don't sit on the map (`staticData.quickLinks: false`).
+  - The map, stage screens and battles fill the window under the menu button's strip.
+- Route: `/run` moved under the hub's sign-in guard (`_hub/_member/run`).
+
 ## [0.2.41] - 2026-10-16
 
 Keyboard and controller navigation, step 3: the run screens, the header bar, practice battle, and dialogs.

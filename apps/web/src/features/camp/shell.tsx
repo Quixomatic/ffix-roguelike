@@ -94,10 +94,17 @@ function useSidebarOpen(): [boolean, () => void] {
 }
 
 export function HubShell() {
-  // The page's music and backdrop come from its route (staticData): the title screen has its own; the rest are camp.
-  const music = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.music)?.staticData.music ?? "camp" });
+  // The page's music, backdrop and shortcuts come from its route (staticData): the title screen has its own music, the
+  // run plays its own (null) and hides the shortcuts; the rest are camp.
+  const music = useRouterState({
+    select: (s) => {
+      const m = s.matches.findLast((x) => x.staticData && "music" in x.staticData);
+      return m ? m.staticData.music : "camp";
+    },
+  });
   const dim = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.backdropDim != null)?.staticData.backdropDim ?? 0.55 });
-  useMusic(MUSIC_SLOTS[music]);
+  const quickLinks = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.quickLinks != null)?.staticData.quickLinks ?? true });
+  useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
   // M / the controller's Start: open or close the menu, and take the cursor with it.
   useEffect(() => {
@@ -135,7 +142,7 @@ export function HubShell() {
             <Menu className="size-5" />
           </button>
         </FocusItem>
-        <QuickLinks />
+        {quickLinks && <QuickLinks />}
         {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
         <FocusSection focusKey={CONTENT_FOCUS}>
           <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
