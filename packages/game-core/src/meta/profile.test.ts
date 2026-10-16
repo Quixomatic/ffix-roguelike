@@ -30,6 +30,28 @@ describe("Completion Points", () => {
     expect(z.points).toBeGreaterThanOrEqual(11);
   });
 
+  test("a run's end keeps what camp changed meanwhile (training, slots, supports, CP) and adds what the run earned (AP)", () => {
+    let p = newProfile();
+    p.builds.zidane!.points = 40;
+    const run = startRun({ seed: "snapshot", tier: 0, party: [p.builds.zidane!] });
+    // Camp stays open during the run: train, unlock a slot, change supports.
+    p = trainStat(p, "zidane", "strength");
+    p = unlockSlot(p, "zidane", "armor");
+    p.builds.zidane!.supports = [];
+    const spentPoints = p.builds.zidane!.points!;
+    // The run earns AP on an ability.
+    const ref = Object.keys(run.party[0]!.build.ap)[0] as keyof typeof run.party[0]["build"]["ap"] | undefined;
+    const apRef = (ref ?? "AA:1") as `AA:${number}`;
+    run.party[0]!.build.ap[apRef] = 99;
+    const report = applyRunOutcome(p, runOutcome(abandonRun(run)), 0);
+    const z = report.profile.builds.zidane!;
+    expect(z.training?.strength).toBe(1);
+    expect(z.unlockedSlots).toContain("armor");
+    expect(z.supports).toEqual([]);
+    expect(z.ap[apRef]).toBe(99);
+    expect(z.points).toBeGreaterThanOrEqual(spentPoints + report.points.zidane!);
+  });
+
   test("CP buys start levels (cost = current level) and slot unlocks (5, 10, 20, 35)", () => {
     let p = newProfile();
     p.builds.zidane!.points = 8;

@@ -7,7 +7,7 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, items, MAIN_CAST, type EquipSlot } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, items, MAIN_CAST, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
 
 import { getArea, getJourney, JOURNEYS, journeyUnlocked, WORLDS } from "../content/worlds";
 import { baseGear, effectivePrice, isGear } from "../run/loot";
@@ -159,8 +159,17 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
     const startLevel = before?.level ?? 1;
     const earned = completionPoints(Math.max(0, b.level - startLevel), outcome.stats.bossKills.length, outcome.won, outcome.stats.battles);
     points[b.key] = earned;
+    // A run plays a snapshot of the character taken when it started, and camp stays open meanwhile (training, slots,
+    // supports can change). So merge onto the character as it is NOW, taking from the run only what a run earns: AP
+    // (abilities mastered or progressed — the higher of the two, per ability) and FF9's growth pool. Everything set at
+    // camp (start level, CP, training, slots, supports, equipment, row) stays as camp has it.
+    const base = before ?? b;
+    const ap: CharacterBuild["ap"] = { ...base.ap };
+    for (const [ref, v] of Object.entries(b.ap) as [AbilityRef, number][]) ap[ref] = Math.max(ap[ref] ?? 0, v ?? 0);
     p.builds[b.key] = {
-      ...b,
+      ...base,
+      ap,
+      growth: b.growth ?? base.growth,
       record,
       level: startLevel,
       exp: expForLevel(startLevel),

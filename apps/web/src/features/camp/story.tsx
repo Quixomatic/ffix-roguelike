@@ -5,6 +5,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PixelIcon } from "@/components/pixel-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
@@ -119,9 +120,12 @@ const LAST_PARTY = "ffix-mock-last-party";
  */
 export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string; tier: number }) {
   const profile = useQuery(trpc.profile.get.queryOptions());
+  const active = useQuery(trpc.run.active.queryOptions());
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [party, setParty] = useState<string[] | null>(null);
+  /** Asking before a start that would wipe the run in progress. */
+  const [confirming, setConfirming] = useState(false);
   const start = useMutation(
     trpc.run.start.mutationOptions({
       onSuccess: async () => {
@@ -164,14 +168,19 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
   const tiers = journeyTiers(p, j.id);
   const tier = tiers.includes(wantedTier) ? wantedTier : tiers[tiers.length - 1]!;
   const toggle = (k: string) => setParty((cur) => (cur!.includes(k) ? cur!.filter((x) => x !== k) : cur!.length >= 4 ? cur : [...cur!, k]));
-  const begin = () => {
+  // Like Pokelike: a run in progress never blocks starting another — starting one wipes it (after asking).
+  const current = active.data ?? null;
+  const currentJourney = current ? JOURNEYS.find((x) => x.id === current.state.journey) : undefined;
+  const sameJourney = current?.state.journey === j.id;
+  const begin = (replace: boolean) => {
     try {
       localStorage.setItem(LAST_PARTY, JSON.stringify(party));
     } catch {
       /* not remembered */
     }
-    start.mutate({ party, tier, journey: j.id });
+    start.mutate({ party, tier, journey: j.id, replace });
   };
+  const startClicked = () => (current ? setConfirming(true) : begin(false));
   const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
 
   return (
@@ -232,29 +241,46 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             );
           })}
         </div>
-        <FocusItem>
-          <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
-            {start.isPending ? (
-              "Setting out…"
-            ) : (
-              <>
-                Begin run <PixelIcon name="arrow-right" size={32} />
-              </>
-            )}
-          </button>
-        </FocusItem>
-      </div>
-      {p.activeRunId && (
-        <div className="text-sm text-pink-200">
-          A run is already in progress —{" "}
+        <div className="flex flex-col items-end gap-2">
+          {sameJourney && (
+            <FocusItem>
+              <Link to="/run" className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl">
+                Continue run <PixelIcon name="arrow-right" size={32} />
+              </Link>
+            </FocusItem>
+          )}
           <FocusItem>
-            <Link to="/run" className="underline">
-              continue it
-            </Link>
-          </FocusItem>{" "}
-          first.
+            <button
+              onClick={startClicked}
+              disabled={!party.length || start.isPending}
+              className={`ff-panel ff-lift inline-flex items-center gap-2 disabled:pointer-events-none disabled:opacity-50 ${sameJourney ? "px-5 py-1.5 text-lg" : "px-8 py-3 text-2xl"}`}
+            >
+              {start.isPending ? (
+                "Setting out…"
+              ) : (
+                <>
+                  {sameJourney ? "New run" : "Begin run"} <PixelIcon name="arrow-right" size={sameJourney ? 16 : 32} />
+                </>
+              )}
+            </button>
+          </FocusItem>
+        </div>
+      </div>
+      {current && !sameJourney && (
+        <div className="text-sm text-pink-200">
+          Beginning this run ends your run in progress ({currentJourney?.name ?? "another journey"}, map {current.state.stage + 1}).
         </div>
       )}
+      <ConfirmDialog
+        open={confirming}
+        onOpenChange={setConfirming}
+        title={sameJourney ? "Start this journey over?" : "End your current run?"}
+        confirmLabel={sameJourney ? "Start over" : "End it and begin"}
+        onConfirm={() => begin(true)}
+      >
+        Your run in <span className="text-yellow-200">{currentJourney?.name ?? "progress"}</span> (map {(current?.state.stage ?? 0) + 1}, {current?.state.gil ?? 0} gil) will be
+        wiped: no rewards, Completion Points or gear from it. This can't be undone.
+      </ConfirmDialog>
 
       <div className="text-sm text-[#c8d0ff]">Pick up to four. Click a card to add or remove them.</div>
       {/* Cards share row tracks (subgrid), so names, stats, gear and footers line up across a row. */}

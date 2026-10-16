@@ -1,6 +1,5 @@
 import { buySupplyRank, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
@@ -8,12 +7,11 @@ import { loadProfile, saveProfile } from "../services/profile";
 import { act, getActiveRun, toTrpcError } from "../services/runs";
 
 /**
- * Apply a game-core rule to the player's profile and persist it. Loadout/points/shop changes are only allowed
- * between runs.
+ * Apply a game-core rule to the player's profile and persist it. Allowed during a run too: the run plays a snapshot
+ * of the party taken when it started, and its end merges onto the profile as it is then (`applyRunOutcome`).
  */
 async function mutateProfile(db: Database, userId: string, change: (p: Profile) => Profile) {
   const loaded = await loadProfile(db, userId);
-  if (await getActiveRun(db, loaded.id)) throw new TRPCError({ code: "CONFLICT", message: "Finish your current run first" });
   let next: Profile;
   try {
     next = change(loaded.profile);

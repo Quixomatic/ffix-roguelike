@@ -56,9 +56,17 @@ export const runRouter = router({
   }),
 
   start: protectedProcedure
-    .input(z.object({ party: z.array(z.string()).min(1).max(4), tier: z.number().int().min(0).max(5), journey: z.string().default("evil-forest") }))
+    .input(
+      z.object({
+        party: z.array(z.string()).min(1).max(4),
+        tier: z.number().int().min(0).max(5),
+        journey: z.string().default("evil-forest"),
+        /** Wipe the run in progress (if any) and start this one. */
+        replace: z.boolean().default(false),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey);
+      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey, input.replace);
       return { id: row.id };
     }),
 

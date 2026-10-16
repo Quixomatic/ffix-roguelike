@@ -48,7 +48,7 @@ export function PlayHub() {
         <Link to="/run" className="ff-panel ff-lift flex items-center justify-between gap-4 px-5 py-3">
           <span>
             <span className="ff-display block text-xl">A run is in progress</span>
-            <span className="text-sm text-[#c8d0ff]">Pick up where you left off. Party and shop changes wait until it ends.</span>
+            <span className="text-sm text-[#c8d0ff]">Pick up where you left off — or start another from Story (that wipes this one).</span>
           </span>
           <span className="ff-display inline-flex items-center gap-2 text-2xl text-yellow-200">
             Continue <PixelIcon name="arrow-right" size={32} />
@@ -109,7 +109,6 @@ export function PlayHub() {
             art={<ShopIcons ids={SUPPLY_ICONS} />}
             lines={["Starting-kit ranks", `${p.gil.toLocaleString()} gil banked`]}
             blurb="More of each item in every run."
-            disabled={!!p.activeRunId}
           />
           <HubCard
             compact
@@ -118,7 +117,6 @@ export function PlayHub() {
             art={<ShopIcons ids={GEAR_ICONS} />}
             lines={[`${gearCatalog(p).length} to unlock`, `${(p.gearUnlocked ?? []).length} unlocked`]}
             blurb="Add gear to the drop pools."
-            disabled={!!p.activeRunId}
           />
         </div>
         <HubCard
@@ -135,7 +133,7 @@ export function PlayHub() {
 }
 
 /** A big hub card; `compact` is the half-width version (two share one slot), with the art above the text. */
-function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: string; title: string; art: ReactNode; lines: ReactNode[]; blurb: string; disabled?: boolean; compact?: boolean }) {
+function HubCard({ to, title, art, lines, blurb, compact }: { to: string; title: string; art: ReactNode; lines: ReactNode[]; blurb: string; compact?: boolean }) {
   return (
     <FocusItem>
     <Link
@@ -150,7 +148,6 @@ function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: stri
           </span>
         ))}
         <span className="mt-1 text-xs opacity-70">{blurb}</span>
-        {disabled && <span className="text-xs text-pink-200">During a run: look, but changes wait</span>}
       </div>
       <div className={`flex items-end transition group-hover:scale-105 ${compact ? "row-start-1 justify-start" : "justify-center"}`}>{art}</div>
     </Link>

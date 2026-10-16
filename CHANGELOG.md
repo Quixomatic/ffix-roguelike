@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.53] - 2026-10-16
+
+Like Pokelike: a run in progress never blocks you. Camp stays open during a run, and starting another run wipes the current one (after asking).
+
+### Changed
+- **Camp is open during a run**: training, gear slots, start levels, support abilities, supplies and the gear catalog all work while a run is going (the API no longer refuses them). A run plays the snapshot of the party taken when it started, so these changes don't touch it; they apply from the next run.
+- **A run's end merges onto your characters as they are now**: it adds what the run earned (AP, the higher per ability; FF9's growth pool; the record; Completion Points) and keeps everything set at camp meanwhile (start level, CP spent, training, slots, supports, equipment). Before, it wrote back the snapshot from the run's start, which would have undone camp changes made during it. New game-core test: training, a slot and supports changed mid-run survive the run's end, and its AP is added (283 pass).
+- **Starting a run while one is going wipes the old one**: `run.start` takes `replace`; the old run ends as abandoned with nothing folded into the profile (no rewards, CP or gear). Without `replace`, the request is still refused, so a run is never lost by accident.
+- **Embark page**:
+  - On the journey you're already running: **Continue run** and **New run**.
+  - On any other journey: **Begin run**, with a note that it ends the run in progress.
+  - Either wipe asks first, in an **FF confirmation dialog** naming the run that will be lost (journey, map, gil).
+- The hub's "changes wait until the run ends" notes are gone; the Continue banner says starting another run from Story wipes this one.
+
+### Added
+- **`ConfirmDialog`** (`components/confirm-dialog.tsx`): an FF window on shadcn's Dialog for destructive confirmations. The cursor starts on Cancel and stays inside; Escape / Backspace / B cancel.
+
 ## [0.2.52] - 2026-10-16
 
 ### Changed

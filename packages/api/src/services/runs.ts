@@ -30,10 +30,15 @@ export function toTrpcError(e: unknown): never {
   throw e;
 }
 
-export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string) {
+/**
+ * Start a run. With a run already going, `replace` wipes it first (it ends as ABANDONED, nothing folded into the
+ * profile — like starting over in Pokelike); without it, the request is refused so a run is never lost by accident.
+ */
+export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string, replace = false) {
   const loaded = await loadProfile(db, userId);
   const { id: profileId, profile } = loaded;
-  if (await getActiveRun(db, profileId)) throw new TRPCError({ code: "CONFLICT", message: "Finish or abandon your current run first" });
+  const current = await getActiveRun(db, profileId);
+  if (current && !replace) throw new TRPCError({ code: "CONFLICT", message: "A run is already in progress" });
   if (new Set(partyKeys).size !== partyKeys.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Duplicate party member" });
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
   if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
@@ -60,6 +65,7 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   }
   const stash = Object.fromEntries(Object.entries(profile.stash).filter(([id]) => !(id in packed)));
   return db.$transaction(async (tx) => {
+    if (current) await tx.run.update({ where: { id: current.id }, data: { status: "ABANDONED", endedAt: new Date() } });
     if (Object.keys(packed).length) await saveProfile(tx, profileId, { ...profile, stash });
     return tx.run.create({
       data: { profileId, seed, journey, tier, party: partyKeys, world: state.world, state: state as object },

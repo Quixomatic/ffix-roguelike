@@ -90,7 +90,6 @@ export function ShopPage({ shop }: { shop: "supplies" | "gear" }) {
         <PageTitle kicker="SHOPS" title={shop === "supplies" ? "Supplies" : "Gear catalog"} />
         <span className="ff-chip text-lg">{p.gil.toLocaleString()} gil</span>
       </div>
-      {p.activeRunId && <div className="text-sm text-pink-200">A run is in progress: purchases wait until it ends.</div>}
       <div className="ff-panel p-4 text-sm">{shop === "supplies" ? <ShopContents shop="supplies" profile={p} /> : <GearCatalogGrid profile={p} />}</div>
     </div>
   );
