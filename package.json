@@ -11,6 +11,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",
+    "check-fast": "turbo run check-fast",
     "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
     "db:push": "turbo run db:push -F @ffix-roguelike/db --",

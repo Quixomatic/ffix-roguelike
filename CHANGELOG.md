@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.46] - 2026-10-16
+
+### Added
+- **`pnpm check-fast`**, set up like ChannelGuide's: every workspace package has a `check-fast` script running **`bun check`** (Bun's built-in TypeScript 7 type checker, on every CPU core); the web app runs `vite build && bun check` (the build regenerates the route tree). A turbo `check-fast` task depends on `^check-fast`, so a dependency's errors invalidate its dependents' cached results. It's named `check-fast`, not `check`, because `bun check` runs a `check` script if one exists, which would recurse. All 9 packages pass in about 12 s (the type checks themselves are well under a second each). `pnpm check-types` (tsc) stays.
+
 ## [0.2.45] - 2026-10-16
 
 ### Fixed

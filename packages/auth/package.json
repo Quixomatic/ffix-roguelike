@@ -6,7 +6,8 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "check-fast": "bun check"
   },
   "dependencies": {
     "@ffix-roguelike/db": "workspace:*",

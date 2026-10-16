@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.45",
+  "version": "0.2.46",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "start": "vite",
     "check-types": "vite build && tsc --noEmit",
+    "check-fast": "vite build && bun check",
     "env:generate": "varlock codegen",
     "sprites:heroes": "bun scripts/slice-hero-sprites.ts",
     "sprites:items": "bun scripts/build-item-icons.ts",

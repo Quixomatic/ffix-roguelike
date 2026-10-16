@@ -7,6 +7,7 @@
   },
   "scripts": {
     "check-types": "tsc --noEmit",
+    "check-fast": "bun check",
     "import:memoria": "bun scripts/import-memoria.ts",
     "import:battles": "bun scripts/import-ff9-battles.ts"
   },
