@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.29] - 2026-10-16
+
+### Fixed
+- **Arriving on a page made an extra cursor tick**: the cursor is placed on the new page's first item for you (so the keys carry on), and that counted as a move. Placing it is now silent; moves you make still tick.
+
 ## [0.2.28] - 2026-10-16
 
 ### Changed

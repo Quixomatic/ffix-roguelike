@@ -27,6 +27,8 @@ function useMergedRef<T>(inner: RefObject<T | null>, outer: Ref<T> | undefined) 
 }
 
 const keysMode = () => document.documentElement.dataset.input === "keys";
+/** Until when focus moves are silent: the cursor placed on a new page for you shouldn't tick (only moves you make do). */
+let quietUntil = 0;
 
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
 export function FocusItem({
@@ -48,7 +50,7 @@ export function FocusItem({
       // Keyboard / controller: bring it into view and tick (the mouse already shows where it is).
       if (keysMode()) {
         (layout.node as HTMLElement | undefined)?.scrollIntoView({ block: "nearest", inline: "nearest" });
-        uiSound("cursor");
+        if (performance.now() >= quietUntil) uiSound("cursor");
       }
       onFocus?.();
     },
@@ -89,7 +91,10 @@ export function FocusSection({
     isFocusBoundary: boundary,
   });
   useEffect(() => {
-    if (autoFocus) focusSelf();
+    if (!autoFocus) return;
+    // Placing the cursor on arrival is silent (Norigin focuses on its own schedule, so allow a moment).
+    quietUntil = performance.now() + 250;
+    focusSelf();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const child = children;
