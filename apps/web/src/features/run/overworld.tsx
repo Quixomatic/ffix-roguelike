@@ -1,4 +1,4 @@
-import { getJourney, WORLDS, type MapNode, type RunState } from "@ffix-roguelike/game-core";
+import { WORLDS, type MapNode, type RunState } from "@ffix-roguelike/game-core";
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
@@ -55,13 +55,8 @@ export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId:
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-black">
+      {/* The area, map and journey are in the party sidebar. */}
       <div ref={hostRef} className="absolute inset-0" />
-      <div className="pointer-events-none absolute left-3 top-3 ff-window px-4 py-2">
-        <div className="text-xl">
-          {world.name} <span className="ff-title">— map {run.stage + 1}/{getJourney(run.journey).areas.length}</span>
-        </div>
-        <div className="ff-title">{getJourney(run.journey).name}</div>
-      </div>
       {hover && (
         <div className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
       )}

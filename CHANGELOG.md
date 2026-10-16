@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.50] - 2026-10-16
+
+### Changed
+- **The run's right margin is back to 1rem**: only the left needs 4rem, to clear the menu button.
+- **No area banner on the overworld map**: the area, map number and journey are in the party sidebar.
+
 ## [0.2.49] - 2026-10-16
 
 ### Changed
