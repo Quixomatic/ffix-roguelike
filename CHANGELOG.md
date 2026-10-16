@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.67] - 2026-10-16
+
+The effects gallery plays FFRK's named abilities with the exact files the game used — and Fire actually shows.
+
+### Fixed
+- **Effects showed nothing** (e.g. Fire, 11000): particle emitters treated FFRK's emission `time`/`startframe` as seconds — they're frames at 60 fps — and the gallery reused effects loaded into an earlier (discarded) Phaser game, whose textures were gone. Effects are now cached per game.
+- Selecting an effect crashed the gallery ("Cannot read properties of undefined (reading 'map')") after the download index changed format.
+
+### Changed
+- **Effects are addressed by their real file paths.** FFRK names effect files many ways (`<n>_hit.json`, `hit.json`, `hit_1.json`, `launch.json`, `shot.json`, `common/launch_black.json`…), and magicite effects live in other folders, so:
+  - `ffrk:effect-names` now writes `effects/catalog.json`: each FFRK effect's names **and the exact launch/shot/hit files** the game played, from captured game data (327 named, 122 with full recipes — e.g. Fire = black-magic launch → no shot → `11000_hit`; Holy = its launch + four hit layers).
+  - `ffrk:effects` downloads every catalog file, then probes each folder for all the known file names (not just `<n>_hit.json`), remembers misses (`.missing`) so re-runs are fast, and indexes by folder.
+  - **Gallery**: an "FFRK abilities" list (named, with their phases) and a "Folders" list (everything downloaded). Phase buttons show every file (launch, shot, hit, hit_1…). Assign a named ability's **whole recipe** to an FF9 move in one click, or the shown file as a move's launch/shot/hit.
+- `.docs/ffrk-assets.md` §6: how FFRK maps abilities to effects (the client gets each ability's effect files from the server per battle — no static table exists), the catalog, file naming, id families, shot/hit type constants, formats.
+
 ## [0.1.66] - 2026-10-16
 
 FFRK's own names for its effects, from captured game data, shown in the effects gallery.

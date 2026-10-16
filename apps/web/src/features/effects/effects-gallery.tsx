@@ -4,149 +4,162 @@ import { useMemo, useState } from "react";
 
 import initialMap from "./ability-effects.json";
 import { EffectStage } from "./effect-stage";
-import { EFFECT_BASE, type EffectPhase } from "./ffrk-effect";
+import { EFFECT_BASE } from "./ffrk-effect";
 
-interface IndexEntry {
-  phases: EffectPhase[];
-  images: string[];
-  sounds: string[];
-}
+/** `effects/index.json` (ffrk:effects): folder → its rig files, the effect art and sounds they use. */
+type EffectIndex = Record<string, { files: string[]; images: string[]; sounds: string[] }>;
+/** `effects/catalog.json` (ffrk:effect-names): FFRK effect id → names and the exact file per phase. */
+type EffectCatalog = Record<string, { names: string[]; phases: Record<string, string> }>;
+
+/** What an FF9 move plays: phase key ("launch", "shot", "hit", "hit_1"…) → rig path. */
 export interface EffectAssignment {
-  hit?: number;
-  launch?: number;
-  shot?: number;
-  note?: string;
+  phases: Record<string, string>;
+  /** Where it came from (FFRK name or folder), for reading the map. */
+  from?: string;
 }
 type EffectMap = { abilities: Record<string, EffectAssignment> };
+
+interface Item {
+  key: string;
+  label: string;
+  sub: string;
+  phases: Record<string, string>;
+  /** A whole FFRK ability recipe (from captured game data) rather than a folder's files. */
+  recipe: boolean;
+  search: string;
+}
+
+const PHASE_ORDER = ["launch", "shot", "hit"];
+const phaseSort = (a: string, b: string) => {
+  const ia = PHASE_ORDER.findIndex((p) => a.startsWith(p));
+  const ib = PHASE_ORDER.findIndex((p) => b.startsWith(p));
+  return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib) || a.localeCompare(b, undefined, { numeric: true });
+};
+const shortPath = (p: string) => p.replace(/^ab\/ability\//, "");
 
 /** Every FF9 move an effect can be assigned to: party abilities ("a:<id>") and enemy attacks ("e:<uid>"). */
 function useMoves() {
   return useMemo(() => {
     const party = actions.filter((a) => a.name && a.name !== "—").map((a) => ({ key: `a:${a.id}`, name: a.name, kind: "Party" as const }));
     const seen = new Set<string>();
-    const enemy = bestiary.actions
-      .filter((a) => a.name && !seen.has(a.name) && seen.add(a.name))
-      .map((a) => ({ key: `e:${a.uid}`, name: a.name, kind: "Enemy" as const }));
+    const enemy = bestiary.actions.filter((a) => a.name && !seen.has(a.name) && seen.add(a.name)).map((a) => ({ key: `e:${a.uid}`, name: a.name, kind: "Enemy" as const }));
     return [...party, ...enemy];
   }, []);
 }
 
-/**
- * Dev tool: browse every downloaded FFRK effect, watch it loop on a target, and assign it to FF9 moves. Saves to
- * `src/features/effects/ability-effects.json` through the dev server.
- */
-export function EffectsGallery() {
-  const index = useQuery({
-    queryKey: ["ffrk-effects-index"],
-    queryFn: async () => (await (await fetch(`${EFFECT_BASE}/index.json`)).json()) as Record<string, IndexEntry>,
-    enabled: import.meta.env.DEV,
-    staleTime: Infinity,
-  });
-  // FFRK's own names for effects, from captured game data (`pnpm -F web ffrk:effect-names`).
-  const names = useQuery({
-    queryKey: ["ffrk-effects-names"],
+const useJson = <T,>(file: string) =>
+  useQuery({
+    queryKey: ["ffrk-effects", file],
     queryFn: async () => {
-      const r = await fetch(`${EFFECT_BASE}/names.json`);
-      return r.ok ? ((await r.json()) as Record<string, string[]>) : {};
+      const r = await fetch(`${EFFECT_BASE}/${file}`);
+      return r.ok ? ((await r.json()) as T) : null;
     },
     enabled: import.meta.env.DEV,
     staleTime: Infinity,
   });
-  const ffrkName = (id: number) => names.data?.[id]?.join(" / ") ?? "";
-  const [namedOnly, setNamedOnly] = useState(false);
+
+/**
+ * Dev tool: browse FFRK's effects — its named abilities (with the exact launch/shot/hit files the game used) and
+ * every downloaded effect folder — watch them loop on a target, and assign them to FF9 moves. Saves to
+ * `src/features/effects/ability-effects.json` through the dev server.
+ */
+export function EffectsGallery() {
+  const index = useJson<EffectIndex>("index.json");
+  const catalog = useJson<EffectCatalog>("catalog.json");
   const moves = useMoves();
   const [map, setMap] = useState<EffectMap>(initialMap as EffectMap);
+  const [tab, setTab] = useState<"named" | "folders">("named");
   const [filter, setFilter] = useState("");
-  const [selected, setSelected] = useState<number | null>(null);
-  const [phase, setPhase] = useState<EffectPhase>("hit");
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [phase, setPhase] = useState<string>("hit");
   const [speed, setSpeed] = useState(1);
   const [moveFilter, setMoveFilter] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const used = useMemo(() => {
-    const m = new Map<number, string[]>();
-    for (const [k, v] of Object.entries(map.abilities)) for (const id of [v.hit, v.launch, v.shot]) if (id != null) m.set(id, [...(m.get(id) ?? []), k]);
-    return m;
-  }, [map]);
-  const moveName = (key: string) => moves.find((m) => m.key === key)?.name ?? key;
+  const items = useMemo(() => {
+    const idx = index.data ?? {};
+    const named: Item[] = Object.entries(catalog.data ?? {})
+      .filter(([, e]) => e.names.length)
+      .map(([id, e]) => {
+        // No captured paths: fall back to the folder with the same id, if it was downloaded.
+        const phases = Object.keys(e.phases).length ? e.phases : Object.fromEntries((idx[id]?.files ?? []).map((f) => [f.replace(/\.json$/, "").replace(`${id}_`, ""), `ab/ability/${id}/${f}`]));
+        return { key: `n:${id}`, label: e.names.join(" / "), sub: `${id}${Object.keys(e.phases).length ? "" : " (guessed files)"}`, phases, recipe: !!Object.keys(e.phases).length, search: `${id} ${e.names.join(" ")}`.toLowerCase() };
+      });
+    const folders: Item[] = Object.entries(idx).map(([folder, e]) => ({
+      key: `f:${folder}`,
+      label: folder,
+      sub: `${catalog.data?.[folder]?.names.join(" / ") ?? ""} ${e.images.map((i) => i.replace(/^img_(eff_)?/, "")).join(" ")}`.trim(),
+      phases: Object.fromEntries(e.files.map((f) => [f.replace(/\.json$/, "").replace(`${folder}_`, ""), `ab/ability/${folder}/${f}`])),
+      recipe: false,
+      search: `${folder} ${catalog.data?.[folder]?.names.join(" ") ?? ""} ${e.images.join(" ")}`.toLowerCase(),
+    }));
+    return { named, folders };
+  }, [index.data, catalog.data]);
 
-  const ids = useMemo(() => {
-    const all = Object.entries(index.data ?? {});
+  const list = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    return all
-      .filter(([id]) => !namedOnly || names.data?.[id])
-      .filter(
-        ([id, e]) =>
-          !q ||
-          id.startsWith(q) ||
-          ffrkName(Number(id)).toLowerCase().includes(q) ||
-          e.images.some((i) => i.toLowerCase().includes(q)) ||
-          (used.get(Number(id)) ?? []).some((k) => moveName(k).toLowerCase().includes(q)),
-      )
-      .map(([id, e]) => ({ id: Number(id), ...e }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index.data, names.data, filter, used, namedOnly]);
+    return (tab === "named" ? items.named : items.folders).filter((i) => !q || i.search.includes(q));
+  }, [items, tab, filter]);
 
-  const entry = selected != null ? index.data?.[selected] : undefined;
+  const selected = useMemo(() => [...items.named, ...items.folders].find((i) => i.key === selectedKey) ?? null, [items, selectedKey]);
+  const phaseKeys = selected ? Object.keys(selected.phases).sort(phaseSort) : [];
+  const path = selected?.phases[phase] ?? null;
+  const moveName = (key: string) => moves.find((m) => m.key === key)?.name ?? key;
   const matchingMoves = moveFilter.trim() ? moves.filter((m) => m.name.toLowerCase().includes(moveFilter.trim().toLowerCase())).slice(0, 30) : [];
 
+  function select(item: Item) {
+    setSelectedKey(item.key);
+    const keys = Object.keys(item.phases);
+    setPhase(keys.find((k) => k === "hit") ?? keys.find((k) => k.startsWith("hit")) ?? keys.sort(phaseSort)[0] ?? "hit");
+  }
   async function save(next: EffectMap) {
     setMap(next);
     setSaving(true);
     await fetch(`${EFFECT_BASE}/__map`, { method: "PUT", body: `${JSON.stringify(next, null, 2)}\n` });
     setSaving(false);
   }
-  function assign(key: string) {
-    if (selected == null) return;
-    const cur = map.abilities[key] ?? {};
-    void save({ abilities: { ...map.abilities, [key]: { ...cur, [phase]: selected } } });
+  /** Assign the whole recipe (named FFRK ability) or the current file as one phase. */
+  function assign(moveKey: string, as: "recipe" | string) {
+    if (!selected) return;
+    const cur = map.abilities[moveKey]?.phases ?? {};
+    const phases = as === "recipe" ? { ...selected.phases } : path ? { ...cur, [as]: path } : cur;
+    void save({ abilities: { ...map.abilities, [moveKey]: { phases, from: selected.label } } });
   }
-  function unassign(key: string, ph: EffectPhase) {
-    const cur = { ...map.abilities[key] };
-    delete cur[ph];
+  function unassign(moveKey: string) {
     const abilities = { ...map.abilities };
-    if (cur.hit == null && cur.launch == null && cur.shot == null) delete abilities[key];
-    else abilities[key] = cur;
+    delete abilities[moveKey];
     void save({ abilities });
   }
 
   if (!import.meta.env.DEV) return <div className="p-6">The effects gallery only runs in development (it reads the downloaded FFRK library).</div>;
 
   return (
-    <div className="grid h-[calc(100vh-4rem)] grid-cols-[16rem_1fr_20rem] gap-3 p-3">
+    <div className="grid h-[calc(100vh-4rem)] grid-cols-[18rem_1fr_22rem] gap-3 p-3">
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
-        <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder="id, FFRK name, art (fire…), or move" value={filter} onChange={(e) => setFilter(e.target.value)} />
-        <label className="flex items-center gap-1.5 text-xs">
-          <input type="checkbox" checked={namedOnly} onChange={(e) => setNamedOnly(e.target.checked)} /> Only effects with an FFRK name
-        </label>
-        <div className="text-xs opacity-70">{index.isLoading ? "Loading index…" : `${ids.length} effects`}</div>
+        <div className="flex gap-1">
+          {(["named", "folders"] as const).map((t) => (
+            <button key={t} className="ff-option flex-1 px-2 text-sm data-[on=true]:text-yellow-200" data-on={tab === t} onClick={() => setTab(t)}>
+              {t === "named" ? `FFRK abilities (${items.named.length})` : `Folders (${items.folders.length})`}
+            </button>
+          ))}
+        </div>
+        <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder={tab === "named" ? "Fire, Cure, Jump, 11000…" : "folder id, art (fire, slash…)"} value={filter} onChange={(e) => setFilter(e.target.value)} />
+        <div className="text-xs opacity-70">{index.isLoading || catalog.isLoading ? "Loading…" : `${list.length} shown`}</div>
         <div className="min-h-0 flex-1 overflow-y-auto">
-          {ids.map((e) => (
-            <button
-              key={e.id}
-              className="flex w-full items-baseline gap-2 rounded px-1.5 py-0.5 text-left text-sm hover:bg-white/10 data-[on=true]:bg-yellow-300/20"
-              data-on={selected === e.id}
-              onClick={() => {
-                setSelected(e.id);
-                setPhase(e.phases.includes("hit") ? "hit" : e.phases[0]!);
-              }}
-            >
-              <span className="tabular-nums">{e.id}</span>
-              <span className="truncate text-xs">
-                {(used.get(e.id) ?? []).length ? <span className="text-yellow-200">{(used.get(e.id) ?? []).map(moveName).join(", ")} </span> : null}
-                {ffrkName(e.id) ? <span>{ffrkName(e.id)}</span> : <span className="opacity-50">{e.images.map((i) => i.replace(/^img_(eff_)?/, "")).join(" ")}</span>}
-              </span>
+          {list.map((i) => (
+            <button key={i.key} className="flex w-full flex-col rounded px-1.5 py-0.5 text-left hover:bg-white/10 data-[on=true]:bg-yellow-300/20" data-on={selectedKey === i.key} onClick={() => select(i)}>
+              <span className="truncate text-sm">{i.label}</span>
+              <span className="truncate text-xs opacity-60">{i.sub}</span>
             </button>
           ))}
         </div>
       </div>
 
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
-        <div className="flex items-center gap-2 text-sm">
-          <span className="ff-display text-lg">{selected ?? "Pick an effect"}</span>
-          {selected != null && ffrkName(selected) && <span className="text-yellow-200">{ffrkName(selected)}</span>}
-          {entry?.phases.map((p) => (
-            <button key={p} className="ff-option px-2 data-[on=true]:text-yellow-200" data-on={phase === p} onClick={() => setPhase(p)}>
+        <div className="flex flex-wrap items-center gap-1.5 text-sm">
+          <span className="ff-display mr-2 text-lg">{selected?.label ?? "Pick an effect"}</span>
+          {phaseKeys.map((p) => (
+            <button key={p} className="ff-option px-2 data-[on=true]:text-yellow-200" data-on={phase === p} onClick={() => setPhase(p)} title={selected?.phases[p]}>
               {p}
             </button>
           ))}
@@ -157,21 +170,30 @@ export function EffectsGallery() {
             </button>
           ))}
         </div>
-        <EffectStage id={selected} phase={phase} speed={speed} className="min-h-0 flex-1 overflow-hidden rounded" />
-        {entry && <div className="text-xs opacity-70">Art: {entry.images.join(", ") || "—"} · Sounds: {entry.sounds.join(", ") || "—"}</div>}
+        <EffectStage path={path} speed={speed} className="min-h-0 flex-1 overflow-hidden rounded" />
+        <div className="text-xs opacity-70">{path ? shortPath(path) : "—"}</div>
       </div>
 
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
-        <div className="ff-title">Assign {selected != null ? `${selected} (${phase})` : ""} to a move {saving && <span className="text-xs opacity-60">saving…</span>}</div>
+        <div className="ff-title">Assign to an FF9 move {saving && <span className="text-xs opacity-60">saving…</span>}</div>
         <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder="Search FF9 moves (Fire, Cure, Goblin Punch…)" value={moveFilter} onChange={(e) => setMoveFilter(e.target.value)} />
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-72 overflow-y-auto">
           {matchingMoves.map((m) => (
-            <button key={m.key} className="flex w-full justify-between rounded px-1.5 py-0.5 text-left text-sm hover:bg-white/10 disabled:opacity-40" disabled={selected == null} onClick={() => assign(m.key)}>
-              <span>{m.name}</span>
-              <span className="text-xs opacity-60">
-                {m.kind} {map.abilities[m.key]?.[phase] != null ? `· ${phase} ${map.abilities[m.key]![phase]}` : ""}
+            <div key={m.key} className="flex items-center gap-1 rounded px-1.5 py-0.5 text-sm hover:bg-white/5">
+              <span className="flex-1 truncate">
+                {m.name} <span className="text-xs opacity-50">{m.kind}</span>
               </span>
-            </button>
+              {selected?.recipe && (
+                <button className="ff-option px-1.5 text-xs" onClick={() => assign(m.key, "recipe")} title="Use this FFRK ability's whole launch → shot → hit recipe">
+                  recipe
+                </button>
+              )}
+              {["launch", "shot", "hit"].map((p) => (
+                <button key={p} className="ff-option px-1.5 text-xs disabled:opacity-30" disabled={!path} onClick={() => assign(m.key, p)} title={`Use the shown file as this move's ${p}`}>
+                  {p}
+                </button>
+              ))}
+            </div>
           ))}
         </div>
         <div className="ff-title mt-2">Assigned ({Object.keys(map.abilities).length})</div>
@@ -179,20 +201,23 @@ export function EffectsGallery() {
           {Object.entries(map.abilities)
             .sort((a, b) => moveName(a[0]).localeCompare(moveName(b[0])))
             .map(([k, v]) => (
-              <div key={k} className="flex flex-wrap items-baseline gap-1.5 border-b border-white/10 py-0.5">
-                <span className="flex-1">{moveName(k)}</span>
-                {(["launch", "shot", "hit"] as const).map((ph) =>
-                  v[ph] != null ? (
-                    <span key={ph} className="flex items-center gap-0.5 text-xs">
-                      <button className="underline decoration-dotted" onClick={() => (setSelected(v[ph]!), setPhase(ph))}>
-                        {ph} {v[ph]}
-                      </button>
-                      <button className="opacity-50 hover:opacity-100" onClick={() => unassign(k, ph)} aria-label="Remove">
-                        ✕
-                      </button>
-                    </span>
-                  ) : null,
-                )}
+              <div key={k} className="border-b border-white/10 py-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="flex-1">{moveName(k)}</span>
+                  <span className="text-xs opacity-60">{v.from}</span>
+                  <button className="text-xs opacity-50 hover:opacity-100" onClick={() => unassign(k)} aria-label="Remove">
+                    ✕
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 text-xs opacity-80">
+                  {Object.entries(v.phases)
+                    .sort((a, b) => phaseSort(a[0], b[0]))
+                    .map(([ph, p]) => (
+                      <span key={ph}>
+                        {ph}: {shortPath(p)}
+                      </span>
+                    ))}
+                </div>
               </div>
             ))}
         </div>

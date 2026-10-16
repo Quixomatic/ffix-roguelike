@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
-import { FfrkEffectPlayer, loadEffect, type EffectPhase } from "./ffrk-effect";
+import { FfrkEffectPlayer, loadEffect } from "./ffrk-effect";
 
 /** A target to play effects on: the Bomb's FFRK sprite (first cell of its strip). */
 const TARGET_URL = "/sprites/enemies/enemy-109010.png";
@@ -19,23 +19,23 @@ class StageScene extends Phaser.Scene {
     this.add.sprite(this.scale.width / 2, this.scale.height / 2, "stage-target", 0).setScale(3);
     this.game.events.emit("stage-ready");
   }
-  async show(id: number | null, phase: EffectPhase, speed: number) {
+  async show(path: string | null, speed: number) {
     const token = ++this.token;
     this.player?.destroy();
     this.player = undefined;
-    if (id == null) return;
-    const asset = await loadEffect(this, id, phase);
+    if (path == null) return;
+    const asset = await loadEffect(this, path);
     if (!asset || token !== this.token) return;
     this.player = new FfrkEffectPlayer(this, asset, { x: this.scale.width / 2, y: this.scale.height / 2, scale: 3, loop: true, speed });
   }
 }
 
-/** A Phaser stage looping one FFRK effect on a target. */
-export function EffectStage({ id, phase, speed = 1, className }: { id: number | null; phase: EffectPhase; speed?: number; className?: string }) {
+/** A Phaser stage looping one FFRK effect rig (server path, e.g. "ab/ability/11000/11000_hit.json") on a target. */
+export function EffectStage({ path, speed = 1, className }: { path: string | null; speed?: number; className?: string }) {
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<StageScene | null>(null);
-  const want = useRef({ id, phase, speed });
-  want.current = { id, phase, speed };
+  const want = useRef({ path, speed });
+  want.current = { path, speed };
 
   useEffect(() => {
     if (!host.current) return;
@@ -49,7 +49,7 @@ export function EffectStage({ id, phase, speed = 1, className }: { id: number | 
     });
     game.events.once("stage-ready", () => {
       scene.current = game.scene.getScene("effect-stage") as StageScene;
-      void scene.current.show(want.current.id, want.current.phase, want.current.speed);
+      void scene.current.show(want.current.path, want.current.speed);
     });
     return () => {
       scene.current = null;
@@ -58,8 +58,8 @@ export function EffectStage({ id, phase, speed = 1, className }: { id: number | 
   }, []);
 
   useEffect(() => {
-    void scene.current?.show(id, phase, speed);
-  }, [id, phase, speed]);
+    void scene.current?.show(path, speed);
+  }, [path, speed]);
 
   return <div ref={host} className={className} />;
 }

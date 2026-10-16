@@ -13,7 +13,8 @@ import Phaser from "phaser";
 import { evalRig, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
 
 export const EFFECT_BASE = import.meta.env.DEV ? "/ffrk-raw" : "/effects";
-export type EffectPhase = "hit" | "launch" | "shot";
+/** Phase keys FFRK uses: "launch" (caster), "shot" (projectile), "hit" (target) and variants ("hit_1", "miss_hit"…). */
+export type EffectPhase = string;
 
 /** "/Content/lang/ab/x/y.png" or "./lang/ab/x/y.png" → "ab/x/y.png". */
 const serverPath = (p: string) => p.replace(/^.*?lang\//, "").replace(/\/\/+/g, "/");
@@ -71,6 +72,7 @@ interface EmitterDef {
   texture_type?: "constant" | "randPick";
   texture_constant?: { file?: string; image: string; packerid?: string };
   texture_randPick?: { image: string; uvMin: [number, number]; uvMax: [number, number] }[];
+  /** Emission time in frames (60 fps). */
   time?: number;
 }
 interface ParticleFile {
@@ -81,8 +83,8 @@ interface Sajson {
 }
 
 export interface EffectAsset {
-  id: number;
-  phase: EffectPhase;
+  /** Server path of the rig ("ab/ability/11000/11000_hit.json"). */
+  path: string;
   rig: Rig;
   particles: Map<string, EmitterDef[]>;
   sprites: Map<string, Sajson>;
@@ -105,17 +107,23 @@ const getJson = <T>(path: string): Promise<T | null> => {
   return jsonCache.get(url) as Promise<T | null>;
 };
 
-const assetCache = new Map<string, Promise<EffectAsset | null>>();
+/** Loaded effects per Phaser game (textures live in a game's texture manager, so a new game must load its own). */
+const assetCache = new WeakMap<Phaser.Game, Map<string, Promise<EffectAsset | null>>>();
 
-/** Load an effect and every texture it needs into `scene`. Null if the effect doesn't exist. */
-export function loadEffect(scene: Phaser.Scene, id: number, phase: EffectPhase): Promise<EffectAsset | null> {
-  const key = `${id}_${phase}`;
-  if (!assetCache.has(key)) assetCache.set(key, doLoad(scene, id, phase));
-  return assetCache.get(key)!;
+/** The usual rig path for an effect id and phase (`<id>/<id>_<phase>.json`; FFRK also uses other names — see the catalog). */
+export const rigPath = (id: number, phase: string) => `ab/ability/${id}/${id}_${phase}.json`;
+
+/** Load an effect rig (server path) and every texture it needs into `scene`. Null if the effect doesn't exist. */
+export function loadEffect(scene: Phaser.Scene, path: string): Promise<EffectAsset | null> {
+  let cache = assetCache.get(scene.game);
+  if (!cache) assetCache.set(scene.game, (cache = new Map()));
+  const key = serverPath(path);
+  if (!cache.has(key)) cache.set(key, doLoad(scene, key));
+  return cache.get(key)!;
 }
 
-async function doLoad(scene: Phaser.Scene, id: number, phase: EffectPhase): Promise<EffectAsset | null> {
-  const rig = await getJson<Rig>(`ab/ability/${id}/${id}_${phase}.json`);
+async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | null> {
+  const rig = await getJson<Rig>(path);
   if (!rig) return null;
   /** png path → its atlas json path (null: plain image). */
   const images = new Map<string, string | null>();
@@ -174,7 +182,7 @@ async function doLoad(scene: Phaser.Scene, id: number, phase: EffectPhase): Prom
   }
   const tags = Object.values(rig.tag ?? {});
   const range = (rig.tag?.play ?? tags[0] ?? [0, 60]).slice(0, 2) as [number, number];
-  return { id, phase, rig, particles, sprites, range };
+  return { path, rig, particles, sprites, range };
 }
 
 // ---------- particles ----------
@@ -225,14 +233,15 @@ class Emitter {
   ) {}
 
   get done() {
-    return this.age >= (this.def.time ?? 1) + (this.def.emitter_lifetimeMax ?? 1) && this.particles.length === 0;
+    return this.age >= ((this.def.startframe ?? 0) + (this.def.time ?? 1)) / 60 + (this.def.emitter_lifetimeMax ?? 1) && this.particles.length === 0;
   }
 
   update(dt: number) {
     const d = this.def;
     this.age += dt;
+    // `startframe` and `time` are frames at 60 fps.
     const delay = (d.startframe ?? 0) / 60;
-    const active = this.age >= delay && this.age < delay + (d.time ?? 1);
+    const active = this.age >= delay && this.age < delay + (d.time ?? 1) / 60;
     if (active) {
       this.carry += (d.emitter_rate ?? 10) * dt;
       while (this.carry >= 1) {
@@ -541,9 +550,9 @@ const rgb = (t: [number, number, number]) => {
   return (c[0]! << 16) | (c[1]! << 8) | c[2]!;
 };
 
-/** Load and play an effect phase at a point. Resolves with the player (or null if the effect doesn't exist). */
-export async function playEffect(scene: Phaser.Scene, id: number, phase: EffectPhase, opts: PlayOptions): Promise<FfrkEffectPlayer | null> {
-  const asset = await loadEffect(scene, id, phase);
+/** Load and play an effect rig at a point. Resolves with the player (or null if the effect doesn't exist). */
+export async function playEffect(scene: Phaser.Scene, path: string, opts: PlayOptions): Promise<FfrkEffectPlayer | null> {
+  const asset = await loadEffect(scene, path);
   if (!asset || !scene.sys.isActive()) return null;
   return new FfrkEffectPlayer(scene, asset, opts);
 }
