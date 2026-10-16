@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.65] - 2026-10-15
+
+FFRK's spell and ability effects: downloaded, playable, and browsable in a new effects gallery.
+
+### Added
+- `pnpm -F web ffrk:effects [from] [to]` (`scripts/fetch-ffrk-effects.ts`) downloads FFRK's ability effects from the game's server — every `ab/ability/<id>/<id>_{hit,launch,shot}.json` rig plus everything it uses: particle files, frame animations (`.sajson`), the shared effect art and its frame lists, and the sound effects (`lang/se/se_ogg/*.ogg`) — into `.docs/assets/FFRK-data/_raw/effects` with an `index.json` (id → phases, art, sounds).
+- **FFRK effect player** (`features/effects/ffrk-effect.ts`): loads an effect and plays it in Phaser — the animated rig (images, additive glows, scrolling textures), FFRK's frame-by-frame sprite animations, and a particle system that follows FFRK's emitter settings (circle/line/box emitters, rate, lifetime, speed and direction, gravity/drag/radial/tangential acceleration, spin, size, scale/alpha/colour over life, random textures, additive blending). Speed control for ×2/×4 battles and frame callbacks (for timing damage numbers to the impact) are built in.
+- **Effects gallery** (`/effects`, an orange "Effects" link in development): every downloaded effect in a searchable list (by id, by the art it uses — "fire", "cure", "slash" — or by the move it's assigned to), playing on loop on a target with its launch/shot/hit phases and ×¼–×2 speed. Pick an effect and assign it to any FF9 move (party abilities and enemy attacks); assignments save to `src/features/effects/ability-effects.json`.
+- `rig evaluation` (`ffrk-anim.ts` `evalRig`) now also returns frame-animation and particle nodes, and plain images with animated UVs.
+
+### Notes
+- The dev server serves the downloaded library at `/ffrk-raw/` (dev only); restart `pnpm dev` to pick up the Vite change. Builds will ship only the effects that get assigned.
+- Effects aren't in battles yet — next is mapping the spells and timing launch → hit with the damage numbers.
+
 ## [0.1.64] - 2026-10-15
 
 Monsters have their real FFRK sprites — and the bosses move with FFRK's own animations.

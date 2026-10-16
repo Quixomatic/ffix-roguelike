@@ -4,12 +4,13 @@
  * position, rotation, scale, alpha and colour on one shared timeline, and `tag` names frame ranges ("idle",
  * "attack", "damage", "dead_boss"…). See `.docs/ffrk-assets.md` §4.3.
  *
- * `poseAt(rig, frame)` evaluates the whole tree at a frame and returns what to draw, back to front, with each
- * image's corners in rig space (x right, y down, origin at the rig's root). Pure — no Phaser — so build scripts can
- * render stills with it and the battle scene can play it.
+ * `evalRig(rig, frame)` evaluates the whole tree at a frame: images to draw (back to front, with each image's
+ * corners in rig space: x right, y down, origin at the rig's root), `.sajson` frame-animation nodes and particle
+ * emitters, each with its world transform. `poseAt` is the images only (boss stills). Pure — no Phaser — so build
+ * scripts can render stills with it and the battle scene / effect player can play it.
  */
 
-export type Channel = "posX" | "posY" | "rotZ" | "scaleX" | "scaleY" | "alpha" | "red" | "green" | "blue";
+export type Channel = "posX" | "posY" | "rotZ" | "scaleX" | "scaleY" | "alpha" | "red" | "green" | "blue" | "image_uvs_0" | "image_uvs_1" | "image_uvs_2" | "image_uvs_3";
 
 interface Segment {
   type: "liner" | "spline";
@@ -29,22 +30,39 @@ export interface RigNode {
     color?: [number, number, number];
     visible?: boolean;
     blend?: "alpha" | "add";
-    image?: { packerid?: string; url?: string; uvs?: [number, number, number, number] };
+    image?: { packerid?: string; url?: string; file?: string; uvs?: [number, number, number, number] };
+    /** A SpriteAnimationBuilder (`.sajson`) action played from rig frame `frame`. */
+    sprite?: { file: string; action: string; frame?: number };
+    /** A particle effect (`pb_*.json`) started at rig frame `frame`. */
+    particle?: { file: string; frame?: number };
     anime?: Partial<Record<Channel, Segment[]>>;
   };
   children?: RigNode[];
+}
+
+export interface RigAction {
+  actionName: string;
+  frame: number;
+  id?: string;
+  [k: string]: unknown;
 }
 
 export interface Rig {
   fps: number;
   tag: Record<string, [number, number, number]>;
   tree: RigNode[];
+  action?: RigAction[];
 }
 
-/** One image to draw: its atlas frame and where its corners land. */
+/** One image to draw: its atlas frame (or a whole image with UVs) and where its corners land. */
 export interface DrawPart {
   node: string;
+  /** Frame name in the image's atlas; "" when the node draws a plain image (`url` + `uvs`). */
   packerid: string;
+  /** Server path of the image ("/Content/lang/ab/…png"). */
+  url?: string;
+  /** Sub-rectangle of a plain image in 0–1 units [u, v, w, h] (FFRK animates these to scroll/tile textures). */
+  uvs?: [number, number, number, number];
   /** Local image size (pixels). */
   w: number;
   h: number;
@@ -53,6 +71,30 @@ export interface DrawPart {
   alpha: number;
   tint: [number, number, number];
   blend: "alpha" | "add";
+}
+
+/** A node placed in rig space: the transform maps its local point (0, 0) to rig space. */
+export interface PlacedNode {
+  node: string;
+  m: [a: number, b: number, c: number, d: number, tx: number, ty: number];
+  alpha: number;
+  tint: [number, number, number];
+  blend: "alpha" | "add";
+}
+export interface SpriteNode extends PlacedNode {
+  file: string;
+  action: string;
+  /** Rig frame the action starts on. */
+  start: number;
+}
+export interface EmitterNode extends PlacedNode {
+  file: string;
+  start: number;
+}
+export interface RigEval {
+  parts: DrawPart[];
+  sprites: SpriteNode[];
+  emitters: EmitterNode[];
 }
 
 /** Nodes never drawn as part of the character (anchors, effect slots, UI). */
@@ -107,9 +149,16 @@ const mul = (p: M, q: M): M => [p[0] * q[0] + p[2] * q[1], p[1] * q[0] + p[3] * 
  * composited boss stills (Plant Brain, Gizamaluke, Hades).
  */
 export function poseAt(rig: Rig, frame: number): DrawPart[] {
+  return evalRig(rig, frame).parts.filter((p) => p.packerid);
+}
+
+/** Evaluate every drawable node of the rig at `frame` (see `poseAt` for the conventions). */
+export function evalRig(rig: Rig, frame: number): RigEval {
   const out: DrawPart[] = [];
+  const sprites: SpriteNode[] = [];
+  const emitters: EmitterNode[] = [];
   const walk = (n: RigNode, parent: M, alpha: number, tint: [number, number, number], root: boolean) => {
-    if (SKIP.test(n.name) || n.type === "collision" || n.type === "attractor" || n.type === "particle") return;
+    if (SKIP.test(n.name) || n.type === "collision" || n.type === "attractor") return;
     const a = n.attrs ?? {};
     const an = a.anime ?? {};
     if (root) {
@@ -134,12 +183,16 @@ export function poseAt(rig: Rig, frame: number): DrawPart[] {
     const sin = Math.sin(rot);
     const node = mul(parent, [cos * sx, sin * sx, -sin * sy, cos * sy, x, y]);
     const img = a.image;
-    if (n.type === "image" && img?.packerid && w > 0 && h > 0)
-      out.push({ node: n.name, packerid: img.packerid, w, h, m: mul(node, [1, 0, 0, 1, -ax * w, -ay * h]), alpha: al, tint: tn, blend: a.blend ?? "alpha" });
+    const blend = a.blend ?? "alpha";
+    if (n.type === "image" && img && (img.packerid || img.url) && w > 0 && h > 0) {
+      const uvs = img.uvs && !img.packerid ? (img.uvs.map((v, i) => curveAt(an[`image_uvs_${i}` as Channel], frame, v)) as DrawPart["uvs"]) : undefined;
+      out.push({ node: n.name, packerid: img.packerid ?? "", url: img.url, uvs, w, h, m: mul(node, [1, 0, 0, 1, -ax * w, -ay * h]), alpha: al, tint: tn, blend });
+    } else if (n.type === "sprite" && a.sprite) sprites.push({ node: n.name, file: a.sprite.file, action: a.sprite.action, start: a.sprite.frame ?? 0, m: node, alpha: al, tint: tn, blend });
+    else if (n.type === "particle" && a.particle) emitters.push({ node: n.name, file: a.particle.file, start: a.particle.frame ?? 0, m: node, alpha: al, tint: tn, blend });
     for (const ch of n.children ?? []) walk(ch, node, al, tn, false);
   };
   for (const n of rig.tree) walk(n, [1, 0, 0, 1, 0, 0], 1, [1, 1, 1], true);
-  return out;
+  return { parts: out, sprites, emitters };
 }
 
 /** Bounding box of a pose in rig space. */
