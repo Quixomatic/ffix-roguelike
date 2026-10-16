@@ -206,6 +206,8 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
 // ── spending Completion Points ───────────────────────────────────────────────
 /** CP needed to raise a start level from `level` to `level + 1`. */
 export const startLevelCost = (level: number) => level;
+/** Start level is trained like a stat: 20 ranks above Lv 1 (Lv 21), level n costing n CP (210 CP in all). */
+export const START_LEVEL_MAX = 21;
 
 function editable(profile: Profile, key: string) {
   const p = structuredClone(profile);
@@ -217,7 +219,7 @@ function editable(profile: Profile, key: string) {
 /** Spend CP to raise a character's start level by one. */
 export function raiseStartLevel(profile: Profile, key: string): Profile {
   const { p, b } = editable(profile, key);
-  if (b.level >= 99) throw new ProfileError("Already at the maximum level");
+  if (b.level >= START_LEVEL_MAX) throw new ProfileError(`Start level is capped at Lv ${START_LEVEL_MAX}`);
   const cost = startLevelCost(b.level);
   if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
   b.points = (b.points ?? 0) - cost;

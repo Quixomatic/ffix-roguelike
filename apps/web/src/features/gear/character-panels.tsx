@@ -180,43 +180,105 @@ const TRAIN_VALUE: Record<TrainStat, (s: DerivedStats) => number> = {
  * Training: one row per stat — name, TRAIN_MAX tick boxes for the ranks bought, "5/20", the stat's resulting
  * value, and a + button (with the next rank's CP cost) when `onTrain` is given; read-only otherwise.
  */
-export function TrainingRows({ build, stats, points, onTrain, busy }: { build: CharacterBuild; stats: DerivedStats; points?: number; onTrain?: (stat: TrainStat) => void; busy?: boolean }) {
+export function TrainingRows({
+  build,
+  stats,
+  points,
+  onTrain,
+  busy,
+  level,
+}: {
+  build: CharacterBuild;
+  stats: DerivedStats;
+  points?: number;
+  onTrain?: (stat: TrainStat) => void;
+  busy?: boolean;
+  /** Start level as the first row (camp): current level, the cap, the next level's cost, and how to raise it. */
+  level?: { value: number; max: number; cost: number; onRaise?: () => void };
+}) {
   return (
     <div className="flex flex-col gap-1.5">
+      {level && (
+        <TrainRow
+          label="Start level"
+          hint="Every run begins at this level"
+          rank={level.value - 1}
+          max={level.max - 1}
+          value={`Lv ${level.value}`}
+          cost={level.cost}
+          canBuy={!!level.onRaise && !busy && (points ?? 0) >= level.cost}
+          onBuy={level.onRaise}
+        />
+      )}
       {TRAIN_STATS.map((stat) => {
         const rank = trainRank(build, stat);
         const fx = TRAIN_EFFECT[stat];
         const cost = trainCost(rank);
-        const maxed = rank >= TRAIN_MAX;
         return (
-          <div key={stat} className="grid grid-cols-[5.5rem_1fr_3rem_3.5rem_auto] items-center gap-2">
-            <span className="ff-title" title={`+${fx.per}${fx.unit === "percent" ? "%" : ""} per rank`}>
-              {fx.label}
-            </span>
-            <span className="flex gap-[3px]">
-              {Array.from({ length: TRAIN_MAX }, (_, i) => (
-                <span key={i} className={`h-4 w-2 rounded-[2px] border ${i < rank ? "border-yellow-200 bg-yellow-300" : "border-white/25 bg-black/30"}`} />
-              ))}
-            </span>
-            <span className="text-right text-sm tabular-nums opacity-80">
-              {rank}/{TRAIN_MAX}
-            </span>
-            <span className="text-right text-lg tabular-nums">{TRAIN_VALUE[stat](stats)}</span>
-            {onTrain ? (
-              <button
-                className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
-                disabled={maxed || busy || (points ?? 0) < cost}
-                onClick={() => onTrain(stat)}
-                title={maxed ? "Fully trained" : `Next rank: ${cost} CP`}
-              >
-                {maxed ? "Max" : `+ ${cost} CP`}
-              </button>
-            ) : (
-              <span />
-            )}
-          </div>
+          <TrainRow
+            key={stat}
+            label={fx.label}
+            hint={`+${fx.per}${fx.unit === "percent" ? "%" : ""} per rank`}
+            rank={rank}
+            max={TRAIN_MAX}
+            value={TRAIN_VALUE[stat](stats)}
+            cost={cost}
+            canBuy={!!onTrain && !busy && (points ?? 0) >= cost}
+            onBuy={onTrain ? () => onTrain(stat) : undefined}
+          />
         );
       })}
+    </div>
+  );
+}
+
+/** One training row: name, rank boxes, "rank/max", resulting value, and a + button when buying is possible. */
+function TrainRow({
+  label,
+  hint,
+  rank,
+  max,
+  value,
+  cost,
+  canBuy,
+  onBuy,
+}: {
+  label: string;
+  hint: string;
+  rank: number;
+  max: number;
+  value: ReactNode;
+  cost: number;
+  canBuy: boolean;
+  onBuy?: () => void;
+}) {
+  const maxed = rank >= max;
+  return (
+    <div className="grid grid-cols-[6.5rem_1fr_3rem_3.5rem_auto] items-center gap-2">
+      <span className="ff-title" title={hint}>
+        {label}
+      </span>
+      <span className="flex gap-[3px]">
+        {Array.from({ length: max }, (_, i) => (
+          <span key={i} className={`h-4 w-2 rounded-[2px] border ${i < rank ? "border-yellow-200 bg-yellow-300" : "border-white/25 bg-black/30"}`} />
+        ))}
+      </span>
+      <span className="text-right text-sm tabular-nums opacity-80">
+        {rank}/{max}
+      </span>
+      <span className="text-right text-lg tabular-nums">{value}</span>
+      {onBuy ? (
+        <button
+          className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+          disabled={maxed || !canBuy}
+          onClick={onBuy}
+          title={maxed ? "Maxed" : `Next: ${cost} CP`}
+        >
+          {maxed ? "Max" : `+ ${cost} CP`}
+        </button>
+      ) : (
+        <span />
+      )}
     </div>
   );
 }

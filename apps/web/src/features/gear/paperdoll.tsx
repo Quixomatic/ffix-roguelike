@@ -52,12 +52,15 @@ export function DollFigure({
   selected,
   onSelect,
   variant,
+  unlock,
 }: {
   heroKey: string;
   slots: PaperdollSlot[];
   selected: EquipSlot | null;
   onSelect(slot: EquipSlot): void;
   variant?: "blind" | "mini" | null;
+  /** Locked slots become "Unlock · cost" buttons (camp): the next slot's CP cost, whether it's affordable, and the action. */
+  unlock?: { cost: number | null; affordable: boolean; busy?: boolean; onUnlock(slot: EquipSlot): void };
 }) {
   const get = slotMap(slots);
   return (
@@ -69,16 +72,51 @@ export function DollFigure({
         </div>
       </div>
       {SLOT_ORDER.map((slot) => (
-        <SlotTile key={slot} data={get(slot)} active={selected === slot} onClick={() => onSelect(slot)} className={PLACE[slot]} />
+        <SlotTile key={slot} data={get(slot)} active={selected === slot} onClick={() => onSelect(slot)} className={PLACE[slot]} unlock={unlock} />
       ))}
     </div>
   );
 }
 
 /** A square slot around the figure: the item's icon, its slot name under it, stats on hover. */
-function SlotTile({ data, active, onClick, className }: { data: PaperdollSlot; active: boolean; onClick(): void; className: string }) {
+function SlotTile({
+  data,
+  active,
+  onClick,
+  className,
+  unlock,
+}: {
+  data: PaperdollSlot;
+  active: boolean;
+  onClick(): void;
+  className: string;
+  unlock?: { cost: number | null; affordable: boolean; busy?: boolean; onUnlock(slot: EquipSlot): void };
+}) {
   const meta = SLOT_META[data.slot];
   const item = data.itemId != null ? findItem(data.itemId) : undefined;
+  if (data.locked && unlock && unlock.cost != null) {
+    const can = unlock.affordable && !unlock.busy;
+    return (
+      <div className={`group relative flex flex-col items-center gap-0.5 ${className}`}>
+        <button
+          className={`flex h-16 w-16 flex-col items-center justify-center rounded-md border-2 border-dashed text-2xl transition ${
+            can ? "border-yellow-200/50 bg-black/30 hover:border-yellow-300 hover:bg-yellow-300/10" : "border-white/25 bg-black/30 opacity-60"
+          }`}
+          disabled={!can}
+          onClick={() => unlock.onUnlock(data.slot)}
+          title={can ? `Unlock the ${meta.label} slot for ${unlock.cost} CP` : `Unlocking needs ${unlock.cost} CP`}
+        >
+          <span className="group-hover:hidden">🔒</span>
+          <span className={`hidden text-xs leading-tight group-hover:block ${can ? "text-yellow-200" : "text-red-300"}`}>
+            Unlock
+            <br />
+            {unlock.cost} CP
+          </span>
+        </button>
+        <span className="ff-title text-[0.7rem]">{meta.label}</span>
+      </div>
+    );
+  }
   return (
     <div className={`group relative flex flex-col items-center gap-0.5 ${className}`}>
       <button

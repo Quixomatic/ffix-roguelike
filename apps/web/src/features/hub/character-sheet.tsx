@@ -6,8 +6,8 @@ import {
   nextSlotCost,
   slotUnlocked,
   starterGear,
+  START_LEVEL_MAX,
   startLevelCost,
-  UNLOCKABLE_SLOTS,
   type CharacterBuild,
 } from "@ffix-roguelike/game-core";
 import { getCharacter, type EquipSlot } from "@ffix-roguelike/game-data";
@@ -50,7 +50,7 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
     slot: s,
     itemId: build.equipment[s],
     locked: !slotUnlocked(build, s),
-    note: s === "weapon" ? "starting weapon" : !slotUnlocked(build, s) ? "locked — unlock in Progress" : build.equipment[s] == null ? "fill it in a run" : "starter gear",
+    note: s === "weapon" ? "starting weapon" : !slotUnlocked(build, s) ? "locked — hover the slot to unlock" : build.equipment[s] == null ? "fill it in a run" : "starter gear",
   }));
   const pickSlot = (s: EquipSlot) => {
     setSlot(s);
@@ -70,7 +70,18 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
       onTab={setTab}
       doll={
         <div className="flex flex-col gap-3">
-          <DollFigure heroKey={build.key} slots={slots} selected={slot} onSelect={pickSlot} />
+          <DollFigure
+            heroKey={build.key}
+            slots={slots}
+            selected={slot}
+            onSelect={pickSlot}
+            unlock={{
+              cost: slotCost,
+              affordable: slotCost != null && points >= slotCost,
+              busy: unlock.isPending,
+              onUnlock: (s) => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" }),
+            }}
+          />
           <EquipmentList slots={slots} selected={slot} onSelect={pickSlot} />
         </div>
       }
@@ -80,36 +91,19 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
           label: "Training",
           content: (
             <div className="grid content-start gap-3 xl:grid-cols-2">
-              <Panel title="Start level" right={<span className="opacity-70">every run begins here</span>}>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-3xl">Lv {build.level}</span>
-                  <button className="ff-window px-4 py-1 disabled:opacity-50" disabled={points < levelCost || raise.isPending} onClick={() => raise.mutate({ key: build.key })}>
-                    → Lv {build.level + 1} · {levelCost} CP
-                  </button>
+              <Panel title="Training" className="xl:col-span-2" right={<span className="opacity-70">spend CP — it carries into every run</span>}>
+                <TrainingRows
+                  build={build}
+                  stats={st}
+                  points={points}
+                  busy={train.isPending || raise.isPending}
+                  onTrain={(stat) => train.mutate({ key: build.key, stat })}
+                  level={{ value: build.level, max: START_LEVEL_MAX, cost: levelCost, onRaise: () => raise.mutate({ key: build.key }) }}
+                />
+                <div className="text-xs opacity-70">
+                  CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run. Locked gear slots unlock from the
+                  paperdoll (hover one).
                 </div>
-                <div className="text-xs opacity-70">CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run.</div>
-              </Panel>
-              <Panel title="Gear slots" right={<span className="opacity-70">{slotCost == null ? "all unlocked" : `next: ${slotCost} CP`}</span>}>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {UNLOCKABLE_SLOTS.map((s) => {
-                    const open = slotUnlocked(build, s);
-                    return (
-                      <button
-                        key={s}
-                        className="rounded border px-2 py-1 text-sm transition disabled:cursor-default data-[open=true]:border-green-400/60 data-[open=true]:bg-green-900/40 data-[open=false]:border-white/20 data-[open=false]:bg-black/25 enabled:hover:brightness-125"
-                        data-open={open}
-                        disabled={open || slotCost == null || points < slotCost || unlock.isPending}
-                        onClick={() => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" })}
-                      >
-                        {SLOT_META[s].label} {open ? "✓" : <span className="opacity-70">· {slotCost} CP</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="text-xs opacity-70">An open slot starts each run with {char.name}'s starter gear and holds what they find.</div>
-              </Panel>
-              <Panel title="Stats" className="xl:col-span-2" right={<span className="opacity-70">spend CP to raise base stats for every run</span>}>
-                <TrainingRows build={build} stats={st} points={points} busy={train.isPending} onTrain={(stat) => train.mutate({ key: build.key, stat })} />
               </Panel>
               <Panel title="Combat" className="xl:col-span-2" right={<span className="opacity-70">at the start of a run</span>}>
                 <StatBars stats={st} />

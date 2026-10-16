@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.60] - 2026-10-15
+
+Start level reads like the other training rows, and gear slots unlock right on the paperdoll.
+
+### Changed
+- **Start level is a training row** at the top of Training: the same rank boxes, "ranks/20", the value ("Lv 6") and a "+ n CP" button. It's now capped at **Lv 21** (20 ranks, level n costing n CP — 210 CP in all, like a stat), down from 99.
+- **Gear slots unlock from the paperdoll**: hover a locked slot and it turns into "Unlock · n CP"; click to unlock (dimmed with the cost in red if you can't afford it). The separate Start level and Gear slots panels are gone.
+
 ## [0.1.59] - 2026-10-15
 
 All Completion Point spending lives on one tab.
