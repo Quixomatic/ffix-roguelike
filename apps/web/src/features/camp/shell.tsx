@@ -104,6 +104,7 @@ export function HubShell() {
   });
   const dim = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.backdropDim != null)?.staticData.backdropDim ?? 0.55 });
   const quickLinks = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.quickLinks != null)?.staticData.quickLinks ?? true });
+  const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
   // M / the controller's Start: open or close the menu, and take the cursor with it.
@@ -146,8 +147,8 @@ export function HubShell() {
         {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
         <FocusSection focusKey={CONTENT_FOCUS}>
           <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
-            {/* Room at the top for the menu button. */}
-            <MemoriaBackdrop dim={dim} className="pt-10">
+            {/* Room at the top for the menu button (unless the page clears it sideways, like the run). */}
+            <MemoriaBackdrop dim={dim} className={topInset ? "pt-10" : ""}>
               <Outlet />
             </MemoriaBackdrop>
           </div>

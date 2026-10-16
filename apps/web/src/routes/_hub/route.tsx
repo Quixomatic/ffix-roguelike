@@ -12,6 +12,8 @@ declare module "@tanstack/react-router" {
     music?: "title" | "camp" | null;
     /** Hub pages: show the gil / CP chips and round shortcuts (default true). */
     quickLinks?: boolean;
+    /** Hub pages: leave a strip at the top for the menu button (default true; false when the page clears it sideways). */
+    topInset?: boolean;
     /** Hub pages: how dark the backdrop is (0–1; default 0.55). */
     backdropDim?: number;
   }

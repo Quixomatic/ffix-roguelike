@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.49] - 2026-10-16
+
+### Changed
+- **The run uses the full height**: no 2.5rem strip at the top for the menu button (the 4rem side inset already clears it), just an even 1rem margin top and bottom, for the map, stage screens and battles. Routes choose whether the hub leaves that strip (`staticData.topInset`, default on).
+
 ## [0.2.48] - 2026-10-16
 
 ### Changed

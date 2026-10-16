@@ -59,7 +59,7 @@ export function RunScreen() {
 
   if (phase.kind === "battle")
     return (
-      <div className="relative flex h-[calc(100svh-2.5rem)] min-h-0 flex-col px-16 pb-4 pt-2">
+      <div className="relative flex h-svh min-h-0 flex-col px-16 py-4">
         {(actions.finishBattle.isPending || !scriptReady) && (
           <div className="ff-window absolute left-1/2 top-4 z-30 -translate-x-1/2 px-4 py-1">{scriptReady ? "Verifying battle…" : "Loading battle…"}</div>
         )}
@@ -89,9 +89,9 @@ export function RunScreen() {
   const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
-    // Fills the window under the hub shell's menu-button strip (2.5rem), inset 4rem each side, clear of the menu button (left-3, 2.5rem wide). The map /
+    // Fills the window (no top strip: the 4rem side inset clears the menu button, left-3 and 2.5rem wide). The map /
     // stage on the left, the party on the right (the hub's own sidebar slides in on the left).
-    <div className="grid h-[calc(100svh-2.5rem)] min-h-0 gap-3 px-16 pb-4 pt-2 lg:grid-cols-[1fr_17rem]">
+    <div className="grid h-svh min-h-0 gap-3 px-16 py-4 lg:grid-cols-[1fr_17rem]">
       <main className="relative min-h-[60vh] overflow-hidden rounded-lg bg-black/40">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
