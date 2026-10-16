@@ -11,16 +11,18 @@
 import Phaser from "phaser";
 
 import { playSfx } from "@/features/audio/music";
-import { cachedFetch } from "@/lib/asset-cache";
+import { assetFetch } from "@/lib/assets";
 import { evalRig, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
 
+/** The dev server's full effect library (the effects gallery browses it); the game loads effects by asset path. */
 export const EFFECT_BASE = import.meta.env.DEV ? "/ffrk-raw" : "/effects";
 /** Phase keys FFRK uses: "launch" (caster), "shot" (projectile), "hit" (target) and variants ("hit_1", "miss_hit"…). */
 export type EffectPhase = string;
 
 /** "/Content/lang/ab/x/y.png" or "./lang/ab/x/y.png" → "ab/x/y.png". */
 const serverPath = (p: string) => p.replace(/^.*?lang\//, "").replace(/\/\/+/g, "/");
-const urlOf = (p: string) => `${EFFECT_BASE}/${serverPath(p)}`;
+/** An effect file's asset path ("effects/ab/…"): from the effects pack, or the dev library. */
+const assetOf = (p: string) => `effects/${serverPath(p)}`;
 const textureKey = (p: string) => `fx:${serverPath(p)}`;
 
 // ---------- file formats ----------
@@ -98,11 +100,11 @@ export interface EffectAsset {
 
 const jsonCache = new Map<string, Promise<unknown>>();
 const getJson = <T>(path: string): Promise<T | null> => {
-  const url = urlOf(path);
+  const url = assetOf(path);
   if (!jsonCache.has(url))
     jsonCache.set(
       url,
-      cachedFetch(url)
+      assetFetch(url)
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
     );
@@ -173,7 +175,7 @@ async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | 
     [...images]
       .filter(([png]) => !scene.textures.exists(textureKey(png)))
       .map(async ([png, atlas]) => {
-        const res = await cachedFetch(urlOf(png)).catch(() => null);
+        const res = await assetFetch(assetOf(png)).catch(() => null);
         if (!res?.ok) return null;
         const blobUrl = URL.createObjectURL(await res.blob());
         return { key: textureKey(png), blobUrl, atlas: atlas ? await getJson<object>(atlas) : null };
@@ -421,7 +423,7 @@ export class FfrkEffectPlayer {
     this.container = scene.add.container(opts.x, opts.y).setScale(opts.flipX ? -s : s, s).setDepth(opts.depth ?? 50);
     this.frame = asset.range[0];
     // FFRK's own sounds fire on their frames (action_sound → lang/se/se_ogg/<id>.ogg).
-    const sounds = (asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string").map((x) => ({ frame: x.frame, fn: () => playSfx(`${EFFECT_BASE}/se/se_ogg/${x.id}.ogg`) }));
+    const sounds = (asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string").map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
     this.pending = [...(opts.onFrame ?? []), ...(opts.mute ? [] : sounds)].sort((a, b) => a.frame - b.frame);
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.tick, this);
   }
@@ -440,7 +442,7 @@ export class FfrkEffectPlayer {
     if (this.frame > end) {
       if (this.opts.loop) {
         this.frame = start;
-        this.pending = (this.asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && !this.opts.mute).map((x) => ({ frame: x.frame, fn: () => playSfx(`${EFFECT_BASE}/se/se_ogg/${x.id}.ogg`) }));
+        this.pending = (this.asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && !this.opts.mute).map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
         for (const list of this.emitters.values()) list.forEach((e) => e.destroy());
         this.emitters.clear();
       }

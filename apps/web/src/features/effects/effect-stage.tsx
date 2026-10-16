@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 import { useEffect, useRef } from "react";
 
+import { assetUrl } from "@/lib/assets";
+
 import { FfrkEffectPlayer, loadEffect } from "./ffrk-effect";
 
 /** A target to play effects on: the Bomb's FFRK sprite (first cell of its strip). */
-const TARGET_URL = "/sprites/enemies/enemy-109010.png";
+const TARGET_URL = "sprites/enemies/enemy-109010.png";
 
 class StageScene extends Phaser.Scene {
   player?: FfrkEffectPlayer;
@@ -13,7 +15,7 @@ class StageScene extends Phaser.Scene {
     super("effect-stage");
   }
   preload() {
-    this.load.spritesheet("stage-target", TARGET_URL, { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet("stage-target", assetUrl(TARGET_URL), { frameWidth: 64, frameHeight: 64 });
   }
   create() {
     this.add.sprite(this.scale.width / 2, this.scale.height / 2, "stage-target", 0).setScale(3);

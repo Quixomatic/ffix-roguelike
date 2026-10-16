@@ -8,7 +8,8 @@
  */
 import { useEffect } from "react";
 
-import { cachedFetch, warmCache } from "@/lib/asset-cache";
+import { warmCache } from "@/lib/asset-cache";
+import { assetFetch, assetUrl, loadPacks, REMOTE } from "@/lib/assets";
 
 import { MUSIC_SLOTS, MUSIC_TRACKS } from "./music.gen";
 
@@ -84,7 +85,9 @@ function load(id: string): Promise<AudioBuffer | null> {
   if (!S.buffers.has(id))
     S.buffers.set(
       id,
-      cachedFetch(track.url)
+      // Each track is its own pack on R2 (downloaded the first time it plays).
+      loadPacks([`music/${id}`])
+        .then(() => assetFetch(track.url))
         .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${r.status}`))))
         .then((b) => ac.decodeAudioData(b))
         .catch(() => null),
@@ -154,14 +157,15 @@ export function setMusicVolume(v: number) {
 
 // ---------- sound effects ----------
 
-/** Play a one-shot sound (e.g. an FFRK ability sound) at the sound-effect volume. Silent until audio is unlocked. */
+/** Play a one-shot sound by asset path (e.g. an FFRK ability sound, "effects/se/se_ogg/<id>.ogg") at the
+ *  sound-effect volume. Silent until audio is unlocked. */
 export function playSfx(url: string) {
   const ac = audio();
   if (!ac || !S.sfxGain || ac.state !== "running" || S.sfxVolume <= 0) return;
   if (!S.sfxBuffers.has(url))
     S.sfxBuffers.set(
       url,
-      cachedFetch(url)
+      assetFetch(url)
         .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${r.status}`))))
         .then((b) => ac.decodeAudioData(b))
         .catch(() => null),
@@ -183,7 +187,9 @@ export function setSfxVolume(v: number) {
 
 /** Fetch the tracks every session uses (title, camp, battle, boss, victory, game over) into the asset cache. */
 export function preloadCoreMusic() {
-  warmCache(Object.values(MUSIC_SLOTS).map((id) => MUSIC_TRACKS[id]?.url).filter((u): u is string => !!u));
+  const ids = Object.values(MUSIC_SLOTS).filter((id) => MUSIC_TRACKS[id]);
+  if (REMOTE) void loadPacks(ids.map((id) => `music/${id}`)).catch(() => undefined);
+  else warmCache(ids.map((id) => assetUrl(MUSIC_TRACKS[id]!.url)));
 }
 
 /** Play `id` while this component wants it (the most recent caller wins; null = silence). */

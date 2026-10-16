@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.1] - 2026-10-16
+
+The game loads its sprites, effects and music from Cloudflare R2, with a loading bar the first time and instant loads after.
+
+### Added
+- **`pnpm -F web assets:upload [--prune]`** (`scripts/upload-assets.ts`): uploads the packs from `assets:pack` that the bucket doesn't have yet, then the manifest last, so players never see a manifest naming a missing pack. Uses the server's R2 credentials (run through varlock from apps/server); `--prune` deletes packs the manifest no longer names. Done: 25 packs, 69.5 MB, at `https://ff-like.turboforge.io/assets`.
+- **Asset loader** (`src/lib/assets.ts`): with `VITE_ASSET_BASE_URL` set, the game reads the manifest and downloads the packs it needs, showing progress. Whole packs are kept in the browser's Cache Storage, and since pack names change with their contents, an update downloads only the packs that changed. Files are served from memory: `assetUrl(path)` gives a blob URL (Phaser, images, CSS) and `assetFetch(path)` a response. Old packs are cleared from the cache.
+- **Loading screen** (`components/asset-gate.tsx`): before the game renders, the sprite and effect packs load (~31 MB the first visit, a moment from the cache after) behind an FF-window progress bar ("12.3 / 31.2 MB"), with Try again on an error.
+- **Music streams per track**: each track is its own pack, downloaded the first time it plays; the six session tracks (title, camp, battle, boss, victory, game over) download in the background after boot.
+
+### Changed
+- Every asset URL goes through `assetUrl` / `assetFetch`: hero, weapon and monster sprites, item icons, both gloves (the menu glove through a CSS variable), FFRK effect files and their sounds, and music.
+- **Production builds leave out `public/sprites` and `public/music`** when assets come from R2: the build is 2.7 MB instead of ~67 MB.
+- Without `VITE_ASSET_BASE_URL`, everything loads from the app's own files as before, and the dev effects library (`/ffrk-raw`) still backs the effects gallery.
+
+### Notes
+- Workflow after rebuilding sprites, music or effect assignments: `pnpm -F web assets:pack && pnpm -F web assets:upload`.
+- Restart `pnpm dev` (Vite config and env changed).
+
 ## [0.2.0] - 2026-10-16
 
 Version 0.2: the game is built on FF9's real data and battle engine, with FFRK art and effects, FF9's soundtrack, and its assets moving to Cloudflare R2.

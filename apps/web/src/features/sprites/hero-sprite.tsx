@@ -1,5 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 
+import { assetUrl } from "@/lib/assets";
+
 import { HERO_CELL, heroSheet, type HeroAnim, type HeroSheet, type HeroVariant } from "./hero-sheets";
 import { HERO_GRID, heroPixels, hex } from "./pixels";
 
@@ -83,7 +85,7 @@ function StripSprite({
     bottom: 0,
     width: cell,
     height: cell,
-    backgroundImage: `url(${sheet.url})`,
+    backgroundImage: `url(${assetUrl(sheet.url)})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: `${sheet.info.frames * cell}px ${cell}px`,
     backgroundPosition: `${-frame * cell}px 0`,

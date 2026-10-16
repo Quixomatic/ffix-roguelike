@@ -1,3 +1,4 @@
+import { assetUrl } from "@/lib/assets";
 import { ITEM_ICON_CELL, ITEM_ICON_COLS, ITEM_ICON_INDEX, ITEM_ICON_ROWS } from "./item-icons.gen";
 
 /**
@@ -15,7 +16,7 @@ export function ItemIcon({ itemId, size = 32, className = "" }: { itemId: number
       style={{
         width: size,
         height: size,
-        backgroundImage: `url(${import.meta.env.BASE_URL}sprites/items.png)`,
+        backgroundImage: `url(${assetUrl("sprites/items.png")})`,
         backgroundSize: `${ITEM_ICON_COLS * ITEM_ICON_CELL * scale}px ${ITEM_ICON_ROWS * ITEM_ICON_CELL * scale}px`,
         backgroundPosition: `-${(cell % ITEM_ICON_COLS) * size}px -${Math.floor(cell / ITEM_ICON_COLS) * size}px`,
         imageRendering: "pixelated",

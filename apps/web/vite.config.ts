@@ -2,13 +2,13 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { varlockVitePlugin } from "@varlock/vite-integration";
 import react from "@vitejs/plugin-react";
-import { createReadStream, existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 
 /**
  * Dev only: serve the downloaded FFRK effect library (`.docs/assets/FFRK-data/_raw/effects`, git-ignored) at
- * `/ffrk-raw/…` so the effects gallery can play any effect. Builds use the packed `public/effects/` set.
+ * `/ffrk-raw/…` so the effects gallery can play any effect. The game itself loads effects from the R2 effects pack.
  * `PUT /ffrk-raw/__map` merges the gallery's changed assignments (`{ set, remove }`) into
  * `src/features/effects/ability-effects.json` and returns the whole map.
  */
@@ -52,6 +52,27 @@ function ffrkRawEffects(): Plugin {
   };
 }
 
+/**
+ * Build only: when the game loads its assets from R2 (`VITE_ASSET_BASE_URL`), don't ship the copies in `public/`
+ * (sprites, music — ~64 MB) in the build output; they're only the dev fallback.
+ */
+function dropPackedAssets(): Plugin {
+  let outDir = "";
+  let remote = false;
+  return {
+    name: "drop-packed-assets",
+    apply: "build",
+    configResolved(config) {
+      outDir = config.build.outDir;
+      remote = !!(config.env.VITE_ASSET_BASE_URL ?? process.env.VITE_ASSET_BASE_URL);
+    },
+    closeBundle() {
+      if (!remote) return;
+      for (const dir of ["sprites", "music"]) rmSync(join(outDir, dir), { recursive: true, force: true });
+    },
+  };
+}
+
 export default defineConfig({
   server: {
     port: 3001,
@@ -68,5 +89,6 @@ export default defineConfig({
     }),
     react(),
     ffrkRawEffects(),
+    dropPackedAssets(),
   ],
 });

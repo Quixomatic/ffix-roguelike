@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +21,8 @@
     "effects:seed": "bun scripts/seed-ability-effects.ts",
     "sprites:enemies": "bun scripts/build-enemy-sprites.ts",
     "audio:music": "bun scripts/build-music.ts",
-    "assets:pack": "bun scripts/pack-assets.ts"
+    "assets:pack": "bun scripts/pack-assets.ts",
+    "assets:upload": "cd ../server && varlock run -- bun ../web/scripts/upload-assets.ts"
   },
   "dependencies": {
     "@ffix-roguelike/api": "workspace:*",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@ffix-roguelike/config": "workspace:*",
+    "@ffix-roguelike/storage": "workspace:*",
     "@tanstack/react-query-devtools": "^5.104.2",
     "@tanstack/react-router-devtools": "^1.167.2",
     "@tanstack/router-plugin": "^1.168.45",

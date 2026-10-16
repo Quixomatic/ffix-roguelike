@@ -66,7 +66,7 @@
   width: 16px;
   height: 16px;
   transform: translateY(-50%);
-  background: url("/sprites/ui/hand-right.png") no-repeat center / 16px 16px;
+  background: var(--glove-right, url("/sprites/ui/hand-right.png")) no-repeat center / 16px 16px;
   image-rendering: pixelated;
 }
 .ff-option[data-active="true"] {

@@ -4,6 +4,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
 import Header from "@/components/header";
+import { AssetGate } from "@/components/asset-gate";
 import { SettingsSync } from "@/features/settings/use-settings";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
@@ -55,7 +56,9 @@ function RootComponent() {
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header />
           <SettingsSync />
-          <Outlet />
+          <AssetGate>
+            <Outlet />
+          </AssetGate>
         </div>
         <Toaster richColors />
       </ThemeProvider>

@@ -6,6 +6,8 @@
  */
 import type Phaser from "phaser";
 
+import { assetUrl } from "@/lib/assets";
+
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroVariant } from "./hero-sheets";
 import { HERO_GRID, heroPixels } from "./pixels";
 
@@ -66,9 +68,9 @@ export function ensurePlaceholder(scene: Phaser.Scene, key: string, opts: Placeh
 export function loadHeroSheets(scene: Phaser.Scene, spriteKeys: Iterable<string>) {
   for (const key of new Set(spriteKeys)) {
     const sheet = heroSheetForSprite(key);
-    if (sheet && !scene.textures.exists(key)) scene.load.spritesheet(key, sheet.url, { frameWidth: HERO_CELL, frameHeight: HERO_CELL });
+    if (sheet && !scene.textures.exists(key)) scene.load.spritesheet(key, assetUrl(sheet.url), { frameWidth: HERO_CELL, frameHeight: HERO_CELL });
     const weapon = sheet && weaponSprite(sheet.info.weapon);
-    if (weapon && !scene.textures.exists(weapon.key)) scene.load.image(weapon.key, weapon.url);
+    if (weapon && !scene.textures.exists(weapon.key)) scene.load.image(weapon.key, assetUrl(weapon.url));
   }
 }
 

@@ -10,6 +10,7 @@ import { playActionEffect, preloadEffects } from "@/features/effects/battle-effe
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
+import { assetUrl } from "@/lib/assets";
 
 /** Texture key of the target glove (public/sprites/ui/hand-down.png, from the Time Fantasy icon pack). */
 const HAND = "ui-hand-down";
@@ -114,7 +115,7 @@ export class BattleScene extends Phaser.Scene {
   preload() {
     const units = this.bridge.getState().units;
     loadHeroSheets(this, units.filter((u) => u.side === "party").map((u) => u.sprite));
-    this.load.image(HAND, "/sprites/ui/hand-down.png");
+    this.load.image(HAND, assetUrl("sprites/ui/hand-down.png"));
     loadEnemySheets(this, units.filter((u) => u.side === "enemy").map((u) => u.sprite));
   }
 

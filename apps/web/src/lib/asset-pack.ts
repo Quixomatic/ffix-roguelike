@@ -40,7 +40,7 @@ export interface AssetManifest {
 }
 
 /** Split a pack into its files. */
-export function readPack(buf: ArrayBuffer): { header: PackHeader; file(entry: PackEntry): Uint8Array } {
+export function readPack(buf: ArrayBuffer): { header: PackHeader; file(entry: PackEntry): Uint8Array<ArrayBuffer> } {
   const bytes = new Uint8Array(buf);
   const view = new DataView(buf);
   if (new TextDecoder().decode(bytes.subarray(0, 4)) !== PACK_MAGIC) throw new Error("Not an asset pack");

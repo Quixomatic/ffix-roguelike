@@ -6,6 +6,8 @@
  */
 import type Phaser from "phaser";
 
+import { assetUrl } from "@/lib/assets";
+
 import { ENEMY_SPRITES } from "./enemy-sprites.gen";
 
 export type EnemyAnim = "idle" | "attack" | "damage" | "dead";
@@ -32,7 +34,7 @@ const textureKey = (info: EnemySpriteInfo) => `ffrk:${info.url}`;
 export function loadEnemySheets(scene: Phaser.Scene, spriteKeys: Iterable<string>) {
   for (const key of new Set(spriteKeys)) {
     const info = enemySpriteFor(key);
-    if (info && !scene.textures.exists(textureKey(info))) scene.load.spritesheet(textureKey(info), info.url, { frameWidth: info.w, frameHeight: info.h });
+    if (info && !scene.textures.exists(textureKey(info))) scene.load.spritesheet(textureKey(info), assetUrl(info.url), { frameWidth: info.w, frameHeight: info.h });
   }
 }
 
