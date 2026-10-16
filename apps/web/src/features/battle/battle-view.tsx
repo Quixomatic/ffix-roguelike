@@ -3,6 +3,7 @@ import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
+import { useNavPause } from "@/features/input/nav";
 
 import { createBattleGame, type BattleBridge } from "./battle-scene";
 import { CommandMenu } from "./command-menu";
@@ -19,6 +20,8 @@ interface Props {
 
 /** A full battle: Phaser battlefield (filling its parent — give it a height) with FF9-style menu windows on top. */
 export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }: Props) {
+  // The battle menu has its own cursor (arrows / Enter / Escape): menu navigation steps aside while it's up.
+  useNavPause();
   const hostRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<BattleBridge | null>(null);
   const pickRef = useRef<((id: string) => void) | null>(null);

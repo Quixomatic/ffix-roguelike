@@ -6,6 +6,7 @@ import { Package, Settings, Trophy } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
+import { FocusItem } from "@/features/input/focus";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
@@ -45,6 +46,7 @@ export function PlayHub() {
       </div>
 
       {p.activeRunId && (
+        <FocusItem>
         <Link to="/run" className="ff-panel ff-lift flex items-center justify-between gap-4 px-5 py-3">
           <span>
             <span className="ff-display block text-xl">A run is in progress</span>
@@ -54,6 +56,7 @@ export function PlayHub() {
             Continue <PixelIcon name="arrow-right" size={32} />
           </span>
         </Link>
+        </FocusItem>
       )}
 
       <div className="ff-panel px-4 pb-3 pt-4">
@@ -136,6 +139,7 @@ export function PlayHub() {
 /** A big hub card; `compact` is the half-width version (two share one slot), with the art above the text. */
 function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: string; title: string; art: ReactNode; lines: ReactNode[]; blurb: string; disabled?: boolean; compact?: boolean }) {
   return (
+    <FocusItem>
     <Link
       to={to}
       className={`ff-panel ff-lift group grid min-h-44 items-center gap-4 ${compact ? "grid-rows-[auto_1fr] px-4 py-4" : "grid-cols-[1fr_auto] px-6 py-5"}`}
@@ -152,6 +156,7 @@ function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: stri
       </div>
       <div className={`flex items-end transition group-hover:scale-105 ${compact ? "row-start-1 justify-start" : "justify-center"}`}>{art}</div>
     </Link>
+    </FocusItem>
   );
 }
 
@@ -186,9 +191,11 @@ function QuickLinks({ gil, cp }: { gil: number; cp: number }) {
 function RoundLink({ to, label, icon: Icon }: { to: string; label: string; icon: ComponentType<{ className?: string }> }) {
   return (
     <Tooltip>
-      <TooltipTrigger render={<Link to={to} aria-label={label} />} className="ff-panel ff-lift flex size-11 items-center justify-center rounded-full">
-        <Icon className="size-5" />
-      </TooltipTrigger>
+      <FocusItem>
+        <TooltipTrigger render={<Link to={to} aria-label={label} />} className="ff-panel ff-lift flex size-11 items-center justify-center rounded-full">
+          <Icon className="size-5" />
+        </TooltipTrigger>
+      </FocusItem>
       <TooltipContent side="left">{label}</TooltipContent>
     </Tooltip>
   );

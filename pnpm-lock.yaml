@@ -127,6 +127,9 @@ importers:
       '@ffix-roguelike/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@noriginmedia/norigin-spatial-navigation':
+        specifier: 3.3.0
+        version: 3.3.0(react@19.3.0)
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0))
@@ -759,6 +762,17 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@noriginmedia/norigin-spatial-navigation-core@4.1.2':
+    resolution: {integrity: sha512-+SMXSilyBd5M3iP0UqXatY2s4ealKaPKqt6SFef5xsqB64Ijzkww+YxsYHgOtr871lSHIei8o3sbKjb5uDuxwA==}
+
+  '@noriginmedia/norigin-spatial-navigation-react@3.3.0':
+    resolution: {integrity: sha512-YmiXFkczmfRTz6vmVmQoNhryi0j/09Ez77RPdCM2/VmXo7XcTVIYhrrQIqXkslLe2BzM2/k6ITqwTGhl2B/GTg==}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@noriginmedia/norigin-spatial-navigation@3.3.0':
+    resolution: {integrity: sha512-8LfwMC3IRuDIntJpcNLEcf+nyXz9F52dCqnJBkLq1bypVibnAPE+uF3KReFFCHzH9VYZK7P0AWZvTtbx3vwjhQ==}
 
   '@opentelemetry/semantic-conventions@1.43.0':
     resolution: {integrity: sha512-eSYWTm620tTk45EKSedaUL8MFYI8hW164hIXsgIHyxu3VobUB3fFCu5t0hQby6OoWRPsG1KkKUG2M5UadiLiVg==}
@@ -2590,6 +2604,9 @@ packages:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
     engines: {node: '>=6'}
 
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
+
   lodash@4.18.1:
     resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
@@ -3956,6 +3973,23 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.3
+
+  '@noriginmedia/norigin-spatial-navigation-core@4.1.2':
+    dependencies:
+      lodash-es: 4.18.1
+
+  '@noriginmedia/norigin-spatial-navigation-react@3.3.0(react@19.3.0)':
+    dependencies:
+      '@noriginmedia/norigin-spatial-navigation-core': 4.1.2
+      lodash-es: 4.18.1
+      react: 19.3.0
+
+  '@noriginmedia/norigin-spatial-navigation@3.3.0(react@19.3.0)':
+    dependencies:
+      '@noriginmedia/norigin-spatial-navigation-core': 4.1.2
+      '@noriginmedia/norigin-spatial-navigation-react': 3.3.0(react@19.3.0)
+    transitivePeerDependencies:
+      - react
 
   '@opentelemetry/semantic-conventions@1.43.0': {}
 
@@ -5579,6 +5613,8 @@ snapshots:
     dependencies:
       p-locate: 3.0.0
       path-exists: 3.0.0
+
+  lodash-es@4.18.1: {}
 
   lodash@4.18.1: {}
 

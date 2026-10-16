@@ -11,7 +11,7 @@ export function GameDialog({ title, headerRight, onClose, children }: { title: R
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
+    <div data-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
       <div className="ff-window flex max-h-[90vh] w-[95vw] max-w-[1200px] flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/15 px-4 py-3">
           <div className="ff-display text-2xl">{title}</div>

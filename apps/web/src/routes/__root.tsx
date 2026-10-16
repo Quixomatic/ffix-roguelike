@@ -6,6 +6,7 @@ import { HeadContent, Outlet, createRootRouteWithContext, useRouterState } from 
 import Header from "@/components/header";
 import { AssetGate } from "@/components/asset-gate";
 import { UiSounds } from "@/features/audio/ui-sounds";
+import { NavRoot } from "@/features/input/nav";
 import { SettingsSync } from "@/features/settings/use-settings";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
@@ -64,6 +65,7 @@ function RootComponent() {
           <main id="main" data-scroll-restoration-id="main" className="grid min-h-0 grid-rows-[minmax(100%,max-content)] overflow-y-auto">
             <AssetGate>
               <UiSounds />
+            <NavRoot />
               <Outlet />
             </AssetGate>
           </main>

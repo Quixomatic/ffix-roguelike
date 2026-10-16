@@ -1,11 +1,13 @@
 import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
-import { Link, Outlet } from "@tanstack/react-router";
+import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { BookOpen, Home, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
+import { FocusItem, FocusSection } from "@/features/input/focus";
+import { PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -36,14 +38,18 @@ const MORE_NAV: NavItem[] = [
  */
 export function HubShell() {
   useMusic(MUSIC_SLOTS.camp);
+  // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
+  const path = useRouterState({ select: (s) => s.location.pathname });
   return (
     <div className="theme-ff grid h-full grid-cols-[15rem_minmax(0,1fr)] bg-background">
       <Sidebar />
-      <div className="min-h-0 overflow-y-auto" data-scroll-restoration-id="mock-main">
-        <MemoriaBackdrop dim={0.55}>
-          <Outlet />
-        </MemoriaBackdrop>
-      </div>
+      <FocusSection key={path} focusKey={PAGE_FOCUS} autoFocus>
+        <div className="min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
+          <MemoriaBackdrop dim={0.55}>
+            <Outlet />
+          </MemoriaBackdrop>
+        </div>
+      </FocusSection>
     </div>
   );
 }
@@ -52,11 +58,14 @@ function Sidebar() {
   const { data: session } = authClient.useSession();
   const profile = useQuery(trpc.profile.get.queryOptions());
   return (
+    <FocusSection focusKey={SIDEBAR_FOCUS}>
     <aside className="flex min-h-0 flex-col gap-3 border-r-2 border-[#e8e8f4]/40 bg-gradient-to-b from-[#1b2466] via-[#10164a] to-[#070a1f] p-3 text-sidebar-foreground">
       {/* The header bar's wordmark. */}
-      <Link to="/play" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
-        FFIX <span className="text-yellow-200">Roguelike</span>
-      </Link>
+      <FocusItem>
+        <Link to="/play" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
+          FFIX <span className="text-yellow-200">Roguelike</span>
+        </Link>
+      </FocusItem>
       {/* The name/version line as the separator, like Pokelike's. */}
       <div className="flex items-center gap-2 text-[0.7rem] text-[#c8d0ff]">
         <Separator className="flex-1 bg-white/25" />
@@ -77,10 +86,12 @@ function Sidebar() {
       </nav>
 
       {/* The original single-page camp, tucked away while the hub grows. */}
-      <Link to="/legacy/camp" className="mt-auto flex items-center gap-2 px-3 text-xs text-[#c8d0ff]/70 hover:text-white">
-        <Undo2 className="size-3.5" />
-        Legacy camp
-      </Link>
+      <FocusItem>
+        <Link to="/legacy/camp" className="mt-auto flex items-center gap-2 px-3 text-xs text-[#c8d0ff]/70 hover:text-white">
+          <Undo2 className="size-3.5" />
+          Legacy camp
+        </Link>
+      </FocusItem>
       <div className="flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2">
         <Avatar image={session?.user.image} name={session?.user.name} size={32} />
         <div className="min-w-0 flex-1">
@@ -89,12 +100,14 @@ function Sidebar() {
         </div>
       </div>
     </aside>
+    </FocusSection>
   );
 }
 
 function NavLink({ item }: { item: NavItem }) {
   const Icon = item.icon;
   return (
+    <FocusItem>
     <Link
       to={item.to}
       activeOptions={{ exact: !!item.exact }}
@@ -104,5 +117,6 @@ function NavLink({ item }: { item: NavItem }) {
       <Icon className="size-4 shrink-0" />
       {item.label}
     </Link>
+    </FocusItem>
   );
 }

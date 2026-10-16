@@ -183,6 +183,35 @@
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
   border-color: #c8f0c8;
 }
+/* Keyboard / controller cursor (features/input): where the focus is, shown only while navigating by keys
+   (<html data-input="keys">) — a yellow ring, or FF9's glove on menu options. */
+:root[data-input="keys"] [data-focused="true"]:not(.ff-option) {
+  outline: 2px solid #ffe066;
+  outline-offset: 2px;
+  box-shadow: 0 0 14px rgba(255, 224, 102, 0.45);
+}
+:root[data-input="keys"] .ff-option[data-focused="true"] {
+  background: rgba(255, 255, 255, 0.12);
+}
+:root[data-input="keys"] .ff-option[data-focused="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  background: var(--glove-right, url("/sprites/ui/hand-right.png")) no-repeat center / 16px 16px;
+  image-rendering: pixelated;
+}
+/* One glove at a time: while the cursor moves by keys, the current page's link keeps its yellow text but not its glove. */
+:root[data-input="keys"] .ff-option[data-active="true"]:not([data-focused="true"])::before {
+  display: none;
+}
+/* The mouse doesn't need the browser's own focus ring on cursor-managed elements. */
+:root[data-input="pointer"] [data-focused]:focus {
+  outline: none;
+}
 /* Hover glow for big clickable windows (hub cards). */
 .ff-lift {
   transition:

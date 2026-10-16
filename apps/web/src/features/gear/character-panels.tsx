@@ -357,7 +357,7 @@ export function CharacterModal({
   );
   if (inline) return window;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
+    <div data-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
       {window}
     </div>
   );

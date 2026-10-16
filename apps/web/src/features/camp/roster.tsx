@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
+import { FocusItem } from "@/features/input/focus";
 import { itemName } from "@/features/run/item-info";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
@@ -43,6 +44,7 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
     <div className="flex flex-wrap items-end justify-center gap-1 sm:gap-3">
       {rosterEntries(profile).map((e, i) => (
         <HoverCard key={e.key}>
+          <FocusItem>
           <HoverCardTrigger
             delay={150}
             closeDelay={50}
@@ -50,7 +52,7 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
               e.unlocked ? (
                 <Link to="/party/$character" params={{ character: e.key }} aria-label={getCharacter(e.key).name} />
               ) : (
-                <span role="img" aria-label="Locked character" />
+                <span role="img" tabIndex={-1} aria-label="Locked character" />
               )
             }
             className="group relative flex flex-col items-center rounded px-1 pb-1 outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -63,6 +65,7 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
             </span>
             {e.unlocked && canSpend(e.build) && <PixelIcon name="star" label="Can spend CP" className="absolute -top-1 right-0" />}
           </HoverCardTrigger>
+          </FocusItem>
           <HoverCardContent side="bottom" sideOffset={6} className="theme-ff ff-panel w-72 rounded-md p-3 text-sm">
             <CharacterCard entry={e} />
           </HoverCardContent>

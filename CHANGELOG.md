@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.25] - 2026-10-16
+
+Keyboard and controller navigation, step 1: the input layer, the hub's sidebar and the Play hub. The mouse works as before.
+
+### Added
+- **Spatial navigation** with **Norigin Spatial Navigation** (`@noriginmedia/norigin-spatial-navigation` 3.3.0) and our input layer (`features/input/nav.ts`):
+  - **←↑→↓ / WASD** move the cursor to the nearest control in that direction. The first press on a page lands on its first item. The page doesn't scroll on arrows; the cursor scrolls what it lands on into view.
+  - **Enter / Space** press the focused button or link (the browser's own handling, so nothing fires twice).
+  - **Escape** backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
+  - **Controller** (Gamepad API): D-pad / left stick move (repeating while held), **A** presses, **B** backs out. They're sent as arrow / Enter / Escape key events with real key codes, so battles, the overworld (Phaser) and the battle menu respond to a controller too.
+  - **Mouse and keys mix**: hovering an item moves the cursor there, so the keys carry on from it (not while typing in a text field).
+  - The cursor's **yellow ring**, or **FF9's glove** on menu options, shows only while navigating by keys (`<html data-input="keys|pointer">`); keyboard moves play the cursor tick.
+- **`FocusItem`** and **`FocusSection`** (`features/input/focus.tsx`): wrap anything the cursor can land on, and groups of them. They wrap their child element (no extra DOM, so grids and subgrids are unaffected), and sections remember their last focused item.
+- **Wired**:
+  - **sidebar**: wordmark, every link, Legacy camp
+  - **Play hub**: the round shortcuts, the Continue banner, every character in the cast line (each with its hover card), the four cards and the two shop cards
+  - Each hub page is its own section, so arriving on a page puts the cursor on its first item.
+
+### Changed
+- **Screens with their own controls step aside**: while the overworld map or a battle is up, menu navigation is paused (`useNavPause`), so Phaser and the battle menu keep their arrow / WASD / Enter handling. Typing in a text field pauses it too, so WASD types.
+- Dialog overlays are marked (`data-modal`), so Escape closes them instead of going Back.
+
 ## [0.2.24] - 2026-10-16
 
 The gear catalog is laid out like the supply shop, and the item popover is reusable: the Items page uses it too.

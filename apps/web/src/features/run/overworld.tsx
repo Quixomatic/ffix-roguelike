@@ -2,6 +2,8 @@ import { getJourney, WORLDS, type MapNode, type RunState } from "@ffix-roguelike
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
+import { useNavPause } from "@/features/input/nav";
+
 import { createMapGame, type MapBridge } from "./map-scene";
 
 const KIND_TEXT: Record<MapNode["kind"], string> = {
@@ -20,6 +22,8 @@ const KIND_TEXT: Record<MapNode["kind"], string> = {
 };
 
 export function Overworld({ run, onMove, busy }: { run: RunState; onMove(nodeId: string): void; busy: boolean }) {
+  // The map walks with arrows / WASD itself: menu navigation steps aside while it's up.
+  useNavPause();
   const hostRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<MapNode | null>(null);
   const onMoveRef = useRef(onMove);
