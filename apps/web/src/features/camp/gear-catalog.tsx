@@ -1,19 +1,20 @@
 import { effectivePrice, gearCatalog, rosterAtStart, type Profile } from "@ffix-roguelike/game-core";
-import { findItem } from "@ffix-roguelike/game-data";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
+import { findItem, getCharacter, type ItemData } from "@ffix-roguelike/game-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { PixelIcon } from "@/components/pixel-icon";
 import { uiSound } from "@/features/audio/ui-sounds";
 import { ItemIcon } from "@/features/items/item-icon";
-import { ItemDetails } from "@/features/run/item-info";
+import { ItemPopover } from "@/features/items/item-popover";
+import { gearSummary, HelpText, KIND_LABEL } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
 /**
- * The gear catalog as a grid of icon tiles: what you can unlock now (price; click to unlock), then what's
- * already unlocked. Hovering a tile shows the item's full card — stats, FF9's help, abilities, who can wear it and
- * what it would change for each character.
+ * The gear catalog, laid out like the supply shop: a grid of cards, each with the item's icon in a square tile, its
+ * name and kind, stats, FF9's description and who can wear it, and an action row — "Unlock · price" for what's for sale
+ * now, an "Unlocked" badge for what you already have. Hovering a card shows the full item card, with what it would
+ * change for each character.
  */
 export function GearCatalogGrid({ profile }: { profile: Profile }) {
   const qc = useQueryClient();
@@ -38,37 +39,32 @@ export function GearCatalogGrid({ profile }: { profile: Profile }) {
       <div className="text-sm opacity-75">Unlocking gear adds it to future runs' drops, shops and treasure for its world. Reach further worlds to see more.</div>
       <Section title={`For sale (${forSale.length})`}>
         {forSale.map((e) => {
+          const item = findItem(e.itemId)!;
           const afford = profile.gil >= e.price;
           return (
-            <Tile key={e.itemId} itemId={e.itemId} roster={roster}>
+            <GearCard key={e.itemId} item={item} roster={roster}>
               <button
-                type="button"
+                className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
                 disabled={!afford || unlock.isPending}
                 onClick={() => unlock.mutate({ itemId: e.itemId })}
-                className="flex w-full flex-col items-center gap-1 rounded border border-white/25 bg-black/25 p-2 text-center transition enabled:hover:border-yellow-300/70 enabled:hover:bg-black/35"
+                title={`Add ${item.name} to future runs`}
               >
-                <ItemIcon itemId={e.itemId} size={40} />
-                <span className="line-clamp-2 text-xs leading-tight">{findItem(e.itemId)?.name}</span>
-                <span className={`text-xs tabular-nums ${afford ? "text-yellow-200" : "text-red-300"}`}>{e.price.toLocaleString()} gil</span>
+                Unlock · <span className={afford ? "" : "text-red-300"}>{e.price.toLocaleString()} gil</span>
               </button>
-            </Tile>
+            </GearCard>
           );
         })}
         {!forSale.length && <Empty>Nothing new for sale — reach further worlds.</Empty>}
       </Section>
       <Section title={`Unlocked (${owned.length})`}>
-        {owned.map((i) => (
-          <Tile key={i.id} itemId={i.id} roster={roster}>
-            <div className="flex w-full flex-col items-center gap-1 rounded border border-emerald-300/40 bg-emerald-400/10 p-2 text-center">
-              <ItemIcon itemId={i.id} size={40} />
-              <span className="line-clamp-2 text-xs leading-tight">{i.name}</span>
-              <span className="inline-flex items-center gap-1 text-xs text-emerald-300">
-                <PixelIcon name="check" /> Unlocked
-              </span>
-            </div>
-          </Tile>
+        {owned.map((item) => (
+          <GearCard key={item.id} item={item} roster={roster} owned>
+            <span className="inline-flex items-center gap-1 rounded border border-emerald-300/40 bg-emerald-400/10 px-2 py-0.5 text-sm text-emerald-300">
+              <PixelIcon name="check" /> Unlocked
+            </span>
+          </GearCard>
         ))}
-        {!owned.length && <Empty>None yet — buy some above, win a run, or earn achievements.</Empty>}
+        {!owned.length && <Empty>None yet — unlock some above, win a run, or earn achievements.</Empty>}
       </Section>
     </div>
   );
@@ -78,7 +74,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="flex flex-col gap-2">
       <div className="ff-title text-base">{title}</div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-2">{children}</div>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{children}</div>
     </div>
   );
 }
@@ -87,14 +83,37 @@ function Empty({ children }: { children: React.ReactNode }) {
   return <div className="col-span-full text-sm opacity-60">{children}</div>;
 }
 
-/** A tile with the item's full card on hover. */
-function Tile({ itemId, roster, children }: { itemId: number; roster: ReturnType<typeof rosterAtStart>; children: React.ReactElement }) {
+/** Who can wear it, short: everyone, or the names. */
+function wearers(item: ItemData): string {
+  const who = item.equippableBy.map((k) => getCharacter(k).name);
+  return who.length >= 12 || !who.length ? "Anyone" : who.join(", ");
+}
+
+/** One catalog card (the supply card's layout); the full item card on hover. `children` is the action (bottom right). */
+function GearCard({ item, roster, owned, children }: { item: ItemData; roster: ReturnType<typeof rosterAtStart>; owned?: boolean; children: React.ReactNode }) {
   return (
-    <HoverCard>
-      <HoverCardTrigger delay={200} closeDelay={50} render={children} />
-      <HoverCardContent side="right" align="start" sideOffset={8} className="theme-ff ff-panel flex w-80 flex-col gap-1 rounded-md p-3 text-sm">
-        <ItemDetails itemId={itemId} party={roster} />
-      </HoverCardContent>
-    </HoverCard>
+    <ItemPopover itemId={item.id} party={roster}>
+      <div className={`grid grid-cols-[4rem_1fr] gap-3 rounded-lg border-2 p-3 ${owned ? "border-emerald-300/25 bg-[#0c1238]/60" : "border-white/15 bg-[#0c1238]/80"}`}>
+        <span className={`flex h-16 w-16 items-center justify-center rounded-md border-2 bg-black/40 ${owned ? "border-emerald-300/40" : "border-yellow-200/50"}`}>
+          <ItemIcon itemId={item.id} size={48} />
+        </span>
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="truncate text-lg">{item.name}</span>
+            <span className="ff-title shrink-0">{KIND_LABEL[item.kind] ?? item.kind}</span>
+          </div>
+          <div className="text-xs">
+            <span className="block text-[#c8d0ff]">{gearSummary(item) || "—"}</span>
+            <HelpText text={item.help} className="line-clamp-2 opacity-70" />
+          </div>
+          <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+            <span className="truncate text-xs opacity-70" title={wearers(item)}>
+              {wearers(item)}
+            </span>
+            <span className="shrink-0">{children}</span>
+          </div>
+        </div>
+      </div>
+    </ItemPopover>
   );
 }

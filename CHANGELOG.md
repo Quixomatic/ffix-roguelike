@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.24] - 2026-10-16
+
+The gear catalog is laid out like the supply shop, and the item popover is reusable: the Items page uses it too.
+
+### Changed
+- **Gear catalog cards follow the supply shop's layout**: a grid of cards (two or three columns), each with the item's icon in a 64 px tile, its name and kind (Weapon, Head, Arm, Body, Accessory), its stats, FF9's description, who can wear it, and an action at the bottom right: **Unlock · price** (red price when you can't afford it) for what's for sale, a green **Unlocked** badge for what you have. Hovering a card still opens the full item popover.
+- **Items page: hover (or Tab to) any item for the same popover** as the gear catalog: name and kind, stats or effect, FF9's description, abilities taught, who can use it, and, signed in, what it would change for each character on your roster. Replaces the click-to-pin card in the corner.
+
+### Added
+- **`ItemPopover`** (`features/items/item-popover.tsx`): hover an item element for its full card in an FF popover. Used by the gear catalog and the Items page. `KIND_LABEL` is exported from `run/item-info.tsx`.
+
 ## [0.2.23] - 2026-10-16
 
 ### Changed

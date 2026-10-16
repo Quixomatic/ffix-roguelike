@@ -4,10 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { authClient } from "@/lib/auth-client";
-import { ItemCard } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
 import { ItemIcon } from "./item-icon";
+import { ItemPopover } from "./item-popover";
 
 const KINDS = [
   { kind: "all", label: "All" },
@@ -21,14 +21,13 @@ const KINDS = [
 
 const CAST = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant", "beatrix", "blank"];
 
-/** Every FF9 item with its icon and stats — a browser for checking art and data (like the practice battle). */
+/** Every FF9 item with its icon; hover one for its full card (and, signed in, what it would change for your roster). */
 export function ItemGallery() {
   const [kind, setKind] = useState<(typeof KINDS)[number]["kind"]>("all");
   const [who, setWho] = useState("");
   const [query, setQuery] = useState("");
   const [size, setSize] = useState(32);
-  const [selected, setSelected] = useState<number | null>(null);
-  // Signed in: the selected item compares against your roster as they start a run.
+  // Signed in: the hovered item compares against your roster as they start a run.
   const { data: session } = authClient.useSession();
   const profile = useQuery({ ...trpc.profile.get.queryOptions(), enabled: !!session });
   const roster = profile.data ? rosterAtStart(profile.data) : undefined;
@@ -72,24 +71,15 @@ export function ItemGallery() {
 
       <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${size + 40}px, 1fr))` }}>
         {shown.map((i) => (
-          <button
-            key={i.id}
-            title={i.name}
-            className="ff-window flex flex-col items-center gap-1 p-2 text-center data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
-            data-on={selected === i.id}
-            onClick={() => setSelected(selected === i.id ? null : i.id)}
-          >
-            <ItemIcon itemId={i.id} size={size} />
-            <span className="w-full truncate text-xs">{i.name}</span>
-          </button>
+          <ItemPopover key={i.id} itemId={i.id} party={roster}>
+            {/* A button so keyboard focus (Tab) opens the popover too. */}
+            <button type="button" data-sound="none" className="ff-window flex flex-col items-center gap-1 p-2 text-center hover:brightness-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-300">
+              <ItemIcon itemId={i.id} size={size} />
+              <span className="w-full truncate text-xs">{i.name}</span>
+            </button>
+          </ItemPopover>
         ))}
       </div>
-
-      {selected != null && (
-        <div className="fixed bottom-4 right-4 w-80 drop-shadow-lg">
-          <ItemCard itemId={selected} party={roster} onClick={() => setSelected(null)} />
-        </div>
-      )}
     </div>
   );
 }

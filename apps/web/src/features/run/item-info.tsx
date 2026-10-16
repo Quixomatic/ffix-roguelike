@@ -92,7 +92,7 @@ export function HelpText({ text, className = "" }: { text?: string; className?: 
   );
 }
 
-const KIND_LABEL: Record<string, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory", item: "Item" };
+export const KIND_LABEL: Record<string, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory", item: "Item" };
 
 /**
  * A gear/item card: name, stats, abilities taught, who can equip it. With `party`, gear also shows how it would
