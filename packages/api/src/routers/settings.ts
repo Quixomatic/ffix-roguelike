@@ -5,7 +5,7 @@ import { protectedProcedure, router } from "../index";
 /** Menu font ids — must match the font sets in apps/web/src/index.css. */
 export const MENU_FONTS = ["rounded", "classic", "pixel", "storybook"] as const;
 
-const DEFAULTS = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 60, sfxVolume: 80 } as const;
+const DEFAULTS = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 } as const;
 
 const settingsInput = z.object({
   menuFont: z.enum(MENU_FONTS).optional(),

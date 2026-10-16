@@ -27,15 +27,23 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
   const battle = useBattle(initial, {
     onEvents: (events) => bridgeRef.current?.play?.(events),
     onEnd,
+    settleAt: () => bridgeRef.current?.settleAt ?? 0,
   });
   const { engine, state } = battle;
-  useMusic(state.outcome === "victory" ? MUSIC_SLOTS.victory : state.outcome === "defeat" ? MUSIC_SLOTS.gameOver : music);
+  // The engine decides the fight the moment the last action runs; show it once that action's effect has landed.
+  const now = Date.now();
+  const outcome = state.outcome && now >= (bridgeRef.current?.settleAt ?? 0) ? state.outcome : null;
+  /** Still on its way: a unit an effect hasn't hit yet looks as it did before the action. */
+  const incoming = (id: string) => now < (bridgeRef.current?.impactAt.get(id) ?? 0);
+  useMusic(outcome === "victory" ? MUSIC_SLOTS.victory : outcome === "defeat" ? MUSIC_SLOTS.gameOver : music);
 
   if (!bridgeRef.current) {
     bridgeRef.current = {
       getState: () => engine.state,
       theme,
       speed: battle.speed,
+      impactAt: new Map(),
+      settleAt: 0,
       highlighted: new Set(),
       activeId: null,
       onUnitClick: (id) => pickRef.current?.(id),
@@ -78,7 +86,7 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
       </div>
 
       <div className="absolute inset-x-2 bottom-2 flex items-end gap-2">
-        <EnemyList enemies={enemies} />
+        <EnemyList enemies={enemies} incoming={incoming} />
         {actor && !battle.auto && !state.outcome ? (
           <CommandMenu
             engine={engine}
@@ -94,14 +102,14 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
           />
         ) : null}
         <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="flex-1">
-          <PartyStatus party={party} activeId={activeId} readyIds={ready} />
+          <PartyStatus party={party} activeId={activeId} readyIds={ready} incoming={incoming} />
         </div>
       </div>
 
-      {state.outcome && (
+      {outcome && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/30">
           <div className="ff-window px-10 py-4 text-3xl">
-            {state.outcome === "victory" ? "Victory!" : state.outcome === "fled" ? "Escaped!" : "Defeat..."}
+            {outcome === "victory" ? "Victory!" : outcome === "fled" ? "Escaped!" : "Defeat..."}
           </div>
         </div>
       )}

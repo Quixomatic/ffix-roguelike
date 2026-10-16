@@ -12,7 +12,15 @@ export interface BattleLogLine {
  * Runs a BattleEngine in real time (20 ticks/s). React re-renders on every tick that changed something;
  * events are forwarded to `onEvents` (the Phaser scene) for animation.
  */
-export function useBattle(initial: BattleState, opts: { onEvents?: (e: BattleEvent[]) => void; onEnd?: (s: BattleState) => void }) {
+export function useBattle(
+  initial: BattleState,
+  opts: {
+    onEvents?: (e: BattleEvent[]) => void;
+    onEnd?: (s: BattleState) => void;
+    /** When (Date.now() ms) the battlefield's last effect lands — the end waits for it. */
+    settleAt?: () => number;
+  },
+) {
   const engineRef = useRef<BattleEngine | null>(null);
   if (!engineRef.current) engineRef.current = new BattleEngine(structuredClone(initial));
   const engine = engineRef.current;
@@ -54,8 +62,9 @@ export function useBattle(initial: BattleState, opts: { onEvents?: (e: BattleEve
       setVersion((v) => v + 1);
       if (engine.state.outcome && !endedRef.current) {
         endedRef.current = true;
-        // Let the last animations play before handing back.
-        setTimeout(() => optsRef.current.onEnd?.(engine.state), 1200);
+        // Let the last effects land and the animations play before handing back.
+        const wait = Math.max(0, (optsRef.current.settleAt?.() ?? 0) - Date.now());
+        setTimeout(() => optsRef.current.onEnd?.(engine.state), wait + 1200);
       }
     }, 1000 / TICKS_PER_SECOND);
     return () => {

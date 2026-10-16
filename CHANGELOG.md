@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.73] - 2026-10-16
+
+Battles end when the last hit lands, not when the engine decides them; quieter default volumes.
+
+### Fixed
+- **"Victory!" appeared (and the fanfare started, and the battle handed back) the moment the final action began**, before its effect had even reached the monsters: the engine decides the fight instantly. The battlefield now tracks when each target's effect lands; the Victory/Defeat banner, its music and the hand-back wait until the last hit has landed (plus the usual pause).
+- **The enemy list dropped monsters and their ATB gauges emptied as soon as they were targeted** (the engine zeroes a fallen unit's gauge at once). Monsters stay listed with their gauge where it was until the hit lands; the field's ATB gauges hold too. The party panel's HP and ATB likewise wait for the hit.
+
+### Added
+- The enemy list shows "No enemies left" once they're all gone.
+
+### Changed
+- **Music and sound effects default to 25** (were 60 and 80) — in Settings, for new players and anyone who hasn't saved a volume (migration `audio_defaults_25`). Saved volumes stay as they are.
+
 ## [0.1.72] - 2026-10-16
 
 Every monster move plays an FFRK effect and sound — not just the handful assigned by name.

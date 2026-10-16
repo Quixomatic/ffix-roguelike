@@ -26,6 +26,12 @@ export interface BattleBridge {
   activeId: string | null;
   /** Battle speed (×1/×2/×4): effects play this much faster. */
   speed: number;
+  /**
+   * Set by the scene: when (Date.now() ms) each unit's incoming effect lands, and when the last one does. Until then
+   * the menus show the unit as it was before the action (the engine has already applied the result).
+   */
+  impactAt: Map<string, number>;
+  settleAt: number;
 }
 
 interface UnitView {
@@ -46,6 +52,8 @@ interface UnitView {
   holdUntil: number;
   /** Until this scene time the unit keeps looking alive/unhurt: an effect is still on its way to hit it. */
   impactAt?: number;
+  /** ATB fill shown while an effect is on its way (the engine zeroes a fallen unit's gauge at once). */
+  lastAtb?: number;
   /** Showing a single status pose (stone/sleep): the next animation must restart. */
   still?: boolean;
   cursor: Phaser.GameObjects.Text;
@@ -226,7 +234,10 @@ export class BattleScene extends Phaser.Scene {
     const gh = GAUGE_H * Math.max(1, this.k);
     const x = v.home.x - gw / 2;
     const y = v.home.y + v.sprite.displayHeight / 2 + 4;
-    const pct = Math.min(1, u.atb / u.atbMax);
+    // Hold the gauge where it was while an effect is still on its way (the engine already zeroed a fallen unit's).
+    const incoming = this.time.now < (v.impactAt ?? 0);
+    if (!incoming) v.lastAtb = Math.min(1, u.atb / u.atbMax);
+    const pct = v.lastAtb ?? 0;
     const frozen = u.statuses.stop || u.statuses.sleep || u.statuses.petrify || u.statuses.freeze;
     g.fillStyle(0x000000, 0.65);
     g.fillRect(x - 1, y - 1, gw + 2, gh + 2);
@@ -393,9 +404,14 @@ export class BattleScene extends Phaser.Scene {
     for (const ev of events) {
       if (ev.type === "actionStart") {
         impact = this.startEffect(ev);
-        if (impact > 0) for (const id of ev.targetIds) {
-          const v = this.views.get(id);
-          if (v) v.impactAt = Math.max(v.impactAt ?? 0, this.time.now + impact);
+        if (impact > 0) {
+          const wall = Date.now() + impact;
+          this.bridge.settleAt = Math.max(this.bridge.settleAt, wall);
+          for (const id of ev.targetIds) {
+            const v = this.views.get(id);
+            if (v) v.impactAt = Math.max(v.impactAt ?? 0, this.time.now + impact);
+            this.bridge.impactAt.set(id, Math.max(this.bridge.impactAt.get(id) ?? 0, wall));
+          }
         }
       }
       const index = popupIndex++;

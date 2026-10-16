@@ -24,7 +24,7 @@ export interface Settings {
   sfxVolume: number;
 }
 
-export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 60, sfxVolume: 80 };
+export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
 
 /**
  * Apply a menu font now and cache it in the browser, so index.html can apply it before the first paint next time
