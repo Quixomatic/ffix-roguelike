@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.0] - 2026-10-16
+
+Version 0.2: the game is built on FF9's real data and battle engine, with FFRK art and effects, FF9's soundtrack, and its assets moving to Cloudflare R2.
+
+### Milestone
+- The 0.1 series (0.1.0–0.1.101) built:
+  - the FF9 battle engine and the server-replayed runs
+  - the story journeys through Disc 1
+  - Completion Points, training and achievement-gated supplies
+  - FFRK party and monster sprites and FFRK spell effects with their sounds
+  - FF9's music
+  - an R2 bucket (`ff-like.turboforge.io`) with avatar uploads and per-class asset packs (`assets:pack`)
+- 0.2.x continues from here: uploading the packs and loading assets from R2, and effects for the remaining moves.
+
+### Changed
+- Version 0.2.0 (minor bump; no code changes in this release).
+
 ## [0.1.101] - 2026-10-16
 
 A local command packs the game's assets, one pack per asset class, ready to upload to R2.
