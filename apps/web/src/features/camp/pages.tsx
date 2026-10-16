@@ -1,6 +1,5 @@
 import { ACHIEVEMENTS } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ffix-roguelike/ui/components/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 
@@ -61,34 +60,19 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
   );
 }
 
-/** The Shops page: supply ranks and the gear catalog as tabs. */
-export function ShopsPage() {
+/** A camp shop's own page: Supplies (/shops/supplies) or the gear catalog (/shops/gear). */
+export function ShopPage({ shop }: { shop: "supplies" | "gear" }) {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
   const p = profile.data;
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <div className="flex items-end justify-between gap-4">
-        <PageTitle kicker="SHOPS" title="Camp shops" />
+        <PageTitle kicker="SHOPS" title={shop === "supplies" ? "Supplies" : "Gear catalog"} />
         <span className="ff-chip text-lg">{p.gil.toLocaleString()} gil</span>
       </div>
       {p.activeRunId && <div className="text-sm text-pink-200">A run is in progress: purchases wait until it ends.</div>}
-      <Tabs defaultValue="supplies" className="gap-4">
-        <TabsList className="ff-panel h-auto gap-1 p-1">
-          <TabsTrigger value="supplies" className="px-4 py-1.5 text-base data-active:bg-yellow-300/20 data-active:text-yellow-200">
-            Supplies
-          </TabsTrigger>
-          <TabsTrigger value="catalog" className="px-4 py-1.5 text-base data-active:bg-yellow-300/20 data-active:text-yellow-200">
-            Gear catalog
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="supplies" className="ff-panel p-4 text-sm">
-          <ShopContents shop="supplies" profile={p} />
-        </TabsContent>
-        <TabsContent value="catalog" className="ff-panel p-4 text-sm">
-          <GearCatalogGrid profile={p} />
-        </TabsContent>
-      </Tabs>
+      <div className="ff-panel p-4 text-sm">{shop === "supplies" ? <ShopContents shop="supplies" profile={p} /> : <GearCatalogGrid profile={p} />}</div>
     </div>
   );
 }

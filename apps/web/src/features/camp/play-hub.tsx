@@ -1,4 +1,4 @@
-import { availableJourneys, ACHIEVEMENTS, JOURNEYS } from "@ffix-roguelike/game-core";
+import { availableJourneys, ACHIEVEMENTS, gearCatalog, JOURNEYS } from "@ffix-roguelike/game-core";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -11,8 +11,9 @@ import { trpc } from "@/utils/trpc";
 
 import { canSpend, RosterLine } from "./roster";
 
-/** Potion and Phoenix Down, for the Shops card. */
-const SHOP_ICONS = [236, 240];
+/** Potion and Phoenix Down for the Supplies card; Mage Masher and Leather Hat for the Gear card. */
+const SUPPLY_ICONS = [236, 240];
+const GEAR_ICONS = [2, 112];
 
 /**
  * The Play hub (replaces camp's single long page): the player's currency top right with a floating stack
@@ -89,20 +90,27 @@ export function PlayHub() {
           lines={[`${p.unlocked.length} recruited`, spenders.length ? <span className="text-yellow-200">★ {spenders.length} can spend CP</span> : "Train, gear and abilities"]}
           blurb="Spend Completion Points, unlock gear slots, learn abilities."
         />
-        <HubCard
-          to="/shops"
-          title="Shops"
-          art={
-            <div className="flex gap-2">
-              {SHOP_ICONS.map((id) => (
-                <ItemIcon key={id} itemId={id} size={48} />
-              ))}
-            </div>
-          }
-          lines={["Supplies · Gear catalog", `${p.gil.toLocaleString()} gil banked`]}
-          blurb="Permanent supply ranks for every run, and gear for the drop pools."
-          disabled={!!p.activeRunId}
-        />
+        {/* Shops: two half-size cards in one slot — each shop is its own page. */}
+        <div className="grid grid-cols-2 gap-4">
+          <HubCard
+            compact
+            to="/shops/supplies"
+            title="Supplies"
+            art={<ShopIcons ids={SUPPLY_ICONS} />}
+            lines={["Starting-kit ranks", `${p.gil.toLocaleString()} gil banked`]}
+            blurb="More of each item in every run."
+            disabled={!!p.activeRunId}
+          />
+          <HubCard
+            compact
+            to="/shops/gear"
+            title="Gear"
+            art={<ShopIcons ids={GEAR_ICONS} />}
+            lines={[`${gearCatalog(p).length} to unlock`, `${(p.gearUnlocked ?? []).length} unlocked`]}
+            blurb="Add gear to the drop pools."
+            disabled={!!p.activeRunId}
+          />
+        </div>
         <HubCard
           to="/challenges"
           title="Challenges"
@@ -116,11 +124,16 @@ export function PlayHub() {
   );
 }
 
-function HubCard({ to, title, art, lines, blurb, disabled }: { to: string; title: string; art: ReactNode; lines: ReactNode[]; blurb: string; disabled?: boolean }) {
+/** A big hub card; `compact` is the half-width version (two share one slot), with the art above the text. */
+function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: string; title: string; art: ReactNode; lines: ReactNode[]; blurb: string; disabled?: boolean; compact?: boolean }) {
   return (
-    <Link to={to} className="ff-panel ff-lift group grid min-h-44 grid-cols-[1fr_auto] items-center gap-4 px-6 py-5" aria-disabled={disabled || undefined}>
-      <div className="flex flex-col gap-1">
-        <span className="ff-display text-3xl">{title}</span>
+    <Link
+      to={to}
+      className={`ff-panel ff-lift group grid min-h-44 items-center gap-4 ${compact ? "grid-rows-[auto_1fr] px-4 py-4" : "grid-cols-[1fr_auto] px-6 py-5"}`}
+      aria-disabled={disabled || undefined}
+    >
+      <div className={`flex flex-col gap-1 ${compact ? "row-start-2 self-start" : ""}`}>
+        <span className={`ff-display ${compact ? "text-2xl" : "text-3xl"}`}>{title}</span>
         {lines.map((l, i) => (
           <span key={i} className={i === 0 ? "text-base" : "text-sm text-[#c8d0ff]"}>
             {l}
@@ -129,8 +142,18 @@ function HubCard({ to, title, art, lines, blurb, disabled }: { to: string; title
         <span className="mt-1 text-xs opacity-70">{blurb}</span>
         {disabled && <span className="text-xs text-pink-200">During a run: look, but changes wait</span>}
       </div>
-      <div className="flex items-end justify-center transition group-hover:scale-105">{art}</div>
+      <div className={`flex items-end transition group-hover:scale-105 ${compact ? "row-start-1 justify-start" : "justify-center"}`}>{art}</div>
     </Link>
+  );
+}
+
+function ShopIcons({ ids }: { ids: number[] }) {
+  return (
+    <div className="flex gap-2">
+      {ids.map((id) => (
+        <ItemIcon key={id} itemId={id} size={40} />
+      ))}
+    </div>
   );
 }
 

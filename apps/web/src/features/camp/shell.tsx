@@ -1,7 +1,7 @@
 import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet } from "@tanstack/react-router";
-import { BookOpen, Home, Package, Settings, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
+import { BookOpen, Home, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
@@ -19,7 +19,8 @@ const GAME_NAV: NavItem[] = [
   { to: "/play", label: "Play", icon: Home, exact: true },
   { to: "/story", label: "Story", icon: BookOpen },
   { to: "/party", label: "Party", icon: Users },
-  { to: "/shops", label: "Shops", icon: Store },
+  { to: "/shops/supplies", label: "Supplies", icon: Store },
+  { to: "/shops/gear", label: "Gear catalog", icon: Shield },
   { to: "/challenges", label: "Challenges", icon: Swords },
 ];
 const MORE_NAV: NavItem[] = [
@@ -52,10 +53,9 @@ function Sidebar() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   return (
     <aside className="flex min-h-0 flex-col gap-3 border-r-2 border-[#e8e8f4]/40 bg-gradient-to-b from-[#1b2466] via-[#10164a] to-[#070a1f] p-3 text-sidebar-foreground">
-      <Link to="/play" className="flex flex-col items-center gap-1 pt-2 text-center [text-shadow:2px_2px_0_#000]">
-        <span className="ff-display text-3xl leading-none text-yellow-200">IX</span>
-        <span className="ff-display text-lg leading-tight text-white">Final Fantasy</span>
-        <span className="ff-title text-xs tracking-[0.3em]">A ROGUELITE</span>
+      {/* The header bar's wordmark. */}
+      <Link to="/play" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
+        FFIX <span className="text-yellow-200">Roguelike</span>
       </Link>
       {/* The name/version line as the separator, like Pokelike's. */}
       <div className="flex items-center gap-2 text-[0.7rem] text-[#c8d0ff]">

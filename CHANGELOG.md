@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.17] - 2026-10-16
+
+The two camp shops are separate pages, side by side on the Play hub; the sidebar uses the header's wordmark.
+
+### Changed
+- **Supplies and Gear catalog are their own pages**: **`/shops/supplies`** and **`/shops/gear`**, each with its own sidebar entry. This replaces the tabbed `/shops` page.
+- **Play hub**: the Shops slot holds two half-size cards side by side, each with its own art and details:
+  - **Supplies**: starting-kit ranks, gil banked.
+  - **Gear**: how many pieces you can unlock, how many are unlocked.
+- **Sidebar logo** is the header bar's "FFIX **Roguelike**" wordmark (was "IX / Final Fantasy / A ROGUELITE").
+
 ## [0.2.16] - 2026-10-16
 
 The new hub is the game's camp: Play, Story, Party, Shops and Challenges in the sidebar layout, at their own paths. The old single-page camp is tucked away at /legacy/camp.
