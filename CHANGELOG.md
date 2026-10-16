@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.77] - 2026-10-16
+
+The target glove is marker-sized.
+
+### Changed
+- The target glove was drawn at the heroes' pixel scale (48 px). It now takes the yellow ▼ marker's place and size — 16 px (32 px on very large screens), at the marker's spot with the same bob.
+
 ## [0.1.76] - 2026-10-16
 
 An FF9-style pointing glove shows exactly who you're about to hit.

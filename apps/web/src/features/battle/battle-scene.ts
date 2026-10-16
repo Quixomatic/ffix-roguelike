@@ -169,10 +169,15 @@ export class BattleScene extends Phaser.Scene {
       v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.ffrk ? this.enemyScale() : v.baseScale * this.k);
       v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
       v.cursor.setPosition(v.home.x, v.home.y - v.top - 18);
-      v.hand.setScale(Math.max(2, this.heroScale)).setPosition(v.home.x, v.home.y - v.top - 6);
+      v.hand.setScale(this.handScale()).setPosition(v.home.x, v.home.y - v.top - 18);
       v.rig?.weapon.setScale(this.heroScale);
       v.rig?.arm.setScale(this.heroScale);
     }
+  }
+
+  /** The target glove replaces the ▼ marker at about its size: 16 px, doubled only on very large canvases. */
+  private handScale() {
+    return this.k >= 1.6 ? 2 : 1;
   }
 
   /** Monsters share the heroes' whole-number pixel scale (FFRK's size ratios); a crowd steps down one. */
@@ -202,7 +207,7 @@ export class BattleScene extends Phaser.Scene {
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    const hand = this.add.image(x, y - top - 6, HAND).setOrigin(0.5, 1).setScale(Math.max(2, this.heroScale)).setDepth(40).setVisible(false);
+    const hand = this.add.image(x, y - top - 18, HAND).setOrigin(0.5, 0.5).setScale(this.handScale()).setDepth(40).setVisible(false);
     this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
   }
 
@@ -301,7 +306,7 @@ export class BattleScene extends Phaser.Scene {
       v.cursor.setColor(targeted ? "#ffe066" : "#ffffff");
       v.cursor.y = v.home.y - v.top - 18 + Math.sin(time / 120) * 3;
       v.hand.setVisible(aimed);
-      if (aimed) v.hand.y = v.home.y - v.top - 6 + Math.abs(Math.sin(time / 140)) * -6 * Math.max(1, this.k);
+      if (aimed) v.hand.y = v.cursor.y;
       // Idle bob for living units (animated heroes breathe on their own).
       if (!v.animated && !down && !stone && !u.statuses.stop && (v.ffrk?.anims.idle?.frames.length ?? 1) <= 1) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
       this.syncRig(v);
