@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.94] - 2026-10-16
+
+Camp cards line up, locked journeys match unlocked ones, and the shops have a section label.
+
+### Changed
+- **Journey and party cards line up across each row**: cards in a grid row share row tracks (CSS subgrid), so titles, subtitles, detail lines, stats, gear and the Manage buttons sit at the same height in every card, however much text each has.
+- **Locked journeys use the same layout as unlocked ones**: "???" with "🔒 Locked", "Unlock: clear *the previous journey*", the map count with "Final boss: ???", and "Clear to recruit: ???" — instead of a shorter, faded card.
+- **"Shops" label** above the Supplies and Gear catalog buttons, like "Journey" and "Party".
+
 ## [0.1.93] - 2026-10-16
 
 Camp supplies are unlocked by achievements — story clears among them — and locked characters' cards match the roster.

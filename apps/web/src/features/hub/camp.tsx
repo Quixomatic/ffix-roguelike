@@ -102,7 +102,8 @@ export function Camp() {
       {between && (
         <>
           <div className="ff-title px-1 text-base">Journey</div>
-          <div className="grid gap-3 sm:grid-cols-3">
+          {/* Cards share row tracks (subgrid), so titles, subtitles and detail lines line up across a row. */}
+          <div className="grid gap-x-3 gap-y-1 sm:grid-cols-3">
             {JOURNEYS.map((j) => {
               const unlocked = open.includes(j.id);
               const cleared = (p.journeysCleared ?? []).includes(j.id);
@@ -110,29 +111,45 @@ export function Camp() {
               return (
                 <button
                   key={j.id}
-                  className="ff-window flex flex-col gap-1 p-3 text-left enabled:hover:brightness-125 disabled:opacity-50 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
+                  className="ff-window row-span-4 mb-2 grid grid-rows-subgrid gap-1 p-3 text-left enabled:hover:brightness-125 disabled:cursor-default data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
                   data-on={chosenJourney === j.id}
                   disabled={!unlocked}
                   onClick={() => setJourney(j.id)}
                 >
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-lg">{unlocked ? j.name : "???"}</span>
-                    {cleared && <span className="text-sm text-yellow-200">Cleared ✓</span>}
+                    <span className={`text-lg ${unlocked ? "" : "opacity-60"}`}>{unlocked ? j.name : "???"}</span>
+                    {cleared ? <span className="text-sm text-yellow-200">Cleared ✓</span> : !unlocked && <span className="ff-title">🔒 Locked</span>}
                   </div>
                   <div className="text-sm opacity-80">
-                    {unlocked ? j.subtitle : `Clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"} first`}
+                    {unlocked ? (
+                      j.subtitle
+                    ) : (
+                      <>
+                        Unlock: <span className="text-yellow-200">clear {JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}</span>
+                      </>
+                    )}
                   </div>
-                  {unlocked && (
-                    <div className="text-xs text-[#c8d0ff]">
-                      {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {encounterNames(area.boss).join(" & ")}
-                    </div>
-                  )}
-                  {unlocked && j.unlocks?.length ? (
-                    <div className="text-xs text-pink-200">
-                      {cleared ? "Joined: " : "Clear to recruit: "}
-                      {j.unlocks.map((k) => getCharacter(k).name).join(", ")}
-                    </div>
-                  ) : null}
+                  <div className="text-xs text-[#c8d0ff]">
+                    {unlocked ? (
+                      <>
+                        {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {encounterNames(area.boss).join(" & ")}
+                      </>
+                    ) : (
+                      <span className="opacity-50">{j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: ???</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-pink-200">
+                    {j.unlocks?.length ? (
+                      unlocked ? (
+                        <>
+                          {cleared ? "Joined: " : "Clear to recruit: "}
+                          {j.unlocks.map((k) => getCharacter(k).name).join(", ")}
+                        </>
+                      ) : (
+                        <span className="opacity-50">Clear to recruit: ???</span>
+                      )
+                    ) : null}
+                  </div>
                 </button>
               );
             })}
@@ -141,7 +158,8 @@ export function Camp() {
       )}
 
       <div className="ff-title px-1 text-base">Party — pick up to 4 {p.activeRunId ? "(after this run)" : ""}</div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Cards share row tracks (subgrid), so names, stats, gear and buttons line up across a row. */}
+      <div className="grid gap-x-3 gap-y-1 sm:grid-cols-2 lg:grid-cols-4">
         {p.unlocked.map((key) => {
           const b = p.builds[key]!;
           const st = deriveStats({ ...b, equipment: starterGear(b) });
@@ -152,10 +170,10 @@ export function Camp() {
           return (
             <div
               key={key}
-              className="ff-window flex flex-col gap-1 p-3 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
+              className="ff-window row-span-5 mb-2 grid grid-rows-subgrid gap-1 p-3 data-[on=true]:outline data-[on=true]:outline-2 data-[on=true]:outline-yellow-300"
               data-on={inParty}
             >
-              <button className="flex flex-col gap-1 text-left disabled:cursor-default" disabled={!between} onClick={() => toggle(key)}>
+              <button className="row-span-4 grid grid-rows-subgrid gap-1 text-left disabled:cursor-default" disabled={!between} onClick={() => toggle(key)}>
                 <div className="flex items-end gap-3">
                   <HeroSprite heroKey={key} size={56} className={inParty ? "ff-hop" : ""} />
                   <div className="min-w-0 flex-1">
@@ -176,17 +194,19 @@ export function Camp() {
                   <span className={canSpend ? "text-yellow-200" : ""}>{cp} CP</span> · {slotsOpen}/5 gear slots
                 </div>
               </button>
-              {between && (
+              {between ? (
                 <button className="mt-1 self-start rounded border border-white/40 px-2 text-xs hover:bg-white/10" onClick={() => setSheet(key)}>
                   Manage{canSpend ? " ★" : ""}
                 </button>
+              ) : (
+                <span />
               )}
             </div>
           );
         })}
         {p.locked.map((l) => (
           // Same layout as an unlocked card (sprite + name, stats, gear line, footer) so the roster lines up.
-          <div key={l.key} className="ff-window flex flex-col gap-1 p-3">
+          <div key={l.key} className="ff-window row-span-5 mb-2 grid grid-rows-subgrid gap-1 p-3">
             <div className="flex items-end gap-3 opacity-80">
               <HeroSprite heroKey={l.key} size={56} silhouette />
               <div className="min-w-0 flex-1">
@@ -206,7 +226,12 @@ export function Camp() {
 
       {Object.keys(supplies).length > 0 && <StashList title="Packed for your next run" entries={Object.entries(supplies)} />}
 
-      {between && <CampShops profile={p} />}
+      {between && (
+        <>
+          <div className="ff-title px-1 text-base">Shops</div>
+          <CampShops profile={p} />
+        </>
+      )}
 
       {sheet && <CharacterSheet build={p.builds[sheet]!} onClose={() => setSheet(null)} />}
 
