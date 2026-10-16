@@ -2,6 +2,30 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.40] - 2026-10-16
+
+The battle menu has FF9's controls on keyboard and controller, with its sounds.
+
+### Added
+- **FF9's battle controls** (`battle/command-menu.tsx`):
+
+  | | Keyboard | Controller |
+  |---|---|---|
+  | Move the cursor | ↑↓←→ or WASD | D-pad / left stick |
+  | Confirm | Enter / Space | A |
+  | Cancel / back | Escape / Backspace | B |
+  | Swap the target side (enemies ⇄ party), FF9's L1 | Tab or Q | LB |
+  | All / single targets, FF9's R1 | E | RB |
+  | Next ready character, FF9's Triangle | C | Y |
+
+  The "All" and side-swap options show their keys. The controller's shoulder and Y buttons arrive as Q / E / C.
+
+### Fixed
+- **The battle menu was silent on keyboard and controller** (its sounds came from mouse clicks). It now plays FF9's menu sounds itself: the tick on moving and confirming, the buzzer on something you can't pick (a disabled option, all / swap on a move that can't), and cancel on backing out.
+
+### Changed
+- Settings → Controller lists the battle buttons too.
+
 ## [0.2.39] - 2026-10-16
 
 ### Changed

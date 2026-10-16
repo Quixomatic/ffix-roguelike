@@ -69,7 +69,11 @@ export function ControllerPanel() {
           ))}
           <div className="text-xs">
             The game reads: <span className="text-yellow-200">{reading.length ? reading.join(" + ") : "nothing"}</span>
-            <span className="opacity-60"> (D-pad / left stick move · A = 0 confirms · B = 1 backs out · Start = 9 menu)</span>
+            <span className="opacity-60">
+              {" "}
+              (D-pad / left stick move · A = 0 confirms · B = 1 backs out · Start = 9 menu · in battle: LB = 4 swaps the target side, RB = 5 all / single,
+              Y = 3 next ready character)
+            </span>
           </div>
         </div>
       )}

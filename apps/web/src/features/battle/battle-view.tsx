@@ -107,6 +107,7 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
               pickRef.current = pick;
               aimRef.current = aim;
             }}
+            onNextActor={ready.length > 1 ? () => setSelectedId(ready[(ready.indexOf(activeId!) + 1) % ready.length]!) : undefined}
           />
         ) : null}
         <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="flex-1">

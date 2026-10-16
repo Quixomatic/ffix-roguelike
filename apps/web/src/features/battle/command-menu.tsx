@@ -2,6 +2,7 @@ import { getBattleAction, isThrowable, type BattleCommand, type BattleEngine, ty
 import { findItem, type TargetType } from "@ffix-roguelike/game-data";
 import { useEffect, useMemo, useState } from "react";
 
+import { uiSound } from "@/features/audio/ui-sounds";
 import { HelpText, itemEffectText } from "@/features/run/item-info";
 
 type Pending = Omit<BattleCommand, "targetIds"> & {
@@ -29,11 +30,13 @@ interface Props {
    * units back here.
    */
   onTargeting(ids: string[], pick: ((id: string) => void) | null, aimed: string[], aim: ((id: string) => void) | null): void;
+  /** Hand the turn to the next ready party member (FF9's Triangle; C / the controller's Y). */
+  onNextActor?(): void;
 }
 
 const NO_PICK: TargetType[] = ["self", "allAlly", "allEnemy", "everyone", "random", "randomAlly", "randomEnemy", "automatic", "all"];
 
-export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
+export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor }: Props) {
   const [menu, setMenu] = useState<Menu>({ level: "root" });
   const [cursor, setCursor] = useState(0);
   /** First half of a Double Black / Double White cast. */
@@ -203,28 +206,52 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actor, engine, engine.state.tick, actor.mp]);
 
-  // Keyboard: arrows move, Enter/Space confirm, Escape/Backspace cancel, Tab swaps side when targeting.
+  /**
+   * FF9's battle controls, keyboard and controller (the controller arrives as these keys — see features/input/nav.ts):
+   * ↑↓←→ / WASD move · Enter / Space (A) confirm · Escape / Backspace (B) cancel · Tab or Q (LB = L1) swap the target
+   * side · E (RB = R1) toggle all / single targets · C (Y = Triangle) next ready character. With FF9's menu sounds.
+   */
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
+      if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
       const len = menu.level === "root" ? rootOptions.length : menu.level === "list" ? menu.options.length : candidates.length + (canAll ? 1 : 0);
-      if (["ArrowDown", "ArrowRight"].includes(ev.key)) setCursor((c) => (c + 1) % Math.max(1, len));
-      else if (["ArrowUp", "ArrowLeft"].includes(ev.key)) setCursor((c) => (c - 1 + len) % Math.max(1, len));
+      const code = ev.code;
+      const move = (d: 1 | -1) => {
+        setCursor((c) => (c + d + len) % Math.max(1, len));
+        uiSound("cursor");
+      };
+      if (["ArrowDown", "ArrowRight", "KeyS", "KeyD"].includes(code)) move(1);
+      else if (["ArrowUp", "ArrowLeft", "KeyW", "KeyA"].includes(code)) move(-1);
       else if (ev.key === "Escape" || ev.key === "Backspace") {
+        if (menu.level !== "root") uiSound("cancel");
         reset();
-      } else if (ev.key === "Tab" && menu.level === "target" && canSwap) {
-        ev.preventDefault();
+      } else if ((code === "Tab" || code === "KeyQ") && menu.level === "target") {
+        // L1: switch between the enemies and the party (when the move can target either).
+        if (!canSwap) return uiSound("buzzer");
         setMenu({ ...menu, side: menu.side === "ally" ? "foe" : "ally" });
         setCursor(0);
+        uiSound("cursor");
+      } else if (code === "KeyE" && menu.level === "target") {
+        // R1: everyone at once, or back to one (when the move can hit several).
+        if (!canAll) return uiSound("buzzer");
+        setCursor((c) => (c >= candidates.length ? 0 : candidates.length));
+        uiSound("cursor");
+      } else if (code === "KeyC") {
+        // Triangle: the next ready character takes the menu.
+        if (!onNextActor) return;
+        onNextActor();
+        uiSound("cursor");
       } else if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault();
+        let ok = false;
         if (menu.level === "root") {
           const o = rootOptions[cursor];
-          if (o && !o.disabled) o.run();
+          if (o && !o.disabled) (ok = true), o.run();
         } else if (menu.level === "list") {
           const o = menu.options[cursor];
-          if (o && !o.disabled) choose(o.pending);
-        } else if (cursor < candidates.length) finish(menu.pending, [candidates[cursor]!.id]);
-        else if (canAll) finish(menu.pending, candidates.map((c) => c.id));
+          if (o && !o.disabled) (ok = true), choose(o.pending);
+        } else if (cursor < candidates.length) (ok = true), finish(menu.pending, [candidates[cursor]!.id]);
+        else if (canAll) (ok = true), finish(menu.pending, candidates.map((c) => c.id));
+        uiSound(ok ? "cursor" : "buzzer");
       } else return;
       ev.preventDefault();
     };
@@ -296,12 +323,12 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
               onMouseEnter={() => setCursor(candidates.length)}
               onClick={() => finish(menu.pending, candidates.map((c) => c.id))}
             >
-              All
+              All <span className="text-sm opacity-60">(E · RB)</span>
             </button>
           )}
           {canSwap && (
             <button className="mt-1 text-sm opacity-80" onClick={() => setMenu({ ...menu, side: menu.side === "ally" ? "foe" : "ally" })}>
-              ⇄ {menu.side === "ally" ? "Target enemies" : "Target allies"} (Tab)
+              ⇄ {menu.side === "ally" ? "Target enemies" : "Target allies"} (Tab · LB)
             </button>
           )}
         </>

@@ -197,12 +197,16 @@ const PAD_KEYS = {
   enter: ["Enter", "Enter"],
   escape: ["Escape", "Escape"],
   menu: ["m", "KeyM"],
+  // FF9's shoulder / Triangle buttons, as the battle menu's keys: L1 swap target side, R1 all / single, Y next character.
+  l1: ["q", "KeyQ"],
+  r1: ["e", "KeyE"],
+  triangle: ["c", "KeyC"],
 } as const;
 export type PadKey = keyof typeof PAD_KEYS;
 const REPEAT_DELAY = 350;
 const REPEAT_EVERY = 120;
 
-const KEY_CODES: Record<string, number> = { ArrowUp: 38, ArrowDown: 40, ArrowLeft: 37, ArrowRight: 39, Enter: 13, Escape: 27 };
+const KEY_CODES: Record<string, number> = { ArrowUp: 38, ArrowDown: 40, ArrowLeft: 37, ArrowRight: 39, Enter: 13, Escape: 27, m: 77, q: 81, e: 69, c: 67 };
 
 /** A real-looking key event: `keyCode`/`which` too, which Phaser's keyboard reads (the constructor can't set them). */
 function keyEvent(type: "keydown" | "keyup", key: string, code: string) {
@@ -261,7 +265,7 @@ function dpad(pad: Gamepad) {
 
 /** What every connected controller is pressing, merged (Windows often adds idle virtual pads next to the real one). */
 export function padInput(): Record<PadKey, boolean> {
-  const out: Record<PadKey, boolean> = { up: false, down: false, left: false, right: false, enter: false, escape: false, menu: false };
+  const out: Record<PadKey, boolean> = { up: false, down: false, left: false, right: false, enter: false, escape: false, menu: false, l1: false, r1: false, triangle: false };
   for (const pad of connectedPads()) {
     const b = (i: number) => !!pad.buttons[i]?.pressed;
     const [x = 0, y = 0] = pad.axes;
@@ -273,6 +277,9 @@ export function padInput(): Record<PadKey, boolean> {
     out.enter ||= b(0);
     out.escape ||= b(1);
     out.menu ||= b(9);
+    out.l1 ||= b(4);
+    out.r1 ||= b(5);
+    out.triangle ||= b(3);
   }
   return out;
 }
@@ -295,7 +302,7 @@ function startGamepad() {
         continue;
       }
       const since = held.get(k);
-      const repeats = k !== "enter" && k !== "escape" && k !== "menu";
+      const repeats = k === "up" || k === "down" || k === "left" || k === "right";
       if (since == null) {
         held.set(k, now);
         k === "enter" ? confirm() : sendKey(k);
