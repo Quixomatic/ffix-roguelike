@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.14] - 2026-10-16
+
+### Changed
+- Mockup Play hub: the gil/CP chips and the round shortcuts sit in the top-right corner of the window, not the content column's, and stay there while the page scrolls.
+
 ## [0.2.13] - 2026-10-16
 
 A mockup of the new hub layout at **/mock**, alongside the current camp (which is unchanged): a sidebar shell, an FF theme for shadcn, the Play hub, and Story, Embark, Party, character, Shops and Challenges pages.

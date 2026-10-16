@@ -31,9 +31,9 @@ export function PlayHub() {
   const challengesDone = challengeDefs.filter((a) => (p.achievements ?? []).includes(a.id)).length;
 
   return (
-    <div className="relative mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-10 pt-6">
-      <QuickLinks gil={p.gil} cp={p.unlocked.reduce((n, k) => n + (p.builds[k]!.points ?? 0), 0)} />
-
+    <>
+    <QuickLinks gil={p.gil} cp={p.unlocked.reduce((n, k) => n + (p.builds[k]!.points ?? 0), 0)} />
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-10 pt-6">
       <div className="pr-14">
         <div className="ff-title tracking-[0.25em]">CAMP</div>
         <h1 className="ff-display text-4xl text-white [text-shadow:3px_3px_0_#000]">Where to next?</h1>
@@ -112,6 +112,7 @@ export function PlayHub() {
         />
       </div>
     </div>
+    </>
   );
 }
 
@@ -133,10 +134,11 @@ function HubCard({ to, title, art, lines, blurb, disabled }: { to: string; title
   );
 }
 
-/** Currency top right, and a floating stack of round shortcuts below it. */
+/** Currency in the window's top-right corner, and a floating stack of round shortcuts below it (they stay put while
+ *  the page scrolls). */
 function QuickLinks({ gil, cp }: { gil: number; cp: number }) {
   return (
-    <div className="absolute right-6 top-6 z-10 flex flex-col items-end gap-3">
+    <div className="fixed right-5 top-5 z-20 flex flex-col items-end gap-3">
       <div className="flex gap-2">
         <span className="ff-chip">{gil.toLocaleString()} gil</span>
         <span className="ff-chip">{cp} CP</span>
