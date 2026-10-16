@@ -9,6 +9,7 @@ import { ItemIcon } from "@/features/items/item-icon";
 import { uiSound } from "@/features/audio/ui-sounds";
 import { HelpText, ItemCard, itemEffectText } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
+import { FocusItem } from "@/features/input/focus";
 
 export type Shop = "supplies" | "catalog";
 
@@ -157,14 +158,16 @@ function SupplyRows({ profile, busy, onBuy }: { profile: Profile; busy: boolean;
                     {rank}/{e.max}
                   </span>
                 </span>
-                <button
-                  className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
-                  disabled={!canBuy}
-                  onClick={() => onBuy(e.itemId)}
-                  title={cost == null ? "Maxed" : `One more ${item.name} in every run`}
-                >
-                  {cost == null ? "Max" : <span className={profile.gil >= cost ? "" : "text-red-300"}>+ {cost.toLocaleString()} gil</span>}
-                </button>
+                <FocusItem>
+                  <button
+                    className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+                    disabled={!canBuy}
+                    onClick={() => onBuy(e.itemId)}
+                    title={cost == null ? "Maxed" : `One more ${item.name} in every run`}
+                  >
+                    {cost == null ? "Max" : <span className={profile.gil >= cost ? "" : "text-red-300"}>+ {cost.toLocaleString()} gil</span>}
+                  </button>
+                </FocusItem>
               </div>
             </div>
           </div>

@@ -29,9 +29,21 @@ function useMergedRef<T>(inner: RefObject<T | null>, outer: Ref<T> | undefined) 
 const keysMode = () => document.documentElement.dataset.input === "keys";
 
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
-export function FocusItem({ children, focusKey, onFocus }: { children: ReactElement<ChildProps>; focusKey?: string; onFocus?(): void }) {
+export function FocusItem({
+  children,
+  focusKey,
+  onFocus,
+  onArrow,
+}: {
+  children: ReactElement<ChildProps>;
+  focusKey?: string;
+  onFocus?(): void;
+  /** Return false to keep a direction for the control itself (a slider's ←/→); the cursor doesn't move. */
+  onArrow?(direction: string): boolean;
+}) {
   const { ref, focusSelf, focused } = useFocusable<object, HTMLElement>({
     focusKey,
+    onArrowPress: onArrow ? (direction) => onArrow(direction) : undefined,
     onFocus: (layout) => {
       // Keyboard / controller: bring it into view and tick (the mouse already shows where it is).
       if (keysMode()) {

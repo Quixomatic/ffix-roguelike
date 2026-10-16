@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ENV } from "@/env";
 import { Panel } from "@/features/gear/character-panels";
 import { authClient } from "@/lib/auth-client";
+import { FocusItem } from "@/features/input/focus";
 
 const ACCEPT = "image/png,image/jpeg,image/gif,image/webp";
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -60,21 +61,25 @@ export function AvatarPanel() {
       <div className="flex items-center gap-3">
         <Avatar image={user?.image} name={user?.name} size={64} />
         <div className="flex flex-wrap gap-2">
-          <button
-            className="rounded border border-white/20 bg-black/25 px-3 py-1 transition hover:brightness-125 disabled:opacity-50"
-            disabled={busy || !user}
-            onClick={() => input.current?.click()}
-          >
-            {busy ? "Saving…" : user?.image ? "Change" : "Upload"}
-          </button>
-          {user?.image && (
+          <FocusItem>
             <button
               className="rounded border border-white/20 bg-black/25 px-3 py-1 transition hover:brightness-125 disabled:opacity-50"
-              disabled={busy}
-              onClick={remove}
+              disabled={busy || !user}
+              onClick={() => input.current?.click()}
             >
-              Remove
+              {busy ? "Saving…" : user?.image ? "Change" : "Upload"}
             </button>
+          </FocusItem>
+          {user?.image && (
+            <FocusItem>
+              <button
+                className="rounded border border-white/20 bg-black/25 px-3 py-1 transition hover:brightness-125 disabled:opacity-50"
+                disabled={busy}
+                onClick={remove}
+              >
+                Remove
+              </button>
+            </FocusItem>
           )}
         </div>
         <input

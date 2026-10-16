@@ -16,6 +16,7 @@ import { abilityName, getAction, getCharacter, getSupportAbility, parseAbilityRe
 import type { ReactNode } from "react";
 
 import { HelpText } from "@/features/run/item-info";
+import { FocusItem } from "@/features/input/focus";
 
 /** A titled section of the character sheet. */
 export function Panel({ title, right, className = "", children }: { title: ReactNode; right?: ReactNode; className?: string; children: ReactNode }) {
@@ -78,23 +79,24 @@ export function SupportGrid({ build, onToggle }: { build: CharacterBuild; onTogg
         const on = active.has(id);
         const sa = getSupportAbility(id);
         return (
-          <button
-            key={a.ref}
-            disabled={!has || !onToggle}
-            onClick={() => onToggle?.(on ? build.supports.filter((x) => x !== id) : [...build.supports, id])}
-            className={`flex flex-col gap-0.5 rounded border px-2 py-1 text-left text-sm transition ${
-              on ? "border-yellow-300/80 bg-yellow-300/10" : "border-white/15 bg-black/25"
-            } ${has ? "enabled:hover:brightness-125" : "opacity-40"}`}
-          >
-            <span className="flex items-center justify-between gap-2">
-              <span className="truncate">
-                <span className={on ? "text-yellow-200" : "opacity-50"}>{on ? "◉" : "○"}</span> {sa.name}
+          <FocusItem key={a.ref}>
+            <button
+              disabled={!has || !onToggle}
+              onClick={() => onToggle?.(on ? build.supports.filter((x) => x !== id) : [...build.supports, id])}
+              className={`flex flex-col gap-0.5 rounded border px-2 py-1 text-left text-sm transition ${
+                on ? "border-yellow-300/80 bg-yellow-300/10" : "border-white/15 bg-black/25"
+              } ${has ? "enabled:hover:brightness-125" : "opacity-40"}`}
+            >
+              <span className="flex items-center justify-between gap-2">
+                <span className="truncate">
+                  <span className={on ? "text-yellow-200" : "opacity-50"}>{on ? "◉" : "○"}</span> {sa.name}
+                </span>
+                <span className="shrink-0 text-xs opacity-80">◆{sa.gems}</span>
               </span>
-              <span className="shrink-0 text-xs opacity-80">◆{sa.gems}</span>
-            </span>
-            <HelpText text={sa.help} className="text-xs opacity-75" />
-            <ApBar build={build} refId={a.ref} />
-          </button>
+              <HelpText text={sa.help} className="text-xs opacity-75" />
+              <ApBar build={build} refId={a.ref} />
+            </button>
+          </FocusItem>
         );
       })}
     </div>
@@ -279,14 +281,16 @@ export function TrainRow({
       </span>
       <span className="text-right text-lg tabular-nums">{value}</span>
       {onBuy ? (
-        <button
-          className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
-          disabled={maxed || !canBuy}
-          onClick={onBuy}
-          title={maxed ? "Maxed" : `Next: ${cost} ${unit}`}
-        >
-          {maxed ? "Max" : `+ ${cost.toLocaleString()} ${unit}`}
-        </button>
+        <FocusItem>
+          <button
+            className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+            disabled={maxed || !canBuy}
+            onClick={onBuy}
+            title={maxed ? "Maxed" : `Next: ${cost} ${unit}`}
+          >
+            {maxed ? "Max" : `+ ${cost.toLocaleString()} ${unit}`}
+          </button>
+        </FocusItem>
       ) : (
         <span />
       )}
@@ -331,9 +335,11 @@ export function CharacterModal({
           <div className="ff-display text-2xl">{title}</div>
           <div className="flex items-center gap-4">
             {headerRight}
-            <button className={inline ? "rounded border border-white/40 px-3 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
-              {inline ? "← Back" : "✕"}
-            </button>
+            <FocusItem>
+              <button className={inline ? "rounded border border-white/40 px-3 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
+                {inline ? "← Back" : "✕"}
+              </button>
+            </FocusItem>
           </div>
         </div>
         <div className="grid min-h-0 flex-1 md:grid-cols-[25rem_1fr]">
@@ -341,13 +347,14 @@ export function CharacterModal({
           <div className="flex min-h-0 flex-col">
             <div className="flex shrink-0 gap-1 border-b border-white/15 px-3 pt-2">
               {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  className={`rounded-t px-3 py-1.5 transition ${t.id === current.id ? "bg-white/15 text-yellow-200" : "opacity-75 hover:bg-white/10 hover:opacity-100"}`}
-                  onClick={() => onTab(t.id)}
-                >
-                  {t.label}
-                </button>
+                <FocusItem key={t.id}>
+                  <button
+                    className={`rounded-t px-3 py-1.5 transition ${t.id === current.id ? "bg-white/15 text-yellow-200" : "opacity-75 hover:bg-white/10 hover:opacity-100"}`}
+                    onClick={() => onTab(t.id)}
+                  >
+                    {t.label}
+                  </button>
+                </FocusItem>
               ))}
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">{current.content}</div>

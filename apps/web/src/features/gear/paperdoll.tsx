@@ -4,10 +4,12 @@ import { abilityName, findItem, type EquipSlot } from "@ffix-roguelike/game-data
 import type { ReactNode } from "react";
 
 import { HoverTip } from "@/components/hover-tip";
+import { PixelIcon } from "@/components/pixel-icon";
 import { DeltaChips } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { gearSummary } from "@/features/run/item-info";
+import { FocusItem } from "@/features/input/focus";
 
 export interface PaperdollSlot {
   slot: EquipSlot;
@@ -99,21 +101,26 @@ function SlotTile({
     const can = unlock.affordable && !unlock.busy;
     return (
       <div className={`group relative flex flex-col items-center gap-0.5 ${className}`}>
-        <button
-          className={`flex h-16 w-16 flex-col items-center justify-center rounded-md border-2 border-dashed text-2xl transition ${
-            can ? "border-yellow-200/50 bg-black/30 hover:border-yellow-300 hover:bg-yellow-300/10" : "border-white/25 bg-black/30 opacity-60"
-          }`}
-          disabled={!can}
-          onClick={() => unlock.onUnlock(data.slot)}
-          title={can ? `Unlock the ${meta.label} slot for ${unlock.cost} CP` : `Unlocking needs ${unlock.cost} CP`}
-        >
-          <span className="group-hover:hidden">🔒</span>
-          <span className={`hidden text-xs leading-tight group-hover:block ${can ? "text-yellow-200" : "text-red-300"}`}>
-            Unlock
-            <br />
-            {unlock.cost} CP
-          </span>
-        </button>
+        <FocusItem>
+          <button
+            className={`flex h-16 w-16 flex-col items-center justify-center rounded-md border-2 border-dashed text-2xl transition ${
+              can ? "border-yellow-200/50 bg-black/30 hover:border-yellow-300 hover:bg-yellow-300/10" : "border-white/25 bg-black/30 opacity-60"
+            }`}
+            disabled={!can}
+            onClick={() => unlock.onUnlock(data.slot)}
+            title={can ? `Unlock the ${meta.label} slot for ${unlock.cost} CP` : `Unlocking needs ${unlock.cost} CP`}
+          >
+            {/* Hover or the keyboard cursor reveals the price. */}
+            <span className="group-hover:hidden group-data-[focused=true]:hidden">
+              <PixelIcon name="lock" size={32} />
+            </span>
+            <span className={`hidden text-xs leading-tight group-hover:block group-data-[focused=true]:block ${can ? "text-yellow-200" : "text-red-300"}`}>
+              Unlock
+              <br />
+              {unlock.cost} CP
+            </span>
+          </button>
+        </FocusItem>
         <span className="ff-title text-[0.7rem]">{meta.label}</span>
       </div>
     );
@@ -127,17 +134,19 @@ function SlotTile({
   ) : null;
   return (
     <HoverTip tip={tip} className={`flex flex-col items-center gap-0.5 ${className}`}>
-      <button
-        className={`flex h-16 w-16 items-center justify-center rounded-md border-2 text-2xl transition enabled:hover:brightness-125 disabled:opacity-45 data-[active=true]:border-yellow-300 data-[active=true]:shadow-[0_0_8px_rgba(255,224,102,0.7)] ${
-          item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/25 bg-black/30"
-        }`}
-        data-active={active}
-        disabled={data.locked}
-        onClick={onClick}
-        title={item ? undefined : meta.label}
-      >
-        {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={48} /> : <span className="opacity-50">{meta.glyph}</span>}
-      </button>
+      <FocusItem>
+        <button
+          className={`flex h-16 w-16 items-center justify-center rounded-md border-2 text-2xl transition enabled:hover:brightness-125 disabled:opacity-45 data-[active=true]:border-yellow-300 data-[active=true]:shadow-[0_0_8px_rgba(255,224,102,0.7)] ${
+            item ? "border-yellow-200/60 bg-[#0c1238]" : "border-white/25 bg-black/30"
+          }`}
+          data-active={active}
+          disabled={data.locked}
+          onClick={onClick}
+          title={item ? undefined : meta.label}
+        >
+          {data.locked ? "🔒" : item ? <ItemIcon itemId={item.id} size={48} /> : <span className="opacity-50">{meta.glyph}</span>}
+        </button>
+      </FocusItem>
       <span className="ff-title text-[0.7rem]">{meta.label}</span>
     </HoverTip>
   );
@@ -153,24 +162,25 @@ export function EquipmentList({ slots, selected, onSelect }: { slots: PaperdollS
         const meta = SLOT_META[slot];
         const item = data.itemId != null ? findItem(data.itemId) : undefined;
         return (
-          <button
-            key={slot}
-            className="grid grid-cols-[5rem_2rem_1fr] items-center gap-2 rounded px-2 py-1.5 text-left transition enabled:hover:bg-white/10 disabled:opacity-45 data-[active=true]:bg-white/15 data-[active=true]:outline data-[active=true]:outline-1 data-[active=true]:outline-yellow-300/70"
-            data-active={selected === slot}
-            disabled={data.locked}
-            onClick={() => onSelect(slot)}
-          >
-            <span className="ff-title">{meta.label}</span>
-            <span className="flex justify-center">{item ? <ItemIcon itemId={item.id} size={32} /> : null}</span>
-            <span className="min-w-0">
-              <span className="block truncate">
-                {item ? item.name : data.locked ? "Locked" : <span className="opacity-60">Empty</span>}
-                {data.note && <span className={`ml-2 text-xs ${data.noteTone === "warn" ? "text-orange-300" : "opacity-60"}`}>{data.note}</span>}
+          <FocusItem key={slot}>
+            <button
+              className="grid grid-cols-[5rem_2rem_1fr] items-center gap-2 rounded px-2 py-1.5 text-left transition enabled:hover:bg-white/10 disabled:opacity-45 data-[active=true]:bg-white/15 data-[active=true]:outline data-[active=true]:outline-1 data-[active=true]:outline-yellow-300/70"
+              data-active={selected === slot}
+              disabled={data.locked}
+              onClick={() => onSelect(slot)}
+            >
+              <span className="ff-title">{meta.label}</span>
+              <span className="flex justify-center">{item ? <ItemIcon itemId={item.id} size={32} /> : null}</span>
+              <span className="min-w-0">
+                <span className="block truncate">
+                  {item ? item.name : data.locked ? "Locked" : <span className="opacity-60">Empty</span>}
+                  {data.note && <span className={`ml-2 text-xs ${data.noteTone === "warn" ? "text-orange-300" : "opacity-60"}`}>{data.note}</span>}
+                </span>
+                {item && <span className="block truncate text-xs text-[#c8d0ff]">{gearSummary(item) || "—"}</span>}
+                {item && item.abilities.length > 0 && <span className="block truncate text-xs text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</span>}
               </span>
-              {item && <span className="block truncate text-xs text-[#c8d0ff]">{gearSummary(item) || "—"}</span>}
-              {item && item.abilities.length > 0 && <span className="block truncate text-xs text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</span>}
-            </span>
-          </button>
+            </button>
+          </FocusItem>
         );
       })}
     </div>
@@ -189,17 +199,19 @@ function PickerDelta({ build, itemId }: { build: CharacterBuild; itemId: number 
 /** A gear choice card: square icon tile on the left, details on the right (shared by the picker's items and Remove). */
 function GearCard({ icon, children, onClick, tone = "item" }: { icon: ReactNode; children: ReactNode; onClick(): void; tone?: "item" | "remove" }) {
   return (
-    <button
-      className={`group grid min-h-[5.5rem] grid-cols-[4rem_1fr] items-start gap-3 rounded-lg border-2 p-2 text-left transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-300 ${
-        tone === "remove" ? "border-red-400/30 bg-black/30 hover:border-red-300/70" : "border-white/15 bg-[#0c1238]/80 hover:border-yellow-300/70"
-      }`}
-      onClick={onClick}
-    >
-      <span className={`flex h-16 w-16 items-center justify-center rounded-md border-2 ${tone === "remove" ? "border-red-400/40 bg-black/40" : "border-yellow-200/50 bg-black/40 group-hover:border-yellow-300"}`}>
-        {icon}
-      </span>
-      <span className="flex min-w-0 flex-col gap-1">{children}</span>
-    </button>
+    <FocusItem>
+      <button
+        className={`group grid min-h-[5.5rem] grid-cols-[4rem_1fr] items-start gap-3 rounded-lg border-2 p-2 text-left transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-300 ${
+          tone === "remove" ? "border-red-400/30 bg-black/30 hover:border-red-300/70" : "border-white/15 bg-[#0c1238]/80 hover:border-yellow-300/70"
+        }`}
+        onClick={onClick}
+      >
+        <span className={`flex h-16 w-16 items-center justify-center rounded-md border-2 ${tone === "remove" ? "border-red-400/40 bg-black/40" : "border-yellow-200/50 bg-black/40 group-hover:border-yellow-300"}`}>
+          {icon}
+        </span>
+        <span className="flex min-w-0 flex-col gap-1">{children}</span>
+      </button>
+    </FocusItem>
   );
 }
 

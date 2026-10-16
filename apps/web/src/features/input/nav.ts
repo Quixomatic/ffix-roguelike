@@ -46,7 +46,10 @@ type NavState = { started: boolean; manual: number; editing: boolean };
 // On globalThis so a dev hot reload doesn't init twice.
 const S: NavState = ((globalThis as { __ffixNav?: NavState }).__ffixNav ??= { started: false, manual: 0, editing: false });
 
-const isEditable = (el: Element | null) => !!el && (el.matches("input, textarea, select, [contenteditable=''], [contenteditable='true']") || !!el.closest("[contenteditable='true']"));
+/** Typing goes here (a slider isn't typing: ↑/↓ still move the cursor off it; it keeps ←/→ — see `isSliderKey`). */
+const isEditable = (el: Element | null) =>
+  !!el && ((el.matches("input, textarea, select, [contenteditable=''], [contenteditable='true']") && !el.matches("input[type='range']")) || !!el.closest("[contenteditable='true']"));
+const isSliderKey = (el: Element | null, dir: string) => !!el?.matches("input[type='range']") && (dir === "left" || dir === "right");
 const dialogOpen = () => !!document.querySelector("[role='dialog'], [data-modal]");
 /** Menu navigation is off: a screen with its own controls is up, or the player is typing. */
 export const navPaused = () => S.manual > 0 || S.editing;
@@ -79,6 +82,8 @@ export function startNav() {
       if (!e.ctrlKey && !e.metaKey && !e.altKey) root.dataset.input = "keys";
       const dir = ARROWS[e.code];
       if (!dir || navPaused() || e.ctrlKey || e.metaKey || e.altKey) return;
+      // A slider keeps ←/→ (it adjusts natively; its FocusItem keeps Norigin from moving).
+      if (isSliderKey(document.activeElement, dir)) return;
       // Arrows move the cursor, not the page.
       e.preventDefault();
       // Nothing focused yet (or it's gone): start on the page, else the sidebar.

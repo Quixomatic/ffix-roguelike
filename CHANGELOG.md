@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.26] - 2026-10-16
+
+Keyboard and controller navigation, step 2: every hub page.
+
+### Added
+- **Cursor stops on every hub page** (`FocusItem`):
+  - **Story**: each journey's Choose.
+  - **Embark**: the "Journeys" back link, the tier choices, the four party slots, Begin run, "continue it", and every roster card.
+  - **Party**: every character card.
+  - **Character page**: Back, the tabs, the paperdoll's slots (a locked slot shows its "Unlock · n CP" price when the cursor is on it, as on hover), the equipment list, the ability and support cards, the training buttons.
+  - **Supplies**: each "+ gil".
+  - **Gear catalog**: each Unlock.
+  - **Settings**: the avatar buttons, the font choices, battle mode / speed / auto battle, and the volume sliders.
+- **Sliders**: ←/→ adjust the volume, ↑/↓ move the cursor on (`FocusItem`'s new `onArrow`; the input layer lets a slider keep ←/→).
+
+### Changed
+- The paperdoll's locked slot shows the pixel padlock instead of 🔒.
+
+### Notes
+- The roster cards' and gear's hover popovers still open on mouse hover only; opening them for the keyboard cursor is next, with the run screens.
+
 ## [0.2.25] - 2026-10-16
 
 Keyboard and controller navigation, step 1: the input layer, the hub's sidebar and the Play hub. The mouse works as before.

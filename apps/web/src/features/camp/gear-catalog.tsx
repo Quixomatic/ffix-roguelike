@@ -9,6 +9,7 @@ import { ItemIcon } from "@/features/items/item-icon";
 import { ItemPopover } from "@/features/items/item-popover";
 import { gearSummary, HelpText, KIND_LABEL } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
+import { FocusItem } from "@/features/input/focus";
 
 /**
  * The gear catalog, laid out like the supply shop: a grid of cards, each with the item's icon in a square tile, its
@@ -43,14 +44,16 @@ export function GearCatalogGrid({ profile }: { profile: Profile }) {
           const afford = profile.gil >= e.price;
           return (
             <GearCard key={e.itemId} item={item} roster={roster}>
-              <button
-                className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
-                disabled={!afford || unlock.isPending}
-                onClick={() => unlock.mutate({ itemId: e.itemId })}
-                title={`Add ${item.name} to future runs`}
-              >
-                Unlock · <span className={afford ? "" : "text-red-300"}>{e.price.toLocaleString()} gil</span>
-              </button>
+              <FocusItem>
+                <button
+                  className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+                  disabled={!afford || unlock.isPending}
+                  onClick={() => unlock.mutate({ itemId: e.itemId })}
+                  title={`Add ${item.name} to future runs`}
+                >
+                  Unlock · <span className={afford ? "" : "text-red-300"}>{e.price.toLocaleString()} gil</span>
+                </button>
+              </FocusItem>
             </GearCard>
           );
         })}

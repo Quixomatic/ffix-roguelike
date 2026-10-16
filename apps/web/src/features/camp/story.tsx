@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { PixelIcon } from "@/components/pixel-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
+import { FocusItem } from "@/features/input/focus";
 
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 
@@ -92,13 +93,15 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
             <span className="opacity-60">{unlocked ? "Not cleared yet" : ""}</span>
           )}
         </span>
-        <button
-          disabled={!unlocked}
-          onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier: 0 } })}
-          className="ff-panel ff-lift inline-flex items-center gap-1.5 px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
-        >
-          Choose <PixelIcon name="arrow-right" />
-        </button>
+        <FocusItem>
+          <button
+            disabled={!unlocked}
+            onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier: 0 } })}
+            className="ff-panel ff-lift inline-flex items-center gap-1.5 px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
+          >
+            Choose <PixelIcon name="arrow-right" />
+          </button>
+        </FocusItem>
       </div>
     </div>
   );
@@ -146,9 +149,11 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
       <div className="mx-auto max-w-xl p-8">
         <div className="ff-panel p-5">
           That journey isn't open yet.{" "}
-          <Link to="/story" className="text-yellow-200 underline">
-            Back to Story
-          </Link>
+          <FocusItem>
+            <Link to="/story" className="text-yellow-200 underline">
+              Back to Story
+            </Link>
+          </FocusItem>
         </div>
       </div>
     );
@@ -167,9 +172,11 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <Link to="/story" data-sound="cancel" className="inline-flex items-center gap-1 self-start text-sm text-[#c8d0ff] hover:text-white">
-        <PixelIcon name="arrow-left" /> Journeys
-      </Link>
+      <FocusItem>
+        <Link to="/story" data-sound="cancel" className="inline-flex items-center gap-1 self-start text-sm text-[#c8d0ff] hover:text-white">
+          <PixelIcon name="arrow-left" /> Journeys
+        </Link>
+      </FocusItem>
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
         <div>
           <div className="ff-title tracking-[0.25em]">EMBARK</div>
@@ -181,16 +188,17 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
         <div className="flex items-center gap-2">
           <span className="text-sm text-[#c8d0ff]">Tier</span>
           {tiers.map((t) => (
-            <Link
-              key={t}
-              to="/story/$journey"
-              params={{ journey: j.id }}
-              search={{ tier: t }}
-              replace
-              className={`rounded border px-2.5 py-1 text-sm ${t === tier ? "border-yellow-300 bg-yellow-300/20 text-yellow-200" : "border-white/40 hover:bg-white/10"}`}
-            >
-              {tierLabel(t)}
-            </Link>
+            <FocusItem key={t}>
+              <Link
+                to="/story/$journey"
+                params={{ journey: j.id }}
+                search={{ tier: t }}
+                replace
+                className={`rounded border px-2.5 py-1 text-sm ${t === tier ? "border-yellow-300 bg-yellow-300/20 text-yellow-200" : "border-white/40 hover:bg-white/10"}`}
+              >
+                {tierLabel(t)}
+              </Link>
+            </FocusItem>
           ))}
         </div>
       </div>
@@ -201,40 +209,45 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
           {Array.from({ length: 4 }, (_, i) => {
             const k = party[i];
             return (
-              <button
-                key={i}
-                onClick={() => k && toggle(k)}
-                title={k ? `Remove ${getCharacter(k).name}` : "Empty slot"}
-                className={`flex h-24 w-24 flex-col items-center justify-end rounded border-2 pb-1 ${k ? "border-yellow-300/70 bg-black/30 hover:bg-black/40" : "border-dashed border-white/25 bg-black/15"}`}
-              >
-                {k ? (
-                  <>
-                    <HeroSprite heroKey={k} size={56} />
-                    <span className="text-xs">{getCharacter(k).name}</span>
-                  </>
-                ) : (
-                  <span className="pb-6 text-xs opacity-50">Slot {i + 1}</span>
-                )}
-              </button>
+              <FocusItem key={i}>
+                <button
+                  onClick={() => k && toggle(k)}
+                  title={k ? `Remove ${getCharacter(k).name}` : "Empty slot"}
+                  className={`flex h-24 w-24 flex-col items-center justify-end rounded border-2 pb-1 ${k ? "border-yellow-300/70 bg-black/30 hover:bg-black/40" : "border-dashed border-white/25 bg-black/15"}`}
+                >
+                  {k ? (
+                    <>
+                      <HeroSprite heroKey={k} size={56} />
+                      <span className="text-xs">{getCharacter(k).name}</span>
+                    </>
+                  ) : (
+                    <span className="pb-6 text-xs opacity-50">Slot {i + 1}</span>
+                  )}
+                </button>
+              </FocusItem>
             );
           })}
         </div>
-        <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
-          {start.isPending ? (
-            "Setting out…"
-          ) : (
-            <>
-              Begin run <PixelIcon name="arrow-right" size={32} />
-            </>
-          )}
-        </button>
+        <FocusItem>
+          <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
+            {start.isPending ? (
+              "Setting out…"
+            ) : (
+              <>
+                Begin run <PixelIcon name="arrow-right" size={32} />
+              </>
+            )}
+          </button>
+        </FocusItem>
       </div>
       {p.activeRunId && (
         <div className="text-sm text-pink-200">
           A run is already in progress —{" "}
-          <Link to="/run" className="underline">
-            continue it
-          </Link>{" "}
+          <FocusItem>
+            <Link to="/run" className="underline">
+              continue it
+            </Link>
+          </FocusItem>{" "}
           first.
         </div>
       )}
@@ -245,15 +258,16 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
         {rosterEntries(p).map((e) => {
           const chosen = party.includes(e.key);
           return (
-            <button
-              key={e.key}
-              disabled={!e.unlocked}
-              onClick={() => toggle(e.key)}
-              data-on={chosen}
-              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${CARD_CELL} ${e.unlocked ? "" : "opacity-60"}`}
-            >
-              <CharacterCard rows entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
-            </button>
+            <FocusItem key={e.key}>
+              <button
+                disabled={!e.unlocked}
+                onClick={() => toggle(e.key)}
+                data-on={chosen}
+                className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${CARD_CELL} ${e.unlocked ? "" : "opacity-60"}`}
+              >
+                <CharacterCard rows entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
+              </button>
+            </FocusItem>
           );
         })}
       </div>

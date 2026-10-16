@@ -7,6 +7,7 @@ import { PixelIcon } from "@/components/pixel-icon";
 import { ShopContents } from "@/features/hub/camp-shop";
 import { CharacterSheet } from "@/features/hub/character-sheet";
 import { trpc } from "@/utils/trpc";
+import { FocusItem } from "@/features/input/focus";
 
 import { GearCatalogGrid } from "./gear-catalog";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
@@ -24,17 +25,19 @@ export function PartyPage() {
       <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-4`}>
         {rosterEntries(p).map((e) =>
           e.unlocked ? (
-            <Link key={e.key} to="/party/$character" params={{ character: e.key }} className={`ff-panel ff-lift p-3 ${CARD_CELL}`}>
-              <CharacterCard
-                rows
-                entry={e}
-                footer={
-                  <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
-                    Manage <PixelIcon name="arrow-right" />
-                  </div>
-                }
-              />
-            </Link>
+            <FocusItem key={e.key}>
+              <Link to="/party/$character" params={{ character: e.key }} className={`ff-panel ff-lift p-3 ${CARD_CELL}`}>
+                <CharacterCard
+                  rows
+                  entry={e}
+                  footer={
+                    <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
+                      Manage <PixelIcon name="arrow-right" />
+                    </div>
+                  }
+                />
+              </Link>
+            </FocusItem>
           ) : (
             <div key={e.key} className={`ff-panel p-3 opacity-60 ${CARD_CELL}`}>
               <CharacterCard rows entry={e} />
@@ -57,9 +60,11 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
       <div className="mx-auto max-w-xl p-8">
         <div className="ff-panel p-5">
           {characterKey in profile.data.builds ? `${getCharacter(characterKey).name} hasn't joined yet.` : "No such character."}{" "}
-          <Link to="/party" className="text-yellow-200 underline">
-            Back to the roster
-          </Link>
+          <FocusItem>
+            <Link to="/party" className="text-yellow-200 underline">
+              Back to the roster
+            </Link>
+          </FocusItem>
         </div>
       </div>
     );
