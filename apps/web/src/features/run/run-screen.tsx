@@ -90,9 +90,9 @@ export function RunScreen() {
   const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   return (
-    // Fills the window under the hub shell's menu-button strip (2.5rem).
-    <div className="grid h-[calc(100svh-2.5rem)] min-h-0 gap-2 p-2 lg:grid-cols-[17rem_1fr]">
-      <PartySidebar run={run} actions={actions} canManage={canManage} onManage={setManaging} />
+    // Fills the window under the hub shell's menu-button strip (2.5rem). The map / stage on the left, the party on the
+    // right (the hub's own sidebar slides in on the left).
+    <div className="grid h-[calc(100svh-2.5rem)] min-h-0 gap-2 p-2 lg:grid-cols-[1fr_17rem]">
       <main className="relative min-h-[60vh] overflow-hidden rounded-lg bg-black/40">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
@@ -116,6 +116,7 @@ export function RunScreen() {
         )}
         <RunDock run={run} actions={actions} canManage={canManage} />
       </main>
+      <PartySidebar run={run} actions={actions} canManage={canManage} onManage={setManaging} />
       {managing && canManage && <RunCharacterSheet run={run} keyName={managing} actions={actions} onClose={() => setManaging(null)} />}
     </div>
   );

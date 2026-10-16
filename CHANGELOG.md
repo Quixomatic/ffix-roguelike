@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.43] - 2026-10-16
+
+### Changed
+- **The run's party sidebar is on the right**: the map / stage fills the left, next to the hub's own sliding sidebar, and the party sits on the right. The dock's panels (Items, Gear, Run) open beside it at the map's right edge.
+
 ## [0.2.42] - 2026-10-16
 
 ### Changed
