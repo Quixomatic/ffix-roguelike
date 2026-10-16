@@ -54,7 +54,7 @@ function ffrkRawEffects(): Plugin {
 
 /**
  * Build only: when the game loads its assets from R2 (`VITE_ASSET_BASE_URL`), don't ship the copies in `public/`
- * (sprites, music — ~64 MB) in the build output; they're only the dev fallback.
+ * (sprites, music, menu sounds — ~64 MB) in the build output; they're only the dev fallback.
  */
 function dropPackedAssets(): Plugin {
   let outDir = "";
@@ -68,7 +68,7 @@ function dropPackedAssets(): Plugin {
     },
     closeBundle() {
       if (!remote) return;
-      for (const dir of ["sprites", "music"]) rmSync(join(outDir, dir), { recursive: true, force: true });
+      for (const dir of ["sprites", "music", "sfx"]) rmSync(join(outDir, dir), { recursive: true, force: true });
     },
   };
 }

@@ -5,6 +5,7 @@ import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react
 
 import Header from "@/components/header";
 import { AssetGate } from "@/components/asset-gate";
+import { UiSounds } from "@/features/audio/ui-sounds";
 import { SettingsSync } from "@/features/settings/use-settings";
 import { ThemeProvider } from "@/components/theme-provider";
 import type { trpc } from "@/utils/trpc";
@@ -57,6 +58,7 @@ function RootComponent() {
           <Header />
           <SettingsSync />
           <AssetGate>
+            <UiSounds />
             <Outlet />
           </AssetGate>
         </div>

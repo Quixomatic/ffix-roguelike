@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { uiSound } from "@/features/audio/ui-sounds";
 import { trpc } from "@/utils/trpc";
 
 export interface RunReport {
@@ -44,6 +45,8 @@ export function useRunActions() {
   };
   const onError = (e: { message: string }) => toast.error(e.message);
   const opts = { onSuccess, onError };
+  /** Buying: FF9's shop purchase chime when it goes through. */
+  const purchase = { onSuccess: (data: Parameters<typeof onSuccess>[0]) => (uiSound("purchase"), onSuccess(data)), onError };
 
   return {
     report,
@@ -51,10 +54,10 @@ export function useRunActions() {
     move: useMutation(trpc.run.move.mutationOptions(opts)),
     finishBattle: useMutation(trpc.run.finishBattle.mutationOptions(opts)),
     claim: useMutation(trpc.run.claim.mutationOptions(opts)),
-    buy: useMutation(trpc.run.buy.mutationOptions(opts)),
-    synthesize: useMutation(trpc.run.synthesize.mutationOptions(opts)),
+    buy: useMutation(trpc.run.buy.mutationOptions(purchase)),
+    synthesize: useMutation(trpc.run.synthesize.mutationOptions(purchase)),
     sell: useMutation(trpc.run.sell.mutationOptions(opts)),
-    buyOffer: useMutation(trpc.run.buyOffer.mutationOptions(opts)),
+    buyOffer: useMutation(trpc.run.buyOffer.mutationOptions(purchase)),
     dig: useMutation(trpc.run.dig.mutationOptions(opts)),
     leave: useMutation(trpc.run.leave.mutationOptions(opts)),
     choose: useMutation(trpc.run.choose.mutationOptions(opts)),

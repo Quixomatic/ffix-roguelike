@@ -162,6 +162,17 @@ export function setMusicVolume(v: number) {
 export function playSfx(url: string) {
   const ac = audio();
   if (!ac || !S.sfxGain || ac.state !== "running" || S.sfxVolume <= 0) return;
+  void sfxBuffer(ac, url).then((buffer) => {
+    if (!buffer || !S.sfxGain) return;
+    const source = ac.createBufferSource();
+    source.buffer = buffer;
+    source.connect(S.sfxGain);
+    source.start();
+  });
+}
+
+/** A sound effect, decoded once (by asset path). */
+function sfxBuffer(ac: AudioContext, url: string): Promise<AudioBuffer | null> {
   if (!S.sfxBuffers.has(url))
     S.sfxBuffers.set(
       url,
@@ -170,13 +181,13 @@ export function playSfx(url: string) {
         .then((b) => ac.decodeAudioData(b))
         .catch(() => null),
     );
-  void S.sfxBuffers.get(url)!.then((buffer) => {
-    if (!buffer || !S.sfxGain) return;
-    const source = ac.createBufferSource();
-    source.buffer = buffer;
-    source.connect(S.sfxGain);
-    source.start();
-  });
+  return S.sfxBuffers.get(url)!;
+}
+
+/** Decode sound effects ahead of time (e.g. the menu sounds), so their first play isn't late. */
+export function warmSfx(urls: string[]) {
+  const ac = audio();
+  if (ac) for (const url of urls) void sfxBuffer(ac, url);
 }
 
 /** Sound effect volume 0–100 (0 = silent). */

@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.8] - 2026-10-16
+
+FF9's own menu sounds: the cursor tick, cancel, the "can't do that" buzzer and the shop purchase chime, across the whole app.
+
+### Added
+- **FF9's menu sounds**, extracted from the game (`python apps/web/scripts/extract-ff9-sfx.py`). FF9's sound table (`SoundEffectMetaData.txt` in `resources.assets`) maps each sound index to its file in the sound-effect bundles; which index the menus play comes from Memoria's UI code: 103 the cursor tick, 101 cancel, 102 buzzer, 1045 shop purchase, 682 help.
+- **Where they play** (`features/audio/ui-sounds.ts`, mounted once for the whole app):
+  - **Cursor tick** whenever the highlighted option in any menu changes, by keyboard or mouse: battle commands, ability, item and target lists, every `.ff-option` list. Clicking a button or link ticks too; FF9 uses the same tick for moving and selecting.
+  - **Cancel** on Escape and on close buttons (dialogs, the character sheet).
+  - **Buzzer** on pressing something you can't do: unaffordable or sold-out items, buttons that are disabled.
+  - **Purchase chime** when a buy goes through: the run shop, Stiltzkin, synthesis, camp supplies and the gear catalog.
+  - Any element can pick its own sound with `data-sound="purchase|buzzer|cancel|help|none"`.
+- They follow the **Sound effects** volume in Settings, are decoded at boot so the first tick isn't late, and the same sound twice within 60 ms plays once (a click that also moves the cursor).
+- The sounds ship as a new `sfx` asset pack (5 files, 40 KB), loaded with the boot packs from R2. `public/sfx/` is git-ignored, like the music.
+
+### Notes
+- Restart `pnpm dev` (Vite config changed).
+
 ## [0.2.7] - 2026-10-16
 
 ### Fixed

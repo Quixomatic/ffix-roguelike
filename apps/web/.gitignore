@@ -64,3 +64,6 @@ dev-dist
 
 # Packed assets (pnpm -F web assets:pack) — uploaded to R2, never committed
 .assets/
+
+# FF9 menu sounds, extracted from the local FF9 install (python scripts/extract-ff9-sfx.py); shipped via the asset packs
+public/sfx/

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { GameDialog } from "@/components/game-dialog";
 import { ItemIcon } from "@/features/items/item-icon";
+import { uiSound } from "@/features/audio/ui-sounds";
 import { HelpText, ItemCard, itemEffectText } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
@@ -52,8 +53,10 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
     onSuccess: () => qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() }),
     onError: (e: { message: string }) => toast.error(e.message),
   };
-  const buyRank = useMutation(trpc.profile.buySupplyRank.mutationOptions(opts));
-  const unlock = useMutation(trpc.profile.unlockGear.mutationOptions(opts));
+  // FF9's shop purchase chime when a buy goes through.
+  const purchase = { ...opts, onSuccess: () => (uiSound("purchase"), opts.onSuccess()) };
+  const buyRank = useMutation(trpc.profile.buySupplyRank.mutationOptions(purchase));
+  const unlock = useMutation(trpc.profile.unlockGear.mutationOptions(purchase));
   const stock = shop === "supplies" ? [] : gearCatalog(profile);
   const busy = buyRank.isPending || unlock.isPending;
   // Gear unlocks compare against how each character starts a run.
