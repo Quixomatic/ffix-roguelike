@@ -10,6 +10,7 @@
  */
 import Phaser from "phaser";
 
+import { playSfx } from "@/features/audio/music";
 import { evalRig, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
 
 export const EFFECT_BASE = import.meta.env.DEV ? "/ffrk-raw" : "/effects";
@@ -387,6 +388,8 @@ export interface PlayOptions {
   onDone?: () => void;
   /** Rig frame → callback (e.g. the impact moment for damage numbers). */
   onFrame?: { frame: number; fn: () => void }[];
+  /** Don't play the effect's sounds (e.g. the gallery's loops). */
+  mute?: boolean;
 }
 
 export class FfrkEffectPlayer {
@@ -406,7 +409,9 @@ export class FfrkEffectPlayer {
     const s = opts.scale ?? 1;
     this.container = scene.add.container(opts.x, opts.y).setScale(opts.flipX ? -s : s, s).setDepth(opts.depth ?? 50);
     this.frame = asset.range[0];
-    this.pending = [...(opts.onFrame ?? [])].sort((a, b) => a.frame - b.frame);
+    // FFRK's own sounds fire on their frames (action_sound → lang/se/se_ogg/<id>.ogg).
+    const sounds = (asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string").map((x) => ({ frame: x.frame, fn: () => playSfx(`${EFFECT_BASE}/se/se_ogg/${x.id}.ogg`) }));
+    this.pending = [...(opts.onFrame ?? []), ...(opts.mute ? [] : sounds)].sort((a, b) => a.frame - b.frame);
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.tick, this);
   }
 
@@ -424,6 +429,7 @@ export class FfrkEffectPlayer {
     if (this.frame > end) {
       if (this.opts.loop) {
         this.frame = start;
+        this.pending = (this.asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && !this.opts.mute).map((x) => ({ frame: x.frame, fn: () => playSfx(`${EFFECT_BASE}/se/se_ogg/${x.id}.ogg`) }));
         for (const list of this.emitters.values()) list.forEach((e) => e.destroy());
         this.emitters.clear();
       }

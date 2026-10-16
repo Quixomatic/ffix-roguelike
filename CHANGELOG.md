@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.71] - 2026-10-16
+
+Battles have sound, and plain attacks swing with their weapon's own effect.
+
+### Added
+- **Sound effects in battle.** FFRK's effects carry their own sounds (each rig's `action_sound` events — FFRK's `lang/se/se_ogg/*.ogg`, downloaded with the effects); they now play on their frames: the black-magic circle's chime, Fire's roar, Curaga's sparkle, a dagger's slash. Played through a sound-effect channel that follows the **Sound effects** volume in Settings (0 = off). The effects gallery plays them too.
+- **Plain attacks use FFRK's weapon-type attack effects** — FFRK's own recipes per weapon category, taken from captured party data: Zidane a dagger slash (30004), Steiner/Beatrix/Blank/Marcus a sword slash (30003), Freya and Quina a spear thrust (30044), Amarant a claw/fist strike (30054), Garnet a rod (30064), Vivi a staff (30074), Eiko a flute's flying note (30093). Monsters' plain attacks use FFRK's claw swipe (30051). Each has its sound, and the damage waits for the slash.
+
 ## [0.1.70] - 2026-10-16
 
 Music: FF9's own soundtrack plays everywhere — title, camp, each area's overworld, battles, bosses, the victory fanfare and Game Over.

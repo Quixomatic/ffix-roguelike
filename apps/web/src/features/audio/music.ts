@@ -1,4 +1,6 @@
 /**
+ * Sound: background music and one-shot sound effects (one Web Audio context).
+ *
  * Background music: FF9's own tracks (`music.gen.ts`, built by `scripts/build-music.ts`), looped at FF9's loop
  * points with Web Audio, crossfading when the track changes. One player for the whole app: screens say which track
  * they want (`useMusic`); the last one asked for plays. Browsers only allow audio after the player interacts with
@@ -14,6 +16,8 @@ const FADE_S = 0.8;
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
+let sfxGain: GainNode | null = null;
+let sfxVolume = 0.8;
 let volume = 0.6;
 let wanted: string | null = null;
 let current: { id: string; source: AudioBufferSourceNode; gain: GainNode } | null = null;
@@ -26,6 +30,9 @@ function audio(): AudioContext | null {
   master = ctx.createGain();
   master.gain.value = volume;
   master.connect(ctx.destination);
+  sfxGain = ctx.createGain();
+  sfxGain.gain.value = sfxVolume;
+  sfxGain.connect(ctx.destination);
   // Autoplay policy: resume on the first interaction, then start whatever was asked for.
   const unlock = () => {
     void ctx!.resume().then(() => {
@@ -99,6 +106,37 @@ export function playMusic(id: string | null) {
 export function setMusicVolume(v: number) {
   volume = Math.max(0, Math.min(100, v)) / 100;
   if (master && ctx) master.gain.setTargetAtTime(volume, ctx.currentTime, 0.05);
+}
+
+// ---------- sound effects ----------
+
+const sfxBuffers = new Map<string, Promise<AudioBuffer | null>>();
+
+/** Play a one-shot sound (e.g. an FFRK ability sound) at the sound-effect volume. Silent until audio is unlocked. */
+export function playSfx(url: string) {
+  const ac = audio();
+  if (!ac || !sfxGain || ac.state !== "running" || sfxVolume <= 0) return;
+  if (!sfxBuffers.has(url))
+    sfxBuffers.set(
+      url,
+      fetch(url)
+        .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${r.status}`))))
+        .then((b) => ac.decodeAudioData(b))
+        .catch(() => null),
+    );
+  void sfxBuffers.get(url)!.then((buffer) => {
+    if (!buffer || !sfxGain) return;
+    const source = ac.createBufferSource();
+    source.buffer = buffer;
+    source.connect(sfxGain);
+    source.start();
+  });
+}
+
+/** Sound effect volume 0–100 (0 = silent). */
+export function setSfxVolume(v: number) {
+  sfxVolume = Math.max(0, Math.min(100, v)) / 100;
+  if (sfxGain && ctx) sfxGain.gain.setTargetAtTime(sfxVolume, ctx.currentTime, 0.05);
 }
 
 /** Play `id` while this component wants it (the most recent caller wins; null = silence). */

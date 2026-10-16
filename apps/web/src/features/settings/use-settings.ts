@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { setMusicVolume } from "@/features/audio/music";
+import { setMusicVolume, setSfxVolume } from "@/features/audio/music";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
@@ -53,12 +53,13 @@ export function useSettings() {
   const update = (patch: Partial<Settings>) => {
     if (patch.menuFont) applyMenuFont(patch.menuFont);
     if (patch.musicVolume != null) setMusicVolume(patch.musicVolume);
+    if (patch.sfxVolume != null) setSfxVolume(patch.sfxVolume);
     if (session) mutation.mutate(patch);
   };
   return { settings, loaded: query.isSuccess, signedIn: !!session, update, saving: mutation.isPending };
 }
 
-/** Mounted once in the root: applies the account's saved menu font and music volume when settings load. */
+/** Mounted once in the root: applies the account's saved menu font and volumes when settings load. */
 export function SettingsSync() {
   const { settings, loaded } = useSettings();
   useEffect(() => {
@@ -67,5 +68,8 @@ export function SettingsSync() {
   useEffect(() => {
     setMusicVolume(settings.musicVolume);
   }, [settings.musicVolume]);
+  useEffect(() => {
+    setSfxVolume(settings.sfxVolume);
+  }, [settings.sfxVolume]);
   return null;
 }

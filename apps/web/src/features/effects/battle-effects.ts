@@ -15,9 +15,43 @@ const MAP = (effectMap as { abilities: Record<string, { phases: Recipe }> }).abi
 /** Battle action ids for FF9 monster attacks start here (game-core FF9_ACTION_BASE). */
 const FF9_ACTION_BASE = 2000;
 
-/** The effect recipe for a battle action (party abilities "a:<id>", FF9 monster attacks "e:<index>"). */
-export function recipeFor(actionId: number | undefined): Recipe | null {
+/** Battle action ids of the plain Attack command: the party's (FF9 action 176) and monsters' (engine 1000). */
+const PARTY_ATTACK = 176;
+const MONSTER_ATTACK = 1000;
+
+/**
+ * Plain attacks play FFRK's weapon-type attack effect (FFRK's own recipes, from captured party data: an empty
+ * launch, a 0.65 s gap while the character swings, then the slash). FF9 weapons are per character, so by hero.
+ */
+const weapon = (id: number, launch = false, shot = false): Recipe => ({
+  launch: launch ? `ab/ability/${id}/${id}_launch.json` : "ab/ability/common/launch_empty.json",
+  shot: shot ? `ab/ability/${id}/${id}_shot.json` : "ab/ability/common/shot_empty.json",
+  hit: `ab/ability/${id}/${id}_hit.json`,
+});
+const WEAPON_EFFECTS: Record<string, Recipe> = {
+  zidane: weapon(30004), // dagger
+  steiner: weapon(30003), // sword
+  beatrix: weapon(30003),
+  blank: weapon(30003),
+  marcus: weapon(30003),
+  freya: weapon(30044), // spear
+  quina: weapon(30044), // forks ≈ spear
+  amarant: weapon(30054), // claws = FFRK fist
+  garnet: weapon(30064, true), // rod
+  vivi: weapon(30074, true), // staff
+  eiko: weapon(30093, false, true), // flute = FFRK instrument (a flying note)
+};
+/** Monsters' plain attack: FFRK's claw swipe (enemy "Cat Scratch"). */
+const MONSTER_WEAPON = weapon(30051);
+
+/**
+ * The effect recipe for a battle action (party abilities "a:<id>", FF9 monster attacks "e:<index>"); plain attacks
+ * use the attacker's weapon effect (`actorSprite` = the unit's sprite key, e.g. "hero/vivi").
+ */
+export function recipeFor(actionId: number | undefined, actorSprite?: string): Recipe | null {
   if (actionId == null) return null;
+  if (actionId === PARTY_ATTACK) return WEAPON_EFFECTS[actorSprite?.split("/")[1] ?? ""] ?? weapon(30003);
+  if (actionId === MONSTER_ATTACK) return MONSTER_WEAPON;
   const key = actionId >= FF9_ACTION_BASE ? `e:${actionId - FF9_ACTION_BASE}` : `a:${actionId}`;
   return MAP[key]?.phases ?? null;
 }
@@ -36,10 +70,10 @@ const phasesOf = (recipe: Recipe) => {
 };
 
 /** Start loading every effect these actions use (call when the battle starts). */
-export function preloadEffects(scene: Phaser.Scene, actionIds: Iterable<number>) {
+export function preloadEffects(scene: Phaser.Scene, actionIds: Iterable<number>, heroSprites: Iterable<string> = []) {
   const paths = new Set<string>();
-  for (const id of actionIds) {
-    const r = recipeFor(id);
+  const recipes = [...[...actionIds].map((id) => recipeFor(id)), ...[...heroSprites].map((s) => recipeFor(PARTY_ATTACK, s))];
+  for (const r of recipes) {
     if (!r) continue;
     for (const p of Object.values(phasesOf(r))) if (p) paths.add(p);
   }
@@ -82,8 +116,8 @@ export interface PlayAt {
  * Play a battle action's effect. Returns the ms (at the given speed) until the hit lands, or null when the action
  * has no effect or its files haven't finished loading (the caller then shows results at once).
  */
-export function playActionEffect(scene: Phaser.Scene, actionId: number | undefined, at: PlayAt): number | null {
-  const recipe = recipeFor(actionId);
+export function playActionEffect(scene: Phaser.Scene, actionId: number | undefined, at: PlayAt, actorSprite?: string): number | null {
+  const recipe = recipeFor(actionId, actorSprite);
   if (!recipe) return null;
   const { launch, shot, hit } = phasesOf(recipe);
   const m = readyFor(scene);

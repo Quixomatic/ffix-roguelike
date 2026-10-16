@@ -376,7 +376,11 @@ export class BattleScene extends Phaser.Scene {
     }
     const scene = state.scene ? bestiary.scenes.find((s) => s.id === state.scene) : undefined;
     for (const uid of scene?.attacks ?? []) if (uid >= 0) ids.add(2000 + uid);
-    preloadEffects(this, ids);
+    preloadEffects(
+      this,
+      ids,
+      state.units.filter((u) => u.side === "party").map((u) => u.sprite),
+    );
   }
 
   /** Engine results that belong to an action's impact (shown when its effect's hit lands). */
@@ -411,7 +415,7 @@ export class BattleScene extends Phaser.Scene {
         to: to.map((v) => ({ x: v.home.x, y: v.home.y })),
         scale: this.heroScale,
         speed: this.bridge.speed,
-      }) ?? 0
+      }, this.bridge.getState().units.find((u) => u.id === ev.actorId)?.sprite) ?? 0
     );
   }
 
