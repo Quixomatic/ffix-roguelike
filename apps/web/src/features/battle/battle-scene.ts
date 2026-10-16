@@ -6,6 +6,7 @@ import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from
 import Phaser from "phaser";
 
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
+import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 /** The reference layout size: unit positions are designed at 960×540 and scaled to the real canvas. */
@@ -44,6 +45,8 @@ interface UnitView {
   cursor: Phaser.GameObjects.Text;
   /** ATB gauge under the unit (enemies too, so you can see who's about to act). */
   gauge: Phaser.GameObjects.Graphics;
+  /** Monster drawn from an FFRK sheet (idle/attack/damage/dead, white hit-flash cell). */
+  ffrk?: EnemySpriteInfo;
   /** FFRK-style weapon rig: the weapon drawn between the body and the arm piece during attack frames. */
   rig?: { frames: (HeroRigFrame | null)[]; weapon: Phaser.GameObjects.Image; grip: [number, number]; arm: Phaser.GameObjects.Sprite };
 }
@@ -86,7 +89,9 @@ export class BattleScene extends Phaser.Scene {
   }
 
   preload() {
-    loadHeroSheets(this, this.bridge.getState().units.filter((u) => u.side === "party").map((u) => u.sprite));
+    const units = this.bridge.getState().units;
+    loadHeroSheets(this, units.filter((u) => u.side === "party").map((u) => u.sprite));
+    loadEnemySheets(this, units.filter((u) => u.side === "enemy").map((u) => u.sprite));
   }
 
   create() {
@@ -136,7 +141,7 @@ export class BattleScene extends Phaser.Scene {
           ? { x: w * 0.74 + v.partySlot * 8 * this.k + (v.backRow ? 36 * this.k : 0), y: top + v.partySlot * spacing }
           : { x: (v.ref.x / BATTLE_W) * w, y: (v.ref.y / BATTLE_H) * h };
       this.tweens.killTweensOf(v.sprite);
-      v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.baseScale * this.k);
+      v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.ffrk ? this.enemyScale() : v.baseScale * this.k);
       v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
       v.cursor.setPosition(v.home.x, v.home.y - v.top - 18);
       v.rig?.weapon.setScale(this.heroScale);
@@ -144,13 +149,22 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  /** Monsters share the heroes' whole-number pixel scale (FFRK's size ratios); a crowd steps down one. */
+  private enemyScale() {
+    const crowd = [...this.views.values()].filter((v) => v.ffrk).length > 3;
+    return Math.max(1, this.heroScale - (crowd ? 1 : 0));
+  }
+
   private addUnit(u: BattleUnit, x: number, y: number, scale: number) {
     const animated = u.side === "party" && ensureHeroAnims(this, u.sprite);
-    const key = animated ? u.sprite : ensurePlaceholder(this, u.sprite, { family: u.family, boss: u.boss });
+    const ffrk = u.side === "enemy" ? ensureEnemyAnims(this, u.sprite) : null;
+    const key = animated ? u.sprite : ffrk ? ffrk.texture : ensurePlaceholder(this, u.sprite, { family: u.family, boss: u.boss });
     const baseScale = u.side === "party" ? scale : u.boss ? 1.6 : 1.3;
-    const sprite = this.add.sprite(x, y, key).setScale(animated ? this.heroScale : baseScale);
-    if (u.side === "enemy") sprite.setFlipX(true);
+    const sprite = this.add.sprite(x, y, key, 0).setScale(animated ? this.heroScale : ffrk ? this.heroScale : baseScale);
+    // FFRK monsters already face the party; the placeholders are drawn facing left.
+    if (u.side === "enemy" && !ffrk) sprite.setFlipX(true);
     if (animated) sprite.play(heroAnimKey(u.sprite, "idle"));
+    if (ffrk) sprite.play(enemyAnimKey(ffrk.info, "idle"));
     sprite.setInteractive({ useHandCursor: true }).on("pointerdown", () => this.bridge.onUnitClick(u.id));
     const top = animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : sprite.displayHeight / 2;
     const cursor = this.add
@@ -159,7 +173,7 @@ export class BattleScene extends Phaser.Scene {
       .setStroke("#000000", 4)
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
-    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, gauge, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
   }
 
   /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
@@ -234,7 +248,10 @@ export class BattleScene extends Phaser.Scene {
       const down = u.hp <= 0 || u.statuses.death !== undefined;
       const stone = u.statuses.petrify !== undefined;
       const shown = isShownUnit(u);
-      if (u.side === "enemy") v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
+      if (u.side === "enemy") {
+        v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
+        if (v.ffrk) this.monsterPose(v, u, down);
+      }
       else if (v.animated) {
         v.sprite.setAlpha(u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
         this.pose(v, u, state);
@@ -248,7 +265,7 @@ export class BattleScene extends Phaser.Scene {
       v.cursor.setColor(targeted ? "#ffe066" : "#ffffff");
       v.cursor.y = v.home.y - v.top - 18 + Math.sin(time / 120) * 3;
       // Idle bob for living units (animated heroes breathe on their own).
-      if (!v.animated && !down && !stone && !u.statuses.stop) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
+      if (!v.animated && !down && !stone && !u.statuses.stop && (v.ffrk?.anims.idle?.frames.length ?? 1) <= 1) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
       this.syncRig(v);
       this.drawGauge(v, u, time, down || stone || !shown);
     }
@@ -296,11 +313,44 @@ export class BattleScene extends Phaser.Scene {
     if (wasStill || v.sprite.anims.currentAnim?.key !== key) v.sprite.play(key);
   }
 
-  /** Play a one-shot pose on a hero (no-op for enemies, placeholders and the fallen). */
+  /** FFRK monsters: freeze on Stop/Petrify/Freeze/Sleep, fall on KO, otherwise idle once a one-shot ends. */
+  private monsterPose(v: UnitView, u: BattleUnit, down: boolean) {
+    const info = v.ffrk!;
+    const frozen = u.statuses.petrify || u.statuses.stop || u.statuses.freeze || u.statuses.sleep;
+    if (frozen && !down) {
+      if (v.sprite.anims.isPlaying) v.sprite.anims.pause();
+      return;
+    }
+    if (v.sprite.anims.isPaused) v.sprite.anims.resume();
+    const want: EnemyAnim = down && info.anims.dead ? "dead" : "idle";
+    if (down && v.sprite.anims.currentAnim?.key === enemyAnimKey(info, "dead")) return;
+    if (!down && this.time.now < v.holdUntil) return;
+    if (v.sprite.anims.currentAnim?.key !== enemyAnimKey(info, want)) v.sprite.play(enemyAnimKey(info, want));
+  }
+
+  /** A one-shot on an FFRK monster: its own attack/damage animation, or the white hit flash. */
+  private actMonster(v: UnitView, what: string) {
+    const info = v.ffrk!;
+    const anim: EnemyAnim | null = what === "attack" || what === "ability" || what === "throw" ? "attack" : what === "damage" ? "damage" : null;
+    if (!anim) return;
+    const a = info.anims[anim];
+    if (a) {
+      v.sprite.play(enemyAnimKey(info, anim));
+      v.holdUntil = this.time.now + (a.frames.length / a.fps) * 1000;
+    } else if (anim === "damage" && info.white != null) {
+      v.sprite.anims.stop();
+      v.sprite.setFrame(info.white);
+      v.holdUntil = this.time.now + 120;
+      this.time.delayedCall(120, () => v.sprite.anims.currentAnim && v.sprite.play(enemyAnimKey(info, "idle")));
+    }
+  }
+
+  /** Play a one-shot pose on a hero or FFRK monster (no-op for placeholders and the fallen). */
   private act(id: string, what: string) {
     const v = this.views.get(id);
     const p = ACTION_POSE[what];
     const u = this.bridge.getState().units.find((x) => x.id === id);
+    if (v?.ffrk && u && u.hp > 0) return this.actMonster(v, what);
     if (!v?.animated || !p || !u || u.hp <= 0) return;
     v.sprite.play(heroAnimKey(u.sprite, p.anim, this.variantOf(u)));
     v.holdUntil = this.time.now + p.ms;
@@ -363,7 +413,7 @@ export class BattleScene extends Phaser.Scene {
   private shake(id: string) {
     const v = this.views.get(id);
     if (!v) return;
-    v.sprite.setTint(0xffffff);
+    if (!v.ffrk) v.sprite.setTint(0xffffff);
     this.tweens.add({ targets: v.sprite, x: v.home.x + 6, duration: 40, yoyo: true, repeat: 2, onComplete: () => (v.sprite.x = v.home.x) });
   }
 

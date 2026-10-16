@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.64] - 2026-10-15
+
+Monsters have their real FFRK sprites — and the bosses move with FFRK's own animations.
+
+### Added
+- **Monster sprites from FF Record Keeper** for 127 monsters (FF9's bestiary and the Echoes crossovers), replacing the coloured blob placeholders:
+  - **FF9's own FFRK art** where FFRK drew it — e.g. Bomb, Masked Man, Plant Spider, Sand Golem, Malboro, Black Mage types, Wraith, Grenade, Hecteyes.
+  - **Bosses are animated with FFRK's own rigs**: Plant Brain, Black Waltz 1–3, Sealion, Gizamaluke, Zaghnol, Prison Cage, Beatrix, Antlion, Ralvurahva, Lani, Soulcage, Hilgigars, Taharka, Meltigemini, the Chaos guardians, Hades, Ozma, Deathguise, Kraken, Tiamat, Lich, Maliris and more — idle loop, attack lunge, the damage flash, and the death fade, all from FFRK's animation files.
+  - **Stand-ins from other Final Fantasy games** where FFRK never drew an FF9 monster (labelled in `enemy-sprite-map.ts`): Cave Imp → Imp (FFII), Mu → Wild Rat (FFVI), Serpion → Scorpion (FFI), Gigan Toad → Poison Toad (FFII), Lizard Man → Twin Lizard (FFV), Ladybug, Clipper, Mandragora, Goblin Mage, Torama → Coeurl… Garnet, Blank and Kuja use their FFRK party sprites when fought.
+- In battle, FFRK monsters face the party, are drawn at the heroes' pixel scale (FFRK's size ratios; one step smaller in crowds of 4+), flash white when hit (their own white frame), play their attack/damage animations, freeze under Stop/Petrify/Sleep/Freeze, and play their death animation.
+- **FFRK animation player** (`features/sprites/ffrk-anim.ts`): evaluates FFRK's AnimationBuilder rigs (node tree, linear + Bézier keyframes for position/rotation/scale/alpha/colour). Its conventions were pinned down by pixel-comparing renders with FFRK's own composited boss stills. The same format drives FFRK's spell effects, which come next.
+- `pnpm -F web sprites:enemies` builds the sheets (`public/sprites/enemies/`, `enemy-sprites.gen.ts`) from the monster → sprite map; `pnpm -F web ffrk:names` names FFRK's numbered enemy sheets by matching them pixel-for-pixel with the Final Fantasy Wiki's FFRK images (749 of 1,292 named).
+- `.docs/ffrk-assets.md`: how the FFRK server assets were found, every URL pattern, the id scheme, the atlas and animation formats, where names come from, the spell-effect paths (`lang/ab/ability/<id>/…`, `lang/ab/effect_image/…` — confirmed live), and the tools.
+
+### Notes
+- Still placeholders (no FFRK art and no good stand-in yet): Baku, Zorn & Thorn, King Leo, Zenero/Benero, Axe Beak, Trick Sparrow, Zuu, Griffin, Drakan, Grimlock, Jabberwock, Gimme Cat, Necron and a few others.
+- Ark and Deathguise show both of their forms at once in idle (their rigs hold alternate forms) — to fix.
+
 ## [0.1.63] - 2026-10-15
 
 The run dock moves to the bottom centre.
