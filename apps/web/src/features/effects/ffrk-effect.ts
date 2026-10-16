@@ -113,6 +113,20 @@ const getJson = <T>(path: string): Promise<T | null> => {
   return jsonCache.get(url) as Promise<T | null>;
 };
 
+type AtlasFrame = { frame: { x: number; y: number; w: number; h: number }; trimmed?: boolean; spriteSourceSize?: object; sourceSize?: object; [k: string]: unknown };
+type AtlasJson = { frames: Record<string, AtlasFrame> | (AtlasFrame & { filename: string })[]; [k: string]: unknown };
+
+/**
+ * The atlas with every frame as just its packed rectangle. FFRK rigs size and place each part by its trimmed frame
+ * (a node's w×h is the crop), but Phaser draws a trimmed frame offset inside its untrimmed source box — which pushed
+ * a creature's arms and legs apart by each piece's trim offset.
+ */
+function untrimmed(atlas: AtlasJson): AtlasJson {
+  const fix = (f: AtlasFrame): AtlasFrame => ({ ...f, trimmed: false, spriteSourceSize: { x: 0, y: 0, w: f.frame.w, h: f.frame.h }, sourceSize: { w: f.frame.w, h: f.frame.h } });
+  const frames = Array.isArray(atlas.frames) ? atlas.frames.map((f) => ({ ...fix(f), filename: f.filename })) : Object.fromEntries(Object.entries(atlas.frames).map(([k, f]) => [k, fix(f)]));
+  return { ...atlas, frames };
+}
+
 /** Loaded effects per Phaser game (textures live in a game's texture manager, so a new game must load its own). */
 const assetCache = new WeakMap<Phaser.Game, Map<string, Promise<EffectAsset | null>>>();
 
@@ -194,7 +208,8 @@ async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | 
         const res = await assetFetch(assetOf(png)).catch(() => null);
         if (!res?.ok) return null;
         const blobUrl = URL.createObjectURL(await res.blob());
-        return { key: textureKey(png), blobUrl, atlas: atlas ? await getJson<object>(atlas) : null };
+        const json = atlas ? await getJson<AtlasJson>(atlas) : null;
+        return { key: textureKey(png), blobUrl, atlas: json ? untrimmed(json) : null };
       }),
   );
   let queued = 0;

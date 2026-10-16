@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.3] - 2026-10-16
+
+### Fixed
+- **Summon creatures (and other effects' pieces) were drawn pulled apart**: Ifrit's arms, legs and accessories each sat away from the body, all animating correctly.
+  - **Cause:** FFRK's atlases store each piece trimmed, as a small crop that remembers where it sat in a bigger source box (Ifrit's 12×10 leg piece sits at (65, 17) in a 93×93 box). FFRK's rigs size and place pieces by the crop itself, but Phaser draws a trimmed frame offset inside its source box, so each piece moved by its own trim offset.
+  - **Fix:** atlases now load into Phaser as plain rectangles, with the trim dropped.
+  - **Scope:** checked across every effect the game uses (237 rigs, 1,454 atlas-drawn parts): 1,425 parts are sized exactly to their trimmed crop, and 1,412 crops are trimmed. So pieces in many other effects were also slightly misplaced, and are now where FFRK puts them.
+
 ## [0.2.2] - 2026-10-16
 
 Every party command and most monster special moves play an FFRK effect, summons bring their creature on screen, and the effects gallery's "FF9 moves" tab lists every pick to check and swap.
