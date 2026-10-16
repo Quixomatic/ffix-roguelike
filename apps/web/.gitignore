@@ -61,3 +61,6 @@ dev-dist
 
 !.env.schema
 /src/env.ts
+
+# Packed assets (pnpm -F web assets:pack) — uploaded to R2, never committed
+.assets/

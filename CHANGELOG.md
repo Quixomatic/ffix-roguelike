@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.101] - 2026-10-16
+
+A local command packs the game's assets, one pack per asset class, ready to upload to R2.
+
+### Added
+- **`pnpm -F web assets:pack [class…]`** (`scripts/pack-assets.ts`): packs the shipped assets from their local build outputs into `apps/web/.assets/packs/` with a `manifest.json` (git-ignored). Classes:
+  - **heroes**, **weapons**, **items**, **ui**, **enemies**: the built sprites.
+  - **effects**: only the FFRK effect files the game can play. That is `usedEffectPaths()` plus everything they reference (particles, frame animations, images and their atlases, sounds); 589 files, 7 MB, out of the 4 GB library. It warns about any referenced file that isn't downloaded.
+  - **music**: one pack per track ("music/music006"), so a track downloads the first time it plays, not with the whole soundtrack.
+- **Re-run it whenever local files change**:
+  - Pack names carry a hash of their contents, so only packs whose contents changed are rewritten; the rest print "unchanged". Old versions are removed.
+  - `assets:pack effects` repacks one class and keeps the others in the manifest.
+  - A full pack takes under a second: 25 packs, 69.5 MB.
+- **Pack format** (`src/lib/asset-pack.ts`): a small header (each file's path, type and position) followed by the files' bytes, plus `readPack()` for the browser loader that will fill the asset cache from them.
+
 ## [0.1.100] - 2026-10-16
 
 Players can set an avatar, stored in the R2 bucket.
