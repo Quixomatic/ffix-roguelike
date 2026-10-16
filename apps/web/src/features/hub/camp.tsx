@@ -13,16 +13,16 @@ import {
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-
-import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { HelpCard } from "@/components/help-card";
+import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { itemName } from "@/features/run/item-info";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
-import { CampShop } from "./camp-shop";
+import { CampShops } from "./camp-shop";
 import { CharacterSheet } from "./character-sheet";
 
 /** Between runs: roster (spend CP, gear, abilities), party picker, difficulty tier, shop and workshop. */
@@ -197,19 +197,18 @@ export function Camp() {
 
       {Object.keys(supplies).length > 0 && <StashList title="Packed for your next run" entries={Object.entries(supplies)} />}
 
-      {between && <CampShop profile={p} />}
+      {between && <CampShops profile={p} />}
 
       {sheet && <CharacterSheet build={p.builds[sheet]!} onClose={() => setSheet(null)} />}
 
-      <div className="ff-window p-3 text-sm leading-relaxed">
-        <div className="ff-title mb-1">How runs work</div>
+      <HelpCard id="camp-how-runs-work" title="How runs work">
         Pick a journey: a campaign of overworld maps, each ending in a boss castle — the last castle holds the journey's final boss. Story journeys follow FF9 and recruit a new party member when cleared. You start alone with Zidane;
         companions join your roster as you progress. Inside a run, characters level up normally from their start level. When the run ends,
         levels reset and everyone who came earns Completion Points (+1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win) — spend them here on a
         higher start level or on unlocking equipment slots (each starts runs with that character's FF9 starter gear, and can hold what they
         find). Gear teaches abilities while equipped; fill their AP to learn them forever. Win a run and all the gear you found is unlocked
         into future runs; banked gil unlocks more from the gear catalog, and achievements unlock the legendary pieces.
-      </div>
+      </HelpCard>
     </div>
   );
 }

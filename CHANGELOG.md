@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.90] - 2026-10-16
+
+The camp's shops are two big buttons with their own windows, and "How runs work" is a dismissible help card.
+
+### Changed
+- **Supplies** and **Gear catalog** are two big buttons on the camp page (icon tile, title, what they're for); each opens its own window like the character sheet — banked gil in the header, the items as cards, Escape or clicking outside closes it. Replaces the inline shop panel with its tabs.
+- **"How runs work"** is a help card pinned to the top-right corner instead of a block at the bottom of the page. ✕ dismisses it — remembered in this browser — and a small "?" button brings it back.
+
+### Added
+- `components/game-dialog.tsx` — **`GameDialog`**, the reusable full-screen FF window (title, header content, close; scrolling body; Escape/outside click closes).
+- `components/help-card.tsx` — **`HelpCard`**, dismissible corner help remembered per id in localStorage.
+
 ## [0.1.89] - 2026-10-16
 
 Items and abilities say what they do — in FF9's own words and with their exact effect.
