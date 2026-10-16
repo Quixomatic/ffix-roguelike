@@ -66,7 +66,12 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
       onClose={onClose}
       tab={tab}
       onTab={setTab}
-      doll={<DollFigure heroKey={build.key} slots={slots} selected={slot} onSelect={pickSlot} />}
+      doll={
+        <div className="flex flex-col gap-3">
+          <DollFigure heroKey={build.key} slots={slots} selected={slot} onSelect={pickSlot} />
+          <EquipmentList slots={slots} selected={slot} onSelect={pickSlot} />
+        </div>
+      }
       tabs={[
         {
           id: "stats",
@@ -81,17 +86,12 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
           id: "equipment",
           label: "Equipment",
           content: (
-            <div className="flex flex-col gap-3">
-              <Panel title="Starting gear" right={<span className="opacity-70">every run begins with this</span>}>
-                <EquipmentList slots={slots} selected={slot} onSelect={setSlot} />
-              </Panel>
-              {slot && (
-                <div className="rounded bg-black/25 p-3 text-sm opacity-80">
-                  {SLOT_META[slot].label}: gear isn't chosen here — {char.name} starts every run with the starter gear in each open slot, and equips what they find
-                  along the way.
-                </div>
-              )}
-            </div>
+            <Panel title={slot ? `${SLOT_META[slot].label}` : "Starting gear"} right={<span className="opacity-70">every run begins with this</span>}>
+              <div className="text-sm opacity-80">
+                Gear isn't chosen at camp — {char.name} starts every run with the starter gear in each open slot (unlock more slots in Progress), and equips
+                what they find along the way. Select a slot on the left to see what's in it.
+              </div>
+            </Panel>
           ),
         },
         {

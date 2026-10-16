@@ -49,7 +49,12 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
       onClose={onClose}
       tab={tab}
       onTab={setTab}
-      doll={<DollFigure heroKey={keyName} slots={slots} selected={slot} onSelect={pickSlot} variant={m.statuses?.includes("blind") ? "blind" : null} />}
+      doll={
+        <div className="flex flex-col gap-3">
+          <DollFigure heroKey={keyName} slots={slots} selected={slot} onSelect={pickSlot} variant={m.statuses?.includes("blind") ? "blind" : null} />
+          <EquipmentList slots={slots} selected={slot} onSelect={pickSlot} />
+        </div>
+      }
       tabs={[
         {
           id: "stats",
@@ -65,9 +70,7 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
           label: "Equipment",
           content: (
             <div className="flex flex-col gap-3">
-              <Panel title="Equipped" right={<span className="opacity-70">select a slot to change it</span>}>
-                <EquipmentList slots={slots} selected={slot} onSelect={setSlot} />
-              </Panel>
+              {!slot && <div className="rounded bg-black/25 p-3 text-sm opacity-80">Select a slot on the left to swap its gear.</div>}
               {slot && (
                 <GearPicker
                   title={`${SLOT_META[slot].label} — gear you're carrying`}

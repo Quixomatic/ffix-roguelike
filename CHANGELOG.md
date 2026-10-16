@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.56] - 2026-10-15
+
+The equipment list is back under the paperdoll.
+
+### Changed
+- The left column of the character sheet shows the paperdoll **and** the equipped list under it (icon, name, stats, abilities taught, notes), as before v0.1.55. Clicking a slot or a row opens the **Equipment** tab, which now holds just the gear choices for that slot (with stat comparisons) in a run, or a note at camp.
+
 ## [0.1.55] - 2026-10-15
 
 The character sheet is a proper window: fixed header, paperdoll on the left, tabs on the right, and only the body scrolls.
