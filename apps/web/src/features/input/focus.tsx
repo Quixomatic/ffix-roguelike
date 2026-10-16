@@ -27,8 +27,6 @@ function useMergedRef<T>(inner: RefObject<T | null>, outer: Ref<T> | undefined) 
 }
 
 const keysMode = () => document.documentElement.dataset.input === "keys";
-/** Until when focus moves are silent: the cursor placed on a new page for you shouldn't tick (only moves you make do). */
-let quietUntil = 0;
 
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
 export function FocusItem({
@@ -46,12 +44,12 @@ export function FocusItem({
   const { ref, focusSelf, focused } = useFocusable<object, HTMLElement>({
     focusKey,
     onArrowPress: onArrow ? (direction) => onArrow(direction) : undefined,
-    onFocus: (layout) => {
-      // Keyboard / controller: bring it into view and tick (the mouse already shows where it is).
-      if (keysMode()) {
-        (layout.node as HTMLElement | undefined)?.scrollIntoView({ block: "nearest", inline: "nearest" });
-        if (performance.now() >= quietUntil) uiSound("cursor");
-      }
+    onFocus: (layout, _props, details) => {
+      // Keyboard / controller: bring it into view (the mouse already shows where it is).
+      if (keysMode()) (layout.node as HTMLElement | undefined)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+      // Tick only for a move the player made: Norigin passes the key event that moved the cursor. Placing it by code
+      // (arriving on a page, the mouse hovering) has no event, so it's silent.
+      if (details?.event) uiSound("cursor");
       onFocus?.();
     },
   });
@@ -91,10 +89,7 @@ export function FocusSection({
     isFocusBoundary: boundary,
   });
   useEffect(() => {
-    if (!autoFocus) return;
-    // Placing the cursor on arrival is silent (Norigin focuses on its own schedule, so allow a moment).
-    quietUntil = performance.now() + 250;
-    focusSelf();
+    if (autoFocus) focusSelf();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const child = children;

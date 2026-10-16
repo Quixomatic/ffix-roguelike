@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.30] - 2026-10-16
+
+### Fixed
+- **Arriving on a page still ticked** (v0.2.29 silenced only the first quarter-second, and the Play hub places the cursor once its data has loaded, later than that). The tick now follows the cause, not a timer: Norigin passes the key event that moved the cursor, so a move made by a key (or the controller) ticks, and a placement by code (arriving on a page, the mouse hovering) has no event and is silent. The first arrow press on a page, which places the cursor, passes its event and ticks.
+
 ## [0.2.29] - 2026-10-16
 
 ### Fixed

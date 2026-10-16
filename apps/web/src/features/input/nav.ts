@@ -91,7 +91,8 @@ export function startNav() {
       const cur = getCurrentFocusKey();
       if (!cur || !doesFocusableExist(cur)) {
         e.stopImmediatePropagation();
-        void setFocus(doesFocusableExist(PAGE_FOCUS) ? PAGE_FOCUS : SIDEBAR_FOCUS);
+        // A key press placed it: pass the event, so it ticks like any move the player makes.
+        void setFocus(doesFocusableExist(PAGE_FOCUS) ? PAGE_FOCUS : SIDEBAR_FOCUS, { event: e });
       }
     },
     true,
