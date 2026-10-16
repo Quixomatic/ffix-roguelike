@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.55] - 2026-10-15
+
+The character sheet is a proper window: fixed header, paperdoll on the left, tabs on the right, and only the body scrolls.
+
+### Changed
+- **Character sheet layout** (camp and in-run, one shared window): the header (name, level, CP, close) stays put; the paperdoll figure fills the left column; the right side has tabs, and each side scrolls on its own. The window is wider (95% of the screen, up to 1400 px) and 90% tall.
+- **Tabs**: **Stats** (HP/MP as bars — current/max in a run — an EXP bar, Strength/Magic/Spirit/Speed as bars against FF9's caps, Attack/Defence/Evade/M.Defence/M.Evade/Stones as cells, lasting statuses), **Equipment** (the equipped list; clicking a slot on the doll opens this tab with that slot's gear choices and their stat comparisons), **Abilities**, **Support** (stone meter), and **Progress** at camp (start level, gear slots, record) or **Items** in a run (field items on this character).
+- The doll shows Blind's glasses when the character is blinded.
+
 ## [0.1.54] - 2026-10-15
 
 Dev tools for balance testing: put any character on (or off) your roster, and grant Completion Points and gil.
