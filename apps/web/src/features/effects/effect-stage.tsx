@@ -11,6 +11,8 @@ const TARGET_URL = "sprites/enemies/enemy-109010.png";
 class StageScene extends Phaser.Scene {
   player?: FfrkEffectPlayer;
   private token = 0;
+  private target?: Phaser.GameObjects.Sprite;
+  private showing: { path: string | null; speed: number } = { path: null, speed: 1 };
   constructor() {
     super("effect-stage");
   }
@@ -18,11 +20,17 @@ class StageScene extends Phaser.Scene {
     this.load.spritesheet("stage-target", assetUrl(TARGET_URL), { frameWidth: 64, frameHeight: 64 });
   }
   create() {
-    this.add.sprite(this.scale.width / 2, this.scale.height / 2, "stage-target", 0).setScale(3);
+    this.target = this.add.sprite(this.scale.width / 2, this.scale.height / 2, "stage-target", 0).setScale(3);
+    // The stage follows its panel's size: keep the target and the effect centred.
+    this.scale.on(Phaser.Scale.Events.RESIZE, () => {
+      this.target?.setPosition(this.scale.width / 2, this.scale.height / 2);
+      void this.show(this.showing.path, this.showing.speed);
+    });
     this.game.events.emit("stage-ready");
   }
   async show(path: string | null, speed: number) {
     const token = ++this.token;
+    this.showing = { path, speed };
     this.player?.destroy();
     this.player = undefined;
     if (path == null) return;

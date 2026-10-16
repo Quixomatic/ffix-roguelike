@@ -276,7 +276,7 @@ export function EffectsGallery() {
   const canAssign = !!selected && selected.key !== targetItem?.key;
 
   return (
-    <div className="grid h-[calc(100vh-4rem)] grid-cols-[28rem_1fr_30rem] gap-3 p-3">
+    <div className="grid h-[calc(100vh-4rem)] grid-cols-[28rem_minmax(0,1fr)_30rem] gap-3 p-3">
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
         <div className="flex gap-1">
           {(Object.keys(TAB_LABEL) as Tab[]).map((t) => (
@@ -337,7 +337,7 @@ export function EffectsGallery() {
         )}
       </div>
 
-      <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
+      <div className="ff-window flex min-h-0 min-w-0 flex-col gap-2 p-2">
         <div className="flex flex-wrap items-center gap-1.5 text-sm">
           <span className="ff-display mr-2 text-lg">{selected?.label || (target ? `${target.name} — plays nothing` : "Pick a move or an effect")}</span>
           {phaseKeys.map((p) => (

@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.7] - 2026-10-16
+
+### Fixed
+- Effects gallery: the middle (stage) panel now shrinks to fit between the wider sidebars instead of pushing the right sidebar off screen. The grid column could not shrink below the Phaser canvas, and the canvas sized itself to the column. The stage also keeps the target and effect centred when it resizes.
+
 ## [0.2.6] - 2026-10-16
 
 ### Changed
