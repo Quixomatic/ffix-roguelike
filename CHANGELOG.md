@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.80] - 2026-10-16
+
+Stealing shows what happened.
+
+### Fixed
+- **Steal didn't say what it took or whether it failed.** A successful steal now pops "Stole Potion!" (the item's name) over the monster and in the banner; a failed one pops "Miss" over the monster, with FF9's reason in the banner — "Couldn't steal anything" or "Doesn't have anything!".
+- **Battle result messages appeared as the action started** (and the action's name banner could hide them). Messages now wait until the action's effect has landed.
+
 ## [0.1.79] - 2026-10-16
 
 ### Changed

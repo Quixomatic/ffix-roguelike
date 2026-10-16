@@ -1,4 +1,5 @@
 import { autoCommand, BattleEngine, TICKS_PER_SECOND, type BattleCommand, type BattleEvent, type BattleState } from "@ffix-roguelike/game-core";
+import { findItem } from "@ffix-roguelike/game-data";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useSettings } from "@/features/settings/use-settings";
@@ -52,11 +53,16 @@ export function useBattle(
           clearTimeout(bannerTimer);
           bannerTimer = setTimeout(() => setBanner(null), 1100);
         }
-        const msg = all.findLast((e) => e.type === "message");
-        if (msg && msg.type === "message") {
-          setBanner(msg.text);
-          clearTimeout(bannerTimer);
-          bannerTimer = setTimeout(() => setBanner(null), 1400);
+        // Results ("Stole Potion!", "Couldn't steal anything", "Not enough MP"…) show once the action's effect lands.
+        const msg = all.findLast((e) => e.type === "message" || (e.type === "steal" && e.itemId != null));
+        const text = msg?.type === "message" ? msg.text : msg?.type === "steal" && msg.itemId != null ? `Stole ${findItem(msg.itemId)?.name ?? "an item"}!` : null;
+        if (text) {
+          const wait = Math.max(0, (optsRef.current.settleAt?.() ?? 0) - Date.now());
+          setTimeout(() => {
+            setBanner(text);
+            clearTimeout(bannerTimer);
+            bannerTimer = setTimeout(() => setBanner(null), 1600);
+          }, wait);
         }
       }
       setVersion((v) => v + 1);

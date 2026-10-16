@@ -3,7 +3,7 @@
  * this scene only reads state and plays effects; clicks on units are reported back for targeting.
  */
 import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
-import { bestiary } from "@ffix-roguelike/game-data";
+import { bestiary, findItem } from "@ffix-roguelike/game-data";
 import Phaser from "phaser";
 
 import { playActionEffect, preloadEffects } from "@/features/effects/battle-effects";
@@ -500,7 +500,9 @@ export class BattleScene extends Phaser.Scene {
         this.cameras.main.flash(250, 255, 120, 200);
         break;
       case "steal":
-        if (ev.itemId != null) this.popup(ev.actorId, "Stole!", "#ffe066", popupIndex);
+        // Over the target, when the steal lands: what was taken, or that it failed (the banner says why).
+        if (ev.itemId != null) this.popup(ev.targetId, `Stole ${findItem(ev.itemId)?.name ?? "it"}!`, "#ffe066", popupIndex, false, 20);
+        else this.popup(ev.targetId, "Miss", "#dddddd", popupIndex);
         break;
       case "ko": {
         const v = this.views.get(ev.targetId);
