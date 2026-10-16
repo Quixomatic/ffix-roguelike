@@ -32,6 +32,66 @@ export function gearSummary(item: ItemData): string {
   return parts.join(" · ");
 }
 
+/** "gradualPetrify" → "Gradual Petrify". */
+export const statusName = (s: string) => s.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
+
+const TARGET_TEXT: Record<string, string> = {
+  singleAlly: "one ally",
+  singleEnemy: "one enemy",
+  singleAny: "one target",
+  manyAlly: "one ally or all allies",
+  manyEnemy: "one enemy or all enemies",
+  manyAny: "one target or a whole side",
+  allAlly: "all allies",
+  allEnemy: "all enemies",
+  everyone: "everyone",
+  self: "yourself",
+};
+
+/**
+ * What a consumable does, exactly, from the data the battle engine uses (its FF9 battle script, power, statuses,
+ * targets) — e.g. "Restores 150 HP · one target", "Cures Silence · one target". Empty for gear.
+ */
+export function itemEffectText(item: ItemData): string {
+  const fx = item.effect;
+  if (!fx || item.kind !== "item") return "";
+  const st = fx.statuses.map(statusName).join(", ");
+  const what: Record<number, string> = {
+    62: `Cures ${st || "Petrify"}; crumbles stone monsters`,
+    69: `Restores ${15 * fx.power} HP`,
+    70: `Restores ${15 * fx.power} MP`,
+    71: "Fully restores HP and MP",
+    72: "Revives a KO'd ally with a little HP",
+    73: `Cures ${st}`,
+    74: `Restores ${fx.power} × (number carried + 1) HP`,
+    75: `Deals ${fx.power} × (number carried + 1) damage`,
+    76: `Restores half of max HP and MP${st ? `; may cause ${st}` : ""}`,
+    77: "Deals 9,999 damage",
+  };
+  const main = what[fx.scriptId] ?? (st ? `Inflicts ${st}` : "");
+  const target = TARGET_TEXT[fx.targets];
+  return [main, target].filter(Boolean).join(" · ");
+}
+
+/** FF9's own help line, with the words FF9 highlights (`{Word}`) in yellow. */
+export function HelpText({ text, className = "" }: { text?: string; className?: string }) {
+  if (!text) return null;
+  const parts = text.split(/(\{[^}]+\})/);
+  return (
+    <span className={`block ${className}`}>
+      {parts.map((p, i) =>
+        p.startsWith("{") && p.endsWith("}") ? (
+          <span key={i} className="text-yellow-200">
+            {p.slice(1, -1)}
+          </span>
+        ) : (
+          p
+        ),
+      )}
+    </span>
+  );
+}
+
 const KIND_LABEL: Record<string, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory", item: "Item" };
 
 /**
@@ -69,7 +129,12 @@ export function ItemCard({
         </span>
         <span className="ff-title">{KIND_LABEL[item.kind] ?? item.kind}</span>
       </div>
-      <div className="text-sm text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
+      {item.kind === "item" ? (
+        <div className="text-sm text-[#c8d0ff]">{itemEffectText(item) || "—"}</div>
+      ) : (
+        <div className="text-sm text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
+      )}
+      <HelpText text={item.help} className="text-xs opacity-80" />
       {item.abilities.length > 0 && <div className="text-sm text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</div>}
       {who.length > 0 && who.length < 12 && <div className="text-xs opacity-70">{who.join(", ")}</div>}
       {party && item.kind !== "item" && <PartyGearDeltas party={party} itemId={itemId} />}

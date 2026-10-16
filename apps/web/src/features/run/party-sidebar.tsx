@@ -4,7 +4,7 @@ import { findItem, getCharacter, MAX_LEVEL } from "@ffix-roguelike/game-data";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
-import { itemName } from "./item-info";
+import { itemEffectText, itemName } from "./item-info";
 import type { RunActions } from "./use-run";
 
 /** Consumables that work outside battle (Potion, Hi-Potion, Ether, Elixir, Phoenix Down — FF9 script ids). */
@@ -127,7 +127,7 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
             <button
               key={c.itemId}
               className="flex items-center gap-0.5 rounded border border-white/20 bg-black/25 px-1 text-xs hover:brightness-125 disabled:opacity-50"
-              title={`Use ${itemName(c.itemId)} on ${getCharacter(m.build.key).name}`}
+              title={`Use ${itemName(c.itemId)} on ${getCharacter(m.build.key).name}${findItem(c.itemId) ? ` — ${itemEffectText(findItem(c.itemId)!)}` : ""}`}
               disabled={actions.useItem.isPending}
               onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: m.build.key })}
             >

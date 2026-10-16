@@ -20,7 +20,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Cinna’s hammer."
  },
  {
   "id": 1,
@@ -45,7 +46,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon used by thieves."
  },
  {
   "id": 2,
@@ -73,7 +75,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon originally used for combating mages. Add ST: {Silence}."
  },
  {
   "id": 3,
@@ -98,7 +101,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Thief’s dagger made of mythril."
  },
  {
   "id": 4,
@@ -126,7 +130,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Light dagger that is easy to handle. Add ST: {Slow}."
  },
  {
   "id": 5,
@@ -151,7 +156,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Popular weapon among thieves."
  },
  {
   "id": 6,
@@ -186,7 +192,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "The most powerful thief’s dagger."
  },
  {
   "id": 7,
@@ -214,7 +221,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Standard thief’s sword. Add ST: {Silence}."
  },
  {
   "id": 8,
@@ -241,7 +249,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Standard thief’s sword. Add ST: {Darkness}."
  },
  {
   "id": 9,
@@ -269,7 +278,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made by processing trouble knife. Add ST: {Trouble}."
  },
  {
   "id": 10,
@@ -296,7 +306,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Also known as ‘The Viper.’ Add ST: {Poison}."
  },
  {
   "id": 11,
@@ -323,7 +334,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon with an angel’s spirit dwelling inside. Add ST: {Confuse}."
  },
  {
   "id": 12,
@@ -350,7 +362,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made by processing ‘Epitaph’s Fragment.’ Add ST: {Petrify}."
  },
  {
   "id": 13,
@@ -387,7 +400,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword from a foreign land. Add ST: {Doom}."
  },
  {
   "id": 14,
@@ -415,7 +429,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon that defines a great thief. Add ST: {Mini}."
  },
  {
   "id": 15,
@@ -442,7 +457,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Considered the most powerful weapon in the world. Add ST: {Sleep}."
  },
  {
   "id": 16,
@@ -469,7 +485,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Ordinary sword used in combat."
  },
  {
   "id": 17,
@@ -496,7 +513,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made of iron."
  },
  {
   "id": 18,
@@ -523,7 +541,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made of mythril."
  },
  {
   "id": 19,
@@ -550,7 +569,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword varnished with blood."
  },
  {
   "id": 20,
@@ -581,7 +601,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon with an ice spirit dwelling inside. Elem-Atk: {Ice}. Add ST: {Freeze}."
  },
  {
   "id": 21,
@@ -610,7 +631,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made of coral. Elem-Atk: {Thunder}."
  },
  {
   "id": 22,
@@ -637,7 +659,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword made of diamond."
  },
  {
   "id": 23,
@@ -668,7 +691,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon with a fire spirit dwelling inside. Elem-Atk: {Fire}. Add ST: {Heat}."
  },
  {
   "id": 24,
@@ -697,7 +721,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon that has Rune inscriptions. Add ST: {Darkness}."
  },
  {
   "id": 25,
@@ -737,7 +762,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword possessing a guardian angel. Elem-Def: {Ice/Thunder} damage reduced by 50%."
  },
  {
   "id": 26,
@@ -772,7 +798,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long sword used by holy knights. Elem-Def: {Fire} damage reduced by 50%."
  },
  {
   "id": 27,
@@ -799,7 +826,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Sword that can only be used by chosen knights. Add ST: {Sleep}."
  },
  {
   "id": 28,
@@ -826,7 +854,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Light sword used by holy knights. Elem-Atk: {Holy}."
  },
  {
   "id": 29,
@@ -854,7 +883,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Knight sword bearing divine inscriptions. Add ST: {Slow}."
  },
  {
   "id": 30,
@@ -883,7 +913,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "The ultimate sword, used by a legendary king. It was forged in another world. Elem-Atk: {Holy}."
  },
  {
   "id": 31,
@@ -908,7 +939,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear used by dragon knights."
  },
  {
   "id": 32,
@@ -933,7 +965,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear made of mythril."
  },
  {
   "id": 33,
@@ -959,7 +992,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear adorned with brilliant gems, originally made as a decoration."
  },
  {
   "id": 34,
@@ -988,7 +1022,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear made of ice. Elem-Atk: {Ice}. Add ST: {Freeze}."
  },
  {
   "id": 35,
@@ -1015,7 +1050,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Also known as ‘The Spear of Enchantment.’ Add ST: {Darkness}."
  },
  {
   "id": 36,
@@ -1042,7 +1078,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Heavy weapon that can deal massive damage. Add ST: {Stop}."
  },
  {
   "id": 37,
@@ -1070,7 +1107,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear made from a magic stone. Add ST: {Petrify}."
  },
  {
   "id": 38,
@@ -1098,7 +1136,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Holy spear. Elem-Atk: {Holy}."
  },
  {
   "id": 39,
@@ -1127,7 +1166,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Spear from the distant past. Add ST: {Confuse}."
  },
  {
   "id": 40,
@@ -1152,7 +1192,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary spear made from the dragon king’s hair. It is known as ‘The Divider of Heaven.’"
  },
  {
   "id": 41,
@@ -1178,7 +1219,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Ordinary claws used for combat."
  },
  {
   "id": 42,
@@ -1206,7 +1248,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Combat knuckles. Add ST: {Poison}."
  },
  {
   "id": 43,
@@ -1232,7 +1275,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Claws made of mythril."
  },
  {
   "id": 44,
@@ -1260,7 +1304,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon with deadly venom on the tip. Add ST: {Venom}."
  },
  {
   "id": 45,
@@ -1288,7 +1333,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon made from a dragon’s claw. Elem-Atk: {Water}."
  },
  {
   "id": 46,
@@ -1314,7 +1360,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long, sharp claws."
  },
  {
   "id": 47,
@@ -1342,7 +1389,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Powerful claws that can kill opponents with one hit. Add ST: {Death Blow}."
  },
  {
   "id": 48,
@@ -1373,7 +1421,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Claws with a wind spirit dwelling inside. Elem-Atk: {Wind}. Add ST: {Trouble}."
  },
  {
   "id": 49,
@@ -1402,7 +1451,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon once used by a legendary hero. Add ST: {Berserk}."
  },
  {
   "id": 50,
@@ -1431,7 +1481,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary combat claws that use the power of darkness to unleash a destructive force beyond imagination. Add ST: {Darkness}."
  },
  {
   "id": 51,
@@ -1460,7 +1511,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long-range combat racket. Elem-Atk: {Wind}."
  },
  {
   "id": 52,
@@ -1490,7 +1542,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long-range weapon that holds mysterious powers. Elem-Atk: {Wind}."
  },
  {
   "id": 53,
@@ -1532,7 +1585,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long-range weapon that holds magic powers. Elem-Atk: {Wind}. Raises {Holy} Elem-Atk."
  },
  {
   "id": 54,
@@ -1562,7 +1616,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long-range weapon made of mythril. Elem-Atk: {Wind}."
  },
  {
   "id": 55,
@@ -1591,7 +1646,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Long-range holy racket. Elem-Atk: {Wind}."
  },
  {
   "id": 56,
@@ -1619,7 +1675,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "The most powerful long-range racket. Elem-Atk: {Wind}."
  },
  {
   "id": 57,
@@ -1646,7 +1703,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Combat rod."
  },
  {
   "id": 58,
@@ -1673,7 +1731,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Rod made of mythril."
  },
  {
   "id": 59,
@@ -1712,7 +1771,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Rod adorned with beautiful stars. Elem-Def: {Shadow} damage reduced by 50%."
  },
  {
   "id": 60,
@@ -1739,7 +1799,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon that can restore the target’s HP."
  },
  {
   "id": 61,
@@ -1768,7 +1829,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Holy Rod. Elem-Atk: {Holy}."
  },
  {
   "id": 62,
@@ -1795,7 +1857,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Rod used by mages."
  },
  {
   "id": 63,
@@ -1821,7 +1884,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary weapon that holds powerful magic."
  },
  {
   "id": 64,
@@ -1848,7 +1912,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Flute with a golem’s power dwelling inside."
  },
  {
   "id": 65,
@@ -1875,7 +1940,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Flute with Lamia’s power dwelling inside."
  },
  {
   "id": 66,
@@ -1902,7 +1968,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Flute with an angel’s power dwelling inside."
  },
  {
   "id": 67,
@@ -1929,7 +1996,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Flute that holds magic powers."
  },
  {
   "id": 68,
@@ -1956,7 +2024,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Flute with a siren’s power dwelling inside."
  },
  {
   "id": 69,
@@ -1983,7 +2052,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary flute that is said to enchant anyone who hears its tune."
  },
  {
   "id": 70,
@@ -2008,7 +2078,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff used by black mages."
  },
  {
   "id": 71,
@@ -2036,7 +2107,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff with a divine fire power dwelling inside. Elem-Atk: {Fire}."
  },
  {
   "id": 72,
@@ -2064,7 +2136,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff with a divine ice power dwelling inside. Elem-Atk: {Ice}."
  },
  {
   "id": 73,
@@ -2092,7 +2165,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff with a divine thunder power dwelling inside. Elem-Atk: {Thunder}."
  },
  {
   "id": 74,
@@ -2121,7 +2195,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff made from a legendary tree. Add ST: {Slow}."
  },
  {
   "id": 75,
@@ -2150,7 +2225,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Weapon that radiates a mysterious light. Add ST: {Confuse}."
  },
  {
   "id": 76,
@@ -2196,7 +2272,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff with a water god dwelling inside. Absorbs {Water/Wind} Elem-Atk. Add ST: {Trouble}. Raises {Water} Elem-Atk."
  },
  {
   "id": 77,
@@ -2224,7 +2301,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Staff that holds powerful magic. Add ST: {Silence}."
  },
  {
   "id": 78,
@@ -2251,7 +2329,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary staff that once belonged to a grand magician. Add ST: {Mini}."
  },
  {
   "id": 79,
@@ -2276,7 +2355,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Combat fork used by the Qu Clan."
  },
  {
   "id": 80,
@@ -2303,7 +2383,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Mysterious fork that causes the opposite effect of ‘Soft.’ Add ST: {Petrify}."
  },
  {
   "id": 81,
@@ -2328,7 +2409,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Fork made of mythril."
  },
  {
   "id": 82,
@@ -2355,7 +2437,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Fork made of silver. Add ST: {Slow}."
  },
  {
   "id": 83,
@@ -2382,7 +2465,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Popular fork among gourmands. Add ST: {Sleep}."
  },
  {
   "id": 84,
@@ -2409,7 +2493,8 @@
    "longRange": false
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Legendary fork known for its ability to crush anything. Add ST: {Stop}."
  },
  {
   "id": 85,
@@ -2430,7 +2515,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Throwing weapon used with the command ‘Throw.’ It cannot be equipped."
  },
  {
   "id": 86,
@@ -2451,7 +2537,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Throwing weapon, more powerful than the Pinwheel. It is used with the command ‘Throw’ and cannot be equipped."
  },
  {
   "id": 87,
@@ -2472,7 +2559,8 @@
    "longRange": true
   },
   "armor": null,
-  "effect": null
+  "effect": null,
+  "help": "Throwing weapon more powerful than the Rising Sun. It is used with the command ‘Throw’ and cannot be equipped."
  },
  {
   "id": 88,
@@ -2502,7 +2590,8 @@
    "magicDefence": 0,
    "magicEvade": 3
   },
-  "effect": null
+  "effect": null,
+  "help": "Regular wristlet."
  },
  {
   "id": 89,
@@ -2543,7 +2632,8 @@
    "magicDefence": 0,
    "magicEvade": 5
   },
-  "effect": null
+  "effect": null,
+  "help": "Wristlet that raises Spirit when equipped."
  },
  {
   "id": 90,
@@ -2586,7 +2676,8 @@
    "magicDefence": 0,
    "magicEvade": 7
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet made of glass. Elem-Def: {Water} damage reduced by 50%."
  },
  {
   "id": 91,
@@ -2628,7 +2719,8 @@
    "magicDefence": 0,
    "magicEvade": 9
   },
-  "effect": null
+  "effect": null,
+  "help": "Wristlet made from bones. Raises {Earth} Elem-Atk."
  },
  {
   "id": 92,
@@ -2668,7 +2760,8 @@
    "magicDefence": 0,
    "magicEvade": 11
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet made of mythril."
  },
  {
   "id": 93,
@@ -2704,7 +2797,8 @@
    "magicDefence": 1,
    "magicEvade": 16
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet packed with magic."
  },
  {
   "id": 94,
@@ -2747,7 +2841,8 @@
    "magicDefence": 0,
    "magicEvade": 14
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet adorned with Chimera wings. Elem-Def: {Holy} damage reduced by 100%."
  },
  {
   "id": 95,
@@ -2790,7 +2885,8 @@
    "magicDefence": 0,
    "magicEvade": 20
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet made in the dark world. Elem-Def: {Shadow} damage reduced by 100%."
  },
  {
   "id": 96,
@@ -2832,7 +2928,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet formerly worn by a ninja."
  },
  {
   "id": 97,
@@ -2875,7 +2972,8 @@
    "magicDefence": 2,
    "magicEvade": 27
   },
-  "effect": null
+  "effect": null,
+  "help": "Armlet made of jade. Raises {Holy} Elem-Atk."
  },
  {
   "id": 98,
@@ -2911,7 +3009,8 @@
    "magicDefence": 0,
    "magicEvade": 13
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves used by thieves."
  },
  {
   "id": 99,
@@ -2955,7 +3054,8 @@
    "magicDefence": 1,
    "magicEvade": 12
   },
-  "effect": null
+  "effect": null,
+  "help": "Wristlet made from dragon bones. Elem-Def: {Shadow} damage reduced by 50%."
  },
  {
   "id": 100,
@@ -2995,7 +3095,8 @@
    "magicDefence": 0,
    "magicEvade": 10
   },
-  "effect": null
+  "effect": null,
+  "help": "Wristlet guard that raises Strength when equipped."
  },
  {
   "id": 101,
@@ -3038,7 +3139,8 @@
    "magicDefence": 0,
    "magicEvade": 18
   },
-  "effect": null
+  "effect": null,
+  "help": "Bracer used by gamblers. Raises {Wind} Elem-Atk."
  },
  {
   "id": 102,
@@ -3072,7 +3174,8 @@
    "magicDefence": 0,
    "magicEvade": 2
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves made of bronze."
  },
  {
   "id": 103,
@@ -3108,7 +3211,8 @@
    "magicDefence": 0,
    "magicEvade": 5
   },
-  "effect": null
+  "effect": null,
+  "help": "Combat gloves. Elem-Def: {Ice} damage reduced by 50%."
  },
  {
   "id": 104,
@@ -3143,7 +3247,8 @@
    "magicDefence": 0,
    "magicEvade": 7
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves made of mythril."
  },
  {
   "id": 105,
@@ -3182,7 +3287,8 @@
    "magicDefence": 0,
    "magicEvade": 10
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves with a thunder god’s power dwelling inside. Elem-Def: {Thunder} damage reduced by 50%. Raises {Thunder} Elem-Atk."
  },
  {
   "id": 106,
@@ -3219,7 +3325,8 @@
    "magicDefence": 0,
    "magicEvade": 13
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves made of diamond. Elem-Def: {Water} damage reduced by 100%."
  },
  {
   "id": 107,
@@ -3254,7 +3361,8 @@
    "magicDefence": 1,
    "magicEvade": 26
   },
-  "effect": null
+  "effect": null,
+  "help": "Popular shield among soldiers."
  },
  {
   "id": 108,
@@ -3292,7 +3400,8 @@
    "magicDefence": 1,
    "magicEvade": 20
   },
-  "effect": null
+  "effect": null,
+  "help": "Protects you from various attacks. Elem-Def: {Fire/Ice/Thunder} damage reduced by 50%."
  },
  {
   "id": 109,
@@ -3326,7 +3435,8 @@
    "magicDefence": 0,
    "magicEvade": 17
   },
-  "effect": null
+  "effect": null,
+  "help": "Very famous brand of glove."
  },
  {
   "id": 110,
@@ -3361,7 +3471,8 @@
    "magicDefence": 0,
    "magicEvade": 10
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves worn exclusively by knights. Nulls {Fire} damage."
  },
  {
   "id": 111,
@@ -3400,7 +3511,8 @@
    "magicDefence": 0,
    "magicEvade": 7
   },
-  "effect": null
+  "effect": null,
+  "help": "Gloves worn by swordsmen. Elem-Def: {Fire/Earth/Water/Wind} damage reduced by 50%."
  },
  {
   "id": 112,
@@ -3430,7 +3542,8 @@
    "magicDefence": 6,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Not a suitable item to wear in combat."
  },
  {
   "id": 113,
@@ -3480,7 +3593,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Provides a southern, tropical feel."
  },
  {
   "id": 114,
@@ -3522,7 +3636,8 @@
    "magicDefence": 7,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hat that raises Spirit. Raises {Wind} Elem-Atk."
  },
  {
   "id": 115,
@@ -3561,7 +3676,8 @@
    "magicDefence": 9,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hats worn by mages."
  },
  {
   "id": 116,
@@ -3603,7 +3719,8 @@
    "magicDefence": 6,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Wearing it will make you popular. Elem-Def: {Water} damage reduced by 50%."
  },
  {
   "id": 117,
@@ -3644,7 +3761,8 @@
    "magicDefence": 10,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hat suited for mages. Raises {Ice} Elem-Atk."
  },
  {
   "id": 118,
@@ -3685,7 +3803,8 @@
    "magicDefence": 12,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Mysterious bandana that makes you light-footed."
  },
  {
   "id": 119,
@@ -3724,7 +3843,8 @@
    "magicDefence": 14,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hat that holds magic powers. Raises {Holy/Shadow} Elem-Atk."
  },
  {
   "id": 120,
@@ -3766,7 +3886,8 @@
    "magicDefence": 17,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Tiara worn by Lamia. Elem-Def: {Wind} damage reduced by 50%."
  },
  {
   "id": 121,
@@ -3808,7 +3929,8 @@
    "magicDefence": 16,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hat worn for ceremonies and festivals in Conde Petie."
  },
  {
   "id": 122,
@@ -3851,7 +3973,8 @@
    "magicDefence": 17,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Headband that raises Strength. Raises {Earth} Elem-Atk."
  },
  {
   "id": 123,
@@ -3892,7 +4015,8 @@
    "magicDefence": 19,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Draws on hidden strength."
  },
  {
   "id": 124,
@@ -3935,7 +4059,8 @@
    "magicDefence": 21,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Old hat, steeped in legend. Elem-Def: {Ice} damage reduced by 100%."
  },
  {
   "id": 125,
@@ -3976,7 +4101,8 @@
    "magicDefence": 23,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Improves movement."
  },
  {
   "id": 126,
@@ -4021,7 +4147,8 @@
    "magicDefence": 27,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hood from a foreign land. Elem-Def: {Fire/Thunder/Water} damage reduced by 50%."
  },
  {
   "id": 127,
@@ -4064,7 +4191,8 @@
    "magicDefence": 26,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Dark-red hat. Raises {Fire} Elem-Atk."
  },
  {
   "id": 128,
@@ -4107,7 +4235,8 @@
    "magicDefence": 32,
    "magicEvade": 2
   },
-  "effect": null
+  "effect": null,
+  "help": "Hairpin that holds magic powers. Raises {Water} Elem-Atk."
  },
  {
   "id": 129,
@@ -4150,7 +4279,8 @@
    "magicDefence": 35,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Coronet that radiates a mysterious light. Elem-Def: {Wind} damage reduced by 100%."
  },
  {
   "id": 130,
@@ -4193,7 +4323,8 @@
    "magicDefence": 37,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Holy hat. Raises {Thunder/Holy} Elem-Atk."
  },
  {
   "id": 131,
@@ -4236,7 +4367,8 @@
    "magicDefence": 33,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Extremely durable hat. Elem-Def: {Thunder} damage reduced by 100%."
  },
  {
   "id": 132,
@@ -4273,7 +4405,8 @@
    "magicDefence": 38,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hats for thieves."
  },
  {
   "id": 133,
@@ -4309,7 +4442,8 @@
    "magicDefence": 39,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Holy hat."
  },
  {
   "id": 134,
@@ -4354,7 +4488,8 @@
    "magicDefence": 47,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Known for providing great defense. Elem-Def: {Earth} damage reduced by 50%. Raises {Water} Elem-Atk."
  },
  {
   "id": 135,
@@ -4397,7 +4532,8 @@
    "magicDefence": 51,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Circlet protected by magic. Elem-Def: {Earth} damage reduced by 100%."
  },
  {
   "id": 136,
@@ -4433,7 +4569,8 @@
    "magicDefence": 5,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm worn by soldier trainees. Elem-Def: {Thunder} damage reduced by 50%."
  },
  {
   "id": 137,
@@ -4469,7 +4606,8 @@
    "magicDefence": 6,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of bronze. Elem-Def: {Water} damage reduced by 50%."
  },
  {
   "id": 138,
@@ -4504,7 +4642,8 @@
    "magicDefence": 7,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of iron."
  },
  {
   "id": 139,
@@ -4539,7 +4678,8 @@
    "magicDefence": 9,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Headgear that raises Spirit."
  },
  {
   "id": 140,
@@ -4576,7 +4716,8 @@
    "magicDefence": 11,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of mythril. Raises {Holy} Elem-Atk."
  },
  {
   "id": 141,
@@ -4612,7 +4753,8 @@
    "magicDefence": 13,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of gold."
  },
  {
   "id": 142,
@@ -4647,7 +4789,8 @@
    "magicDefence": 16,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm that raises Strength."
  },
  {
   "id": 143,
@@ -4682,7 +4825,8 @@
    "magicDefence": 20,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of diamond."
  },
  {
   "id": 144,
@@ -4719,7 +4863,8 @@
    "magicDefence": 23,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm made of platinum. Elem-Def: {Ice} damage reduced by 50%."
  },
  {
   "id": 145,
@@ -4753,7 +4898,8 @@
    "magicDefence": 26,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Helm that raises Strength and Magic."
  },
  {
   "id": 146,
@@ -4787,7 +4933,8 @@
    "magicDefence": 29,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Very famous brand of helmet."
  },
  {
   "id": 147,
@@ -4821,7 +4968,8 @@
    "magicDefence": 33,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "The greatest helmet."
  },
  {
   "id": 148,
@@ -4852,7 +5000,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Provides a southern, tropical feel."
  },
  {
   "id": 149,
@@ -4882,7 +5031,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Clothes made of leather."
  },
  {
   "id": 150,
@@ -4926,7 +5076,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Silk burns easily. Elem-Def: {Thunder} damage reduced by 50%."
  },
  {
   "id": 151,
@@ -4964,7 +5115,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Plate worn for combat. Elem-Def: {Ice} damage reduced by 50%."
  },
  {
   "id": 152,
@@ -5004,7 +5156,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Plate made of bronze."
  },
  {
   "id": 153,
@@ -5042,7 +5195,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Plate that provides brimming strength."
  },
  {
   "id": 154,
@@ -5084,7 +5238,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Vest braided with mythril. Elem-Def: {Water} damage reduced by 50%."
  },
  {
   "id": 155,
@@ -5127,7 +5282,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Very durable vest. Elem-Def: {Fire} damage reduced by 50%."
  },
  {
   "id": 156,
@@ -5165,7 +5321,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Cloak that holds magic powers. Raises {Ice} Elem-Atk."
  },
  {
   "id": 157,
@@ -5207,7 +5364,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Vest that raises Spirit."
  },
  {
   "id": 158,
@@ -5244,7 +5402,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Clothes that raise Strength."
  },
  {
   "id": 159,
@@ -5285,7 +5444,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Clothes from a foreign land."
  },
  {
   "id": 160,
@@ -5327,7 +5487,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Raises Strength."
  },
  {
   "id": 161,
@@ -5373,7 +5534,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe blessed by the earth god. Absorbs {Earth} Elem-Atk. Raises {Earth} Elem-Atk."
  },
  {
   "id": 162,
@@ -5417,7 +5579,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Supposedly, a vest that belonged to a demon. Elem-Def: {Shadow} damage reduced by 50%."
  },
  {
   "id": 163,
@@ -5453,7 +5616,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Plate worn by women."
  },
  {
   "id": 164,
@@ -5493,7 +5657,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Gear that makes you light-footed. Absorbs {Shadow} Elem-Atk."
  },
  {
   "id": 165,
@@ -5534,7 +5699,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Gear that raises Spirit."
  },
  {
   "id": 166,
@@ -5572,7 +5738,8 @@
    "magicDefence": 1,
    "magicEvade": 3
   },
-  "effect": null
+  "effect": null,
+  "help": "Suit worn by women. Elem-Def: {Thunder} damage reduced by 100%."
  },
  {
   "id": 167,
@@ -5611,7 +5778,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Extremely durable suit. Raises {Fire} Elem-Atk."
  },
  {
   "id": 168,
@@ -5649,7 +5817,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Ordinary robe."
  },
  {
   "id": 169,
@@ -5687,7 +5856,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe made of silk."
  },
  {
   "id": 170,
@@ -5725,7 +5895,8 @@
    "magicDefence": 3,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe made for mages."
  },
  {
   "id": 171,
@@ -5761,7 +5932,8 @@
    "magicDefence": 4,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe worn by Qus."
  },
  {
   "id": 172,
@@ -5800,7 +5972,8 @@
    "magicDefence": 4,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe made for white mages. Raises {Holy} Elem-Atk."
  },
  {
   "id": 173,
@@ -5839,7 +6012,8 @@
    "magicDefence": 4,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe made for black mages. Raises {Shadow} Elem-Atk."
  },
  {
   "id": 174,
@@ -5881,7 +6055,8 @@
    "magicDefence": 6,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Robe possessed by the spirit of light. Raises {Holy/Shadow} Elem-Atk."
  },
  {
   "id": 175,
@@ -5919,7 +6094,8 @@
    "magicDefence": 5,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "The greatest robe. Elem-Def: {Wind} damage reduced by 100%."
  },
  {
   "id": 176,
@@ -5939,7 +6115,8 @@
    "magicDefence": 27,
    "magicEvade": 17
   },
-  "effect": null
+  "effect": null,
+  "help": "Tin armor that looks like a toy."
  },
  {
   "id": 177,
@@ -5975,7 +6152,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made of bronze. Elem-Def: {Wind} damage reduced by 50%."
  },
  {
   "id": 178,
@@ -6009,7 +6187,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor packed with magic."
  },
  {
   "id": 179,
@@ -6046,7 +6225,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made with chains. Elem-Def: {Earth} damage reduced by 50%."
  },
  {
   "id": 180,
@@ -6083,7 +6263,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made of mythril. Elem-Def: {Water} damage reduced by 50%."
  },
  {
   "id": 181,
@@ -6118,7 +6299,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor that raises Spirit."
  },
  {
   "id": 182,
@@ -6152,7 +6334,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made of gold."
  },
  {
   "id": 183,
@@ -6190,7 +6373,8 @@
    "magicDefence": 5,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor that provides excellent protection. Elem-Def: {Fire/Ice/Thunder} damage reduced by 50%."
  },
  {
   "id": 184,
@@ -6228,7 +6412,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made in the dark world. Absorbs {Shadow} Elem-Atk. Raises {Shadow} Elem-Atk."
  },
  {
   "id": 185,
@@ -6262,7 +6447,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made of diamond."
  },
  {
   "id": 186,
@@ -6298,7 +6484,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made of platinum. Elem-Def: {Ice} damage reduced by 100%."
  },
  {
   "id": 187,
@@ -6332,7 +6519,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor protected by extraordinary powers."
  },
  {
   "id": 188,
@@ -6365,7 +6553,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor made from a dragon’s scale."
  },
  {
   "id": 189,
@@ -6400,7 +6589,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Very famous brand of armor."
  },
  {
   "id": 190,
@@ -6433,7 +6623,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Armor worn exclusively by knights."
  },
  {
   "id": 191,
@@ -6470,7 +6661,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "The greatest armor. Elem-Def: {Shadow} damage reduced by 50%"
  },
  {
   "id": 192,
@@ -6519,7 +6711,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Boots with good traction. Elem-Def: {Earth} damage reduced by 50%."
  },
  {
   "id": 193,
@@ -6564,7 +6757,8 @@
    "magicDefence": 0,
    "magicEvade": 6
   },
-  "effect": null
+  "effect": null,
+  "help": "Shoes packed with magic."
  },
  {
   "id": 194,
@@ -6611,7 +6805,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Boots that raise Strength. Raises {Earth} Elem-Atk."
  },
  {
   "id": 195,
@@ -6642,7 +6837,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Provides a southern, tropical feel."
  },
  {
   "id": 196,
@@ -6689,7 +6885,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Boots that are light as a feather. Absorbs {Earth} Elem-Atk."
  },
  {
   "id": 197,
@@ -6734,7 +6931,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Combat boots."
  },
  {
   "id": 198,
@@ -6779,7 +6977,8 @@
    "magicDefence": 0,
    "magicEvade": 4
   },
-  "effect": null
+  "effect": null,
+  "help": "Shoes that allow you to walk with light steps."
  },
  {
   "id": 199,
@@ -6817,7 +7016,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Anklet adorned with a four-leaf clover that raises Spirit."
  },
  {
   "id": 200,
@@ -6862,7 +7062,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Belt that raises Strength."
  },
  {
   "id": 201,
@@ -6909,7 +7110,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Belt that raises Strength. Raises {Wind} Elem-Atk."
  },
  {
   "id": 202,
@@ -6954,7 +7156,8 @@
    "magicDefence": 0,
    "magicEvade": 5
   },
-  "effect": null
+  "effect": null,
+  "help": "Buckle protected by mysterious powers."
  },
  {
   "id": 203,
@@ -7001,7 +7204,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring used as a charm since ancient times. Absorbs {Ice} Elem-Atk."
  },
  {
   "id": 204,
@@ -7048,7 +7252,8 @@
    "magicDefence": 3,
    "magicEvade": 2
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring with a fire god’s spirit dwelling inside. Absorbs {Fire} Elem-Atk."
  },
  {
   "id": 205,
@@ -7097,7 +7302,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring enchanted with the spell ‘Reflect.’"
  },
  {
   "id": 206,
@@ -7144,7 +7350,8 @@
    "magicDefence": 0,
    "magicEvade": 3
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring adorned by corals. Absorbs {Thunder} Elem-Atk."
  },
  {
   "id": 207,
@@ -7189,7 +7396,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring that raises Strength."
  },
  {
   "id": 208,
@@ -7236,7 +7444,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Ring with a phoenix’s power dwelling inside. Raises {Holy} Elem-Atk."
  },
  {
   "id": 209,
@@ -7290,7 +7499,8 @@
    "magicDefence": 3,
    "magicEvade": 6
   },
-  "effect": null
+  "effect": null,
+  "help": "Protects you from various attacks. Elem-Def: all elemental damage reduced by 50%."
  },
  {
   "id": 210,
@@ -7336,7 +7546,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "‘Put it together with the other piece.’ Absorbs {Holy/Shadow} Elem-Atk."
  },
  {
   "id": 211,
@@ -7379,7 +7590,8 @@
    "magicDefence": 2,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "‘Summon the beast from the dark.’"
  },
  {
   "id": 212,
@@ -7424,7 +7636,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Scarf that raises Strength."
  },
  {
   "id": 213,
@@ -7473,7 +7686,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Magic choker. Elem-Def: {Wind} damage reduced by 50%. Raises {Shadow} Elem-Atk."
  },
  {
   "id": 214,
@@ -7520,7 +7734,8 @@
    "magicDefence": 0,
    "magicEvade": 2
   },
-  "effect": null
+  "effect": null,
+  "help": "Earrings that raise Spirit. Raises {Wind} Elem-Atk."
  },
  {
   "id": 215,
@@ -7562,7 +7777,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Holy earrings worn by women. Raises {Holy} Elem-Atk."
  },
  {
   "id": 216,
@@ -7603,7 +7819,8 @@
    "magicDefence": 0,
    "magicEvade": 4
   },
-  "effect": null
+  "effect": null,
+  "help": "Rouge used by women that draws out Holy power. Elem-Def: {Holy} damage reduced by 50%. Raises {Water} Elem-Atk."
  },
  {
   "id": 217,
@@ -7634,7 +7851,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Provides a southern, tropical feel."
  },
  {
   "id": 218,
@@ -7673,7 +7891,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hair ornament enchanted with various powers, worn by women. Raises {Fire} Elem-Atk."
  },
  {
   "id": 219,
@@ -7712,7 +7931,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hair ornament enchanted with various powers, worn by women. Raises {Ice} Elem-Atk."
  },
  {
   "id": 220,
@@ -7751,7 +7971,8 @@
    "magicDefence": 1,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Hair ornament enchanted with various powers, worn by women. Raises {Thunder} Elem-Atk."
  },
  {
   "id": 221,
@@ -7804,7 +8025,8 @@
    "magicDefence": 1,
    "magicEvade": 4
   },
-  "effect": null
+  "effect": null,
+  "help": "Item that always keeps Mog beside you. Absorbs {Water/Wind} Elem-Atk. Elem-Def: {Fire/Ice/Thunder/Holy} damage reduced by 50%."
  },
  {
   "id": 222,
@@ -7843,7 +8065,8 @@
    "magicDefence": 1,
    "magicEvade": 3
   },
-  "effect": null
+  "effect": null,
+  "help": "Item that has a nice fragrance. Raises {Holy} Elem-Atk."
  },
  {
   "id": 223,
@@ -7882,7 +8105,8 @@
    "magicDefence": 0,
    "magicEvade": 0
   },
-  "effect": null
+  "effect": null,
+  "help": "Item that radiates a mysterious light. Raises {Shadow} Elem-Atk."
  },
  {
   "id": 224,
@@ -7919,7 +8143,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 225,
@@ -7956,7 +8181,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 226,
@@ -7993,7 +8219,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 227,
@@ -8030,7 +8257,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 228,
@@ -8068,7 +8296,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 229,
@@ -8105,7 +8334,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 230,
@@ -8142,7 +8372,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 231,
@@ -8179,7 +8410,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 232,
@@ -8216,7 +8448,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 233,
@@ -8253,7 +8486,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 234,
@@ -8290,7 +8524,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 235,
@@ -8327,7 +8562,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. Equip as an Add-on."
  },
  {
   "id": 236,
@@ -8348,7 +8584,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores 150 HP. The effect decreases if used in the field."
  },
  {
   "id": 237,
@@ -8369,7 +8606,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores 450 HP. The effect decreases if used in the field."
  },
  {
   "id": 238,
@@ -8390,7 +8628,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores 150 MP. The effect decreases if used in the field."
  },
  {
   "id": 239,
@@ -8411,7 +8650,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Fully restores HP and MP."
  },
  {
   "id": 240,
@@ -8434,7 +8674,8 @@
    "statuses": [
     "death"
    ]
-  }
+  },
+  "help": "Cures {KO}."
  },
  {
   "id": 241,
@@ -8457,7 +8698,8 @@
    "statuses": [
     "silence"
    ]
-  }
+  },
+  "help": "Cures {Silence}."
  },
  {
   "id": 242,
@@ -8481,7 +8723,8 @@
     "petrify",
     "gradualPetrify"
    ]
-  }
+  },
+  "help": "Cures {Petrify} and {Gradual Petrify}."
  },
  {
   "id": 243,
@@ -8505,7 +8748,8 @@
     "venom",
     "poison"
    ]
-  }
+  },
+  "help": "Cures {Venom} and {Poison}."
  },
  {
   "id": 244,
@@ -8528,7 +8772,8 @@
    "statuses": [
     "blind"
    ]
-  }
+  },
+  "help": "Cures {Darkness}."
  },
  {
   "id": 245,
@@ -8551,7 +8796,8 @@
    "statuses": [
     "zombie"
    ]
-  }
+  },
+  "help": "Cures {Zombie}."
  },
  {
   "id": 246,
@@ -8574,7 +8820,8 @@
    "statuses": [
     "virus"
    ]
-  }
+  },
+  "help": "Cures {Virus}."
  },
  {
   "id": 247,
@@ -8603,7 +8850,8 @@
     "mini",
     "gradualPetrify"
    ]
-  }
+  },
+  "help": "Cures various status abnormalities."
  },
  {
   "id": 248,
@@ -8626,7 +8874,8 @@
    "statuses": [
     "trouble"
    ]
-  }
+  },
+  "help": "Cures {Trouble}."
  },
  {
   "id": 249,
@@ -8653,7 +8902,8 @@
    "statuses": [
     "death"
    ]
-  }
+  },
+  "help": "Cures {KO}. It cannot be used in the field."
  },
  {
   "id": 250,
@@ -8696,7 +8946,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Deals damage to the target. Equip as an Add-on."
  },
  {
   "id": 251,
@@ -8719,7 +8970,8 @@
    "statuses": [
     "berserk"
    ]
-  }
+  },
+  "help": "Cures {Berserk}. Item has no effect in the field. Chocobo’s favorite food."
  },
  {
   "id": 252,
@@ -8740,7 +8992,8 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Deals damage to the target. If you give it to a chocobo..."
  },
  {
   "id": 253,
@@ -8765,7 +9018,8 @@
     "blind",
     "poison"
    ]
-  }
+  },
+  "help": "Restores HP and MP. If you ask a save moogle, he will restore everyone’s HP and MP."
  },
  {
   "id": 254,
@@ -8786,6 +9040,7 @@
    "rate": 0,
    "elements": [],
    "statuses": []
-  }
+  },
+  "help": "Restores HP. It cannot be used in the field. It radiates a mysterious light."
  }
 ]

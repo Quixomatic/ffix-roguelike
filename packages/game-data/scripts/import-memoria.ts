@@ -35,6 +35,7 @@ import {
   type TargetType,
   type WeaponData,
 } from "../src/types";
+import { attachHelp } from "./help-text";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 // Seed data for the ff9_* tables (the server upserts it on startup when it changes).
@@ -390,6 +391,8 @@ const write = (name: string, data: unknown) => {
   console.log(`  ✓ ${name}.json (${Array.isArray(data) ? data.length : 1})`);
 };
 console.log(`Importing Memoria data from ${DATA}`);
+// FF9's own help lines (extract-help-text.py), when extracted.
+attachHelp(OUT, { items, actions, supports: supportAbilities });
 write("statuses", statuses);
 write("actions", actions);
 write("support-abilities", supportAbilities);

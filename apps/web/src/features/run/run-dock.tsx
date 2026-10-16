@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
-import { gearSummary, itemName } from "./item-info";
+import { gearSummary, HelpText, itemEffectText, itemName } from "./item-info";
 import { fieldItems } from "./party-sidebar";
 import type { RunActions } from "./use-run";
 
@@ -66,7 +66,10 @@ function InventoryPanel({ run, actions, canManage }: { run: RunState; actions: R
         <div key={c.itemId} className="rounded bg-black/25 px-2 py-1">
           <div className="flex items-center gap-2">
             <ItemIcon itemId={c.itemId} size={32} />
-            <span className="flex-1">{itemName(c.itemId)}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block">{itemName(c.itemId)}</span>
+              <ItemEffectLine itemId={c.itemId} />
+            </span>
             <span className="tabular-nums">×{c.count}</span>
             {canManage && usable.has(c.itemId) && (
               <button className="rounded border border-white/20 px-1.5 text-xs hover:brightness-125" onClick={() => setUsing(using === c.itemId ? null : c.itemId)}>
@@ -92,6 +95,18 @@ function InventoryPanel({ run, actions, canManage }: { run: RunState; actions: R
         </div>
       ))}
     </div>
+  );
+}
+
+/** What a consumable does (exact effect) and FF9's help line, under its name. */
+function ItemEffectLine({ itemId }: { itemId: number }) {
+  const item = findItem(itemId);
+  if (!item) return null;
+  return (
+    <span className="block text-xs">
+      {itemEffectText(item) && <span className="block text-[#c8d0ff]">{itemEffectText(item)}</span>}
+      <HelpText text={item.help} className="opacity-70" />
+    </span>
   );
 }
 

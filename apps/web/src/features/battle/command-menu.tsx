@@ -2,6 +2,8 @@ import { getBattleAction, isThrowable, type BattleCommand, type BattleEngine, ty
 import { findItem, type TargetType } from "@ffix-roguelike/game-data";
 import { useEffect, useMemo, useState } from "react";
 
+import { HelpText, itemEffectText } from "@/features/run/item-info";
+
 type Pending = Omit<BattleCommand, "targetIds"> & {
   label: string;
   targets: TargetType;
@@ -10,7 +12,8 @@ type Pending = Omit<BattleCommand, "targetIds"> & {
   /** Double Black / Double White: pick a second spell after this one. */
   double?: { title: string; options: ListOption[] };
 };
-type ListOption = { label: string; sub?: string; disabled?: boolean; pending: Pending };
+/** `help`: FF9's help line; `effect`: what an item does exactly (shown under the list for the highlighted option). */
+type ListOption = { label: string; sub?: string; disabled?: boolean; pending: Pending; help?: string; effect?: string };
 
 type Menu =
   | { level: "root" }
@@ -158,6 +161,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
             return {
               label: a.name,
               sub: mp ? `${mp} MP` : "",
+              help: a.help,
               disabled: mp > actor.mp || (silenced && engine.isMagical(a)) || (a.scriptId === 63 && !engine.magicSwordReady(actor)),
               pending: { kind: "ability", actionId: a.id, label: a.name, targets: a.targets, forDead: a.forDead, defaultAlly: a.defaultAlly, actorId: actor.id },
             };
@@ -183,6 +187,8 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
             return {
               label: item.name,
               sub: `×${s.count}`,
+              help: item.help,
+              effect: itemEffectText(item),
               pending: { kind: "item", itemId: item.id, label: item.name, targets: fx.targets, forDead: fx.forDead, defaultAlly: true, actorId: actor.id },
             };
           }),
@@ -262,6 +268,12 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting }: Props) {
             ))}
             {!menu.options.length && <div className="opacity-60">Nothing learned yet</div>}
           </div>
+          {(menu.options[cursor]?.effect || menu.options[cursor]?.help) && (
+            <div className="mt-1 border-t border-white/15 pt-1 text-xs">
+              {menu.options[cursor]!.effect && <div className="text-[#c8d0ff]">{menu.options[cursor]!.effect}</div>}
+              <HelpText text={menu.options[cursor]!.help} className="opacity-80" />
+            </div>
+          )}
         </>
       )}
       {menu.level === "target" && (

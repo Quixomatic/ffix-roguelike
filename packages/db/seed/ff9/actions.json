@@ -29,7 +29,8 @@
   "statuses": [],
   "mp": 6,
   "type": 1,
-  "vfx": 9
+  "vfx": 9,
+  "help": "Restores HP of single/multiple targets."
  },
  {
   "id": 2,
@@ -45,7 +46,8 @@
   "statuses": [],
   "mp": 10,
   "type": 1,
-  "vfx": 162
+  "vfx": 162,
+  "help": "Restores a lot of HP of single/multiple targets."
  },
  {
   "id": 3,
@@ -61,7 +63,8 @@
   "statuses": [],
   "mp": 22,
   "type": 1,
-  "vfx": 144
+  "vfx": 144,
+  "help": "Restores big-time HP of single/multiple targets."
  },
  {
   "id": 4,
@@ -79,7 +82,8 @@
   ],
   "mp": 14,
   "type": 0,
-  "vfx": 32
+  "vfx": 32,
+  "help": "Gradually restores HP."
  },
  {
   "id": 5,
@@ -97,7 +101,8 @@
   ],
   "mp": 8,
   "type": 1,
-  "vfx": 17
+  "vfx": 17,
+  "help": "Recover from {KO}."
  },
  {
   "id": 6,
@@ -115,7 +120,8 @@
   ],
   "mp": 24,
   "type": 1,
-  "vfx": 15
+  "vfx": 15,
+  "help": "Recover from {KO} with full HP."
  },
  {
   "id": 7,
@@ -131,7 +137,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 131
+  "vfx": 131,
+  "help": "Scan enemy to determine HP, MP, and weaknesses."
  },
  {
   "id": 8,
@@ -150,7 +157,8 @@
   ],
   "mp": 4,
   "type": 1,
-  "vfx": 12
+  "vfx": 12,
+  "help": "Removes {Venom} and {Poison}."
  },
  {
   "id": 9,
@@ -169,7 +177,8 @@
   ],
   "mp": 8,
   "type": 1,
-  "vfx": 13
+  "vfx": 13,
+  "help": "Removes {Petrify} and {Gradual Petrify}."
  },
  {
   "id": 10,
@@ -195,7 +204,8 @@
   ],
   "mp": 20,
   "type": 1,
-  "vfx": 11
+  "vfx": 11,
+  "help": "Removes various abnormal status effects."
  },
  {
   "id": 11,
@@ -213,7 +223,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 63
+  "vfx": 63,
+  "help": "Reduces damage from magic attacks."
  },
  {
   "id": 12,
@@ -231,7 +242,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 123
+  "vfx": 123,
+  "help": "Reduces damage from physical attacks."
  },
  {
   "id": 13,
@@ -249,7 +261,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 89
+  "vfx": 89,
+  "help": "Speeds up ATB Gauge."
  },
  {
   "id": 14,
@@ -267,7 +280,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 127
+  "vfx": 127,
+  "help": "Causes {Silence}, which disables magic in single/multiple targets."
  },
  {
   "id": 15,
@@ -285,7 +299,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 124
+  "vfx": 124,
+  "help": "Makes single/multiple targets smaller."
  },
  {
   "id": 16,
@@ -303,7 +318,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 79
+  "vfx": 79,
+  "help": "Reflects magic attacks back onto caster."
  },
  {
   "id": 17,
@@ -321,7 +337,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 97
+  "vfx": 97,
+  "help": "Causes {Confuse}, which makes single/multiple targets erratic."
  },
  {
   "id": 18,
@@ -339,7 +356,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 140
+  "vfx": 140,
+  "help": "Causes single/multiple targets to attack uncontrollably."
  },
  {
   "id": 19,
@@ -357,7 +375,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 157
+  "vfx": 157,
+  "help": "Causes {Darkness}, which hinders accuracy of physical attacks."
  },
  {
   "id": 20,
@@ -375,7 +394,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 76
+  "vfx": 76,
+  "help": "Allows single/multiple targets to float in the air."
  },
  {
   "id": 21,
@@ -402,7 +422,8 @@
   ],
   "mp": 16,
   "type": 0,
-  "vfx": 128
+  "vfx": 128,
+  "help": "Removes abnormal status caused by magic attacks."
  },
  {
   "id": 22,
@@ -418,7 +439,8 @@
   "statuses": [],
   "mp": 14,
   "type": 0,
-  "vfx": 90
+  "vfx": 90,
+  "help": "Raises physical attack power."
  },
  {
   "id": 23,
@@ -434,7 +456,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 201
+  "vfx": 201,
+  "help": "Extracts Ore from a target."
  },
  {
   "id": 24,
@@ -452,7 +475,8 @@
   "statuses": [],
   "mp": 36,
   "type": 0,
-  "vfx": 87
+  "vfx": 87,
+  "help": "Causes {Holy} damage."
  },
  {
   "id": 25,
@@ -470,7 +494,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 70
+  "vfx": 70,
+  "help": "Causes {Fire} damage to single/multiple targets."
  },
  {
   "id": 26,
@@ -488,7 +513,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 71
+  "vfx": 71,
+  "help": "Causes a lot of {Fire} damage to single/multiple targets."
  },
  {
   "id": 27,
@@ -506,7 +532,8 @@
   "statuses": [],
   "mp": 24,
   "type": 0,
-  "vfx": 72
+  "vfx": 72,
+  "help": "Causes big-time {Fire} damage to single/ multiple targets."
  },
  {
   "id": 28,
@@ -524,7 +551,8 @@
   ],
   "mp": 10,
   "type": 0,
-  "vfx": 78
+  "vfx": 78,
+  "help": "Puts single/multiple targets to sleep."
  },
  {
   "id": 29,
@@ -542,7 +570,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 62
+  "vfx": 62,
+  "help": "Causes {Ice} damage to single/multiple targets."
  },
  {
   "id": 30,
@@ -560,7 +589,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 77
+  "vfx": 77,
+  "help": "Causes a lot of {Ice} damage to single/multiple targets."
  },
  {
   "id": 31,
@@ -578,7 +608,8 @@
   "statuses": [],
   "mp": 24,
   "type": 0,
-  "vfx": 152
+  "vfx": 152,
+  "help": "Causes big-time {Ice} damage to single/multiple targets."
  },
  {
   "id": 32,
@@ -596,7 +627,8 @@
   ],
   "mp": 6,
   "type": 0,
-  "vfx": 126
+  "vfx": 126,
+  "help": "Slows down ATB Gauge."
  },
  {
   "id": 33,
@@ -614,7 +646,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 66
+  "vfx": 66,
+  "help": "Causes {Thunder} damage to single/multiple targets."
  },
  {
   "id": 34,
@@ -632,7 +665,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 73
+  "vfx": 73,
+  "help": "Causes a lot of {Thunder} damage to single/multiple targets."
  },
  {
   "id": 35,
@@ -650,7 +684,8 @@
   "statuses": [],
   "mp": 24,
   "type": 0,
-  "vfx": 133
+  "vfx": 133,
+  "help": "Causes big-time {Thunder} damage to single/multiple targets."
  },
  {
   "id": 36,
@@ -668,7 +703,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 149
+  "vfx": 149,
+  "help": "Stops targets from taking any action."
  },
  {
   "id": 37,
@@ -686,7 +722,8 @@
   ],
   "mp": 8,
   "type": 0,
-  "vfx": 202
+  "vfx": 202,
+  "help": "Causes {Poison} to single/multiple targets."
  },
  {
   "id": 38,
@@ -704,7 +741,8 @@
   ],
   "mp": 18,
   "type": 0,
-  "vfx": 120
+  "vfx": 120,
+  "help": "Causes {Non-elemental} damage and {Poison} to single/multiple targets."
  },
  {
   "id": 39,
@@ -720,7 +758,8 @@
   "statuses": [],
   "mp": 2,
   "type": 0,
-  "vfx": 57
+  "vfx": 57,
+  "help": "Absorbs MP from the target and transfers it to the spell caster."
  },
  {
   "id": 40,
@@ -736,7 +775,8 @@
   "statuses": [],
   "mp": 14,
   "type": 0,
-  "vfx": 132
+  "vfx": 132,
+  "help": "Drains HP from the target and transfers it to the spell caster."
  },
  {
   "id": 41,
@@ -752,7 +792,8 @@
   "statuses": [],
   "mp": 18,
   "type": 0,
-  "vfx": 99
+  "vfx": 99,
+  "help": "Amount of damage depends on the target’s HP."
  },
  {
   "id": 42,
@@ -768,7 +809,8 @@
   "statuses": [],
   "mp": 16,
   "type": 0,
-  "vfx": 56
+  "vfx": 56,
+  "help": "Causes {Non-elemental} damage."
  },
  {
   "id": 43,
@@ -786,7 +828,8 @@
   ],
   "mp": 20,
   "type": 0,
-  "vfx": 94
+  "vfx": 94,
+  "help": "KOs the target."
  },
  {
   "id": 44,
@@ -804,7 +847,8 @@
   ],
   "mp": 18,
   "type": 0,
-  "vfx": 153
+  "vfx": 153,
+  "help": "Causes {Petrify}."
  },
  {
   "id": 45,
@@ -822,7 +866,8 @@
   "statuses": [],
   "mp": 22,
   "type": 0,
-  "vfx": 95
+  "vfx": 95,
+  "help": "Causes {Water} damage to single/multiple targets."
  },
  {
   "id": 46,
@@ -838,7 +883,8 @@
   "statuses": [],
   "mp": 42,
   "type": 0,
-  "vfx": 134
+  "vfx": 134,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 47,
@@ -854,7 +900,8 @@
   "statuses": [],
   "mp": 40,
   "type": 0,
-  "vfx": 125
+  "vfx": 125,
+  "help": "Causes {Non-elemental} damage."
  },
  {
   "id": 48,
@@ -872,7 +919,8 @@
   "statuses": [],
   "mp": 72,
   "type": 0,
-  "vfx": 308
+  "vfx": 308,
+  "help": "Causes {Shadow} damage to all targets."
  },
  {
   "id": 49,
@@ -890,7 +938,8 @@
   "statuses": [],
   "mp": 24,
   "type": 4,
-  "vfx": 38
+  "vfx": 38,
+  "help": "Causes {Ice} damage to all enemies."
  },
  {
   "id": 50,
@@ -908,7 +957,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 212
+  "vfx": 212,
+  "help": "Strike the enemy with Fire Sword."
  },
  {
   "id": 51,
@@ -926,7 +976,8 @@
   "statuses": [],
   "mp": 26,
   "type": 4,
-  "vfx": 276
+  "vfx": 276,
+  "help": "Causes {Fire} damage to all enemies."
  },
  {
   "id": 52,
@@ -944,7 +995,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 213
+  "vfx": 213,
+  "help": "Strike the enemy with Fira Sword."
  },
  {
   "id": 53,
@@ -962,7 +1014,8 @@
   "statuses": [],
   "mp": 22,
   "type": 4,
-  "vfx": 186
+  "vfx": 186,
+  "help": "Causes {Thunder} damage to all enemies."
  },
  {
   "id": 54,
@@ -980,7 +1033,8 @@
   "statuses": [],
   "mp": 30,
   "type": 0,
-  "vfx": 214
+  "vfx": 214,
+  "help": "Strike the enemy with Firaga Sword."
  },
  {
   "id": 55,
@@ -996,7 +1050,8 @@
   "statuses": [],
   "mp": 32,
   "type": 4,
-  "vfx": 184
+  "vfx": 184,
+  "help": "Reduces all enemies’ HP. Amount of damage depends on targets’ HP."
  },
  {
   "id": 56,
@@ -1014,7 +1069,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 218
+  "vfx": 218,
+  "help": "Strike the enemy with Blizzard Sword."
  },
  {
   "id": 57,
@@ -1032,7 +1088,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 219
+  "vfx": 219,
+  "help": "Strike the enemy with Blizzara Sword."
  },
  {
   "id": 58,
@@ -1050,7 +1107,8 @@
   ],
   "mp": 28,
   "type": 4,
-  "vfx": 261
+  "vfx": 261,
+  "help": "Causes KO to all enemies."
  },
  {
   "id": 59,
@@ -1068,7 +1126,8 @@
   "statuses": [],
   "mp": 30,
   "type": 0,
-  "vfx": 220
+  "vfx": 220,
+  "help": "Strike the enemy with Blizzaga Sword."
  },
  {
   "id": 60,
@@ -1086,7 +1145,8 @@
   "statuses": [],
   "mp": 42,
   "type": 4,
-  "vfx": 179
+  "vfx": 179,
+  "help": "Causes {Water} damage to all enemies."
  },
  {
   "id": 61,
@@ -1104,7 +1164,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 215
+  "vfx": 215,
+  "help": "Strike the enemy with Thunder Sword."
  },
  {
   "id": 62,
@@ -1120,7 +1181,8 @@
   "statuses": [],
   "mp": 56,
   "type": 4,
-  "vfx": 227
+  "vfx": 227,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 63,
@@ -1138,7 +1200,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 216
+  "vfx": 216,
+  "help": "Strike the enemy with Thundara Sword."
  },
  {
   "id": 64,
@@ -1156,7 +1219,8 @@
   "statuses": [],
   "mp": 80,
   "type": 4,
-  "vfx": 381
+  "vfx": 381,
+  "help": "Causes {Shadow} damage to all enemies."
  },
  {
   "id": 65,
@@ -1174,7 +1238,8 @@
   "statuses": [],
   "mp": 30,
   "type": 0,
-  "vfx": 217
+  "vfx": 217,
+  "help": "Strike the enemy with Thundaga Sword."
  },
  {
   "id": 66,
@@ -1192,7 +1257,8 @@
   "statuses": [],
   "mp": 30,
   "type": 0,
-  "vfx": 210
+  "vfx": 210,
+  "help": "Causes {Earth} damage to all enemies."
  },
  {
   "id": 67,
@@ -1210,7 +1276,8 @@
   "statuses": [],
   "mp": 30,
   "type": 0,
-  "vfx": 226
+  "vfx": 226,
+  "help": "Causes {Wind} damage to all enemies."
  },
  {
   "id": 68,
@@ -1228,7 +1295,8 @@
   ],
   "mp": 24,
   "type": 0,
-  "vfx": 177
+  "vfx": 177,
+  "help": "Casts {Reflect} on all party members."
  },
  {
   "id": 69,
@@ -1246,7 +1314,8 @@
   ],
   "mp": 24,
   "type": 0,
-  "vfx": 494
+  "vfx": 494,
+  "help": "Casts {Haste} on all party members."
  },
  {
   "id": 70,
@@ -1264,7 +1333,8 @@
   ],
   "mp": 24,
   "type": 0,
-  "vfx": 493
+  "vfx": 493,
+  "help": "Casts {Shell} on all party members."
  },
  {
   "id": 71,
@@ -1282,7 +1352,8 @@
   ],
   "mp": 24,
   "type": 0,
-  "vfx": 495
+  "vfx": 495,
+  "help": "Casts {Vanish} on all party members."
  },
  {
   "id": 72,
@@ -1305,7 +1376,8 @@
   ],
   "mp": 32,
   "type": 0,
-  "vfx": 211
+  "vfx": 211,
+  "help": "Causes {Fire} damage to all enemies, and all party members recover from {KO}."
  },
  {
   "id": 73,
@@ -1341,7 +1413,8 @@
   "statuses": [],
   "mp": 54,
   "type": 0,
-  "vfx": 251
+  "vfx": 251,
+  "help": "Causes {Holy} damage to all enemies."
  },
  {
   "id": 75,
@@ -1357,7 +1430,8 @@
   "statuses": [],
   "mp": 20,
   "type": 0,
-  "vfx": 221
+  "vfx": 221,
+  "help": "Strike the enemy with Bio Sword."
  },
  {
   "id": 76,
@@ -1375,7 +1449,8 @@
   "statuses": [],
   "mp": 26,
   "type": 0,
-  "vfx": 222
+  "vfx": 222,
+  "help": "Strike the enemy with Water Sword."
  },
  {
   "id": 77,
@@ -1391,7 +1466,8 @@
   "statuses": [],
   "mp": 4,
   "type": 2,
-  "vfx": 74
+  "vfx": 74,
+  "help": "Causes {Non-elemental} damage to the enemy."
  },
  {
   "id": 78,
@@ -1409,7 +1485,8 @@
   ],
   "mp": 20,
   "type": 2,
-  "vfx": 154
+  "vfx": 154,
+  "help": "KOs all enemies whose LEVELs are multiples of 5."
  },
  {
   "id": 79,
@@ -1427,7 +1504,8 @@
   "statuses": [],
   "mp": 22,
   "type": 2,
-  "vfx": 129
+  "vfx": 129,
+  "help": "Causes {Holy} damage to enemies whose LEVELs are multiples of 4."
  },
  {
   "id": 80,
@@ -1443,7 +1521,8 @@
   "statuses": [],
   "mp": 12,
   "type": 2,
-  "vfx": 392
+  "vfx": 392,
+  "help": "Reduces {Defense} of enemies whose LEVELs are multiples of 3."
  },
  {
   "id": 81,
@@ -1461,7 +1540,8 @@
   ],
   "mp": 12,
   "type": 2,
-  "vfx": 236
+  "vfx": 236,
+  "help": "Casts {Doom} on the target."
  },
  {
   "id": 82,
@@ -1479,7 +1559,8 @@
   ],
   "mp": 18,
   "type": 2,
-  "vfx": 237
+  "vfx": 237,
+  "help": "Randomly KOs a target."
  },
  {
   "id": 83,
@@ -1497,7 +1578,8 @@
   "statuses": [],
   "mp": 14,
   "type": 2,
-  "vfx": 28
+  "vfx": 28,
+  "help": "Causes {Water} damage to all enemies."
  },
  {
   "id": 84,
@@ -1516,7 +1598,8 @@
   ],
   "mp": 64,
   "type": 2,
-  "vfx": 81
+  "vfx": 81,
+  "help": "Casts {Shell} and {Protect} on all party members."
  },
  {
   "id": 85,
@@ -1532,7 +1615,8 @@
   "statuses": [],
   "mp": 8,
   "type": 2,
-  "vfx": 88
+  "vfx": 88,
+  "help": "Reduces the target’s HP to 1."
  },
  {
   "id": 86,
@@ -1554,7 +1638,8 @@
   ],
   "mp": 16,
   "type": 2,
-  "vfx": 44
+  "vfx": 44,
+  "help": "Causes {Confuse}, {Darkness}, {Poison}, {Slow}, and {Mini} to the enemy."
  },
  {
   "id": 87,
@@ -1570,7 +1655,8 @@
   "statuses": [],
   "mp": 10,
   "type": 2,
-  "vfx": 82
+  "vfx": 82,
+  "help": "Causes {Non-elemental} damage to the target when your HP is 1."
  },
  {
   "id": 88,
@@ -1586,7 +1672,8 @@
   "statuses": [],
   "mp": 8,
   "type": 2,
-  "vfx": 30
+  "vfx": 30,
+  "help": "Reduces the enemy’s HP by 1,000."
  },
  {
   "id": 89,
@@ -1602,7 +1689,8 @@
   "statuses": [],
   "mp": 12,
   "type": 2,
-  "vfx": 297
+  "vfx": 297,
+  "help": "Damages with the difference between your max HP and current HP."
  },
  {
   "id": 90,
@@ -1620,7 +1708,8 @@
   ],
   "mp": 14,
   "type": 2,
-  "vfx": 501
+  "vfx": 501,
+  "help": "Causes {Sleep} to all targets."
  },
  {
   "id": 91,
@@ -1638,7 +1727,8 @@
   "statuses": [],
   "mp": 22,
   "type": 2,
-  "vfx": 178
+  "vfx": 178,
+  "help": "Causes {Wind} damage to all enemies."
  },
  {
   "id": 92,
@@ -1656,7 +1746,8 @@
   "statuses": [],
   "mp": 20,
   "type": 2,
-  "vfx": 390
+  "vfx": 390,
+  "help": "Causes {Earth} damage to all enemies."
  },
  {
   "id": 93,
@@ -1672,7 +1763,8 @@
   "statuses": [],
   "mp": 4,
   "type": 2,
-  "vfx": 45
+  "vfx": 45,
+  "help": "Uses Remedy on all party members."
  },
  {
   "id": 94,
@@ -1688,7 +1780,8 @@
   "statuses": [],
   "mp": 10,
   "type": 2,
-  "vfx": 228
+  "vfx": 228,
+  "help": "Amount of damage depends on the number of frogs you have caught."
  },
  {
   "id": 95,
@@ -1704,7 +1797,8 @@
   "statuses": [],
   "mp": 14,
   "type": 2,
-  "vfx": 41
+  "vfx": 41,
+  "help": "Restores HP of all party members."
  },
  {
   "id": 96,
@@ -1722,7 +1816,8 @@
   ],
   "mp": 8,
   "type": 2,
-  "vfx": 500
+  "vfx": 500,
+  "help": "Makes a party member disappear."
  },
  {
   "id": 97,
@@ -1742,7 +1837,8 @@
   ],
   "mp": 8,
   "type": 2,
-  "vfx": 150
+  "vfx": 150,
+  "help": "Causes {Freeze} to the enemy."
  },
  {
   "id": 98,
@@ -1760,7 +1856,8 @@
   ],
   "mp": 10,
   "type": 2,
-  "vfx": 187
+  "vfx": 187,
+  "help": "Causes {Heat} to the enemy."
  },
  {
   "id": 99,
@@ -1776,7 +1873,8 @@
   "statuses": [],
   "mp": 2,
   "type": 2,
-  "vfx": 130
+  "vfx": 130,
+  "help": "Reduces the enemy’s MP."
  },
  {
   "id": 100,
@@ -1794,7 +1892,8 @@
   ],
   "mp": 14,
   "type": 2,
-  "vfx": 138
+  "vfx": 138,
+  "help": "Casts {Life} when KO’d."
  },
  {
   "id": 101,
@@ -1810,7 +1909,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 249
+  "vfx": 249,
+  "help": "Escape from battle with high probability."
  },
  {
   "id": 102,
@@ -1826,7 +1926,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 250
+  "vfx": 250,
+  "help": "See the enemy’s items."
  },
  {
   "id": 103,
@@ -1842,7 +1943,8 @@
   "statuses": [],
   "mp": 2,
   "type": 0,
-  "vfx": 399
+  "vfx": 399,
+  "help": "Allows back attack."
  },
  {
   "id": 104,
@@ -1858,7 +1960,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 229
+  "vfx": 229,
+  "help": "Draws out the hidden power in thief swords."
  },
  {
   "id": 105,
@@ -1876,7 +1979,8 @@
   ],
   "mp": 4,
   "type": 0,
-  "vfx": 233
+  "vfx": 233,
+  "help": "Causes {Trouble} to the target."
  },
  {
   "id": 106,
@@ -1892,7 +1996,8 @@
   "statuses": [],
   "mp": 32,
   "type": 0,
-  "vfx": 234
+  "vfx": 234,
+  "help": "Sacrifice yourself to restore HP and MP to the other party members."
  },
  {
   "id": 107,
@@ -1908,7 +2013,8 @@
   "statuses": [],
   "mp": 6,
   "type": 0,
-  "vfx": 312
+  "vfx": 312,
+  "help": "Deals physical damage by luck."
  },
  {
   "id": 108,
@@ -1924,7 +2030,8 @@
   "statuses": [],
   "mp": 8,
   "type": 0,
-  "vfx": 231
+  "vfx": 231,
+  "help": "Deals physical damage to the target."
  },
  {
   "id": 109,
@@ -1940,7 +2047,8 @@
   "statuses": [],
   "mp": 10,
   "type": 0,
-  "vfx": 241
+  "vfx": 241,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 110,
@@ -1956,7 +2064,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 242
+  "vfx": 242,
+  "help": "Deals physical damage to all enemies."
  },
  {
   "id": 111,
@@ -1972,7 +2081,8 @@
   "statuses": [],
   "mp": 14,
   "type": 0,
-  "vfx": 243
+  "vfx": 243,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 112,
@@ -1988,7 +2098,8 @@
   "statuses": [],
   "mp": 16,
   "type": 0,
-  "vfx": 244
+  "vfx": 244,
+  "help": "Deals physical damage to all enemies."
  },
  {
   "id": 113,
@@ -2004,7 +2115,8 @@
   "statuses": [],
   "mp": 24,
   "type": 0,
-  "vfx": 245
+  "vfx": 245,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 114,
@@ -2020,7 +2132,8 @@
   "statuses": [],
   "mp": 32,
   "type": 0,
-  "vfx": 246
+  "vfx": 246,
+  "help": "Deals physical damage to all enemies."
  },
  {
   "id": 115,
@@ -2036,7 +2149,8 @@
   "statuses": [],
   "mp": 48,
   "type": 0,
-  "vfx": 247
+  "vfx": 247,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 116,
@@ -2052,7 +2166,8 @@
   "statuses": [],
   "mp": 60,
   "type": 0,
-  "vfx": 248
+  "vfx": 248,
+  "help": "Deals physical damage to all enemies."
  },
  {
   "id": 117,
@@ -2068,7 +2183,8 @@
   "statuses": [],
   "mp": 10,
   "type": 0,
-  "vfx": 401
+  "vfx": 401,
+  "help": "Reduces the enemy’s HP and MP."
  },
  {
   "id": 118,
@@ -2086,7 +2202,8 @@
   ],
   "mp": 12,
   "type": 0,
-  "vfx": 168
+  "vfx": 168,
+  "help": "Casts {Regen} on all party members."
  },
  {
   "id": 119,
@@ -2102,7 +2219,8 @@
   "statuses": [],
   "mp": 78,
   "type": 0,
-  "vfx": 296
+  "vfx": 296,
+  "help": "Reduces HP of all enemies."
  },
  {
   "id": 120,
@@ -2118,7 +2236,8 @@
   "statuses": [],
   "mp": 36,
   "type": 0,
-  "vfx": 83
+  "vfx": 83,
+  "help": "Restores MP of all party members."
  },
  {
   "id": 121,
@@ -2136,7 +2255,8 @@
   ],
   "mp": 12,
   "type": 0,
-  "vfx": 61
+  "vfx": 61,
+  "help": "Causes {Berserk} to all targets."
  },
  {
   "id": 122,
@@ -2152,7 +2272,8 @@
   "statuses": [],
   "mp": 28,
   "type": 0,
-  "vfx": 491
+  "vfx": 491,
+  "help": "See for yourself."
  },
  {
   "id": 123,
@@ -2168,7 +2289,8 @@
   "statuses": [],
   "mp": 46,
   "type": 0,
-  "vfx": 387
+  "vfx": 387,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 124,
@@ -2184,7 +2306,8 @@
   "statuses": [],
   "mp": 16,
   "type": 0,
-  "vfx": 490
+  "vfx": 490,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 125,
@@ -2200,7 +2323,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 85
+  "vfx": 85,
+  "help": "Restores HP and MP of one party member."
  },
  {
   "id": 126,
@@ -2216,7 +2340,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 135
+  "vfx": 135,
+  "help": "Causes {Non-elemental} damage to the enemy by using Gil."
  },
  {
   "id": 127,
@@ -2232,7 +2357,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 193
+  "vfx": 193,
+  "help": "Causes {Non-elemental} damage to the enemy."
  },
  {
   "id": 128,
@@ -2251,7 +2377,8 @@
   ],
   "mp": 12,
   "type": 0,
-  "vfx": 197
+  "vfx": 197,
+  "help": "Casts {Auto-Life} and {Regen} on one party member."
  },
  {
   "id": 129,
@@ -2267,7 +2394,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 195
+  "vfx": 195,
+  "help": "Makes the enemy weak against some elemental property."
  },
  {
   "id": 130,
@@ -2285,7 +2413,8 @@
   ],
   "mp": 20,
   "type": 0,
-  "vfx": 137
+  "vfx": 137,
+  "help": "Recover from {KO}."
  },
  {
   "id": 131,
@@ -2301,7 +2430,8 @@
   "statuses": [],
   "mp": 20,
   "type": 0,
-  "vfx": 121
+  "vfx": 121,
+  "help": "Amount of damage depends on the enemy’s HP."
  },
  {
   "id": 132,
@@ -2319,7 +2449,8 @@
   ],
   "mp": 16,
   "type": 0,
-  "vfx": 385
+  "vfx": 385,
+  "help": "Casts {Doom} on the enemy."
  },
  {
   "id": 133,
@@ -2335,7 +2466,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 86
+  "vfx": 86,
+  "help": "Restores HP and MP of all party members."
  },
  {
   "id": 134,
@@ -2351,7 +2483,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 136
+  "vfx": 136,
+  "help": "Causes Non-elemental damage to all enemies by using Gil."
  },
  {
   "id": 135,
@@ -2367,7 +2500,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 194
+  "vfx": 194,
+  "help": "Causes Non-elemental damage to all enemies."
  },
  {
   "id": 136,
@@ -2386,7 +2520,8 @@
   ],
   "mp": 12,
   "type": 0,
-  "vfx": 198
+  "vfx": 198,
+  "help": "Casts {Auto-Life} and {Regen} on all party members."
  },
  {
   "id": 137,
@@ -2402,7 +2537,8 @@
   "statuses": [],
   "mp": 12,
   "type": 0,
-  "vfx": 196
+  "vfx": 196,
+  "help": "Makes all enemies weak against some elemental property."
  },
  {
   "id": 138,
@@ -2420,7 +2556,8 @@
   ],
   "mp": 20,
   "type": 0,
-  "vfx": 421
+  "vfx": 421,
+  "help": "Recover all party members from {KO}."
  },
  {
   "id": 139,
@@ -2436,7 +2573,8 @@
   "statuses": [],
   "mp": 20,
   "type": 0,
-  "vfx": 122
+  "vfx": 122,
+  "help": "Deals damage to all enemies. Amount of damage depends on the enemies’ HP."
  },
  {
   "id": 140,
@@ -2454,7 +2592,8 @@
   ],
   "mp": 16,
   "type": 0,
-  "vfx": 386
+  "vfx": 386,
+  "help": "Casts {Doom} on all enemies."
  },
  {
   "id": 141,
@@ -2472,7 +2611,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 188
+  "vfx": 188,
+  "help": "Reduces your HP to cause {Shadow} damage to the enemy."
  },
  {
   "id": 142,
@@ -2488,7 +2628,8 @@
   "statuses": [],
   "mp": 8,
   "type": 0,
-  "vfx": 189
+  "vfx": 189,
+  "help": "Damages with the difference between your max HP and current HP."
  },
  {
   "id": 143,
@@ -2506,7 +2647,8 @@
   ],
   "mp": 16,
   "type": 0,
-  "vfx": 190
+  "vfx": 190,
+  "help": "Knocks Out the target."
  },
  {
   "id": 144,
@@ -2522,7 +2664,8 @@
   "statuses": [],
   "mp": 8,
   "type": 0,
-  "vfx": 208
+  "vfx": 208,
+  "help": "Reduces the enemy’s {Attack Pwr}."
  },
  {
   "id": 145,
@@ -2538,7 +2681,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 92
+  "vfx": 92,
+  "help": "Reduces the enemy’s {Defense}."
  },
  {
   "id": 146,
@@ -2554,7 +2698,8 @@
   "statuses": [],
   "mp": 8,
   "type": 0,
-  "vfx": 209
+  "vfx": 209,
+  "help": "Reduces the enemy’s {Magic Def}."
  },
  {
   "id": 147,
@@ -2570,7 +2715,8 @@
   "statuses": [],
   "mp": 4,
   "type": 0,
-  "vfx": 46
+  "vfx": 46,
+  "help": "Reduces the enemy’s {Magic}."
  },
  {
   "id": 148,
@@ -2586,7 +2732,8 @@
   "statuses": [],
   "mp": 10,
   "type": 0,
-  "vfx": 398
+  "vfx": 398,
+  "help": "Makes all Near Death party members ‘Attack.’"
  },
  {
   "id": 149,
@@ -2604,7 +2751,8 @@
   "statuses": [],
   "mp": 24,
   "type": 0,
-  "vfx": 191
+  "vfx": 191,
+  "help": "Causes {Thunder} damage to the enemy."
  },
  {
   "id": 150,
@@ -2620,7 +2768,8 @@
   "statuses": [],
   "mp": 26,
   "type": 0,
-  "vfx": 207
+  "vfx": 207,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 151,
@@ -2636,7 +2785,8 @@
   "statuses": [],
   "mp": 32,
   "type": 0,
-  "vfx": 397
+  "vfx": 397,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 152,
@@ -2652,7 +2802,8 @@
   "statuses": [],
   "mp": 46,
   "type": 0,
-  "vfx": 192
+  "vfx": 192,
+  "help": "Deals physical damage to the enemy."
  },
  {
   "id": 153,
@@ -2670,7 +2821,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 407
+  "vfx": 407,
+  "help": "Causes {Ice} damage to all enemies."
  },
  {
   "id": 154,
@@ -2688,7 +2840,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 445
+  "vfx": 445,
+  "help": "Causes {Fire} damage to all enemies."
  },
  {
   "id": 155,
@@ -2706,7 +2859,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 415
+  "vfx": 415,
+  "help": "Causes {Thunder} damage to all enemies."
  },
  {
   "id": 156,
@@ -2722,7 +2876,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 446
+  "vfx": 446,
+  "help": "Amount of damage depends on the enemies’ HP."
  },
  {
   "id": 157,
@@ -2738,7 +2893,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 424
+  "vfx": 424,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 158,
@@ -2756,7 +2912,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 406
+  "vfx": 406,
+  "help": "Causes {Water} damage to all enemies."
  },
  {
   "id": 159,
@@ -2772,7 +2929,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 405
+  "vfx": 405,
+  "help": "Causes {Non-elemental} damage to all enemies."
  },
  {
   "id": 160,
@@ -2790,7 +2948,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 447
+  "vfx": 447,
+  "help": "Causes Shadow damage to all enemies."
  },
  {
   "id": 161,
@@ -2998,7 +3157,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 159
+  "vfx": 159,
+  "help": "Powerful Magic."
  },
  {
   "id": 174,
@@ -3014,7 +3174,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 377
+  "vfx": 377,
+  "help": "Powerful Magic."
  },
  {
   "id": 175,
@@ -3030,7 +3191,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 293
+  "vfx": 293,
+  "help": "Powerful Magic."
  },
  {
   "id": 176,
@@ -3226,7 +3388,8 @@
   "statuses": [],
   "mp": 0,
   "type": 0,
-  "vfx": 251
+  "vfx": 251,
+  "help": "Causes {Holy} damage to all enemies."
  },
  {
   "id": 188,
@@ -3258,7 +3421,8 @@
   "statuses": [],
   "mp": 60,
   "type": 0,
-  "vfx": 223
+  "vfx": 223,
+  "help": "Strike the enemy with Flare Sword."
  },
  {
   "id": 190,
@@ -3292,6 +3456,7 @@
   "statuses": [],
   "mp": 50,
   "type": 0,
-  "vfx": 224
+  "vfx": 224,
+  "help": "Strike the enemy with Doomsday Sword."
  }
 ]

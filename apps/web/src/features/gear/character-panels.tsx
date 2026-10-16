@@ -12,8 +12,10 @@ import {
   type DerivedStats,
   type TrainStat,
 } from "@ffix-roguelike/game-core";
-import { abilityName, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
+import { abilityName, getAction, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
 import type { ReactNode } from "react";
+
+import { HelpText } from "@/features/run/item-info";
 
 /** A titled section of the character sheet. */
 export function Panel({ title, right, className = "", children }: { title: ReactNode; right?: ReactNode; className?: string; children: ReactNode }) {
@@ -90,6 +92,7 @@ export function SupportGrid({ build, onToggle }: { build: CharacterBuild; onTogg
               </span>
               <span className="shrink-0 text-xs opacity-80">◆{sa.gems}</span>
             </span>
+            <HelpText text={sa.help} className="text-xs opacity-75" />
             <ApBar build={build} refId={a.ref} />
           </button>
         );
@@ -108,6 +111,7 @@ export function AbilityGrid({ build }: { build: CharacterBuild }) {
       {actives.map((a) => (
         <div key={a.ref} className={`flex flex-col gap-0.5 rounded border border-white/15 bg-black/25 px-2 py-1 text-sm ${available.includes(a.ref) ? "" : "opacity-40"}`}>
           <span className="truncate">{abilityName(a.ref)}</span>
+          <HelpText text={getAction(parseAbilityRef(a.ref).id)?.help} className="text-xs opacity-75" />
           <ApBar build={build} refId={a.ref} />
         </div>
       ))}

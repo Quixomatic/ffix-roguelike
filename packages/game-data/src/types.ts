@@ -93,12 +93,16 @@ export interface ActionData {
   type: number;
   /** Special-effect id (FF9 uses it to tell e.g. Comet from other spells). */
   vfx: number;
+  /** FF9's own help line (highlighted words as `{Word}`). */
+  help?: string;
 }
 
 export interface SupportAbilityData {
   id: number;
   name: string;
   gems: number;
+  /** FF9's own help line (highlighted words as `{Word}`). */
+  help?: string;
 }
 
 /** `AA:<actionId>` (active) or `SA:<supportId>` (support). */
@@ -205,6 +209,8 @@ export interface ItemData {
   weapon: WeaponData | null;
   armor: ArmorData | null;
   effect: ItemEffectData | null;
+  /** FF9's own help line (highlighted words as `{Word}`). */
+  help?: string;
 }
 
 export interface LevelRow {

@@ -2,6 +2,22 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.89] - 2026-10-16
+
+Items and abilities say what they do — in FF9's own words and with their exact effect.
+
+### Added
+- **FF9's help text** for every item, ability and support ability, extracted from the game (`packages/game-data/scripts/extract-help-text.py` reads the English `itm_help` / `aa_help` / `sa_help` tables from `FF9_Data/resources.assets`) into the seed tables as a `help` field (`db/seed/ff9/help-text.json`; `bun scripts/apply-help-text.ts`, and `import:memoria` attaches it on every import). E.g. Echo Screen "Cures **Silence**.", Soft "Cures **Petrify** and **Gradual Petrify**.", Mage Masher "Weapon originally used for combating mages. Add ST: **Silence**." — FF9's highlighted words shown in yellow.
+- **Exact effects from the engine's data** for consumables (`itemEffectText`): "Restores 150 HP · one target", "Cures Venom, Silence, Blind, Stop, Poison, Mini, Gradual Petrify · one target" (Remedy), "Fully restores HP and MP", "Revives a KO'd ally with a little HP", "Restores half of max HP and MP; may cause Silence, Blind, Poison" (Tent)…
+- Shown where you use or pick items and abilities:
+  - **Battle menus**: the highlighted ability or item's help (and an item's exact effect) under the list, like FF9's help bar.
+  - **Item cards** (rewards, shops, treasure, catalog, Items page): consumables show their exact effect; all items show FF9's line.
+  - **The run's Items panel**: effect and help under each item; the sidebar's quick-use buttons say what they do on hover.
+  - **Character sheet**: Abilities and Support cards show FF9's description.
+
+### Notes
+- The FF9 seed tables changed (help lines); the server re-seeds them on the next start.
+
 ## [0.1.88] - 2026-10-16
 
 ### Changed
