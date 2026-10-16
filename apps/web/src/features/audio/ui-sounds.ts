@@ -89,7 +89,7 @@ export function useUiSounds() {
       uiSound("buzzer");
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape" || e.repeat) return;
+      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("input, textarea, select")) return;
       uiSound("cancel");

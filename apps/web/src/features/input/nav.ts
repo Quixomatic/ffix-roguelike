@@ -5,7 +5,7 @@
  *   `FocusSection`s, which remember their last focused item). The first arrow press on a page focuses its first item.
  * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the focused control
  *   (Norigin's Enter is unused).
- * - **Back**: Escape backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
+ * - **Back**: Escape or Backspace backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
  * - **Controller**: the D-pad / left stick send arrow-key events (repeating while held), A presses the focused control
  *   (or sends Enter where the screen has its own controls), B sends Escape — so battles and the overworld, which already
  *   listen for those keys, work with a controller too.
@@ -146,13 +146,14 @@ export function useNavPause(active = true) {
   }, [active]);
 }
 
-/** Mounts navigation for the app: starts it once, and makes Escape back out (the router's Back) outside dialogs. */
+/** Mounts navigation for the app: starts it once, and makes Escape / Backspace back out (the router's Back) outside dialogs. */
 export function NavRoot() {
   const router = useRouter();
   useEffect(() => {
     startNav();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape" || e.repeat || e.defaultPrevented || navPaused() || isEditable(e.target as Element) || dialogOpen()) return;
+      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat || e.defaultPrevented || navPaused() || isEditable(e.target as Element) || dialogOpen()) return;
+      e.preventDefault();
       if (router.history.canGoBack()) router.history.back();
     };
     window.addEventListener("keydown", onKey);

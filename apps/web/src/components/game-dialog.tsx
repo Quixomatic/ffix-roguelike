@@ -6,7 +6,7 @@ import { useEffect, type ReactNode } from "react";
  */
 export function GameDialog({ title, headerRight, onClose, children }: { title: ReactNode; headerRight?: ReactNode; onClose(): void; children: ReactNode }) {
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => (e.key === "Escape" || (e.key === "Backspace" && !(e.target as Element | null)?.closest("input, textarea, select"))) && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);

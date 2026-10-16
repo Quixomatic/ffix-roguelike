@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.28] - 2026-10-16
+
+### Changed
+- **Backspace backs out like Escape**: it goes Back (with the cancel sound) when no dialog is open, and closes dialogs. In text fields it still deletes; the battle menu already used it to cancel.
+
 ## [0.2.27] - 2026-10-16
 
 ### Changed
