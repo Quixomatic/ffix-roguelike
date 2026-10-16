@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.59] - 2026-10-15
+
+All Completion Point spending lives on one tab.
+
+### Changed
+- The camp character sheet's first tab is **Training**: Start level and Gear slots side by side, then the stat training rows, then the combat numbers — everything you spend CP on in one place. The Progress tab became **Record** (runs, wins and bosses with that character).
+
 ## [0.1.58] - 2026-10-15
 
 Training: spend Completion Points to raise a character's base stats for every run.

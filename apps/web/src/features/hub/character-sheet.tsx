@@ -21,7 +21,7 @@ import { DollFigure, EquipmentList, SLOT_META, type PaperdollSlot } from "@/feat
 import { trpc } from "@/utils/trpc";
 
 /**
- * Before a run: the paperdoll (starter gear) on the left; Stats, Equipment, Abilities, Support and Progress tabs on
+ * Before a run: the paperdoll (starter gear) on the left; Training (all CP spending), Equipment, Abilities, Support and Record tabs on
  * the right.
  */
 export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuild; onClose(): void }) {
@@ -77,13 +77,41 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
       tabs={[
         {
           id: "stats",
-          label: "Stats",
+          label: "Training",
           content: (
-            <div className="flex flex-col gap-3">
-              <Panel title="Training" right={<span className="opacity-70">spend CP to raise base stats for every run</span>}>
+            <div className="grid content-start gap-3 xl:grid-cols-2">
+              <Panel title="Start level" right={<span className="opacity-70">every run begins here</span>}>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-3xl">Lv {build.level}</span>
+                  <button className="ff-window px-4 py-1 disabled:opacity-50" disabled={points < levelCost || raise.isPending} onClick={() => raise.mutate({ key: build.key })}>
+                    → Lv {build.level + 1} · {levelCost} CP
+                  </button>
+                </div>
+                <div className="text-xs opacity-70">CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run.</div>
+              </Panel>
+              <Panel title="Gear slots" right={<span className="opacity-70">{slotCost == null ? "all unlocked" : `next: ${slotCost} CP`}</span>}>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {UNLOCKABLE_SLOTS.map((s) => {
+                    const open = slotUnlocked(build, s);
+                    return (
+                      <button
+                        key={s}
+                        className="rounded border px-2 py-1 text-sm transition disabled:cursor-default data-[open=true]:border-green-400/60 data-[open=true]:bg-green-900/40 data-[open=false]:border-white/20 data-[open=false]:bg-black/25 enabled:hover:brightness-125"
+                        data-open={open}
+                        disabled={open || slotCost == null || points < slotCost || unlock.isPending}
+                        onClick={() => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" })}
+                      >
+                        {SLOT_META[s].label} {open ? "✓" : <span className="opacity-70">· {slotCost} CP</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="text-xs opacity-70">An open slot starts each run with {char.name}'s starter gear and holds what they find.</div>
+              </Panel>
+              <Panel title="Stats" className="xl:col-span-2" right={<span className="opacity-70">spend CP to raise base stats for every run</span>}>
                 <TrainingRows build={build} stats={st} points={points} busy={train.isPending} onTrain={(stat) => train.mutate({ key: build.key, stat })} />
               </Panel>
-              <Panel title="Combat" right={<span className="opacity-70">at the start of a run</span>}>
+              <Panel title="Combat" className="xl:col-span-2" right={<span className="opacity-70">at the start of a run</span>}>
                 <StatBars stats={st} />
               </Panel>
             </div>
@@ -141,39 +169,11 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
           ),
         },
         {
-          id: "progress",
-          label: "Progress",
+          id: "record",
+          label: "Record",
           content: (
-            <div className="grid content-start gap-3 xl:grid-cols-2">
-              <Panel title="Start level" right={<span className="opacity-70">every run begins here</span>}>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-3xl">Lv {build.level}</span>
-                  <button className="ff-window px-4 py-1 disabled:opacity-50" disabled={points < levelCost || raise.isPending} onClick={() => raise.mutate({ key: build.key })}>
-                    → Lv {build.level + 1} · {levelCost} CP
-                  </button>
-                </div>
-                <div className="text-xs opacity-70">CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run.</div>
-              </Panel>
-              <Panel title="Gear slots" right={<span className="opacity-70">{slotCost == null ? "all unlocked" : `next: ${slotCost} CP`}</span>}>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {UNLOCKABLE_SLOTS.map((s) => {
-                    const open = slotUnlocked(build, s);
-                    return (
-                      <button
-                        key={s}
-                        className="rounded border px-2 py-1 text-sm transition disabled:cursor-default data-[open=true]:border-green-400/60 data-[open=true]:bg-green-900/40 data-[open=false]:border-white/20 data-[open=false]:bg-black/25 enabled:hover:brightness-125"
-                        data-open={open}
-                        disabled={open || slotCost == null || points < slotCost || unlock.isPending}
-                        onClick={() => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" })}
-                      >
-                        {SLOT_META[s].label} {open ? "✓" : <span className="opacity-70">· {slotCost} CP</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="text-xs opacity-70">An open slot starts each run with {char.name}'s starter gear and holds what they find.</div>
-              </Panel>
-              <Panel title="Record" className="xl:col-span-2">
+            <div className="grid content-start gap-3">
+              <Panel title="Record" right={<span className="opacity-70">runs with {char.name} in the party</span>}>
                 <div className="grid grid-cols-3 gap-1.5 text-center">
                   {(
                     [
