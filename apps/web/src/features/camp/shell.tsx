@@ -58,8 +58,8 @@ const pageResolver: NextFocusResolver = (direction, from, siblings) => {
     return null;
   }
   if (from === MENU_BUTTON_FOCUS) {
-    if (direction === "down") return content;
-    if (direction === "right") return quick[0] ?? null;
+    // → goes into the page (the shortcuts are across the whole page: → from the content's right edge reaches them).
+    if (direction === "down" || direction === "right") return content;
     return null;
   }
   const i = quick.findIndex((q) => q.focusKey === from);

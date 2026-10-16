@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { BattleView } from "./battle-view";
 import { useBattleScript } from "./use-battle-script";
+import { FocusItem } from "@/features/input/focus";
 
 interface Props {
   world: number;
@@ -79,15 +80,17 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
             onChange={(e) => onChange({ level: Math.max(1, Math.min(99, Number(e.target.value) || 1)) })}
           />
         </label>
-        <button
-          className="ff-option"
-          onClick={() => {
-            setResult(null);
-            setRound((r) => r + 1);
-          }}
-        >
-          New fight
-        </button>
+        <FocusItem>
+          <button
+            className="ff-option"
+            onClick={() => {
+              setResult(null);
+              setRound((r) => r + 1);
+            }}
+          >
+            New fight
+          </button>
+        </FocusItem>
         {result && (
           <span className="text-yellow-200">
             {result.outcome} in {Math.round(result.tick / 20)}s

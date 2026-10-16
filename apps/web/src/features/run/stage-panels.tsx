@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useTween } from "@/features/results/use-tween";
 import { VictoryScreen } from "@/features/results/victory-screen";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
+import { FocusItem } from "@/features/input/focus";
 
 import { ItemCard, itemName } from "./item-info";
 import type { RunActions, RunReport } from "./use-run";
@@ -35,14 +36,18 @@ export function RewardsPanel({ run, phase, actions }: { run: RunState; phase: Ex
               <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
             ))}
           </div>
-          <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
-            Skip
-          </button>
+          <FocusItem>
+            <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
+              Skip
+            </button>
+          </FocusItem>
         </>
       ) : (
-        <button className="ff-window mx-auto px-6 py-2 text-lg" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
-          Continue
-        </button>
+        <FocusItem>
+          <button className="ff-window mx-auto px-6 py-2 text-lg" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
+            Continue
+          </button>
+        </FocusItem>
       )}
     </VictoryScreen>
   );
@@ -59,9 +64,11 @@ export function TreasurePanel({ run, phase, actions }: { run: RunState; phase: E
           <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
         ))}
       </div>
-      <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
-        Leave it
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
+          Leave it
+        </button>
+      </FocusItem>
     </Panel>
   );
 }
@@ -85,9 +92,11 @@ export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extra
         })}
       </div>
       <SellList run={run} actions={actions} />
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-        Leave
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+          Leave
+        </button>
+      </FocusItem>
     </Panel>
   );
 }
@@ -101,14 +110,15 @@ function SellList({ run, actions }: { run: RunState; actions: RunActions }) {
       <div className="ff-title mb-1">Sell (unequipped gear)</div>
       <div className="flex flex-wrap gap-2">
         {sellable.map((g) => (
-          <button
-            key={g.uid}
-            className="rounded border border-white/30 px-2 py-0.5 text-sm hover:bg-white/10 disabled:opacity-50"
-            disabled={actions.sell.isPending}
-            onClick={() => actions.sell.mutate({ uid: g.uid })}
-          >
-            {itemName(g.itemId)} · {sellPrice(g.itemId)}g{!g.secured && <span className="text-orange-300"> ·found</span>}
-          </button>
+          <FocusItem key={g.uid}>
+            <button
+              className="rounded border border-white/30 px-2 py-0.5 text-sm hover:bg-white/10 disabled:opacity-50"
+              disabled={actions.sell.isPending}
+              onClick={() => actions.sell.mutate({ uid: g.uid })}
+            >
+              {itemName(g.itemId)} · {sellPrice(g.itemId)}g{!g.secured && <span className="text-orange-300"> ·found</span>}
+            </button>
+          </FocusItem>
         ))}
       </div>
     </div>
@@ -159,9 +169,11 @@ export function SynthPanel({ run, phase, actions }: { run: RunState; phase: Extr
         })}
       </div>
       <SellList run={run} actions={actions} />
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-        Leave
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+          Leave
+        </button>
+      </FocusItem>
     </Panel>
   );
 }
@@ -175,9 +187,11 @@ export function MooglePanel({ run, actions }: { run: RunState; actions: RunActio
         "I'll buy any gear you can't use, kupo. Remember — what you find out here only comes home if you see the journey through!"
       </div>
       <SellList run={run} actions={actions} />
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-        Set off
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+          Set off
+        </button>
+      </FocusItem>
     </Panel>
   );
 }
@@ -190,21 +204,24 @@ export function EventPanel({ run, phase, actions }: { run: RunState; phase: Extr
       {phase.result ? (
         <>
           <div className="ff-window p-4 text-lg text-yellow-100">{phase.result}</div>
-          <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-            Continue
-          </button>
+          <FocusItem>
+            <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+              Continue
+            </button>
+          </FocusItem>
         </>
       ) : (
         <div className="flex flex-col gap-2">
           {ev.choices.map((c, i) => (
-            <button
-              key={c.label}
-              className="ff-window px-4 py-2 text-left text-lg enabled:hover:brightness-125 disabled:opacity-50"
-              disabled={(c.cost ?? 0) > run.gil || actions.choose.isPending}
-              onClick={() => actions.choose.mutate({ index: i })}
-            >
-              {c.label}
-            </button>
+            <FocusItem key={c.label}>
+              <button
+                className="ff-window px-4 py-2 text-left text-lg enabled:hover:brightness-125 disabled:opacity-50"
+                disabled={(c.cost ?? 0) > run.gil || actions.choose.isPending}
+                onClick={() => actions.choose.mutate({ index: i })}
+              >
+                {c.label}
+              </button>
+            </FocusItem>
           ))}
         </div>
       )}
@@ -220,9 +237,11 @@ export function WorldClearPanel({ run, actions }: { run: RunState; actions: RunA
       <div className="ff-window p-4 text-lg">
         The road leads on to <span className="text-yellow-200">{next?.name}</span> — {next?.subtitle}. The party rests before setting out.
       </div>
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.nextWorld.mutate()}>
-        Travel on
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.nextWorld.mutate()}>
+          Travel on
+        </button>
+      </FocusItem>
     </Panel>
   );
 }
@@ -283,9 +302,11 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
       )}
 
       <div className="text-center text-sm opacity-80">Spend Completion Points at camp on a higher start level or unlocking equipment slots.</div>
-      <Link to="/play" className="ff-window mx-auto px-6 py-2 text-lg">
-        Back to camp
-      </Link>
+      <FocusItem>
+        <Link to="/play" className="ff-window mx-auto px-6 py-2 text-lg">
+          Back to camp
+        </Link>
+      </FocusItem>
     </div>
   );
 }

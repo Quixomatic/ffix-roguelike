@@ -3,6 +3,7 @@ import { abilityName, findItem, getCharacter, type ItemData } from "@ffix-roguel
 
 import { PartyGearDeltas } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
+import { FocusItem } from "@/features/input/focus";
 
 /** One-line stat summary for a piece of gear, e.g. "Atk 18 · Silence" or "Def 4 · Eva 7 · Str+1". */
 export function gearSummary(item: ItemData): string {
@@ -113,16 +114,18 @@ export function ItemCard({
 }) {
   if (!findItem(itemId)) return null;
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={!onClick}
-      data-active={selected}
-      className="ff-window flex w-full flex-col gap-1 p-3 text-left transition enabled:hover:brightness-125 data-[active=true]:outline data-[active=true]:outline-2 data-[active=true]:outline-yellow-300"
-    >
-      <ItemDetails itemId={itemId} party={party} />
-      {footer}
-    </button>
+    <FocusItem>
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={!onClick}
+        data-active={selected}
+        className="ff-window flex w-full flex-col gap-1 p-3 text-left transition enabled:hover:brightness-125 data-[active=true]:outline data-[active=true]:outline-2 data-[active=true]:outline-yellow-300"
+      >
+        <ItemDetails itemId={itemId} party={party} />
+        {footer}
+      </button>
+    </FocusItem>
   );
 }
 

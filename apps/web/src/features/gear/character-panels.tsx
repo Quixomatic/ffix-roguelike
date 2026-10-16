@@ -16,7 +16,7 @@ import { abilityName, getAction, getCharacter, getSupportAbility, parseAbilityRe
 import type { ReactNode } from "react";
 
 import { HelpText } from "@/features/run/item-info";
-import { FocusItem } from "@/features/input/focus";
+import { FocusItem, FocusSection } from "@/features/input/focus";
 
 /** A titled section of the character sheet. */
 export function Panel({ title, right, className = "", children }: { title: ReactNode; right?: ReactNode; className?: string; children: ReactNode }) {
@@ -363,9 +363,12 @@ export function CharacterModal({
       </div>
   );
   if (inline) return window;
+  // A dialog: the cursor starts inside and stays there until it closes.
   return (
-    <div data-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
-      {window}
-    </div>
+    <FocusSection boundary autoFocus>
+      <div data-modal className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3" onClick={onClose}>
+        {window}
+      </div>
+    </FocusSection>
   );
 }

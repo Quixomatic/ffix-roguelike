@@ -5,6 +5,7 @@ import { useState } from "react";
 import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, TrainingRows } from "@/features/gear/character-panels";
 import { DollFigure, EquipmentList, GearPicker, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { ItemIcon } from "@/features/items/item-icon";
+import { FocusItem } from "@/features/input/focus";
 
 import { itemName } from "./item-info";
 import { fieldItems } from "./party-sidebar";
@@ -124,16 +125,17 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
               {items.length ? (
                 <div className="grid gap-1.5 sm:grid-cols-2">
                   {items.map((c) => (
-                    <button
-                      key={c.itemId}
-                      className="flex items-center gap-2 rounded border border-white/20 bg-black/25 px-2 py-1 text-left hover:brightness-125 disabled:opacity-50"
-                      disabled={actions.useItem.isPending}
-                      onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: keyName })}
-                    >
-                      <ItemIcon itemId={c.itemId} size={32} />
-                      <span className="flex-1">{itemName(c.itemId)}</span>
-                      <span className="tabular-nums">×{c.count}</span>
-                    </button>
+                    <FocusItem key={c.itemId}>
+                      <button
+                        className="flex items-center gap-2 rounded border border-white/20 bg-black/25 px-2 py-1 text-left hover:brightness-125 disabled:opacity-50"
+                        disabled={actions.useItem.isPending}
+                        onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: keyName })}
+                      >
+                        <ItemIcon itemId={c.itemId} size={32} />
+                        <span className="flex-1">{itemName(c.itemId)}</span>
+                        <span className="tabular-nums">×{c.count}</span>
+                      </button>
+                    </FocusItem>
                   ))}
                 </div>
               ) : (

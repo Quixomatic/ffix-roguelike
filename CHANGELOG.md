@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.41] - 2026-10-16
+
+Keyboard and controller navigation, step 3: the run screens, the header bar, practice battle, and dialogs.
+
+### Added
+- **Cursor stops throughout a run**:
+  - **party sidebar**: Optimize gear, each member's Manage and quick-use items
+  - **dock**: Items / Gear / Run tabs, close, use-on-member, Abandon run
+  - **every stage screen**: reward picks, treasure, shop and synthesis items (every `ItemCard` is a cursor stop), selling, Moogle, events, Stiltzkin, Chocobo digs, world clear, Leave / Continue
+  - the **in-run character sheet** and the **run-over** screen
+- **Each stage's screen is the page's cursor section**: arriving on a reward, shop or event puts the cursor on its first item. (The overworld map and battles keep their own controls.)
+- **Header bar** links (on runs, battles, Dev, the effects gallery) and the **practice battle**'s controls are cursor stops.
+- **Dialogs keep the cursor inside** (the character sheet, `GameDialog`): it starts on the dialog's first item and can't wander to the page behind until the dialog closes.
+
+### Changed
+- **→ from the menu button goes into the page**, not across it to the shortcuts on the far right. The shortcuts are reached with → from the content's right edge.
+
 ## [0.2.40] - 2026-10-16
 
 The battle menu has FF9's controls on keyboard and controller, with its sounds.

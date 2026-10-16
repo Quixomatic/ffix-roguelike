@@ -3,6 +3,7 @@ import { findItem } from "@ffix-roguelike/game-data";
 
 import { ItemCard, itemName } from "./item-info";
 import type { RunActions } from "./use-run";
+import { FocusItem } from "@/features/input/focus";
 
 function Header({ title, subtitle, gil }: { title: string; subtitle: string; gil: number }) {
   return (
@@ -39,22 +40,25 @@ export function StiltzkinPanel({ run, phase, actions }: { run: RunState; phase: 
               }
             />
           ) : (
-            <button
-              key={i}
-              className="ff-window flex flex-col gap-1 p-3 text-left enabled:hover:brightness-125 disabled:opacity-50"
-              disabled={bought || !afford || actions.buyOffer.isPending}
-              onClick={() => actions.buyOffer.mutate({ index: i })}
-            >
-              <span className="text-lg">{o.label}</span>
-              <span className="text-sm text-[#c8d0ff]">{summarize(o.items)}</span>
-              <span className={`mt-auto text-right text-sm ${afford ? "" : "text-red-300"}`}>{bought ? "Sold" : `${o.price} gil`}</span>
-            </button>
+            <FocusItem key={i}>
+              <button
+                className="ff-window flex flex-col gap-1 p-3 text-left enabled:hover:brightness-125 disabled:opacity-50"
+                disabled={bought || !afford || actions.buyOffer.isPending}
+                onClick={() => actions.buyOffer.mutate({ index: i })}
+              >
+                <span className="text-lg">{o.label}</span>
+                <span className="text-sm text-[#c8d0ff]">{summarize(o.items)}</span>
+                <span className={`mt-auto text-right text-sm ${afford ? "" : "text-red-300"}`}>{bought ? "Sold" : `${o.price} gil`}</span>
+              </button>
+            </FocusItem>
           );
         })}
       </div>
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-        Farewell, kupo
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+          Farewell, kupo
+        </button>
+      </FocusItem>
     </div>
   );
 }
@@ -81,29 +85,32 @@ export function ChocoboPanel({ run, phase, actions }: { run: RunState; phase: Ex
           const dug = phase.dug.includes(i);
           const revealed = dug || done;
           return (
-            <button
-              key={i}
-              className={`ff-window flex aspect-square flex-col items-center justify-center gap-1 p-2 text-center enabled:hover:brightness-125 ${
-                revealed ? (dug ? "" : "opacity-50") : ""
-              }`}
-              disabled={revealed || actions.dig.isPending}
-              onClick={() => actions.dig.mutate({ index: i })}
-            >
-              {revealed ? (
-                <>
-                  <span className={`text-3xl ${dug ? "ff-pop" : ""}`}>{spot.type === "nothing" ? "·" : spot.type === "gil" ? "💰" : "✦"}</span>
-                  <span className={`text-sm ${dug && spot.type !== "nothing" ? "text-yellow-200" : ""}`}>{spotLabel(spot)}</span>
-                </>
-              ) : (
-                <span className="text-3xl opacity-70">?</span>
-              )}
-            </button>
+            <FocusItem key={i}>
+              <button
+                className={`ff-window flex aspect-square flex-col items-center justify-center gap-1 p-2 text-center enabled:hover:brightness-125 ${
+                  revealed ? (dug ? "" : "opacity-50") : ""
+                }`}
+                disabled={revealed || actions.dig.isPending}
+                onClick={() => actions.dig.mutate({ index: i })}
+              >
+                {revealed ? (
+                  <>
+                    <span className={`text-3xl ${dug ? "ff-pop" : ""}`}>{spot.type === "nothing" ? "·" : spot.type === "gil" ? "💰" : "✦"}</span>
+                    <span className={`text-sm ${dug && spot.type !== "nothing" ? "text-yellow-200" : ""}`}>{spotLabel(spot)}</span>
+                  </>
+                ) : (
+                  <span className="text-3xl opacity-70">?</span>
+                )}
+              </button>
+            </FocusItem>
           );
         })}
       </div>
-      <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
-        {done ? "Ride on" : "Leave early"}
-      </button>
+      <FocusItem>
+        <button className="ff-window mx-auto px-6 py-2 text-lg" onClick={() => actions.leave.mutate()}>
+          {done ? "Ride on" : "Leave early"}
+        </button>
+      </FocusItem>
     </div>
   );
 }

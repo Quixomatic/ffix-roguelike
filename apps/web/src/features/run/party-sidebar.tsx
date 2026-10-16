@@ -3,6 +3,7 @@ import { findItem, getCharacter, MAX_LEVEL } from "@ffix-roguelike/game-data";
 
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
+import { FocusItem } from "@/features/input/focus";
 
 import { itemEffectText, itemName } from "./item-info";
 import type { RunActions } from "./use-run";
@@ -37,9 +38,11 @@ export function PartySidebar({ run, actions, canManage, onManage }: { run: RunSt
         ))}
       </div>
       {canManage && (
-        <button className="ff-window px-3 py-1 text-sm" disabled={actions.optimize.isPending} onClick={() => actions.optimize.mutate()}>
-          Optimize gear
-        </button>
+        <FocusItem>
+          <button className="ff-window px-3 py-1 text-sm" disabled={actions.optimize.isPending} onClick={() => actions.optimize.mutate()}>
+            Optimize gear
+          </button>
+        </FocusItem>
       )}
     </aside>
   );
@@ -70,14 +73,16 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
   return (
     <div className="ff-window flex max-h-[13rem] min-h-0 flex-1 flex-col gap-1 px-2 py-1.5">
       <div className="flex items-center gap-2">
-        <button
-          className="flex h-14 w-12 shrink-0 items-end justify-center rounded bg-black/30 enabled:hover:brightness-125"
-          onClick={onManage}
-          disabled={!canManage}
-          title={canManage ? "Equipment & abilities" : undefined}
-        >
-          <HeroSprite heroKey={m.build.key} size={48} ko={down} anim={lowHp ? "dying" : undefined} variant={m.statuses?.includes("blind") ? "blind" : null} />
-        </button>
+        <FocusItem>
+          <button
+            className="flex h-14 w-12 shrink-0 items-end justify-center rounded bg-black/30 enabled:hover:brightness-125"
+            onClick={onManage}
+            disabled={!canManage}
+            title={canManage ? "Equipment & abilities" : undefined}
+          >
+            <HeroSprite heroKey={m.build.key} size={48} ko={down} anim={lowHp ? "dying" : undefined} variant={m.statuses?.includes("blind") ? "blind" : null} />
+          </button>
+        </FocusItem>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between">
             <span className="ff-display truncate">{getCharacter(m.build.key).name}</span>
@@ -120,19 +125,22 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
 
       {canManage && (
         <div className="mt-auto flex flex-wrap items-center gap-1">
-          <button className="rounded border border-white/20 bg-black/25 px-1.5 text-xs hover:brightness-125" onClick={onManage}>
-            Manage
-          </button>
-          {items.map((c) => (
-            <button
-              key={c.itemId}
-              className="flex items-center gap-0.5 rounded border border-white/20 bg-black/25 px-1 text-xs hover:brightness-125 disabled:opacity-50"
-              title={`Use ${itemName(c.itemId)} on ${getCharacter(m.build.key).name}${findItem(c.itemId) ? ` — ${itemEffectText(findItem(c.itemId)!)}` : ""}`}
-              disabled={actions.useItem.isPending}
-              onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: m.build.key })}
-            >
-              <ItemIcon itemId={c.itemId} size={16} />×{c.count}
+          <FocusItem>
+            <button className="rounded border border-white/20 bg-black/25 px-1.5 text-xs hover:brightness-125" onClick={onManage}>
+              Manage
             </button>
+          </FocusItem>
+          {items.map((c) => (
+            <FocusItem key={c.itemId}>
+              <button
+                className="flex items-center gap-0.5 rounded border border-white/20 bg-black/25 px-1 text-xs hover:brightness-125 disabled:opacity-50"
+                title={`Use ${itemName(c.itemId)} on ${getCharacter(m.build.key).name}${findItem(c.itemId) ? ` — ${itemEffectText(findItem(c.itemId)!)}` : ""}`}
+                disabled={actions.useItem.isPending}
+                onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: m.build.key })}
+              >
+                <ItemIcon itemId={c.itemId} size={16} />×{c.count}
+              </button>
+            </FocusItem>
           ))}
         </div>
       )}

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
+import { FocusItem } from "@/features/input/focus";
 
 import { gearSummary, HelpText, itemEffectText, itemName } from "./item-info";
 import { fieldItems } from "./party-sidebar";
@@ -27,24 +28,27 @@ export function RunDock({ run, actions, canManage }: { run: RunState; actions: R
     <>
       <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1">
         {TABS.map((t) => (
-          <button
-            key={t.id}
-            className="ff-window flex items-center gap-1.5 px-3 py-1 text-sm data-[on=true]:text-yellow-200 data-[on=true]:brightness-125"
-            data-on={tab === t.id}
-            onClick={() => setTab(tab === t.id ? null : t.id)}
-          >
-            <span className="text-base leading-none">{t.glyph}</span>
-            {t.label}
-          </button>
+          <FocusItem key={t.id}>
+            <button
+              className="ff-window flex items-center gap-1.5 px-3 py-1 text-sm data-[on=true]:text-yellow-200 data-[on=true]:brightness-125"
+              data-on={tab === t.id}
+              onClick={() => setTab(tab === t.id ? null : t.id)}
+            >
+              <span className="text-base leading-none">{t.glyph}</span>
+              {t.label}
+            </button>
+          </FocusItem>
         ))}
       </div>
       {tab && (
         <div className="ff-window absolute bottom-14 right-2 top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
           <div className="flex items-center justify-between">
             <span className="ff-display text-lg">{TABS.find((t) => t.id === tab)!.label}</span>
-            <button onClick={() => setTab(null)} aria-label="Close">
-              ✕
-            </button>
+            <FocusItem>
+              <button onClick={() => setTab(null)} aria-label="Close">
+                ✕
+              </button>
+            </FocusItem>
           </div>
           {tab === "inventory" && <InventoryPanel run={run} actions={actions} canManage={canManage} />}
           {tab === "gear" && <GearBagPanel run={run} />}
@@ -72,23 +76,26 @@ function InventoryPanel({ run, actions, canManage }: { run: RunState; actions: R
             </span>
             <span className="tabular-nums">×{c.count}</span>
             {canManage && usable.has(c.itemId) && (
-              <button className="rounded border border-white/20 px-1.5 text-xs hover:brightness-125" onClick={() => setUsing(using === c.itemId ? null : c.itemId)}>
-                Use
-              </button>
+              <FocusItem>
+                <button className="rounded border border-white/20 px-1.5 text-xs hover:brightness-125" onClick={() => setUsing(using === c.itemId ? null : c.itemId)}>
+                  Use
+                </button>
+              </FocusItem>
             )}
           </div>
           {using === c.itemId && (
             <div className="mt-1 flex flex-wrap gap-1">
               {run.party.map((m) => (
-                <button
-                  key={m.build.key}
-                  className="flex items-center gap-1 rounded border border-white/20 bg-black/30 px-1.5 text-xs hover:brightness-125"
-                  disabled={actions.useItem.isPending}
-                  onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: m.build.key })}
-                >
-                  <HeroSprite heroKey={m.build.key} size={20} ko={m.hp <= 0} />
-                  {getCharacter(m.build.key).name}
-                </button>
+                <FocusItem key={m.build.key}>
+                  <button
+                    className="flex items-center gap-1 rounded border border-white/20 bg-black/30 px-1.5 text-xs hover:brightness-125"
+                    disabled={actions.useItem.isPending}
+                    onClick={() => actions.useItem.mutate({ itemId: c.itemId, key: m.build.key })}
+                  >
+                    <HeroSprite heroKey={m.build.key} size={20} ko={m.hp <= 0} />
+                    {getCharacter(m.build.key).name}
+                  </button>
+                </FocusItem>
               ))}
             </div>
           )}
@@ -173,14 +180,16 @@ function RunInfoPanel({ run, actions }: { run: RunState; actions: RunActions }) 
           );
         })}
       </div>
-      <button
-        className="mt-2 rounded border border-red-400/50 px-2 py-1 text-sm text-red-300 hover:bg-red-900/30"
-        onClick={() => {
-          if (confirm("Abandon this run? You still earn Completion Points and keep learned abilities; gear found this run is lost.")) actions.abandon.mutate();
-        }}
-      >
-        Abandon run
-      </button>
+      <FocusItem>
+        <button
+          className="mt-2 rounded border border-red-400/50 px-2 py-1 text-sm text-red-300 hover:bg-red-900/30"
+          onClick={() => {
+            if (confirm("Abandon this run? You still earn Completion Points and keep learned abilities; gear found this run is lost.")) actions.abandon.mutate();
+          }}
+        >
+          Abandon run
+        </button>
+      </FocusItem>
     </div>
   );
 }
