@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
+import { FocusItem } from "@/features/input/focus";
 
 import { ItemIcon } from "./item-icon";
 import { ItemPopover } from "./item-popover";
@@ -45,25 +46,33 @@ export function ItemGallery() {
         <span className="ff-title text-lg">Items</span>
         <div className="flex flex-wrap gap-1">
           {KINDS.map((k) => (
-            <button key={k.kind} className="ff-window px-2 py-0.5 text-sm data-[on=true]:text-yellow-200" data-on={kind === k.kind} onClick={() => setKind(k.kind)}>
-              {k.label}
-            </button>
+            <FocusItem key={k.kind}>
+              <button className="ff-window px-2 py-0.5 text-sm data-[on=true]:text-yellow-200" data-on={kind === k.kind} onClick={() => setKind(k.kind)}>
+                {k.label}
+              </button>
+            </FocusItem>
           ))}
         </div>
-        <select className="ff-window px-2 py-0.5 text-sm" value={who} onChange={(e) => setWho(e.target.value)}>
-          <option value="">Anyone</option>
-          {CAST.map((k) => (
-            <option key={k} value={k}>
-              {getCharacter(k).name}
-            </option>
-          ))}
-        </select>
-        <input className="ff-window px-2 py-0.5 text-sm" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <FocusItem>
+          <select className="ff-window px-2 py-0.5 text-sm" value={who} onChange={(e) => setWho(e.target.value)}>
+            <option value="">Anyone</option>
+            {CAST.map((k) => (
+              <option key={k} value={k}>
+                {getCharacter(k).name}
+              </option>
+            ))}
+          </select>
+        </FocusItem>
+        <FocusItem>
+          <input className="ff-window px-2 py-0.5 text-sm" placeholder="Search…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </FocusItem>
         <div className="flex gap-1 text-sm">
           {[16, 32, 48, 64].map((s) => (
-            <button key={s} className="ff-window px-2 py-0.5 data-[on=true]:text-yellow-200" data-on={size === s} onClick={() => setSize(s)}>
-              {s}px
-            </button>
+            <FocusItem key={s}>
+              <button className="ff-window px-2 py-0.5 data-[on=true]:text-yellow-200" data-on={size === s} onClick={() => setSize(s)}>
+                {s}px
+              </button>
+            </FocusItem>
           ))}
         </div>
         <span className="ml-auto text-sm opacity-70">{shown.length} items</span>

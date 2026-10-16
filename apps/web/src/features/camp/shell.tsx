@@ -1,14 +1,17 @@
 import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
 import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
-import { useState } from "react";
+import { setFocus } from "@noriginmedia/norigin-spatial-navigation";
+import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
+import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { FocusItem, FocusSection } from "@/features/input/focus";
-import { PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
+import { MENU_EVENT, PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -61,8 +64,21 @@ function useSidebarOpen(): [boolean, () => void] {
 }
 
 export function HubShell() {
-  useMusic(MUSIC_SLOTS.camp);
+  // The page's music and backdrop come from its route (staticData): the title screen has its own; the rest are camp.
+  const music = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.music)?.staticData.music ?? "camp" });
+  const dim = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.backdropDim != null)?.staticData.backdropDim ?? 0.55 });
+  useMusic(MUSIC_SLOTS[music]);
   const [open, toggle] = useSidebarOpen();
+  // M / the controller's Start: open or close the menu, and take the cursor with it.
+  useEffect(() => {
+    const onMenu = () => {
+      const opening = !open;
+      toggle();
+      requestAnimationFrame(() => void setFocus(opening ? SIDEBAR_FOCUS : PAGE_FOCUS));
+    };
+    window.addEventListener(MENU_EVENT, onMenu);
+    return () => window.removeEventListener(MENU_EVENT, onMenu);
+  }, [open, toggle]);
   // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
@@ -73,41 +89,44 @@ export function HubShell() {
       <div className="min-h-0 overflow-hidden" aria-hidden={!open || undefined} inert={!open || undefined}>
         <Sidebar open={open} />
       </div>
+      {/* The page's cursor section holds the menu button and the shortcuts too, so ↑ from the top of a page reaches them. */}
+      <FocusSection key={path} focusKey={PAGE_FOCUS} autoFocus>
       <div className="relative min-h-0">
-        {/* Always on screen, inset on the page: slides the sidebar in and out. */}
+        {/* Always on screen, inset on the page: slides the sidebar in and out (or M / Start). */}
         <FocusItem>
           <button
             type="button"
             onClick={toggle}
-            aria-label={open ? "Hide the menu" : "Show the menu"}
+            aria-label={open ? "Hide the menu (M)" : "Show the menu (M)"}
+            title={open ? "Hide the menu (M)" : "Show the menu (M)"}
             aria-expanded={open}
             className="ff-panel ff-lift absolute left-3 top-3 z-20 flex size-10 items-center justify-center rounded-full"
           >
             <Menu className="size-5" />
           </button>
         </FocusItem>
-        <FocusSection key={path} focusKey={PAGE_FOCUS} autoFocus>
-          <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
-            {/* Room at the top for the menu button. */}
-            <MemoriaBackdrop dim={0.55} className="pt-10">
-              <Outlet />
-            </MemoriaBackdrop>
-          </div>
-        </FocusSection>
+        <QuickLinks />
+        <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
+          {/* Room at the top for the menu button. */}
+          <MemoriaBackdrop dim={dim} className="pt-10">
+            <Outlet />
+          </MemoriaBackdrop>
+        </div>
       </div>
+      </FocusSection>
     </div>
   );
 }
 
 function Sidebar({ open }: { open: boolean }) {
   const { data: session } = authClient.useSession();
-  const profile = useQuery(trpc.profile.get.queryOptions());
+  const profile = useQuery({ ...trpc.profile.get.queryOptions(), enabled: !!session });
   return (
     <FocusSection focusKey={SIDEBAR_FOCUS} disabled={!open}>
     <aside className={`flex h-full w-60 min-h-0 flex-col gap-3 transition-transform duration-300 ease-out ${open ? "" : "-translate-x-full"} border-r-2 border-[#e8e8f4]/40 bg-gradient-to-b from-[#1b2466] via-[#10164a] to-[#070a1f] p-3 text-sidebar-foreground`}>
-      {/* The header bar's wordmark. */}
+      {/* The header bar's wordmark: home (the title screen). */}
       <FocusItem>
-        <Link to="/play" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
+        <Link to="/" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
           FFIX <span className="text-yellow-200">Roguelike</span>
         </Link>
       </FocusItem>
@@ -137,13 +156,21 @@ function Sidebar({ open }: { open: boolean }) {
           Legacy camp
         </Link>
       </FocusItem>
-      <div className="flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2">
-        <Avatar image={session?.user.image} name={session?.user.name} size={32} />
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm">{session?.user.name ?? "…"}</div>
-          <div className="text-xs text-yellow-200">{profile.data ? `${profile.data.gil.toLocaleString()} gil` : ""}</div>
+      {session ? (
+        <div className="flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2">
+          <Avatar image={session.user.image} name={session.user.name} size={32} />
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm">{session.user.name}</div>
+            <div className="text-xs text-yellow-200">{profile.data ? `${profile.data.gil.toLocaleString()} gil` : ""}</div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <FocusItem>
+          <Link to="/login" className="ff-panel ff-lift flex items-center justify-center gap-2 px-3 py-2 text-base">
+            Sign in <PixelIcon name="arrow-right" />
+          </Link>
+        </FocusItem>
+      )}
     </aside>
     </FocusSection>
   );
@@ -163,5 +190,43 @@ function NavLink({ item }: { item: NavItem }) {
       {item.label}
     </Link>
     </FocusItem>
+  );
+}
+
+/**
+ * Banked gil and CP in the page's top-right corner, and a floating stack of round shortcuts below them — on every hub
+ * page, staying put while it scrolls. Signed in only.
+ */
+function QuickLinks() {
+  const { data: session } = authClient.useSession();
+  const profile = useQuery({ ...trpc.profile.get.queryOptions(), enabled: !!session });
+  if (!session || !profile.data) return null;
+  const p = profile.data;
+  const cp = p.unlocked.reduce((n, k) => n + (p.builds[k]!.points ?? 0), 0);
+  return (
+    <div className="absolute right-5 top-3 z-20 flex flex-col items-end gap-3">
+      <div className="flex gap-2">
+        <span className="ff-chip">{p.gil.toLocaleString()} gil</span>
+        <span className="ff-chip">{cp} CP</span>
+      </div>
+      <div className="flex flex-col gap-2">
+        <RoundLink to="/items" label="Items" icon={Package} />
+        <RoundLink to="/achievements" label="Achievements" icon={Trophy} />
+        <RoundLink to="/settings" label="Settings" icon={Settings} />
+      </div>
+    </div>
+  );
+}
+
+function RoundLink({ to, label, icon: Icon }: { to: string; label: string; icon: ComponentType<{ className?: string }> }) {
+  return (
+    <Tooltip>
+      <FocusItem>
+        <TooltipTrigger render={<Link to={to} aria-label={label} />} className="ff-panel ff-lift flex size-11 items-center justify-center rounded-full">
+          <Icon className="size-5" />
+        </TooltipTrigger>
+      </FocusItem>
+      <TooltipContent side="left">{label}</TooltipContent>
+    </Tooltip>
   );
 }

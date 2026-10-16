@@ -6,9 +6,11 @@
  * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the focused control
  *   (Norigin's Enter is unused).
  * - **Back**: Escape or Backspace backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
+ *   In a text field or dropdown, Escape lets go of it instead (the cursor takes over again).
+ * - **Menu**: M (or the controller's Start) opens / closes the hub's sidebar and moves the cursor into / out of it.
  * - **Controller**: the D-pad / left stick send arrow-key events (repeating while held), A presses the focused control
- *   (or sends Enter where the screen has its own controls), B sends Escape — so battles and the overworld, which already
- *   listen for those keys, work with a controller too.
+ *   (or sends Enter where the screen has its own controls), B sends Escape, Start the menu — so battles and the
+ *   overworld, which already listen for those keys, work with a controller too.
  *
  * Screens with their own controls (the overworld's walking, the battle menu, Phaser) pause menu navigation while they're
  * mounted (`useNavPause`). Typing in a text field pauses it too, so WASD types. Norigin runs with native events (it never
@@ -31,6 +33,8 @@ import { useEffect } from "react";
 /** Focus keys of the shell's two sections: the page's content and the sidebar. */
 export const PAGE_FOCUS = "page";
 export const SIDEBAR_FOCUS = "sidebar";
+/** Window event for the menu control (M, or the controller's Start): the hub shell opens / closes its sidebar. */
+export const MENU_EVENT = "ffix:menu";
 
 const ARROWS: Record<string, "up" | "down" | "left" | "right"> = {
   ArrowUp: "up",
@@ -81,6 +85,21 @@ export function startNav() {
     "keydown",
     (e) => {
       if (!e.ctrlKey && !e.metaKey && !e.altKey) root.dataset.input = "keys";
+      // Escape in a text field or dropdown lets go of it: the cursor and arrows take over again (not Back).
+      if (e.key === "Escape" && isEditable(e.target as Element) && S.manual === 0) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        (e.target as HTMLElement).blur();
+        const cur = getCurrentFocusKey();
+        if (cur && doesFocusableExist(cur)) void setFocus(cur);
+        return;
+      }
+      // M: the menu (the hub's sidebar).
+      if (e.code === "KeyM" && !e.repeat && !navPaused() && !isEditable(e.target as Element) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        window.dispatchEvent(new Event(MENU_EVENT));
+        return;
+      }
       const dir = ARROWS[e.code];
       if (!dir || navPaused() || e.ctrlKey || e.metaKey || e.altKey) return;
       // A slider keeps ←/→ (it adjusts natively; its FocusItem keeps Norigin from moving).
@@ -165,7 +184,15 @@ export function NavRoot() {
 
 // ── Controller ──────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const PAD_KEYS = { up: ["ArrowUp", "ArrowUp"], down: ["ArrowDown", "ArrowDown"], left: ["ArrowLeft", "ArrowLeft"], right: ["ArrowRight", "ArrowRight"], enter: ["Enter", "Enter"], escape: ["Escape", "Escape"] } as const;
+const PAD_KEYS = {
+  up: ["ArrowUp", "ArrowUp"],
+  down: ["ArrowDown", "ArrowDown"],
+  left: ["ArrowLeft", "ArrowLeft"],
+  right: ["ArrowRight", "ArrowRight"],
+  enter: ["Enter", "Enter"],
+  escape: ["Escape", "Escape"],
+  menu: ["m", "KeyM"],
+} as const;
 type PadKey = keyof typeof PAD_KEYS;
 const REPEAT_DELAY = 350;
 const REPEAT_EVERY = 120;
@@ -215,6 +242,7 @@ function startGamepad() {
       right: b(15) || x > 0.5,
       enter: b(0),
       escape: b(1),
+      menu: b(9),
     };
     const now = performance.now();
     for (const k of Object.keys(down) as PadKey[]) {
@@ -223,7 +251,7 @@ function startGamepad() {
         continue;
       }
       const since = held.get(k);
-      const repeats = k !== "enter" && k !== "escape";
+      const repeats = k !== "enter" && k !== "escape" && k !== "menu";
       if (since == null) {
         held.set(k, now);
         k === "enter" ? confirm() : sendKey(k);

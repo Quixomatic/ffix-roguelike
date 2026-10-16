@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { EmbarkPage } from "@/features/camp/story";
 
-export const Route = createFileRoute("/_auth/_hub/story/$journey")({
+export const Route = createFileRoute("/_hub/_member/story/$journey")({
   validateSearch: z.object({ tier: z.number().int().min(0).catch(0) }),
   component: function Embark() {
     const { journey } = Route.useParams();

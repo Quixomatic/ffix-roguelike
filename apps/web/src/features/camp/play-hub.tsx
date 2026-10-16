@@ -1,9 +1,8 @@
 import { availableJourneys, ACHIEVEMENTS, gearCatalog, JOURNEYS } from "@ffix-roguelike/game-core";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Package, Settings, Trophy } from "lucide-react";
-import type { ComponentType, ReactNode } from "react";
+import { Trophy } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
 import { FocusItem } from "@/features/input/focus";
@@ -35,7 +34,6 @@ export function PlayHub() {
 
   return (
     <>
-    <QuickLinks gil={p.gil} cp={p.unlocked.reduce((n, k) => n + (p.builds[k]!.points ?? 0), 0)} />
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-10 pt-6">
       <div className="pr-14">
         <div className="ff-title tracking-[0.25em]">CAMP</div>
@@ -170,33 +168,3 @@ function ShopIcons({ ids }: { ids: number[] }) {
   );
 }
 
-/** Currency in the window's top-right corner, and a floating stack of round shortcuts below it (they stay put while
- *  the page scrolls). */
-function QuickLinks({ gil, cp }: { gil: number; cp: number }) {
-  return (
-    <div className="fixed right-5 top-5 z-20 flex flex-col items-end gap-3">
-      <div className="flex gap-2">
-        <span className="ff-chip">{gil.toLocaleString()} gil</span>
-        <span className="ff-chip">{cp} CP</span>
-      </div>
-      <div className="flex flex-col gap-2">
-        <RoundLink to="/items" label="Items" icon={Package} />
-        <RoundLink to="/achievements" label="Achievements" icon={Trophy} />
-        <RoundLink to="/settings" label="Settings" icon={Settings} />
-      </div>
-    </div>
-  );
-}
-
-function RoundLink({ to, label, icon: Icon }: { to: string; label: string; icon: ComponentType<{ className?: string }> }) {
-  return (
-    <Tooltip>
-      <FocusItem>
-        <TooltipTrigger render={<Link to={to} aria-label={label} />} className="ff-panel ff-lift flex size-11 items-center justify-center rounded-full">
-          <Icon className="size-5" />
-        </TooltipTrigger>
-      </FocusItem>
-      <TooltipContent side="left">{label}</TooltipContent>
-    </Tooltip>
-  );
-}

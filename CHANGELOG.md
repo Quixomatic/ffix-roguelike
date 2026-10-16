@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.33] - 2026-10-16
+
+The title screen and the Items page join the hub's sidebar layout, the currency and shortcuts are on every hub page, and the menu has a key.
+
+### Changed
+- **The title screen (`/`) and the Items page use the sidebar layout**, so the header bar is only on runs, battles, Dev, the effects gallery and sign-in. The sidebar's **"FFIX Roguelike" wordmark goes home** (the title screen).
+  - Routes: the hub layout (`_hub`) is public; the title screen and Items sit in it directly, and the signed-in pages (Play, Story, Party, Shops, Challenges, Achievements, Settings) sit behind its sign-in guard (`_hub/_member`). Signed out, the sidebar shows **Sign in** where the player card goes.
+- **The title screen is vertically centred** in the page area, with the backdrop at full strength (no dark strip at the top) and its own music.
+- **Gil, CP and the round shortcuts (Items, Achievements, Settings) are on every hub page**, part of the layout, not just the Play hub. Signed in only.
+- **Music and backdrop come from the route** (`staticData.music`, `staticData.backdropDim`): the title screen declares its own, and every other hub page is camp music on the dimmed backdrop.
+
+### Added
+- **Menu key**: **M**, or the controller's **Start**, opens or closes the sidebar and moves the cursor into it, or back to the page.
+- **The menu button and the shortcuts are in the page's cursor section**, so ↑ from the top of any page reaches them (before, the cursor could barely get to the menu button).
+- **Keyboard and controller on the title screen** (Play / Sign in, Practice battle) and the **Items page** (kind filters, character filter, search, icon sizes, and every item, with its popover).
+- **Escape in a text field or dropdown lets go of it**, so the cursor and arrows take over again.
+- Item popovers (Items page, gear catalog) are cursor stops.
+
+### Fixed
+- **Going from the title screen to Play didn't change the music**: the title asked for its music and the shell for camp's, and only the first request stuck. The shell now plays the current route's music.
+
 ## [0.2.32] - 2026-10-16
 
 ### Added

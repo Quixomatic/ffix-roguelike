@@ -2,6 +2,7 @@ import type { CharacterBuild } from "@ffix-roguelike/game-core";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
 import type { ReactElement } from "react";
 
+import { FocusItem } from "@/features/input/focus";
 import { ItemDetails } from "@/features/run/item-info";
 
 /**
@@ -22,7 +23,10 @@ export function ItemPopover({
 }) {
   return (
     <HoverCard>
-      <HoverCardTrigger delay={250} closeDelay={50} render={children} />
+      {/* A cursor stop too, so the keyboard / controller can reach every item. */}
+      <FocusItem>
+        <HoverCardTrigger delay={250} closeDelay={50} render={children} />
+      </FocusItem>
       <HoverCardContent side={side} align="start" sideOffset={8} className="theme-ff ff-panel flex w-80 flex-col gap-1 rounded-md p-3 text-sm">
         <ItemDetails itemId={itemId} party={party} />
       </HoverCardContent>
