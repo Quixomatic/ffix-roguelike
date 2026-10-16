@@ -44,6 +44,8 @@ interface UnitView {
   animated: boolean;
   /** A one-shot pose (attack, hurt…) holds until this scene time. */
   holdUntil: number;
+  /** Until this scene time the unit keeps looking alive/unhurt: an effect is still on its way to hit it. */
+  impactAt?: number;
   /** Showing a single status pose (stone/sleep): the next animation must restart. */
   still?: boolean;
   cursor: Phaser.GameObjects.Text;
@@ -250,7 +252,8 @@ export class BattleScene extends Phaser.Scene {
     for (const u of state.units) {
       const v = this.views.get(u.id);
       if (!v) continue;
-      const down = u.hp <= 0 || u.statuses.death !== undefined;
+      // The engine has already applied the action; until its effect lands the unit still looks as it did.
+      const down = (u.hp <= 0 || u.statuses.death !== undefined) && this.time.now >= (v.impactAt ?? 0);
       const stone = u.statuses.petrify !== undefined;
       const shown = isShownUnit(u);
       if (u.side === "enemy") {
@@ -278,6 +281,9 @@ export class BattleScene extends Phaser.Scene {
 
   /** The pose a hero rests in when no one-shot is holding: KO, victory, guard, turn ready, chanting, Low HP. */
   private restingPose(u: BattleUnit, state: BattleState): HeroAnim {
+    // An effect is still on its way: keep standing until it hits (the engine already applied the result).
+    const incoming = this.time.now < (this.views.get(u.id)?.impactAt ?? 0);
+    if (incoming) return state.ready.includes(u.id) || this.bridge.activeId === u.id ? "ready" : "idle";
     if (u.hp <= 0 || u.statuses.death !== undefined) return "ko";
     if (state.outcome === "victory") return "victory";
     if (u.statuses.defend) return "defend";
@@ -381,7 +387,13 @@ export class BattleScene extends Phaser.Scene {
     /** ms until the current action's effect hits (0 = no effect: show results at once). */
     let impact = 0;
     for (const ev of events) {
-      if (ev.type === "actionStart") impact = this.startEffect(ev);
+      if (ev.type === "actionStart") {
+        impact = this.startEffect(ev);
+        if (impact > 0) for (const id of ev.targetIds) {
+          const v = this.views.get(id);
+          if (v) v.impactAt = Math.max(v.impactAt ?? 0, this.time.now + impact);
+        }
+      }
       const index = popupIndex++;
       if (impact > 0 && BattleScene.IMPACT.has(ev.type)) this.time.delayedCall(impact, () => this.playEvent(ev, index));
       else this.playEvent(ev, index);

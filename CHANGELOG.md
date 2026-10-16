@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.69] - 2026-10-16
+
+Damage, KOs and deaths wait for the spell to actually hit.
+
+### Fixed
+- **Monsters faded out and died before the effect reached them** (and heroes dropped to their KO/kneel pose early): the battlefield read the engine's state, which already has the result when the action starts. A unit that an effect is still flying at now keeps standing until the hit lands; then it fades, falls or kneels.
+- **Damage numbers appeared before the hit's real impact**: the impact was timed to FFRK's hand-off frame, which comes before the burst peaks (Fire hands off at frame 5 of 80). Numbers, Miss/Guard, status pops and the hurt pose now appear at the later of that frame and a third of the way into the hit — when the flames/sparkles are at their height.
+
 ## [0.1.68] - 2026-10-16
 
 Spells and abilities play FFRK's effects in battle: Vivi's Fire bursts on the target, Curaga sparkles, and the damage numbers wait for the hit.

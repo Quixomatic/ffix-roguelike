@@ -57,6 +57,16 @@ function leadMs(a: EffectAsset | null | undefined): number {
   return (Math.max(0, next - a.range[0]) / (a.rig.fps || 60)) * 1000;
 }
 
+/**
+ * When a hit visibly lands, in ms at speed 1. FFRK's hand-off frame (`action_next`) often comes before the burst
+ * peaks (Fire hands off at frame 5 of 80), so the impact is the later of that frame and a third of the way in.
+ */
+function impactMs(a: EffectAsset | null | undefined): number {
+  if (!a) return 0;
+  const len = Math.max(0, a.range[1] - a.range[0]);
+  return Math.max(leadMs(a), (len / 3 / (a.rig.fps || 60)) * 1000);
+}
+
 const isEmpty = (p: string | undefined) => !p || /common\/(shot|hit|launch)_empty/.test(p);
 
 export interface PlayAt {
@@ -87,7 +97,7 @@ export function playActionEffect(scene: Phaser.Scene, actionId: number | undefin
 
   const tLaunch = leadMs(launchA) / speed;
   const tShot = leadMs(shotA) / speed;
-  const tHit = leadMs(hitA) / speed;
+  const tHit = impactMs(hitA) / speed;
 
   if (launchA && !isEmpty(launch)) new FfrkEffectPlayer(scene, launchA, { ...opts, x: at.from.x, y: at.from.y });
   if (shotA && !isEmpty(shot)) {
