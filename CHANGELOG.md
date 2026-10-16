@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.23] - 2026-10-16
+
+### Changed
+- **Character cards line up across each row** on the Party page and the embark party picker. Each card spans five shared row tracks (CSS subgrid): name, stats, starter gear, gear slots, footer. Matching lines sit at the same height in every card of a row however long each is (e.g. a long starter-gear line), and every card is the same height.
+- **Locked characters fill the same five rows**: silhouette and "???", empty stat cells, how to recruit them, "Joins your roster when recruited", and a padlock "Locked" footer, so they're as tall as the rest.
+- `CharacterCard` takes `rows` (its lines only, for a subgrid cell); `CARD_GRID` / `CARD_CELL` in `camp/roster.tsx` set up the grid and the cells. The cast line's hover card keeps the stacked layout.
+
 ## [0.2.22] - 2026-10-16
 
 Pixel-art icons instead of text characters in the hub, and a compact Cleared badge.

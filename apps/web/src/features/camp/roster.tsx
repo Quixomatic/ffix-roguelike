@@ -72,55 +72,93 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
   );
 }
 
-/** A character at a glance: how they start a run, or how to recruit them. */
-export function CharacterCard({ entry: e, footer }: { entry: RosterEntry; footer?: ReactNode }) {
-  if (!e.unlocked)
-    return (
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-end gap-3">
-          <HeroSprite heroKey={e.key} size={48} silhouette />
-          <div>
-            <div className="ff-display text-lg">???</div>
-            <div className="ff-title">Not recruited</div>
-          </div>
-        </div>
-        <div className="text-xs text-[#c8d0ff]">
-          Unlock: <span className="text-yellow-200">{e.hint}</span>
-        </div>
-        {footer}
-      </div>
-    );
-  const b = e.build;
+/**
+ * Character cards in a grid line up row by row: each card spans `CARD_ROWS` rows of the grid (`CARD_GRID` on the grid,
+ * `CARD_CELL` on each card) and lays its lines into them with subgrid — name, stats, gear, gear slots, footer — so
+ * matching lines sit at the same height in every card of a row, however long each one is.
+ */
+export const CARD_ROWS = 5;
+export const CARD_GRID = "grid gap-x-3 gap-y-1.5";
+export const CARD_CELL = "row-span-5 mb-1.5 grid grid-rows-subgrid gap-y-1.5";
+
+/**
+ * A character at a glance: how they start a run, or how to recruit them. `rows` renders just its `CARD_ROWS` lines,
+ * for a card that's a subgrid cell (`CARD_CELL`); otherwise they're stacked (e.g. in a popover).
+ */
+export function CharacterCard({ entry: e, footer, rows }: { entry: RosterEntry; footer?: ReactNode; rows?: boolean }) {
+  const lines = e.unlocked ? unlockedLines(e.build, footer) : lockedLines(e.key, e.hint, footer);
+  return rows ? <>{lines}</> : <div className="flex flex-col gap-1.5">{lines}</div>;
+}
+
+function unlockedLines(b: CharacterBuild, footer: ReactNode) {
   const st = deriveStats({ ...b, equipment: starterGear(b) });
   const gear = Object.values(starterGear(b)).filter((x): x is number => x != null);
   const cp = b.points ?? 0;
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-end gap-3">
-        <HeroSprite heroKey={e.key} size={48} />
-        <div className="min-w-0 flex-1">
-          <div className="ff-display text-lg">{getCharacter(e.key).name}</div>
-          <div className="ff-title">Start Lv {b.level}</div>
-        </div>
-        <span className={`ff-chip text-xs ${canSpend(b) ? "" : "opacity-70"}`}>
-          {cp} CP{canSpend(b) && <PixelIcon name="star" />}
-        </span>
+  return [
+    <div key="head" className="flex items-end gap-3">
+      <HeroSprite heroKey={b.key} size={48} />
+      <div className="min-w-0 flex-1">
+        <div className="ff-display text-lg">{getCharacter(b.key).name}</div>
+        <div className="ff-title">Start Lv {b.level}</div>
       </div>
-      <div className="grid grid-cols-4 gap-1 text-center text-xs">
-        <Stat label="HP" value={st.maxHp} />
-        <Stat label="MP" value={st.maxMp} />
-        <Stat label="Str" value={st.strength} />
-        <Stat label="Mag" value={st.magic} />
-      </div>
-      <div className="text-xs text-[#c8d0ff]">{gear.map(itemName).join(" · ") || "No gear"}</div>
-      <div className="text-xs opacity-80">{1 + (b.unlockedSlots ?? []).length}/5 gear slots open</div>
+      <span className={`ff-chip text-xs ${canSpend(b) ? "" : "opacity-70"}`}>
+        {cp} CP{canSpend(b) && <PixelIcon name="star" />}
+      </span>
+    </div>,
+    <div key="stats" className="grid grid-cols-4 gap-1 text-center text-xs">
+      <Stat label="HP" value={st.maxHp} />
+      <Stat label="MP" value={st.maxMp} />
+      <Stat label="Str" value={st.strength} />
+      <Stat label="Mag" value={st.magic} />
+    </div>,
+    <div key="gear" className="text-xs text-[#c8d0ff]">
+      {gear.map(itemName).join(" · ") || "No gear"}
+    </div>,
+    <div key="slots" className="text-xs opacity-80">
+      {1 + (b.unlockedSlots ?? []).length}/5 gear slots open
+    </div>,
+    <div key="foot" className="self-end">
       {footer ?? (
-        <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
+        <span className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
           Click to manage <PixelIcon name="arrow-right" />
-        </div>
+        </span>
       )}
-    </div>
-  );
+    </div>,
+  ];
+}
+
+/** The same five lines for someone not yet recruited, so their card is the same height as the others. */
+function lockedLines(key: string, hint: string, footer: ReactNode) {
+  return [
+    <div key="head" className="flex items-end gap-3">
+      <HeroSprite heroKey={key} size={48} silhouette />
+      <div>
+        <div className="ff-display text-lg">???</div>
+        <div className="ff-title">Not recruited</div>
+      </div>
+    </div>,
+    <div key="stats" className="grid grid-cols-4 gap-1 text-center text-xs opacity-40">
+      {["HP", "MP", "Str", "Mag"].map((l) => (
+        <div key={l} className="rounded bg-black/30 px-1 py-0.5">
+          <div className="text-[0.65rem] text-[#c8d0ff]">{l}</div>
+          <div>—</div>
+        </div>
+      ))}
+    </div>,
+    <div key="gear" className="text-xs text-[#c8d0ff]">
+      Unlock: <span className="text-yellow-200">{hint}</span>
+    </div>,
+    <div key="slots" className="text-xs opacity-60">
+      Joins your roster when recruited
+    </div>,
+    <div key="foot" className="self-end">
+      {footer ?? (
+        <span className="inline-flex items-center gap-1 text-xs opacity-60">
+          <PixelIcon name="lock" /> Locked
+        </span>
+      )}
+    </div>,
+  ];
 }
 
 function Stat({ label, value }: { label: string; value: number }) {

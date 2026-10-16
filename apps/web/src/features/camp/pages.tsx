@@ -9,7 +9,7 @@ import { CharacterSheet } from "@/features/hub/character-sheet";
 import { trpc } from "@/utils/trpc";
 
 import { GearCatalogGrid } from "./gear-catalog";
-import { CharacterCard, rosterEntries } from "./roster";
+import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 import { PageTitle } from "./story";
 
 /** The Party page: the whole roster as cards; recruited ones open their own page. */
@@ -20,11 +20,13 @@ export function PartyPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle kicker="PARTY" title="Roster" sub="Spend Completion Points on start levels, training and gear slots; equip support abilities; see what each character has mastered." />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Cards share row tracks (subgrid), so names, stats, gear and footers line up across a row. */}
+      <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-4`}>
         {rosterEntries(p).map((e) =>
           e.unlocked ? (
-            <Link key={e.key} to="/party/$character" params={{ character: e.key }} className="ff-panel ff-lift p-3">
+            <Link key={e.key} to="/party/$character" params={{ character: e.key }} className={`ff-panel ff-lift p-3 ${CARD_CELL}`}>
               <CharacterCard
+                rows
                 entry={e}
                 footer={
                   <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
@@ -34,8 +36,8 @@ export function PartyPage() {
               />
             </Link>
           ) : (
-            <div key={e.key} className="ff-panel p-3 opacity-60">
-              <CharacterCard entry={e} />
+            <div key={e.key} className={`ff-panel p-3 opacity-60 ${CARD_CELL}`}>
+              <CharacterCard rows entry={e} />
             </div>
           ),
         )}

@@ -9,7 +9,7 @@ import { PixelIcon } from "@/components/pixel-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
-import { CharacterCard, rosterEntries } from "./roster";
+import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 
 type StoryProfile = { maxTier: number; journeysCleared?: string[] } & Parameters<typeof availableJourneys>[0];
 
@@ -240,7 +240,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
       )}
 
       <div className="text-sm text-[#c8d0ff]">Pick up to four. Click a card to add or remove them.</div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Cards share row tracks (subgrid), so names, stats, gear and footers line up across a row. */}
+      <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-4`}>
         {rosterEntries(p).map((e) => {
           const chosen = party.includes(e.key);
           return (
@@ -249,9 +250,9 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
               disabled={!e.unlocked}
               onClick={() => toggle(e.key)}
               data-on={chosen}
-              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${e.unlocked ? "" : "opacity-60"}`}
+              className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${CARD_CELL} ${e.unlocked ? "" : "opacity-60"}`}
             >
-              <CharacterCard entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
+              <CharacterCard rows entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
             </button>
           );
         })}
