@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.96] - 2026-10-16
+
+FF9's spells and Magic Swords play FFRK effects — 310 FF9 moves have one now — and the effects gallery has an "FF9 spells" tab to check and swap them.
+
+### Added
+- **All 13,653 FFRK effect folders indexed** (with the art and sounds each uses; the download finished).
+- **Spell candidates** (`features/effects/spell-candidates.ts`): every FF9 spell and Magic Sword without a same-named FFRK ability gets an ordered list of FFRK effects with the reason for each — FFRK's family numbering (12000 = ice tier 1 → **Blizzard**, 13000 → **Thunder**, 14000 → **Water**…) and FFRK's own file names, which use the Japanese spell names (carele = ケアル → **Cure**, carelela → **Cura**, poisona → **Panacea**, refrek = リフレク → **Reflect**, img_bio → **Bio**, commet → **Comet**, meteor → **Meteor**, skull → **Death**, time-magic circles → **Slow/Stop**), plus FFRK's spellblades for Steiner's swords (Fire Strike → Fire Sword, ice/thunder/water spellblades, Venom Buster → Bio Sword, Dark Buster → Doomsday Sword).
+- `effects:seed` assigns the first candidate to every party and monster move with that name — **148 more moves**, 310 in all. Assignments made in the gallery are never overwritten.
+- **Effects gallery → "FF9 spells" tab** (now the first tab): each spell's candidates side by side, labelled with the reason; pick one, watch it, and "Use this for every FF9 *Spell*" assigns it to all party and monster moves of that name (and shows what's assigned now).
+
+### Notes
+- The surest picks are the tier, Cure/Cura, Reflect, Bio, Comet, Meteor and Death ones; the status spells (Silence, Confuse, Blind, Float, Dispel, Might, Sleep…) have two or three candidates each — worth a look in the gallery.
+
 ## [0.1.95] - 2026-10-16
 
 ### Fixed

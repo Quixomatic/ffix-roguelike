@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import initialMap from "./ability-effects.json";
 import { EffectStage } from "./effect-stage";
 import { EFFECT_BASE } from "./ffrk-effect";
+import { folderRecipe, SPELL_CANDIDATES } from "./spell-candidates";
 
 /** `effects/index.json` (ffrk:effects): folder → its rig files, the effect art and sounds they use. */
 type EffectIndex = Record<string, { files: string[]; images: string[]; sounds: string[] }>;
@@ -27,6 +28,8 @@ interface Item {
   /** A whole FFRK ability recipe (from captured game data) rather than a folder's files. */
   recipe: boolean;
   search: string;
+  /** "FF9 spells" tab: the FF9 spell this candidate is for. */
+  spell?: string;
 }
 
 const PHASE_ORDER = ["launch", "shot", "hit"];
@@ -68,7 +71,7 @@ export function EffectsGallery() {
   const catalog = useJson<EffectCatalog>("catalog.json");
   const moves = useMoves();
   const [map, setMap] = useState<EffectMap>(initialMap as EffectMap);
-  const [tab, setTab] = useState<"named" | "folders">("named");
+  const [tab, setTab] = useState<"spells" | "named" | "folders">("spells");
   const [filter, setFilter] = useState("");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [phase, setPhase] = useState<string>("hit");
@@ -93,15 +96,23 @@ export function EffectsGallery() {
       recipe: false,
       search: `${folder} ${catalog.data?.[folder]?.names.join(" ") ?? ""} ${e.images.join(" ")}`.toLowerCase(),
     }));
-    return { named, folders };
+    // FF9 spells with no same-named FFRK ability: each candidate folder as its own entry, to compare and pick.
+    const spells: Item[] = SPELL_CANDIDATES.flatMap((sp) =>
+      sp.candidates.flatMap((cand, i) => {
+        const phases = folderRecipe(cand.folder, idx[cand.folder]?.files ?? [], sp.school);
+        if (!phases) return [];
+        return [{ key: `s:${sp.name}:${cand.folder}`, label: `${sp.name} — ${cand.folder}${i === 0 ? " (first pick)" : ""}`, sub: cand.why, phases, recipe: true, search: `${sp.name} ${cand.folder} ${cand.why}`.toLowerCase(), spell: sp.name }];
+      }),
+    );
+    return { named, folders, spells };
   }, [index.data, catalog.data]);
 
   const list = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    return (tab === "named" ? items.named : items.folders).filter((i) => !q || i.search.includes(q));
+    return (tab === "spells" ? items.spells : tab === "named" ? items.named : items.folders).filter((i) => !q || i.search.includes(q));
   }, [items, tab, filter]);
 
-  const selected = useMemo(() => [...items.named, ...items.folders].find((i) => i.key === selectedKey) ?? null, [items, selectedKey]);
+  const selected = useMemo(() => [...items.spells, ...items.named, ...items.folders].find((i) => i.key === selectedKey) ?? null, [items, selectedKey]);
   const phaseKeys = selected ? Object.keys(selected.phases).sort(phaseSort) : [];
   const path = selected?.phases[phase] ?? null;
   const moveName = (key: string) => moves.find((m) => m.key === key)?.name ?? key;
@@ -125,6 +136,13 @@ export function EffectsGallery() {
     const phases = as === "recipe" ? { ...selected.phases } : path ? { ...cur, [as]: path } : cur;
     void save({ abilities: { ...map.abilities, [moveKey]: { phases, from: selected.label } } });
   }
+  /** Assign the selected candidate's recipe to every FF9 move (party and monster) with this spell's name. */
+  function useForSpell(spell: string) {
+    if (!selected) return;
+    const abilities = { ...map.abilities };
+    for (const m of moves.filter((m) => m.name === spell)) abilities[m.key] = { phases: { ...selected.phases }, from: `${spell}: ${selected.label.replace(" (first pick)", "")} — ${selected.sub}` };
+    void save({ abilities });
+  }
   function unassign(moveKey: string) {
     const abilities = { ...map.abilities };
     delete abilities[moveKey];
@@ -137,9 +155,9 @@ export function EffectsGallery() {
     <div className="grid h-[calc(100vh-4rem)] grid-cols-[18rem_1fr_22rem] gap-3 p-3">
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
         <div className="flex gap-1">
-          {(["named", "folders"] as const).map((t) => (
-            <button key={t} className="ff-option flex-1 px-2 text-sm data-[on=true]:text-yellow-200" data-on={tab === t} onClick={() => setTab(t)}>
-              {t === "named" ? `FFRK abilities (${items.named.length})` : `Folders (${items.folders.length})`}
+          {(["spells", "named", "folders"] as const).map((t) => (
+            <button key={t} className="ff-option flex-1 px-1 text-xs data-[on=true]:text-yellow-200" data-on={tab === t} onClick={() => setTab(t)}>
+              {t === "spells" ? `FF9 spells (${SPELL_CANDIDATES.length})` : t === "named" ? `FFRK named (${items.named.length})` : `Folders (${items.folders.length})`}
             </button>
           ))}
         </div>
@@ -175,6 +193,12 @@ export function EffectsGallery() {
       </div>
 
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
+        {selected?.spell && (
+          <button className="ff-window px-3 py-2 text-left hover:brightness-125" onClick={() => useForSpell(selected.spell!)}>
+            Use this for every FF9 <span className="text-yellow-200">{selected.spell}</span>
+            <span className="block text-xs opacity-70">Now: {moves.filter((m) => m.name === selected.spell).map((m) => map.abilities[m.key]?.from).find(Boolean) ?? "nothing"}</span>
+          </button>
+        )}
         <div className="ff-title">Assign to an FF9 move {saving && <span className="text-xs opacity-60">saving…</span>}</div>
         <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder="Search FF9 moves (Fire, Cure, Goblin Punch…)" value={moveFilter} onChange={(e) => setMoveFilter(e.target.value)} />
         <div className="max-h-72 overflow-y-auto">

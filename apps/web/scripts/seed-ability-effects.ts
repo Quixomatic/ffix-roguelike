@@ -14,6 +14,8 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { folderRecipe, SPELL_CANDIDATES } from "../src/features/effects/spell-candidates";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const FX = join(ROOT, ".docs", "assets", "FFRK-data", "_raw", "effects");
 const MAP_FILE = join(ROOT, "apps", "web", "src", "features", "effects", "ability-effects.json");
@@ -55,6 +57,20 @@ for (const m of moves) {
   map.abilities[m.key] = { phases: hit.phases, from: `${catalog[hit.id]!.names.join(" / ")} (FFRK ${hit.id}${hit.exact ? "" : ", hit only"})` };
   added++;
 }
+// Then FF9 spells with no same-named FFRK ability: the first candidate from spell-candidates.ts (family + file-name
+// evidence), which the effects gallery's "FF9 spells" tab lets you check and swap.
+let guessed = 0;
+for (const spell of SPELL_CANDIDATES) {
+  const pick = spell.candidates.map((c) => ({ c, recipe: folderRecipe(c.folder, index[c.folder]?.files ?? [], spell.school) })).find((x) => x.recipe);
+  if (!pick) continue;
+  for (const m of moves.filter((m) => m.name.trim().toLowerCase() === spell.name.toLowerCase())) {
+    if (map.abilities[m.key]) continue;
+    map.abilities[m.key] = { phases: pick.recipe!, from: `${spell.name}: FFRK ${pick.c.folder} — ${pick.c.why}` };
+    guessed++;
+  }
+}
+console.log(`✓ ${guessed} moves assigned from spell candidates`);
+
 map.abilities = Object.fromEntries(Object.entries(map.abilities).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true })));
 writeFileSync(MAP_FILE, `${JSON.stringify(map, null, 2)}\n`);
 console.log(`✓ ${added} moves assigned by FFRK name (${Object.keys(map.abilities).length} in all) → ${MAP_FILE}`);
