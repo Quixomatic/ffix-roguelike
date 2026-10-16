@@ -6,7 +6,6 @@ import { toast } from "sonner";
 
 import { GameDialog } from "@/components/game-dialog";
 import { ItemIcon } from "@/features/items/item-icon";
-import { TrainRow } from "@/features/gear/character-panels";
 import { HelpText, ItemCard, itemEffectText } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
@@ -92,40 +91,53 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
 }
 
 /**
- * Supply ranks, like training: per item, its rank boxes, how many every run starts with, and "+ gil" for the next
- * rank (each costs far more than the item does in a run).
+ * Supply ranks as a grid of cards: the item's icon tile, how many every run starts with, its effect, its rank boxes,
+ * and "+ gil" for the next rank (each costs far more than the item does in a run).
  */
 function SupplyRows({ profile, busy, onBuy }: { profile: Profile; busy: boolean; onBuy(itemId: number): void }) {
   const kit = new Map(starterKit().map((k) => [k.itemId, k.count]));
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {campSupplyStock(profile).map((e) => {
         const item = findItem(e.itemId)!;
         const rank = supplyRank(profile, e.itemId);
         const cost = supplyRankCost(profile, e.itemId);
         const base = kit.get(e.itemId) ?? 0;
+        const canBuy = cost != null && profile.gil >= cost && !busy;
         return (
-          <div key={e.itemId} className="rounded border border-white/10 bg-black/25 p-2">
-            <TrainRow
-              label={
-                <span className="flex items-center gap-2 normal-case">
-                  <ItemIcon itemId={e.itemId} size={32} />
-                  <span className="text-base">{item.name}</span>
+          <div key={e.itemId} className="grid grid-cols-[4rem_1fr] gap-3 rounded-lg border-2 border-white/15 bg-[#0c1238]/80 p-3">
+            <span className="flex h-16 w-16 items-center justify-center rounded-md border-2 border-yellow-200/50 bg-black/40">
+              <ItemIcon itemId={e.itemId} size={48} />
+            </span>
+            <div className="flex min-w-0 flex-col gap-1.5">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="truncate text-lg">{item.name}</span>
+                <span className="shrink-0 text-sm tabular-nums" title={`Every run starts with ${base + rank}`}>
+                  <span className="text-xl text-yellow-200">×{base + rank}</span> <span className="opacity-70">per run</span>
                 </span>
-              }
-              labelWidth="12rem"
-              hint={itemEffectText(item)}
-              rank={rank}
-              max={SUPPLY_MAX}
-              value={<span title={`Every run starts with ${base + rank}`}>×{base + rank}</span>}
-              cost={cost ?? 0}
-              canBuy={cost != null && profile.gil >= cost && !busy}
-              onBuy={() => onBuy(e.itemId)}
-              unit="gil"
-            />
-            <div className="mt-1 pl-[2.75rem] text-xs">
-              <span className="text-[#c8d0ff]">{itemEffectText(item)}</span>
-              <HelpText text={item.help} className="opacity-70" />
+              </div>
+              <div className="text-xs">
+                <span className="block text-[#c8d0ff]">{itemEffectText(item)}</span>
+                <HelpText text={item.help} className="opacity-70" />
+              </div>
+              <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+                <span className="flex items-center gap-[3px]" title={`${rank} of ${SUPPLY_MAX} extra`}>
+                  {Array.from({ length: SUPPLY_MAX }, (_, i) => (
+                    <span key={i} className={`h-4 w-2.5 rounded-[2px] border ${i < rank ? "border-yellow-200 bg-yellow-300" : "border-white/25 bg-black/30"}`} />
+                  ))}
+                  <span className="ml-1.5 text-xs tabular-nums opacity-70">
+                    {rank}/{SUPPLY_MAX}
+                  </span>
+                </span>
+                <button
+                  className="rounded border border-yellow-200/50 px-2.5 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+                  disabled={!canBuy}
+                  onClick={() => onBuy(e.itemId)}
+                  title={cost == null ? "Maxed" : `One more ${item.name} in every run`}
+                >
+                  {cost == null ? "Max" : <span className={profile.gil >= cost ? "" : "text-red-300"}>+ {cost.toLocaleString()} gil</span>}
+                </button>
+              </div>
             </div>
           </div>
         );

@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.92] - 2026-10-16
+
+### Changed
+- **Supplies are a grid of cards** instead of full-width rows: each card has the item's icon in a square tile, its name and how many every run starts with ("×6 per run"), its exact effect and FF9's description, its 5 rank boxes, and a "+ gil" button for the next rank (red when you can't afford it, "Max" when full).
+
 ## [0.1.91] - 2026-10-16
 
 Supplies are permanent starting-kit upgrades, bought like training.
