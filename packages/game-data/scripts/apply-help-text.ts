@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-/// <reference types="node" />
+/// <reference types="bun" />
 /**
  * apply-help-text — add FF9's help lines (`db/seed/ff9/help-text.json`) to the committed seed tables (items,
  * actions, support abilities) without a full re-import. `import:memoria` does the same on every import.

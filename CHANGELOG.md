@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.45] - 2026-10-16
+
+### Fixed
+- `pnpm check-types` failed in game-data: two help-text scripts referenced Node's types, which that package doesn't install. They run under Bun and now reference Bun's types. All 9 packages typecheck; game-core tests: 282 pass, 2 skip.
+
 ## [0.2.44] - 2026-10-16
 
 ### Fixed

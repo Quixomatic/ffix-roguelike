@@ -1,4 +1,4 @@
-/// <reference types="node" />
+/// <reference types="bun" />
 /**
  * FF9's own help lines (extracted by `extract-help-text.py` into `db/seed/ff9/help-text.json`), attached to the
  * seed tables as a `help` field — items by item id, abilities by action id, support abilities by id. Words FF9
