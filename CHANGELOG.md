@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.95] - 2026-10-16
+
+### Fixed
+- The "🔒 Locked" tag on locked character cards sits and centres its text exactly like the Manage button.
+
 ## [0.1.94] - 2026-10-16
 
 Camp cards line up, locked journeys match unlocked ones, and the shops have a section label.

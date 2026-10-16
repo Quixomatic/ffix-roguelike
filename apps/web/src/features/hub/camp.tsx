@@ -219,7 +219,10 @@ export function Camp() {
               Unlock: <span className="text-yellow-200">{l.hint}</span>
             </div>
             <div className="text-xs opacity-50">Joins your roster when unlocked</div>
-            <span className="mt-1 self-start rounded border border-white/20 px-2 text-xs opacity-60">🔒 Locked</span>
+            {/* A disabled button styled like Manage, so its text sits exactly the same way. */}
+            <button className="mt-1 self-start rounded border border-white/20 px-2 text-xs opacity-60" disabled>
+              🔒 Locked
+            </button>
           </div>
         ))}
       </div>
