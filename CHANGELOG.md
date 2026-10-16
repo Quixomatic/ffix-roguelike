@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.6] - 2026-10-16
+
+### Changed
+- Effects gallery: wider side panels: the move/effect list is 28rem (was 20rem) and the target/assign panel 30rem (was 22rem), so names, statuses and candidate reasons fit.
+
 ## [0.2.5] - 2026-10-16
 
 The effects gallery has a "To map" tab: every FF9 move, with what it plays now, filtered to the ones still needing an effect.
