@@ -180,13 +180,43 @@ export function EquipmentList({ slots, selected, onSelect }: { slots: PaperdollS
 function PickerDelta({ build, itemId }: { build: CharacterBuild; itemId: number }) {
   const change = gearChange(build, itemId);
   return change ? (
-    <div className="mt-0.5">
+    <span className="mt-0.5 block">
       <DeltaChips change={change} />
-    </div>
+    </span>
   ) : null;
 }
 
-/** A list of gear choices for the selected slot (shared picker look). With `compare`, each shows its stat changes. */
+/** A gear choice card: square icon tile on the left, details on the right (shared by the picker's items and Remove). */
+function GearCard({ icon, children, onClick, tone = "item" }: { icon: ReactNode; children: ReactNode; onClick(): void; tone?: "item" | "remove" }) {
+  return (
+    <button
+      className={`group grid min-h-[5.5rem] grid-cols-[4rem_1fr] items-start gap-3 rounded-lg border-2 p-2 text-left transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-300 ${
+        tone === "remove" ? "border-red-400/30 bg-black/30 hover:border-red-300/70" : "border-white/15 bg-[#0c1238]/80 hover:border-yellow-300/70"
+      }`}
+      onClick={onClick}
+    >
+      <span className={`flex h-16 w-16 items-center justify-center rounded-md border-2 ${tone === "remove" ? "border-red-400/40 bg-black/40" : "border-yellow-200/50 bg-black/40 group-hover:border-yellow-300"}`}>
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-col gap-1">{children}</span>
+    </button>
+  );
+}
+
+/** "No item" symbol for the Remove card: the empty slot, crossed out. */
+function RemoveIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-9 w-9 text-red-300" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M5.6 5.6l12.8 12.8" />
+    </svg>
+  );
+}
+
+/**
+ * Gear choices for the selected slot: a grid of cards — the item's icon in a square tile, then its name, stats and
+ * (with `compare`) what equipping it would change. "Remove" is a card of the same size.
+ */
 export function GearPicker({
   title,
   options,
@@ -203,29 +233,25 @@ export function GearPicker({
   compare?: CharacterBuild;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded bg-black/25 p-2">
+    <div className="flex flex-col gap-2 rounded bg-black/25 p-3">
       <div className="ff-title">{title}</div>
-      <div className="grid gap-1 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-2 2xl:grid-cols-3">
         {onRemove && (
-          <button className="ff-option text-left" onClick={onRemove}>
-            (Remove)
-          </button>
+          <GearCard icon={<RemoveIcon />} onClick={onRemove} tone="remove">
+            <span className="text-base text-red-200">Remove</span>
+            <span className="text-xs opacity-70">Leave this slot empty</span>
+          </GearCard>
         )}
         {options.map((o) => {
           const item = findItem(o.itemId)!;
           return (
-            <button key={o.key} className="ff-option text-left" onClick={() => onPick(o.key)}>
-              <div className="flex items-center gap-1.5">
-                <ItemIcon itemId={item.id} size={16} />
-                {item.name} {o.caption}
-              </div>
-              <div className="text-xs text-[#c8d0ff]">{gearSummary(item)}</div>
-              {compare ? (
-                <PickerDelta build={compare} itemId={item.id} />
-              ) : (
-                item.abilities.length > 0 && <div className="text-xs text-yellow-200">{item.abilities.map(abilityName).join(", ")}</div>
-              )}
-            </button>
+            <GearCard key={o.key} icon={<ItemIcon itemId={item.id} size={48} />} onClick={() => onPick(o.key)}>
+              <span className="truncate text-base">
+                {item.name} <span className="text-sm">{o.caption}</span>
+              </span>
+              <span className="text-xs text-[#c8d0ff]">{gearSummary(item) || "—"}</span>
+              {compare ? <PickerDelta build={compare} itemId={item.id} /> : item.abilities.length > 0 && <span className="text-xs text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</span>}
+            </GearCard>
           );
         })}
       </div>

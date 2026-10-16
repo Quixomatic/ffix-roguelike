@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.81] - 2026-10-16
+
+Swapping gear in a run is a grid of proper tiles.
+
+### Changed
+- **The in-run gear picker** (character sheet → Equipment) is a grid of bordered cards with gaps (two columns, three on wide screens). Each card has the item's icon in a square 64 px tile on the left and its details on the right: name (and who's wearing it / "found"), stats, and the stat changes it would make for this character. Cards highlight on hover.
+- **Remove** is a card of the same size, with a crossed-out slot symbol in its tile and "Leave this slot empty".
+
 ## [0.1.80] - 2026-10-16
 
 Stealing shows what happened.
