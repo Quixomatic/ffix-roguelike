@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.99] - 2026-10-16
+
+The server is connected to the R2 bucket.
+
+### Changed
+- The server depends on `@ffix-roguelike/storage` (for the upcoming Hono upload routes) and its `.env` points at the `ff-like` bucket. A round trip works: put, exists, list, a public GET through the r2.dev URL (200, correct content type), and delete.
+
 ## [0.1.98] - 2026-10-16
 
 Cloudflare R2 storage for game assets and user uploads, and the effects gallery can no longer wipe assignments.
