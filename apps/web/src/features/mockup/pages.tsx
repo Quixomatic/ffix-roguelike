@@ -8,6 +8,7 @@ import { ShopContents } from "@/features/hub/camp-shop";
 import { CharacterSheet } from "@/features/hub/character-sheet";
 import { trpc } from "@/utils/trpc";
 
+import { GearCatalogGrid } from "./gear-catalog";
 import { CharacterCard, rosterEntries } from "./roster";
 import { PageTitle } from "./story";
 
@@ -85,7 +86,7 @@ export function ShopsPage() {
           <ShopContents shop="supplies" profile={p} />
         </TabsContent>
         <TabsContent value="catalog" className="ff-panel p-4 text-sm">
-          <ShopContents shop="catalog" profile={p} />
+          <GearCatalogGrid profile={p} />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,9 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_auth/mock/party/')({
-  component: RouteComponent,
-})
+import { PartyPage } from "@/features/mockup/pages";
 
-function RouteComponent() {
-  return <div>Hello "/_auth/mock/party/"!</div>
-}
+export const Route = createFileRoute("/_auth/mock/party/")({
+  component: PartyPage,
+});

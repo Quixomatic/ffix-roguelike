@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.15] - 2026-10-16
+
+### Changed
+- **Mockup Shops → Gear catalog is a grid of icon tiles**: icon, name and price for what you can unlock now (click to unlock; the price is red when you can't afford it), then everything already unlocked (green, "Unlocked ✓"). Hovering a tile shows the item's full card in a popover: stats, FF9's help, abilities taught, who can wear it, and what it would change for each character.
+- `ItemDetails` (`run/item-info.tsx`): the item card's contents, for cards and popovers alike; `ItemCard` uses it.
+
+### Fixed
+- **/mock/party showed "Hello /_auth/mock/party/!"**: the running dev server's router plugin scaffolded a placeholder into the route file the moment it was created. It's the Party page again.
+
 ## [0.2.14] - 2026-10-16
 
 ### Changed

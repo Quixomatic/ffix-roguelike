@@ -111,9 +111,7 @@ export function ItemCard({
   selected?: boolean;
   party?: CharacterBuild[];
 }) {
-  const item = findItem(itemId);
-  if (!item) return null;
-  const who = item.equippableBy.map((k) => getCharacter(k).name);
+  if (!findItem(itemId)) return null;
   return (
     <button
       type="button"
@@ -122,6 +120,20 @@ export function ItemCard({
       data-active={selected}
       className="ff-window flex w-full flex-col gap-1 p-3 text-left transition enabled:hover:brightness-125 data-[active=true]:outline data-[active=true]:outline-2 data-[active=true]:outline-yellow-300"
     >
+      <ItemDetails itemId={itemId} party={party} />
+      {footer}
+    </button>
+  );
+}
+
+/** Everything an item card says about an item (name, kind, effect or stats, FF9's help, abilities, who can use it,
+ *  stat changes for the party) — for cards and hover popovers. */
+export function ItemDetails({ itemId, party }: { itemId: number; party?: CharacterBuild[] }) {
+  const item = findItem(itemId);
+  if (!item) return null;
+  const who = item.equippableBy.map((k) => getCharacter(k).name);
+  return (
+    <>
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-lg">
           <ItemIcon itemId={itemId} size={32} />
@@ -138,8 +150,7 @@ export function ItemCard({
       {item.abilities.length > 0 && <div className="text-sm text-yellow-200">Teaches: {item.abilities.map(abilityName).join(", ")}</div>}
       {who.length > 0 && who.length < 12 && <div className="text-xs opacity-70">{who.join(", ")}</div>}
       {party && item.kind !== "item" && <PartyGearDeltas party={party} itemId={itemId} />}
-      {footer}
-    </button>
+    </>
   );
 }
 
