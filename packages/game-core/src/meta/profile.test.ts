@@ -7,7 +7,8 @@ import { getItem } from "@ffix-roguelike/game-data";
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
-import { applyRunOutcome, buySupplyRank, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
+import { awardAchievements } from "./achievements";
+import { applyRunOutcome, buySupplyRank, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -109,6 +110,22 @@ describe("camp", () => {
     for (let i = 2; i < SUPPLY_MAX; i++) p = buySupplyRank(p, potion);
     expect(supplyRankCost(p, potion)).toBeNull();
     expect(() => buySupplyRank(p, potion)).toThrow();
+  });
+
+  test("supplies beyond the basics are unlocked by achievements (story clears, a win, Tier 3)", () => {
+    const hiPotion = itemByName("Hi-Potion").id;
+    let p = newProfile();
+    p.gil = 1_000_000;
+    const entry = campSupplyCatalog(p).find((e) => e.itemId === hiPotion)!;
+    expect(entry.unlocked).toBe(false);
+    expect(entry.unlockedBy?.id).toBe("story-evil-forest");
+    expect(() => buySupplyRank(p, hiPotion)).toThrow();
+    p.journeysCleared = ["evil-forest"];
+    awardAchievements(p);
+    expect(campSupplyStock(p).some((e) => e.itemId === hiPotion)).toBe(true);
+    p = buySupplyRank(p, hiPotion);
+    expect(startingSupplies(p)[hiPotion]).toBe(1);
+    expect(campSupplyCatalog(p).find((e) => e.itemId === itemByName("Elixir").id)!.max).toBe(2);
   });
 
   test("legendary gear is never in the catalog or base pools", () => {

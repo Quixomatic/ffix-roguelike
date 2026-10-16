@@ -185,12 +185,21 @@ export function Camp() {
           );
         })}
         {p.locked.map((l) => (
-          <div key={l.key} className="ff-window flex items-end gap-3 p-3 opacity-70">
-            <HeroSprite heroKey={l.key} size={56} silhouette />
-            <div>
-              <div className="text-xl">???</div>
-              <div className="text-sm">Unlock: {l.hint}</div>
+          // Same layout as an unlocked card (sprite + name, stats, gear line, footer) so the roster lines up.
+          <div key={l.key} className="ff-window flex flex-col gap-1 p-3">
+            <div className="flex items-end gap-3 opacity-80">
+              <HeroSprite heroKey={l.key} size={56} silhouette />
+              <div className="min-w-0 flex-1">
+                <div className="text-xl">???</div>
+                <div className="ff-title">Locked</div>
+              </div>
             </div>
+            <div className="text-sm opacity-50">HP — · MP —</div>
+            <div className="text-xs text-[#c8d0ff]">
+              Unlock: <span className="text-yellow-200">{l.hint}</span>
+            </div>
+            <div className="text-xs opacity-50">Joins your roster when unlocked</div>
+            <span className="mt-1 self-start rounded border border-white/20 px-2 text-xs opacity-60">🔒 Locked</span>
           </div>
         ))}
       </div>

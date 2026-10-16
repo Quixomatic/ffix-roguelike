@@ -8,7 +8,7 @@ import { gameDataVersion, itemByName, items, MAIN_CAST } from "@ffix-roguelike/g
 import { canEquip, gearScore, isMastered } from "../stats";
 import type { Profile } from "./profile";
 
-export type AchievementCategory = "milestone" | "boss" | "challenge" | "legend";
+export type AchievementCategory = "story" | "milestone" | "boss" | "challenge" | "legend";
 
 export interface AchievementDef {
   id: string;
@@ -23,6 +23,8 @@ export interface AchievementDef {
     items?: string[];
     /** A hero's best-in-slot armour, computed from FF9's item table when needed. */
     bestInSlotFor?: string;
+    /** Camp supplies this unlocks (item names) — they can then be ranked up to start every run with more. */
+    supplies?: string[];
   };
   /** Hidden until earned (shown as ???). */
   secret?: boolean;
@@ -30,6 +32,7 @@ export interface AchievementDef {
 }
 
 const kills = (p: Profile, id: string) => (p.stats.bossKills[id] ?? 0) > 0;
+const cleared = (p: Profile, journey: string) => p.journeysCleared?.includes(journey) ?? false;
 const solo = (p: Profile, key: string) => p.stats.soloWins?.includes(key) ?? false;
 const masteredCount = (p: Profile) =>
   Object.values(p.builds).reduce((n, b) => n + Object.keys(b.ap).filter((ref) => isMastered(b, ref as never)).length, 0);
@@ -62,9 +65,17 @@ const legendClear = (p: Profile, key: string) => p.stats.legendClears?.includes(
 const heroName = (key: string) => key[0]!.toUpperCase() + key.slice(1);
 
 export const ACHIEVEMENTS: AchievementDef[] = [
+  // ── story: clearing FF9's journeys (they also open camp supplies, roughly when FF9's shops start selling them) ──
+  { id: "story-evil-forest", name: "Out of the Forest", description: "Clear The Evil Forest", category: "story", reward: { gil: 1000, supplies: ["Hi-Potion", "Soft"] }, check: (p) => cleared(p, "evil-forest") },
+  { id: "story-ice-cavern", name: "Through the Ice", description: "Clear The Ice Cavern", category: "story", reward: { gil: 1500, supplies: ["Magic Tag", "Vaccine"] }, check: (p) => cleared(p, "ice-cavern") },
+  { id: "story-dali", name: "The Secret Under Dali", description: "Clear Dali", category: "story", reward: { gil: 2000, supplies: ["Tent", "Annoyntment"] }, check: (p) => cleared(p, "dali") },
+  { id: "story-lindblum", name: "Hunter's Chance", description: "Clear Lindblum", category: "story", reward: { gil: 3000, supplies: ["Ether"] }, check: (p) => cleared(p, "lindblum") },
+  { id: "story-gizamaluke", name: "The Bell Tolls", description: "Clear Gizamaluke's Grotto", category: "story", reward: { gil: 4000, cp: 3 }, check: (p) => cleared(p, "gizamaluke") },
+
   // ── milestones ──
   { id: "first-victory", name: "First Blood", description: "Win a battle", category: "milestone", reward: { gil: 300 }, check: (p) => p.stats.battles >= 1 },
   { id: "first-run", name: "The Journey Begins", description: "Finish a run", category: "milestone", reward: { gil: 500, cp: 2 }, check: (p) => p.stats.runs >= 1 },
+  { id: "first-win", name: "Triumph", description: "Win a run", category: "milestone", reward: { gil: 2000, cp: 3, supplies: ["Remedy"] }, check: (p) => p.stats.wins >= 1 },
   { id: "veteran", name: "Veteran", description: "Win 100 battles", category: "milestone", reward: { gil: 5000, cp: 5 }, check: (p) => p.stats.battles >= 100 },
   { id: "fellowship", name: "Fellowship", description: "Have 4 characters on your roster", category: "milestone", reward: { gil: 2000, cp: 3 }, check: (p) => p.unlocked.length >= 4 },
   {
@@ -97,7 +108,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     }),
   ),
   { id: "tier-1", name: "Tougher Stuff", description: "Win a run on Tier 1", category: "challenge", reward: { gil: 6000, cp: 8 }, check: (p) => p.stats.highestTierWon >= 1 },
-  { id: "tier-3", name: "Iron Will", description: "Win a run on Tier 3", category: "challenge", reward: { gil: 15000, cp: 15 }, check: (p) => p.stats.highestTierWon >= 3 },
+  { id: "tier-3", name: "Iron Will", description: "Win a run on Tier 3", category: "challenge", reward: { gil: 15000, cp: 15, supplies: ["Elixir"] }, check: (p) => p.stats.highestTierWon >= 3 },
   { id: "tier-5", name: "Unbreakable", description: "Win a run on Tier 5", category: "challenge", reward: { gil: 30000, cp: 25 }, check: (p) => p.stats.highestTierWon >= 5 },
 
   // ── legends (Terra & Memoria superbosses — the ultimate weapons) ──

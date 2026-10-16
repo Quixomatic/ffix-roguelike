@@ -263,7 +263,7 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
           {report.achievements.map((id, i) => {
             const a = achievement(id);
             if (!a) return null;
-            const reward = [a.reward.gil ? `${a.reward.gil} gil` : "", a.reward.cp ? `+${a.reward.cp} CP${a.reward.cpFor ? "" : " each"}` : "", rewardItemIds(a).length ? `unlocks ${rewardItemIds(a).map(itemName).join(", ")}` : ""]
+            const reward = [a.reward.gil ? `${a.reward.gil} gil` : "", a.reward.cp ? `+${a.reward.cp} CP${a.reward.cpFor ? "" : " each"}` : "", rewardItemIds(a).length ? `unlocks ${rewardItemIds(a).map(itemName).join(", ")}` : "", a.reward.supplies?.length ? `camp supplies: ${a.reward.supplies.join(", ")}` : ""]
               .filter(Boolean)
               .join(" · ");
             return (

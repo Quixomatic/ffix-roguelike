@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.93] - 2026-10-16
+
+Camp supplies are unlocked by achievements — story clears among them — and locked characters' cards match the roster.
+
+### Added
+- **Story achievements** (a new "Story" category): Out of the Forest (clear The Evil Forest), Through the Ice (The Ice Cavern), The Secret Under Dali (Dali), Hunter's Chance (Lindblum), The Bell Tolls (Gizamaluke's Grotto) — gil, and camp supplies.
+- **Triumph** — win a run (gil, CP, and the Remedy supply).
+- Achievements can unlock **camp supplies** (`reward.supplies`); the achievements page and the run-over screen list them.
+
+### Changed
+- **Supplies are gated by achievements.** Potion, Phoenix Down, Antidote, Eye Drops and Echo Screen are always stocked; Hi-Potion and Soft come with clearing The Evil Forest, Magic Tag and Vaccine with The Ice Cavern, Tent and Annoyntment with Dali, Ether with Lindblum, Remedy with winning a run, and Elixir with **Iron Will** (win on Tier 3) — Elixir caps at 2 ranks and, as a never-sold rarity, is priced like one (ranks 200,000 / 400,000 gil). Replaces the "furthest world reached" gating.
+- **Locked supplies show in the grid** as greyed cards with their effect and "🔒 Unlock: *achievement* — *what to do*".
+- **Locked characters on the camp roster use the same card layout as unlocked ones** — silhouette with "???" and "Locked", the stat and gear lines (the unlock condition where the gear goes), and a 🔒 footer where Manage would be — so the roster lines up.
+
+### Notes
+- Achievements are checked when a run ends, so story clears you've already made unlock their supplies at the end of your next run.
+
 ## [0.1.92] - 2026-10-16
 
 ### Changed

@@ -1,4 +1,4 @@
-import { campSupplyStock, gearCatalog, rosterAtStart, starterKit, SUPPLY_MAX, supplyRank, supplyRankCost, type Profile } from "@ffix-roguelike/game-core";
+import { campSupplyCatalog, gearCatalog, rosterAtStart, starterKit, supplyRank, supplyRankCost, type Profile } from "@ffix-roguelike/game-core";
 import { findItem } from "@ffix-roguelike/game-data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -54,7 +54,7 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
   };
   const buyRank = useMutation(trpc.profile.buySupplyRank.mutationOptions(opts));
   const unlock = useMutation(trpc.profile.unlockGear.mutationOptions(opts));
-  const stock = shop === "supplies" ? campSupplyStock(profile) : gearCatalog(profile);
+  const stock = shop === "supplies" ? [] : gearCatalog(profile);
   const busy = buyRank.isPending || unlock.isPending;
   // Gear unlocks compare against how each character starts a run.
   const roster = rosterAtStart(profile);
@@ -63,7 +63,7 @@ function ShopDialog({ shop, profile, onClose }: { shop: Shop; profile: Profile; 
       <div className="mb-3 text-sm opacity-75">
         {shop === "catalog"
           ? "Unlocking gear adds it to future runs' drops, shops and treasure for its world. Reach further worlds to see more."
-          : `Each rank adds one more of that item to what every run starts with (up to ${SUPPLY_MAX} extra). Reach further worlds to stock more.`}
+          : "Each rank adds one more of that item to what every run starts with. Story clears and other achievements unlock more supplies."}
       </div>
       {shop === "supplies" ? (
         <SupplyRows profile={profile} busy={busy} onBuy={(itemId) => buyRank.mutate({ itemId })} />
@@ -98,12 +98,28 @@ function SupplyRows({ profile, busy, onBuy }: { profile: Profile; busy: boolean;
   const kit = new Map(starterKit().map((k) => [k.itemId, k.count]));
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {campSupplyStock(profile).map((e) => {
+      {campSupplyCatalog(profile).map((e) => {
         const item = findItem(e.itemId)!;
         const rank = supplyRank(profile, e.itemId);
         const cost = supplyRankCost(profile, e.itemId);
         const base = kit.get(e.itemId) ?? 0;
         const canBuy = cost != null && profile.gil >= cost && !busy;
+        if (!e.unlocked)
+          return (
+            <div key={e.itemId} className="grid grid-cols-[4rem_1fr] gap-3 rounded-lg border-2 border-dashed border-white/15 bg-black/30 p-3 opacity-70">
+              <span className="flex h-16 w-16 items-center justify-center rounded-md border-2 border-white/20 bg-black/40 grayscale">
+                <ItemIcon itemId={e.itemId} size={48} />
+              </span>
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="truncate text-lg">{item.name}</span>
+                <span className="text-xs text-[#c8d0ff]">{itemEffectText(item)}</span>
+                <span className="mt-auto text-sm">
+                  🔒 Unlock: <span className="text-yellow-200">{e.unlockedBy?.name ?? "—"}</span>
+                  {e.unlockedBy && <span className="opacity-70"> — {e.unlockedBy.description}</span>}
+                </span>
+              </div>
+            </div>
+          );
         return (
           <div key={e.itemId} className="grid grid-cols-[4rem_1fr] gap-3 rounded-lg border-2 border-white/15 bg-[#0c1238]/80 p-3">
             <span className="flex h-16 w-16 items-center justify-center rounded-md border-2 border-yellow-200/50 bg-black/40">
@@ -121,12 +137,12 @@ function SupplyRows({ profile, busy, onBuy }: { profile: Profile; busy: boolean;
                 <HelpText text={item.help} className="opacity-70" />
               </div>
               <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-                <span className="flex items-center gap-[3px]" title={`${rank} of ${SUPPLY_MAX} extra`}>
-                  {Array.from({ length: SUPPLY_MAX }, (_, i) => (
+                <span className="flex items-center gap-[3px]" title={`${rank} of ${e.max} extra`}>
+                  {Array.from({ length: e.max }, (_, i) => (
                     <span key={i} className={`h-4 w-2.5 rounded-[2px] border ${i < rank ? "border-yellow-200 bg-yellow-300" : "border-white/25 bg-black/30"}`} />
                   ))}
                   <span className="ml-1.5 text-xs tabular-nums opacity-70">
-                    {rank}/{SUPPLY_MAX}
+                    {rank}/{e.max}
                   </span>
                 </span>
                 <button

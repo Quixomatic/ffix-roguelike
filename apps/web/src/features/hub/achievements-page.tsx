@@ -5,6 +5,7 @@ import { itemName } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
 const CATEGORY_LABEL: Record<AchievementCategory, string> = {
+  story: "Story",
   milestone: "Milestones",
   boss: "Bosses",
   challenge: "Challenges",
@@ -46,6 +47,7 @@ export function AchievementsPage() {
                       a.reward.gil ? `${a.reward.gil.toLocaleString()} gil` : "",
                       a.reward.cp ? `+${a.reward.cp} CP${a.reward.cpFor ? "" : " each"}` : "",
                       items.length ? (hidden ? "Unlocks legendary gear" : `Unlocks ${items.map(itemName).join(", ")}`) : "",
+                      a.reward.supplies?.length ? `Camp supplies: ${a.reward.supplies.join(", ")}` : "",
                     ]
                       .filter(Boolean)
                       .join(" · ")}

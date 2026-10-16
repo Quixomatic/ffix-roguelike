@@ -28,7 +28,7 @@ import {
   type CharacterBuild,
   type TrainStat,
 } from "../stats";
-import { awardAchievements, legendaryItems } from "./achievements";
+import { ACHIEVEMENTS, awardAchievements, legendaryItems } from "./achievements";
 
 export interface ProfileStats {
   runs: number;
@@ -297,23 +297,46 @@ export function unlockGear(profile: Profile, itemId: number): Profile {
   return p;
 }
 
-const SUPPLY_TIERS: string[][] = [
-  ["Potion", "Phoenix Down", "Antidote", "Eye Drops", "Echo Screen"],
-  ["Hi-Potion", "Ether", "Soft", "Tent"],
-  ["Remedy", "Elixir"],
-];
+/** Supplies every camp has from the start; the rest are unlocked by achievements (their `reward.supplies`). */
+const BASIC_SUPPLIES = ["Potion", "Phoenix Down", "Antidote", "Eye Drops", "Echo Screen"];
+/** Every supply the camp can stock, in display order. */
+const ALL_SUPPLIES = [...BASIC_SUPPLIES, "Hi-Potion", "Soft", "Magic Tag", "Vaccine", "Tent", "Annoyntment", "Ether", "Remedy", "Elixir"];
 
-/** Most extra copies of one supply a run can start with. */
+/** Most extra copies of one supply a run can start with (Elixir is capped lower). */
 export const SUPPLY_MAX = 5;
+const SUPPLY_MAX_BY_NAME: Record<string, number> = { Elixir: 2 };
 /** Rank n of a supply costs this many times the item's FF9 price × n — far above buying it in a run. */
 export const SUPPLY_COST_FACTOR = 10;
 
-/** Supplies the camp can upgrade (more as you reach further worlds), with their FF9 price. */
-export function campSupplyStock(profile: Profile): { itemId: number; price: number }[] {
-  return SUPPLY_TIERS.slice(0, Math.min(SUPPLY_TIERS.length, profile.stats.bestWorld + 1))
-    .flat()
-    .map((name) => getItem(itemByName(name).id))
-    .map((i) => ({ itemId: i.id, price: i.price || 500 }));
+export interface SupplyEntry {
+  itemId: number;
+  /** FF9 price the rank costs are based on (never-sold rarities use the rare price). */
+  price: number;
+  max: number;
+  unlocked: boolean;
+  /** The achievement that unlocks it (locked supplies). */
+  unlockedBy?: { id: string; name: string; description: string };
+}
+
+/** Every camp supply with whether it's unlocked yet (basic ones always; others by an achievement). */
+export function campSupplyCatalog(profile: Profile): SupplyEntry[] {
+  const earned = new Set(profile.achievements ?? []);
+  return ALL_SUPPLIES.map((name) => {
+    const item = getItem(itemByName(name).id);
+    const by = ACHIEVEMENTS.find((a) => a.reward.supplies?.includes(name));
+    return {
+      itemId: item.id,
+      price: effectivePrice(item),
+      max: SUPPLY_MAX_BY_NAME[name] ?? SUPPLY_MAX,
+      unlocked: BASIC_SUPPLIES.includes(name) || (!!by && earned.has(by.id)),
+      unlockedBy: by ? { id: by.id, name: by.name, description: by.description } : undefined,
+    };
+  });
+}
+
+/** Supplies the camp can rank up now. */
+export function campSupplyStock(profile: Profile): SupplyEntry[] {
+  return campSupplyCatalog(profile).filter((e) => e.unlocked);
 }
 
 /** Extra copies of `itemId` every run starts with. */
@@ -323,13 +346,13 @@ export const supplyRank = (profile: Profile, itemId: number) => profile.supplyRa
 export function supplyRankCost(profile: Profile, itemId: number): number | null {
   const entry = campSupplyStock(profile).find((e) => e.itemId === itemId);
   const rank = supplyRank(profile, itemId);
-  if (!entry || rank >= SUPPLY_MAX) return null;
+  if (!entry || rank >= entry.max) return null;
   return entry.price * SUPPLY_COST_FACTOR * (rank + 1);
 }
 
 /** Buy the next rank of a supply: every run from now on starts with one more. */
 export function buySupplyRank(profile: Profile, itemId: number): Profile {
-  if (!campSupplyStock(profile).some((e) => e.itemId === itemId)) throw new ProfileError("Not available yet — reach further worlds");
+  if (!campSupplyStock(profile).some((e) => e.itemId === itemId)) throw new ProfileError("Not unlocked yet — see its achievement");
   const cost = supplyRankCost(profile, itemId);
   if (cost == null) throw new ProfileError("Already at the most a run can start with");
   if (profile.gil < cost) throw new ProfileError(`Need ${cost} gil`);
