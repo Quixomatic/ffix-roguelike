@@ -3,8 +3,8 @@
  *
  * - **Move**: ←↑→↓ or WASD move the focus to the nearest control in that direction (`FocusItem`s, grouped by
  *   `FocusSection`s, which remember their last focused item). The first arrow press on a page focuses its first item.
- * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the focused control
- *   (Norigin's Enter is unused).
+ * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the control the
+ *   cursor is on (`cursorTarget`: the browser's focus, else Norigin's marked item). Norigin's Enter is unused.
  * - **Back**: Escape or Backspace backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
  *   In a text field or dropdown, Escape lets go of it instead (the cursor takes over again).
  * - **Menu**: M (or the controller's Start) opens / closes the hub's sidebar and moves the cursor into / out of it.
@@ -126,8 +126,7 @@ export function startNav() {
   // controls (battle menu, map) already treat Space as Enter.
   const spaceTarget = (e: KeyboardEvent) => {
     if (e.code !== "Space" || e.ctrlKey || e.metaKey || e.altKey || navPaused() || isEditable(e.target as Element)) return null;
-    const el = document.activeElement as HTMLElement | null;
-    return el && el !== document.body && el.matches("button, a[href], [role='button'], summary") ? el : null;
+    return cursorTarget();
   };
   window.addEventListener(
     "keydown",
@@ -140,6 +139,21 @@ export function startNav() {
     "keyup",
     (e) => {
       const el = spaceTarget(e);
+      if (!el) return;
+      e.preventDefault();
+      if (!(el as HTMLButtonElement).disabled) el.click();
+    },
+    true,
+  );
+  // Enter is the browser's own on a focused control. When the browser's focus isn't on one but the cursor is (it landed
+  // while the control was disabled), Enter presses what the cursor is on — so one press always does it.
+  window.addEventListener(
+    "keydown",
+    (e) => {
+      if (e.key !== "Enter" || e.repeat || navPaused() || isEditable(e.target as Element)) return;
+      const focused = document.activeElement as HTMLElement | null;
+      if (focused && focused !== document.body && focused.matches(PRESSABLE)) return;
+      const el = cursorTarget();
       if (!el) return;
       e.preventDefault();
       if (!(el as HTMLButtonElement).disabled) el.click();
@@ -227,9 +241,24 @@ function sendKey(k: PadKey) {
 
 /** A: press the focused control in menus; where a screen has its own controls, send Enter. */
 function confirm() {
+  const el = navPaused() ? null : cursorTarget();
+  if (el) {
+    if (!(el as HTMLButtonElement).disabled) el.click();
+  } else sendKey("enter");
+}
+
+const PRESSABLE = "button, a[href], [role='button'], summary";
+
+/**
+ * What confirm presses: the control the cursor is on. That's the browser's focus when it's on a control — else the
+ * element Norigin marked (`data-focused`): a control that was disabled when the cursor landed on it (e.g. Continue
+ * while the battle result saves) never got the browser's focus, yet it's where the cursor is.
+ */
+export function cursorTarget(): HTMLElement | null {
   const el = document.activeElement as HTMLElement | null;
-  if (!navPaused() && el && el !== document.body && el.matches("button, a[href], [role='button'], summary")) el.click();
-  else sendKey("enter");
+  if (el && el !== document.body && el.matches(PRESSABLE)) return el;
+  const marked = document.querySelector<HTMLElement>("[data-focused='true']");
+  return marked?.matches(PRESSABLE) ? marked : null;
 }
 
 /** Connected controllers (the browser only lists one after a button on it is pressed with the page focused). */

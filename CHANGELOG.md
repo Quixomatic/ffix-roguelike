@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.54] - 2026-10-16
+
+### Fixed
+- **The controller's A (and Enter / Space) sometimes needed two presses**, e.g. on Continue after a won battle. The cursor lands on the button while it's still disabled (the battle result is saving); the browser can't focus a disabled button, so the first press went to the page. Confirm now presses the control the cursor is on (`cursorTarget`: the browser's focus, else the item the navigation marked), for A, Enter and Space alike, so one press does it.
+
 ## [0.2.53] - 2026-10-16
 
 Like Pokelike: a run in progress never blocks you. Camp stays open during a run, and starting another run wipes the current one (after asking).
