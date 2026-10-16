@@ -7,7 +7,7 @@ import { getItem } from "@ffix-roguelike/game-data";
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
-import { applyRunOutcome, buySupply, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, buySupply, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -149,5 +149,33 @@ describe("gear comparison", () => {
     expect(gearChange({ ...z, equipment: { ...z.equipment, weapon: 2 } }, 1)!.loses).toEqual(["AA:102"]);
     // Steiner can't use it.
     expect(gearChange(newBuild("steiner", 10), 2)!.canEquip).toBe(false);
+  });
+});
+
+describe("training", () => {
+  test("CP buys ranks that raise base stats for every run; costs escalate and cap at 20", () => {
+    let p = newProfile();
+    p.builds.zidane!.points = 100;
+    const before = deriveStats(p.builds.zidane!);
+    p = trainStat(p, "zidane", "strength"); // 1 CP
+    p = trainStat(p, "zidane", "strength"); // 2 CP
+    p = trainStat(p, "zidane", "hp"); // 1 CP
+    const z = p.builds.zidane!;
+    expect(z.points).toBe(96);
+    expect(z.training).toEqual({ strength: 2, hp: 1 });
+    const after = deriveStats(z);
+    expect(after.strength).toBe(before.strength + 2);
+    expect(after.maxHp).toBeGreaterThan(before.maxHp); // more Strength and +2% HP
+    // Speed: one point per two ranks.
+    p = trainStat(p, "zidane", "speed");
+    expect(deriveStats(p.builds.zidane!).speed).toBe(before.speed);
+    p = trainStat(p, "zidane", "speed");
+    expect(deriveStats(p.builds.zidane!).speed).toBe(before.speed + 1);
+    // Not enough CP / maxed out.
+    p.builds.zidane!.points = 0;
+    expect(() => trainStat(p, "zidane", "magic")).toThrow("Need 1 CP");
+    p.builds.zidane!.points = 999;
+    p.builds.zidane!.training = { magic: 20 };
+    expect(() => trainStat(p, "zidane", "magic")).toThrow("Fully trained");
   });
 });

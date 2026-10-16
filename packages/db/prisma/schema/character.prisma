@@ -20,6 +20,8 @@ model PlayerCharacter {
   points Int @default(0)
   /// Equipment slots unlocked with CP ("armor" | "head" | "wrist" | "accessory"); the weapon slot is always open.
   unlockedSlots String[] @default([])
+  /// Training ranks bought with CP, per stat (game-core TRAIN_STATS → 0–20), e.g. {"strength": 3, "hp": 1}.
+  training Json @default("{}")
 
   weaponId    Int?
   headId      Int?

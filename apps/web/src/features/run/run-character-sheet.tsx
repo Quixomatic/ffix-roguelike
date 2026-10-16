@@ -2,7 +2,7 @@ import { canEquip, deriveStats, EQUIP_SLOTS, expForLevel, gemsMax, gemsUsed, slo
 import { getCharacter, getItem, MAX_LEVEL, type EquipSlot } from "@ffix-roguelike/game-data";
 import { useState } from "react";
 
-import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid } from "@/features/gear/character-panels";
+import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, TrainingRows } from "@/features/gear/character-panels";
 import { DollFigure, EquipmentList, GearPicker, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { ItemIcon } from "@/features/items/item-icon";
 
@@ -60,9 +60,14 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
           id: "stats",
           label: "Stats",
           content: (
-            <Panel title="Stats" right={(m.statuses?.length ?? 0) > 0 ? <span className="text-purple-300">{m.statuses!.join(", ")}</span> : undefined}>
-              <StatBars stats={st} current={{ hp: m.hp, mp: m.mp }} exp={{ into: m.build.exp - expFrom, span: Math.max(1, expTo - expFrom), total: m.build.exp }} />
-            </Panel>
+            <div className="flex flex-col gap-3">
+              <Panel title="Stats" right={(m.statuses?.length ?? 0) > 0 ? <span className="text-purple-300">{m.statuses!.join(", ")}</span> : undefined}>
+                <StatBars stats={st} current={{ hp: m.hp, mp: m.mp }} exp={{ into: m.build.exp - expFrom, span: Math.max(1, expTo - expFrom), total: m.build.exp }} />
+              </Panel>
+              <Panel title="Training" right={<span className="opacity-70">bought with CP at camp</span>}>
+                <TrainingRows build={m.build} stats={st} />
+              </Panel>
+            </div>
           ),
         },
         {

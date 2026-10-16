@@ -56,6 +56,8 @@ export interface CharacterBuild {
   points?: number;
   /** Equipment slots unlocked with Completion Points (the weapon slot is always open). */
   unlockedSlots?: EquipSlot[];
+  /** Training ranks bought with Completion Points (0–TRAIN_MAX per stat), raising base stats for every run. */
+  training?: Partial<Record<TrainStat, number>>;
   /**
    * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
@@ -291,6 +293,30 @@ export function canEquip(key: string, item: ItemData, slot: EquipSlot): boolean 
 
 const uniq = <T>(xs: T[]) => [...new Set(xs)];
 
+// ── training (CP → base stats) ───────────────────────────────────────────────
+
+export const TRAIN_STATS = ["strength", "magic", "spirit", "speed", "hp", "mp"] as const;
+export type TrainStat = (typeof TRAIN_STATS)[number];
+/** Ranks per stat. */
+export const TRAIN_MAX = 20;
+/**
+ * What each rank adds. Strength/Magic raise the "basis" stats (so HP/MP follow, as in FF9); Speed is FF9's
+ * strongest stat, so it takes two ranks per point; HP/MP are percentages. Tuning lives here.
+ */
+export const TRAIN_EFFECT: Record<TrainStat, { per: number; unit: "point" | "percent"; label: string }> = {
+  strength: { per: 1, unit: "point", label: "Strength" },
+  magic: { per: 1, unit: "point", label: "Magic" },
+  spirit: { per: 1, unit: "point", label: "Spirit" },
+  speed: { per: 0.5, unit: "point", label: "Speed" },
+  hp: { per: 2, unit: "percent", label: "HP" },
+  mp: { per: 2, unit: "percent", label: "MP" },
+};
+/** CP for the next rank: rank n costs n (a full stat is 210 CP). */
+export const trainCost = (rank: number) => rank + 1;
+export const trainRank = (build: CharacterBuild, stat: TrainStat) => Math.max(0, Math.min(TRAIN_MAX, build.training?.[stat] ?? 0));
+/** The bonus a stat gets from its ranks (points, or percent for HP/MP). */
+export const trainBonus = (build: CharacterBuild, stat: TrainStat) => Math.floor(trainRank(build, stat) * TRAIN_EFFECT[stat].per);
+
 export function deriveStats(build: CharacterBuild): DerivedStats {
   const data = getCharacter(build.key);
   const lv = Math.max(1, Math.min(MAX_LEVEL, build.level));
@@ -300,12 +326,12 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
 
   // "Basis" stats (ff9level.cs): base + level growth + bonus pool ÷ 32. Max HP/MP use these, before gear.
   const pool = build.growth ?? emptyGrowth();
-  const basisStr = Math.min(STAT_CAPS.strength, data.base.strength + Math.floor((lv * 3) / 10) + (pool.strength >> 5));
-  const basisMag = Math.min(STAT_CAPS.magic, data.base.magic + Math.floor((lv * 3) / 10) + (pool.magic >> 5));
-  let speed = Math.min(STAT_CAPS.speed, data.base.speed + Math.floor(lv / 10) + (pool.speed >> 5));
+  const basisStr = Math.min(STAT_CAPS.strength, data.base.strength + Math.floor((lv * 3) / 10) + (pool.strength >> 5) + trainBonus(build, "strength"));
+  const basisMag = Math.min(STAT_CAPS.magic, data.base.magic + Math.floor((lv * 3) / 10) + (pool.magic >> 5) + trainBonus(build, "magic"));
+  let speed = Math.min(STAT_CAPS.speed, data.base.speed + Math.floor(lv / 10) + (pool.speed >> 5) + trainBonus(build, "speed"));
   let strength = basisStr;
   let magic = basisMag;
-  let spirit = Math.min(STAT_CAPS.spirit, data.base.spirit + Math.floor((lv * 3) / 20) + (pool.spirit >> 5));
+  let spirit = Math.min(STAT_CAPS.spirit, data.base.spirit + Math.floor((lv * 3) / 20) + (pool.spirit >> 5) + trainBonus(build, "spirit"));
   let defence = 0;
   let evade = 0;
   let magicDefence = 0;
@@ -344,6 +370,8 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
 
   let maxHp = Math.floor((row.hpBonus * basisStr) / 50);
   let maxMp = Math.floor((row.mpBonus * basisMag) / 100);
+  maxHp = Math.floor((maxHp * (100 + trainBonus(build, "hp"))) / 100);
+  maxMp = Math.floor((maxMp * (100 + trainBonus(build, "mp"))) / 100);
   // HP+10%/20%, MP+10%/20% (support ids 5–8)
   if (supports.has(5)) maxHp = Math.floor(maxHp * 1.1);
   if (supports.has(6)) maxHp = Math.floor(maxHp * 1.2);

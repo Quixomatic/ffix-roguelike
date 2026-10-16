@@ -1,4 +1,4 @@
-import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -47,6 +47,11 @@ export const profileRouter = router({
   raiseStartLevel: protectedProcedure
     .input(z.object({ key: z.string() }))
     .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => raiseStartLevel(p, input.key))),
+
+  /** Spend Completion Points on one training rank of a stat. */
+  trainStat: protectedProcedure
+    .input(z.object({ key: z.string(), stat: z.enum(TRAIN_STATS) }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => trainStat(p, input.key, input.stat))),
 
   /** Spend Completion Points to unlock an equipment slot for a character. */
   unlockSlot: protectedProcedure

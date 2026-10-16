@@ -15,7 +15,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid } from "@/features/gear/character-panels";
+import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, TrainingRows } from "@/features/gear/character-panels";
+import { ItemIcon } from "@/features/items/item-icon";
 import { DollFigure, EquipmentList, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
 
@@ -36,6 +37,7 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
   const raise = useMutation(trpc.profile.raiseStartLevel.mutationOptions(opts));
   const unlock = useMutation(trpc.profile.unlockSlot.mutationOptions(opts));
   const supportsM = useMutation(trpc.profile.setSupports.mutationOptions(opts));
+  const train = useMutation(trpc.profile.trainStat.mutationOptions(opts));
 
   const char = getCharacter(build.key);
   const st = deriveStats(build);
@@ -77,19 +79,45 @@ export function CharacterSheet({ build: saved, onClose }: { build: CharacterBuil
           id: "stats",
           label: "Stats",
           content: (
-            <Panel title="Stats" right={<span className="opacity-70">at the start of a run</span>}>
-              <StatBars stats={st} />
-            </Panel>
+            <div className="flex flex-col gap-3">
+              <Panel title="Training" right={<span className="opacity-70">spend CP to raise base stats for every run</span>}>
+                <TrainingRows build={build} stats={st} points={points} busy={train.isPending} onTrain={(stat) => train.mutate({ key: build.key, stat })} />
+              </Panel>
+              <Panel title="Combat" right={<span className="opacity-70">at the start of a run</span>}>
+                <StatBars stats={st} />
+              </Panel>
+            </div>
           ),
         },
         {
           id: "equipment",
           label: "Equipment",
           content: (
-            <Panel title={slot ? `${SLOT_META[slot].label}` : "Starting gear"} right={<span className="opacity-70">every run begins with this</span>}>
+            <Panel title="Starting gear upgrades" right={<span className="text-orange-300">coming soon</span>}>
               <div className="text-sm opacity-80">
-                Gear isn't chosen at camp — {char.name} starts every run with the starter gear in each open slot (unlock more slots in Progress), and equips
-                what they find along the way. Select a slot on the left to see what's in it.
+                Upgrade {char.name}'s starter gear step by step so every run starts better equipped. It won't be cheap.
+              </div>
+              <div className="flex flex-col gap-2">
+                {slots
+                  .filter((s) => !s.locked)
+                  .map((s) => (
+                    <div key={s.slot} className={`flex items-center gap-2 rounded p-1.5 ${slot === s.slot ? "bg-white/10" : ""}`}>
+                      <span className="ff-title w-20 shrink-0">{SLOT_META[s.slot].label}</span>
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded border-2 border-yellow-200/60 bg-[#0c1238]" title="Current starter">
+                        {s.itemId != null ? <ItemIcon itemId={s.itemId} size={32} /> : <span className="opacity-40">—</span>}
+                      </span>
+                      {[1, 2, 3].map((step) => (
+                        <span key={step} className="flex items-center gap-2">
+                          <span className="text-xl opacity-50">→</span>
+                          <span className="flex h-14 w-14 flex-col items-center justify-center rounded border-2 border-dashed border-white/20 bg-black/30 text-xs opacity-60" title="Coming soon">
+                            <span className="text-lg">🔒</span>
+                            ??? CP
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                {!slots.some((s) => !s.locked) && <div className="text-sm opacity-60">No gear slots open yet.</div>}
               </div>
             </Panel>
           ),

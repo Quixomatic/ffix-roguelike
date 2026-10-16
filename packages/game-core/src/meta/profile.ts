@@ -20,8 +20,13 @@ import {
   nextSlotCost,
   slotUnlocked,
   starterGear,
+  TRAIN_MAX,
+  TRAIN_STATS,
+  trainCost,
+  trainRank,
   UNLOCKABLE_SLOTS,
   type CharacterBuild,
+  type TrainStat,
 } from "../stats";
 import { awardAchievements, legendaryItems } from "./achievements";
 
@@ -218,6 +223,19 @@ export function raiseStartLevel(profile: Profile, key: string): Profile {
   b.points = (b.points ?? 0) - cost;
   b.level++;
   b.exp = expForLevel(b.level);
+  return p;
+}
+
+/** Spend CP on one training rank of a stat (raises that base stat for every run). */
+export function trainStat(profile: Profile, key: string, stat: TrainStat): Profile {
+  const { p, b } = editable(profile, key);
+  if (!TRAIN_STATS.includes(stat)) throw new ProfileError("Unknown stat");
+  const rank = trainRank(b, stat);
+  if (rank >= TRAIN_MAX) throw new ProfileError("Fully trained");
+  const cost = trainCost(rank);
+  if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
+  b.points = (b.points ?? 0) - cost;
+  b.training = { ...b.training, [stat]: rank + 1 };
   return p;
 }
 

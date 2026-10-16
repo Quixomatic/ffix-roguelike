@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.58] - 2026-10-15
+
+Training: spend Completion Points to raise a character's base stats for every run.
+
+### Added
+- **Training** (camp character sheet → Stats): one row per stat — Strength, Magic, Spirit, Speed, HP, MP — with 20 rank boxes, "ranks/20", the stat's resulting value and a **+ n CP** button. Rank n costs n CP (a full stat is 210 CP). Each rank adds +1 Strength/Magic/Spirit (Strength and Magic also raise HP and MP, as in FF9), +1 Speed every two ranks, or +2% HP/MP. Tuning lives in `TRAIN_EFFECT` (game-core `stats.ts`). The in-run sheet shows the ranks read-only.
+- game-core `trainStat` / `trainRank` / `trainCost`; API `profile.trainStat`; DB `player_character.training` (migration `character_training`).
+- **Starting gear upgrades** (camp → Equipment): a preview of the planned upgrade path — each open slot's starter item, then locked steps ("coming soon").
+
+### Changed
+- The long Strength/Magic/Spirit/Speed bars are gone; the Stats tab shows Training plus the combat numbers at camp, and HP/MP/EXP bars plus Training in a run.
+
 ## [0.1.57] - 2026-10-15
 
 The paperdoll has room to breathe.

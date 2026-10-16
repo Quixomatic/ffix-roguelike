@@ -1,4 +1,17 @@
-import { activeSupports, apCost, availableAbilities, isMastered, type CharacterBuild, type DerivedStats } from "@ffix-roguelike/game-core";
+import {
+  activeSupports,
+  apCost,
+  availableAbilities,
+  isMastered,
+  TRAIN_EFFECT,
+  TRAIN_MAX,
+  TRAIN_STATS,
+  trainCost,
+  trainRank,
+  type CharacterBuild,
+  type DerivedStats,
+  type TrainStat,
+} from "@ffix-roguelike/game-core";
 import { abilityName, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
 import type { ReactNode } from "react";
 
@@ -120,10 +133,7 @@ const BLUE = "linear-gradient(90deg,#3a68c8,#9cc0ff)";
 const PURPLE = "linear-gradient(90deg,#8a6ad8,#d0b8ff)";
 const GOLD = "linear-gradient(90deg,#c8a030,#ffe066)";
 
-/**
- * Vitals and core stats as bars: HP/MP (current/max in a run), EXP to the next level, and Strength/Magic/Spirit/
- * Speed against FF9's caps (99/99/50/50); combat numbers (Attack, Defence, Evade…) as cells below.
- */
+/** Vitals as bars (HP/MP current/max and EXP, in a run) and the combat numbers (Attack, Defence, Evade…) as cells. */
 export function StatBars({ stats, current, exp }: { stats: DerivedStats; current?: { hp: number; mp: number }; exp?: { into: number; span: number; total: number } }) {
   const hp = current?.hp ?? stats.maxHp;
   const mp = current?.mp ?? stats.maxMp;
@@ -137,17 +147,13 @@ export function StatBars({ stats, current, exp }: { stats: DerivedStats; current
   ];
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1.5">
-        <StatBar label="HP" value={hp} max={stats.maxHp} color={hp < stats.maxHp / 6 ? GOLD : GREEN} />
-        <StatBar label="MP" value={mp} max={stats.maxMp} color={BLUE} />
-        {exp && <StatBar label="EXP" value={exp.into} max={exp.span} color={PURPLE} text={`${exp.total.toLocaleString()}`} />}
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <StatBar label="Strength" value={stats.strength} max={99} color={GOLD} text={stats.strength} />
-        <StatBar label="Magic" value={stats.magic} max={99} color={GOLD} text={stats.magic} />
-        <StatBar label="Spirit" value={stats.spirit} max={50} color={GOLD} text={stats.spirit} />
-        <StatBar label="Speed" value={stats.speed} max={50} color={GOLD} text={stats.speed} />
-      </div>
+      {current && (
+        <div className="flex flex-col gap-1.5">
+          <StatBar label="HP" value={hp} max={stats.maxHp} color={hp < stats.maxHp / 6 ? GOLD : GREEN} />
+          <StatBar label="MP" value={mp} max={stats.maxMp} color={BLUE} />
+          {exp && <StatBar label="EXP" value={exp.into} max={exp.span} color={PURPLE} text={`${exp.total.toLocaleString()}`} />}
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
         {cells.map(([label, value]) => (
           <div key={label} className="flex flex-col rounded bg-black/25 px-2 py-1">
@@ -156,6 +162,61 @@ export function StatBars({ stats, current, exp }: { stats: DerivedStats; current
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/** The stat a training row shows as its resulting value. */
+const TRAIN_VALUE: Record<TrainStat, (s: DerivedStats) => number> = {
+  strength: (s) => s.strength,
+  magic: (s) => s.magic,
+  spirit: (s) => s.spirit,
+  speed: (s) => s.speed,
+  hp: (s) => s.maxHp,
+  mp: (s) => s.maxMp,
+};
+
+/**
+ * Training: one row per stat — name, TRAIN_MAX tick boxes for the ranks bought, "5/20", the stat's resulting
+ * value, and a + button (with the next rank's CP cost) when `onTrain` is given; read-only otherwise.
+ */
+export function TrainingRows({ build, stats, points, onTrain, busy }: { build: CharacterBuild; stats: DerivedStats; points?: number; onTrain?: (stat: TrainStat) => void; busy?: boolean }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      {TRAIN_STATS.map((stat) => {
+        const rank = trainRank(build, stat);
+        const fx = TRAIN_EFFECT[stat];
+        const cost = trainCost(rank);
+        const maxed = rank >= TRAIN_MAX;
+        return (
+          <div key={stat} className="grid grid-cols-[5.5rem_1fr_3rem_3.5rem_auto] items-center gap-2">
+            <span className="ff-title" title={`+${fx.per}${fx.unit === "percent" ? "%" : ""} per rank`}>
+              {fx.label}
+            </span>
+            <span className="flex gap-[3px]">
+              {Array.from({ length: TRAIN_MAX }, (_, i) => (
+                <span key={i} className={`h-4 w-2 rounded-[2px] border ${i < rank ? "border-yellow-200 bg-yellow-300" : "border-white/25 bg-black/30"}`} />
+              ))}
+            </span>
+            <span className="text-right text-sm tabular-nums opacity-80">
+              {rank}/{TRAIN_MAX}
+            </span>
+            <span className="text-right text-lg tabular-nums">{TRAIN_VALUE[stat](stats)}</span>
+            {onTrain ? (
+              <button
+                className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
+                disabled={maxed || busy || (points ?? 0) < cost}
+                onClick={() => onTrain(stat)}
+                title={maxed ? "Fully trained" : `Next rank: ${cost} CP`}
+              >
+                {maxed ? "Max" : `+ ${cost} CP`}
+              </button>
+            ) : (
+              <span />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
