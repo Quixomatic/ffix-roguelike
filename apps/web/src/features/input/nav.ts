@@ -35,6 +35,9 @@ export const PAGE_FOCUS = "page";
 export const SIDEBAR_FOCUS = "sidebar";
 /** The page's content (inside PAGE_FOCUS, beside the menu button and shortcuts): where arriving on a page lands. */
 export const CONTENT_FOCUS = "page-content";
+/** The hub's menu button, and its round shortcuts (`quick-0`, `quick-1`…, top to bottom). */
+export const MENU_BUTTON_FOCUS = "menu-button";
+export const quickFocus = (i: number) => `quick-${i}`;
 /** Window event for the menu control (M, or the controller's Start): the hub shell opens / closes its sidebar. */
 export const MENU_EVENT = "ffix:menu";
 

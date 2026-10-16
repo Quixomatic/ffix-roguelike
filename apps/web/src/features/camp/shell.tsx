@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
 import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
-import { setFocus } from "@noriginmedia/norigin-spatial-navigation";
+import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 
@@ -11,7 +11,7 @@ import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { FocusItem, FocusSection } from "@/features/input/focus";
-import { CONTENT_FOCUS, MENU_EVENT, PAGE_FOCUS, SIDEBAR_FOCUS } from "@/features/input/nav";
+import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -41,6 +41,35 @@ const MORE_NAV: NavItem[] = [
  * Routes under `_auth/_hub` use it (their layout sets `staticData.shell = "sidebar"`, which hides the header bar).
  */
 const SIDEBAR_KEY = "ffix-sidebar-open";
+
+/**
+ * How the cursor moves between the page's three parts — the content, the menu button (top left) and the shortcuts
+ * (top right) — which float over each other, so geometry alone can't. Within the content it moves as usual; this is
+ * for leaving it. null: leave the page (e.g. ← from the content's left edge to the sidebar).
+ */
+const pageResolver: NextFocusResolver = (direction, from, siblings) => {
+  const byKey = (k: string) => siblings.find((s) => s.focusKey === k) ?? null;
+  const quick = siblings.filter((s) => s.focusKey.startsWith("quick-")).sort((a, b) => a.focusKey.localeCompare(b.focusKey));
+  const content = byKey(CONTENT_FOCUS);
+  if (from === CONTENT_FOCUS) {
+    if (direction === "up") return byKey(MENU_BUTTON_FOCUS);
+    if (direction === "right") return quick[0] ?? null;
+    return null;
+  }
+  if (from === MENU_BUTTON_FOCUS) {
+    if (direction === "down") return content;
+    if (direction === "right") return quick[0] ?? null;
+    return null;
+  }
+  const i = quick.findIndex((q) => q.focusKey === from);
+  if (i >= 0) {
+    if (direction === "up") return quick[i - 1] ?? null;
+    if (direction === "down") return quick[i + 1] ?? content;
+    if (direction === "left") return content;
+    return null;
+  }
+  return null;
+};
 
 /** Whether the sidebar is out, remembered per browser. */
 function useSidebarOpen(): [boolean, () => void] {
@@ -90,10 +119,10 @@ export function HubShell() {
         <Sidebar open={open} />
       </div>
       {/* The page's cursor section holds the menu button and the shortcuts too, so ↑ from the top of a page reaches them. */}
-      <FocusSection key={path} focusKey={PAGE_FOCUS} preferredChild={CONTENT_FOCUS} autoFocus>
+      <FocusSection key={path} focusKey={PAGE_FOCUS} preferredChild={CONTENT_FOCUS} resolver={pageResolver} autoFocus>
       <div className="relative min-h-0">
         {/* Always on screen, inset on the page: slides the sidebar in and out (or M / Start). */}
-        <FocusItem>
+        <FocusItem focusKey={MENU_BUTTON_FOCUS}>
           <button
             type="button"
             onClick={toggle}
@@ -213,18 +242,18 @@ function QuickLinks() {
         <span className="ff-chip">{cp} CP</span>
       </div>
       <div className="flex flex-col gap-2">
-        <RoundLink to="/items" label="Items" icon={Package} />
-        <RoundLink to="/achievements" label="Achievements" icon={Trophy} />
-        <RoundLink to="/settings" label="Settings" icon={Settings} />
+        <RoundLink index={0} to="/items" label="Items" icon={Package} />
+        <RoundLink index={1} to="/achievements" label="Achievements" icon={Trophy} />
+        <RoundLink index={2} to="/settings" label="Settings" icon={Settings} />
       </div>
     </div>
   );
 }
 
-function RoundLink({ to, label, icon: Icon }: { to: string; label: string; icon: ComponentType<{ className?: string }> }) {
+function RoundLink({ index, to, label, icon: Icon }: { index: number; to: string; label: string; icon: ComponentType<{ className?: string }> }) {
   return (
     <Tooltip>
-      <FocusItem>
+      <FocusItem focusKey={quickFocus(index)}>
         <TooltipTrigger render={<Link to={to} aria-label={label} />} className="ff-panel ff-lift flex size-11 items-center justify-center rounded-full">
           <Icon className="size-5" />
         </TooltipTrigger>

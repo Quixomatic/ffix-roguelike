@@ -1,4 +1,4 @@
-import { FocusContext, useFocusable } from "@noriginmedia/norigin-spatial-navigation";
+import { FocusContext, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { cloneElement, createContext, useContext, useEffect, type ReactElement, type Ref, type RefObject } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
@@ -81,6 +81,7 @@ export function FocusSection({
   boundary,
   disabled = false,
   preferredChild,
+  resolver,
 }: {
   children: ReactElement<ChildProps>;
   focusKey?: string;
@@ -92,6 +93,8 @@ export function FocusSection({
   disabled?: boolean;
   /** Focus key of the child to land on when the section is entered (else its first / last focused item). */
   preferredChild?: string;
+  /** Pick the next child yourself when moving between this section's children (null: leave the section). */
+  resolver?: NextFocusResolver;
 }) {
   const { ref, focusKey: key, focusSelf } = useFocusable<object, HTMLElement>({
     focusKey,
@@ -99,6 +102,7 @@ export function FocusSection({
     saveLastFocusedChild: true,
     isFocusBoundary: boundary,
     preferredChildFocusKey: preferredChild,
+    nextFocusResolver: resolver,
   });
   useEffect(() => {
     if (autoFocus) focusSelf();

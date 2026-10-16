@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.35] - 2026-10-16
+
+### Fixed
+- **The menu button couldn't be reached again** (v0.2.34): it floats over the page's content, so for the cursor it was never "above" the content. Moving between the page's parts is now explicit (`FocusSection resolver`, Norigin's `nextFocusResolver`):
+  - **↑** from the top of the content goes to the menu button; **↓** comes back.
+  - **→** from the content's right edge, or from the menu button, goes to the round shortcuts. **↑/↓** move along them; **↓** past the last one, or **←**, returns to the content.
+  - **←** from the content's left edge still reaches the sidebar.
+  - Arriving on a page still lands on the content's first item.
+
 ## [0.2.34] - 2026-10-16
 
 ### Fixed
