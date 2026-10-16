@@ -68,7 +68,7 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
   const expTo = lv >= MAX_LEVEL ? expFrom : expForLevel(lv + 1);
   const items = fieldItems(run);
   return (
-    <div className="ff-window flex min-h-0 flex-1 flex-col gap-1 px-2 py-1.5">
+    <div className="ff-window flex max-h-[13rem] min-h-0 flex-1 flex-col gap-1 px-2 py-1.5">
       <div className="flex items-center gap-2">
         <button
           className="flex h-14 w-12 shrink-0 items-end justify-center rounded bg-black/30 enabled:hover:brightness-125"

@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.62] - 2026-10-15
+
+Party cards in the run sidebar stop growing.
+
+### Fixed
+- **Party cards stretched to fill the whole sidebar** with only one or two members. Each card now grows to at most 13rem tall: a full party still shares the height, a small party stacks at the top.
+
 ## [0.1.61] - 2026-10-15
 
 Gear tooltips on the paperdoll no longer get cut off.
