@@ -163,7 +163,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <Link to="/story" className="self-start text-sm text-[#c8d0ff] hover:text-white">
+      <Link to="/story" data-sound="cancel" className="self-start text-sm text-[#c8d0ff] hover:text-white">
         ◂ Journeys
       </Link>
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">

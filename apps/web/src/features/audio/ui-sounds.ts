@@ -6,7 +6,7 @@
  * `useUiSounds()` (mounted once, in the app root) plays them for the whole app:
  * - **cursor** whenever a menu option (`.ff-option`) becomes the highlighted one — keyboard or mouse, every menu;
  * - **cursor** on clicking a button or link;
- * - **cancel** on Escape, and on close / back buttons (`aria-label="Close"`);
+ * - **cancel** on Escape, on close / back buttons (`aria-label="Close"`), and on the browser's Back / Forward;
  * - **buzzer** on pressing a disabled button (can't afford, sold out, not allowed) — browsers send no click there;
  * - an element can ask for another sound with `data-sound="purchase|buzzer|cancel|help|none"`.
  * Purchases play `uiSound("purchase")` when the buy succeeds.
@@ -73,11 +73,15 @@ export function useUiSounds() {
       if (t?.closest("input, textarea, select")) return;
       uiSound("cancel");
     };
+    // The browser's Back (and Forward, and a mouse's back button) is backing out.
+    const onPop = () => uiSound("cancel");
     document.addEventListener("click", onClick, true);
     document.addEventListener("pointerup", onPointerUp, true);
     document.addEventListener("keydown", onKey, true);
+    window.addEventListener("popstate", onPop);
     return () => {
       observer.disconnect();
+      window.removeEventListener("popstate", onPop);
       document.removeEventListener("click", onClick, true);
       document.removeEventListener("pointerup", onPointerUp, true);
       document.removeEventListener("keydown", onKey, true);

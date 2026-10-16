@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.18] - 2026-10-16
+
+### Changed
+- **Going back plays FF9's cancel sound**: the browser's Back and Forward (and a mouse's back button, through `popstate`), and the in-app back links: Embark's "◂ Journeys", and the character page's "← Back" (already a Close button).
+
 ## [0.2.17] - 2026-10-16
 
 The two camp shops are separate pages, side by side on the Play hub; the sidebar uses the header's wordmark.
