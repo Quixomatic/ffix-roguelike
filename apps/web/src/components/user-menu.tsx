@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "@ffix-roguelike/ui/components/skeleton";
 import { Link, useNavigate } from "@tanstack/react-router";
 
+import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 
 export default function UserMenu() {
@@ -31,7 +32,8 @@ export default function UserMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" />}>
+      <DropdownMenuTrigger render={<Button variant="outline" className="gap-2" />}>
+        <Avatar image={session.user.image} name={session.user.name} size={20} />
         {session.user.name}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-card">

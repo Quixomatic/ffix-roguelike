@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.100] - 2026-10-16
+
+Players can set an avatar, stored in the R2 bucket.
+
+### Added
+- **Avatar uploads**:
+  - **Settings → Avatar**: upload, change or remove your picture (PNG, JPEG, GIF or WebP, up to 2 MB). It shows in the header's account button too, or your initial when you have none.
+  - **Flow** (same split as ChannelGuide's uploads, and GuideEngine's avatar flow):
+    - `POST /api/uploads/avatar` (`apps/server/src/uploads.ts`) is a thin, cookie-authed Hono multipart route, since tRPC is JSON-only.
+    - It calls the api service (`packages/api/src/services/avatar.ts`), which stores the file through `@ffix-roguelike/storage` at `avatars/users/<id>.<ext>` and returns its public URL.
+    - The client sets that URL with **better-auth's `authClient.updateUser({ image })`** and refreshes the session, so `user.image` stays better-auth's.
+  - The image format is read from the file's bytes, not taken from the browser, so only real images are stored. Each upload replaces the last; the URL carries a `?v=` stamp so browsers and the CDN pick up the new picture.
+- The api package depends on `@ffix-roguelike/storage`.
+
+### Notes
+- Assets and avatars are served from **ff-like.turboforge.io**, the bucket's custom domain.
+- Restart `pnpm dev` (new server route).
+
 ## [0.1.99] - 2026-10-16
 
 The server is connected to the R2 bucket.

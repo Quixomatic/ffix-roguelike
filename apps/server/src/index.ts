@@ -8,6 +8,7 @@ import { logger } from "hono/logger";
 import { createContext } from "./context";
 import { ENV } from "./env.server";
 import { auth, db } from "./services";
+import { uploadsApi } from "./uploads";
 
 const app = new Hono();
 
@@ -23,6 +24,9 @@ app.use(
 );
 
 app.on(["POST", "GET"], "/api/auth/*", async (c) => auth.handler(c.req.raw));
+
+// Multipart uploads (avatars); everything else about them is tRPC.
+app.route("/api/uploads", uploadsApi);
 
 app.use(
   "/trpc/*",
