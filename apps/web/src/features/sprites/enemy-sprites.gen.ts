@@ -5471,6 +5471,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "Zombie FFIX"
  },
+ "baku": {
+  "url": "/sprites/enemies/enemy-109001.png",
+  "w": 48,
+  "h": 72,
+  "originX": 24,
+  "originY": 72,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Masked Man FFIX (James's pick)"
+ },
  "garnet": {
   "url": "/sprites/enemies/player-109002.png",
   "w": 32,

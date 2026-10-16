@@ -136,6 +136,7 @@ export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   "yeti": { boss: 206057, src: "Yeti (FF6)" },
   "zaghnol": { boss: 209084, src: "Zaghnol (FF9)" },
   "zombie": { enemy: 109081, src: "Zombie FFIX" },
+  "baku": { enemy: 109001, src: "stand-in: Masked Man FFIX (James's pick)" },
   "garnet": { player: 109002, src: "Garnet (FFRK party sheet)" },
   "blank": { player: 109066, src: "Blank (FFRK party sheet)" },
   "kuja": { player: 109010, src: "Kuja (FFRK party sheet)" },

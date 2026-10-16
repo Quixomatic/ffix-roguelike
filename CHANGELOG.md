@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.88] - 2026-10-16
+
+### Changed
+- **Baku** (Alexandria's boss) uses FFRK's Masked Man sprite instead of the placeholder — FFRK never drew Baku.
+
 ## [0.1.87] - 2026-10-16
 
 ### Changed
