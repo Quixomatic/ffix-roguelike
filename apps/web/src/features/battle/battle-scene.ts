@@ -175,9 +175,9 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
-  /** The target glove replaces the ▼ marker at about its size: 16 px, doubled only on very large canvases. */
+  /** The target glove replaces the ▼ marker, a little bigger: 24 px (32 px on very large canvases). */
   private handScale() {
-    return this.k >= 1.6 ? 2 : 1;
+    return this.k >= 1.6 ? 2 : 1.5;
   }
 
   /** Monsters share the heroes' whole-number pixel scale (FFRK's size ratios); a crowd steps down one. */

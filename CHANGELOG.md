@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.79] - 2026-10-16
+
+### Changed
+- The target glove is a touch bigger: 24 px (32 px on very large screens), up from 16.
+
 ## [0.1.78] - 2026-10-16
 
 FF9's menu hand: the highlighted menu option has a pixel glove pointing at it.
