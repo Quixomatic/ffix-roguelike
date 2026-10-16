@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.10] - 2026-10-16
+
+### Fixed
+- **The run screen no longer fills the height** (since v0.2.9): its layout relied on being stretched by the old grid row, and the new scrolling `<main>` did not stretch it. `<main>` is now a one-row grid whose row is at least the full height and grows with taller pages (`grid-rows-[minmax(100%,max-content)]`), so every page fills the area under the header whether or not it sets its own height, and long pages still scroll under the header.
+
 ## [0.2.9] - 2026-10-16
 
 The header stays put: pages scroll in their own area under it.

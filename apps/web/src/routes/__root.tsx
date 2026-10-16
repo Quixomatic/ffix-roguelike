@@ -54,11 +54,12 @@ function RootComponent() {
         disableTransitionOnChange
         storageKey="vite-ui-theme"
       >
-        {/* App shell: the header stays put; <main> is the one scroll area (full-screen pages fill it exactly). */}
+        {/* App shell: the header stays put; <main> is the one scroll area. Its single row is at least the full height
+            (pages stretch to fill it, whether or not they set h-full) and grows with taller pages, which then scroll. */}
         <div className="grid h-svh grid-rows-[auto_minmax(0,1fr)]">
           <Header />
           <SettingsSync />
-          <main id="main" data-scroll-restoration-id="main" className="min-h-0 overflow-y-auto">
+          <main id="main" data-scroll-restoration-id="main" className="grid min-h-0 grid-rows-[minmax(100%,max-content)] overflow-y-auto">
             <AssetGate>
               <UiSounds />
               <Outlet />
