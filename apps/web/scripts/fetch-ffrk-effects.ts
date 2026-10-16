@@ -4,188 +4,142 @@
  * fetch-ffrk-effects — download FFRK's ability effects (spells, skills, enemy attacks, soul breaks, summons) from the
  * game's static server into `.docs/assets/FFRK-data/_raw/effects/` (git-ignored), mirroring the server layout.
  *
- * Effects are AnimationBuilder rigs in `lang/ab/ability/<folder>/<file>.json` (see `.docs/ffrk-assets.md`). File names
- * vary — `<n>_hit.json`, `hit.json`, `hit_1.json`, `launch.json`, `shot.json`, `back.json`… — so:
- *   1. every exact path in `effects/catalog.json` (`ffrk:effect-names`, from captured game data) is fetched;
- *   2. every folder id in [FROM, TO) is probed for `<n>_hit.json`, `hit.json` and `<n>_shot.json`; a folder with any
- *      of them is checked for the other known names;
- *   3. each rig is crawled: every `/Content/lang/ab/...` (or `./lang/ab/...`) path it mentions — particle files,
- *      `.sajson` frame animations, images and their atlas `.json`, `ability/common/*` — is fetched and crawled in turn;
- *      every `action_sound` id is fetched from `lang/se/se_ogg/<id>.ogg`.
- * Already-downloaded files are skipped (re-runnable; 404s are remembered in `.missing` so re-runs skip them too).
- * Writes `effects/index.json`: folder → { files, images, sounds } (merged across runs, saved as it goes).
+ * Effects are AnimationBuilder rigs in `lang/ab/ability/<folder>/<file>.json` (see `.docs/ffrk-assets.md`). File
+ * names vary (`<n>_hit.json`, `hit.json`, `hit_1.json`, `launch.json`, `shot.json`, `back.json`…), so the stages are:
+ *   1. catalog  — every exact path in `effects/catalog.json` (`ffrk:effect-names`, from captured game data)
+ *   2. probe    — every folder id in [from, to) for `<n>_hit.json`, `hit.json`, `<n>_shot.json`
+ *   3. variants — each folder found, for the other known file names
+ *   4. crawl    — every file a rig uses (particles `pb_*.json`, `.sajson` frame animations, images + their atlas
+ *                 `.json`, `ability/common/*`), recording each folder's effect art and sounds
+ *   5. index    — `effects/index.json`: folder → { files, images, sounds }
+ *   6. sounds   — `lang/se/se_ogg/<id>.ogg`: by default only for effects the game plays (assignments, weapon
+ *                 attacks, monster defaults — `src/features/effects/effect-recipes.ts`)
+ * Built on `lib/fetcher.ts`: parallel, timeouts + retries, disk cache and a remembered-missing list (re-runs are
+ * fast), progress bars.
  *
- *   bun scripts/fetch-ffrk-effects.ts [from] [to]     (default 10000 100000)
+ *   bun scripts/fetch-ffrk-effects.ts [from] [to] [--skip-probe] [--sounds used|all|none]
+ *     defaults: 10000 100000, --sounds used. --skip-probe reuses the folders already in index.json.
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const STATIC = "https://dff.sp.mbga.jp/dff/static/lang";
+import { usedEffectPaths } from "../src/features/effects/effect-recipes";
+import { Fetcher } from "./lib/fetcher";
+
 const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".docs", "assets", "FFRK-data", "_raw", "effects");
-const CONCURRENCY = 24;
-const PROBE = (n: number) => [`${n}_hit.json`, "hit.json", `${n}_shot.json`];
-const MORE = (n: number) => [`${n}_launch.json`, `${n}_shot.json`, `${n}_hit.json`, `${n}_hit_1.json`, "hit.json", "hit_1.json", "hit_2.json", "hit_3.json", "launch.json", "shot.json", "back.json", "land.json", "hit_miss.json", "magicite.json", "magicite_hit.json", "magicite_hit_1.json"];
-
-const [FROM = 10000, TO = 100000] = process.argv.slice(2).map(Number);
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-// Known misses, so re-runs don't probe them again.
-const MISSING = join(OUT, ".missing");
-mkdirSync(OUT, { recursive: true });
-const missing = new Set(existsSync(MISSING) ? readFileSync(MISSING, "utf8").split("\n").filter(Boolean) : []);
-
-async function get(url: string): Promise<Uint8Array | null> {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const res = await fetch(url);
-      if (res.status === 404 || res.status === 403) return null;
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return new Uint8Array(await res.arrayBuffer());
-    } catch {
-      await sleep(800 * (attempt + 1));
-    }
-  }
-  return null;
-}
-
-const local = (path: string) => join(OUT, ...path.split("/"));
-
-/** Fetch `lang/<path>` once (cached on disk); null if the server doesn't have it. */
-async function fetchPath(path: string): Promise<Uint8Array | null> {
-  const file = local(path);
-  if (existsSync(file)) return new Uint8Array(readFileSync(file));
-  if (missing.has(path)) return null;
-  const data = await get(`${STATIC}/${path}`);
-  if (data) {
-    mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, data);
-  } else {
-    missing.add(path);
-    appendFileSync(MISSING, `${path}\n`);
-  }
-  return data;
-}
-
-async function pool<T>(items: T[], fn: (item: T) => Promise<void>) {
-  let i = 0;
-  await Promise.all(
-    Array.from({ length: CONCURRENCY }, async () => {
-      while (i < items.length) await fn(items[i++]!);
-    }),
-  );
-}
-
-interface Folder {
-  files: Set<string>;
-  images: Set<string>;
-  sounds: Set<string>;
-}
-const folders = new Map<string, Folder>();
-const folderOf = (rigPath: string) => /ab\/ability\/([^/]+)\//.exec(rigPath)?.[1] ?? "?";
-const addRig = (rigPath: string) => {
-  const f = folderOf(rigPath);
-  let e = folders.get(f);
-  if (!e) folders.set(f, (e = { files: new Set(), images: new Set(), sounds: new Set() }));
-  e.files.add(rigPath.split("/").pop()!);
+const args = process.argv.slice(2);
+const flag = (name: string) => {
+  const i = args.indexOf(name);
+  return i >= 0 ? (args[i + 1] ?? "") : undefined;
 };
+const [FROM = 10000, TO = 100000] = args.filter((a) => /^\d+$/.test(a)).map(Number);
+const SKIP_PROBE = args.includes("--skip-probe");
+const SOUNDS = (flag("--sounds") ?? "used") as "used" | "all" | "none";
 
-function writeIndex() {
-  const file = join(OUT, "index.json");
-  const previous = existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as Record<string, { files?: string[] }>) : {};
-  const merged: Record<string, unknown> = {};
-  // Old-format entries (by effect id with "phases") are dropped; folders merge their file lists.
-  for (const [k, v] of Object.entries(previous)) if (v.files) merged[k] = v;
-  for (const [k, f] of folders) {
-    const prev = (merged[k] as { files?: string[] } | undefined)?.files ?? [];
-    merged[k] = { files: [...new Set([...prev, ...f.files])].sort(), images: [...f.images].sort(), sounds: [...f.sounds].sort() };
-  }
-  writeFileSync(file, `${JSON.stringify(Object.fromEntries(Object.entries(merged).sort((a, b) => a[0].localeCompare(b[0], undefined, { numeric: true }))), null, 1)}\n`);
-}
+const net = new Fetcher({ root: OUT, baseUrl: "https://dff.sp.mbga.jp/dff/static/lang/", concurrency: 24 });
+const indexFile = join(OUT, "index.json");
+type Entry = { files: string[]; images: string[]; sounds: string[] };
+const previous: Record<string, Entry> = existsSync(indexFile) ? JSON.parse(readFileSync(indexFile, "utf8")) : {};
 
-// 1. Exact paths from captured game data.
+/** Rig files found per folder. */
+const folders = new Map<string, Set<string>>();
+const addRig = (path: string) => {
+  const m = /^ab\/ability\/([^/]+)\/([^/]+\.json)$/.exec(path);
+  if (!m) return;
+  const set = folders.get(m[1]!) ?? new Set();
+  set.add(m[2]!);
+  folders.set(m[1]!, set);
+};
+for (const [folder, e] of Object.entries(previous)) for (const f of e.files) addRig(`ab/ability/${folder}/${f}`);
+
+// 1. catalog
 const catalogFile = join(OUT, "catalog.json");
 const catalog = existsSync(catalogFile) ? (JSON.parse(readFileSync(catalogFile, "utf8")) as Record<string, { phases: Record<string, string> }>) : {};
 const catalogPaths = [...new Set(Object.values(catalog).flatMap((e) => Object.values(e.phases)))];
-await pool(catalogPaths, async (p) => {
-  if (await fetchPath(p)) addRig(p);
+await net.run("catalog", catalogPaths, async (p) => {
+  if (await net.get(p)) addRig(p);
 });
-console.log(`catalog: ${catalogPaths.length} paths, ${folders.size} folders`);
 
-// 2. Probe folder ids.
-const ids = Array.from({ length: TO - FROM }, (_, k) => FROM + k);
-let probed = 0;
-const hits: number[] = [];
-await pool(ids, async (n) => {
-  for (const f of PROBE(n))
-    if (await fetchPath(`ab/ability/${n}/${f}`)) {
-      hits.push(n);
-      break;
-    }
-  if (++probed % 5000 === 0) {
-    console.log(`probed ${probed}/${ids.length}, ${hits.length} folders`);
-    writeIndex();
-  }
-});
-await pool(hits, async (n) => {
-  for (const f of MORE(n)) if (await fetchPath(`ab/ability/${n}/${f}`)) addRig(`ab/ability/${n}/${f}`);
-});
-console.log(`${hits.length} folders in ${FROM}–${TO - 1}`);
-
-// 3. Crawl dependencies.
-const seen = new Set<string>();
-// "/Content/lang/ab/..." in rigs and particle files; "./lang/ab/..." in SpriteAnimationBuilder (.sajson) files.
-const CONTENT = /(?:\/Content\/|\.\/)lang\/([A-Za-z0-9_./-]+\.(?:json|png|sajson))/g;
-const SOUND = /"id"\s*:\s*"(se_[A-Za-z0-9_]+)"/g;
-
-/** Files a rig/particle/sajson file references (images also bring their atlas). */
-const depsOf = (text: string) =>
-  [...text.matchAll(CONTENT)].flatMap((m) => {
-    const p = m[1]!.replace(/^ww\/compile\/[a-z]+\//, "").replace(/\/\/+/g, "/");
-    return p.endsWith(".png") ? [p, p.replace(/\.png$/, ".json")] : [p];
+// 2–3. probe and variants
+if (!SKIP_PROBE) {
+  const ids = Array.from({ length: TO - FROM }, (_, k) => FROM + k);
+  const hits: number[] = [];
+  await net.run("probe", ids, async (n) => {
+    for (const f of [`${n}_hit.json`, "hit.json", `${n}_shot.json`])
+      if (await net.get(`ab/ability/${n}/${f}`)) {
+        hits.push(n);
+        return;
+      }
   });
-
-/** Everything reachable from a file: images (effect_image names) and sounds, crawling as needed. */
-const reach = new Map<string, Promise<{ images: Set<string>; sounds: Set<string> }>>();
-function crawl(path: string): Promise<{ images: Set<string>; sounds: Set<string> }> {
-  if (!reach.has(path))
-    reach.set(
-      path,
-      (async () => {
-        const out = { images: new Set<string>(), sounds: new Set<string>() };
-        seen.add(path);
-        const data = await fetchPath(path);
-        if (!data || !/\.(json|sajson)$/.test(path)) return out;
-        const text = new TextDecoder().decode(data);
-        for (const m of text.matchAll(SOUND)) out.sounds.add(m[1]!);
-        for (const p of depsOf(text)) {
-          if (p.includes("/effect_image/") && p.endsWith(".png")) out.images.add(p.split("/").pop()!.replace(/\.png$/, ""));
-          const sub = await crawl(p);
-          sub.images.forEach((i) => out.images.add(i));
-          sub.sounds.forEach((s) => out.sounds.add(s));
-        }
-        return out;
-      })(),
-    );
-  return reach.get(path)!;
+  const variants = (n: number) => [`${n}_launch.json`, `${n}_shot.json`, `${n}_hit.json`, `${n}_hit_1.json`, "hit.json", "hit_1.json", "hit_2.json", "hit_3.json", "launch.json", "shot.json", "back.json", "land.json", "hit_miss.json", "magicite.json", "magicite_hit.json", "magicite_hit_1.json"];
+  await net.run("variants", hits, async (n) => {
+    for (const f of variants(n)) if (await net.get(`ab/ability/${n}/${f}`)) addRig(`ab/ability/${n}/${f}`);
+  });
 }
 
-let crawled = 0;
-await pool([...folders.entries()], async ([folder, f]) => {
-  for (const file of f.files) {
-    const r = await crawl(`ab/ability/${folder}/${file}`);
-    r.images.forEach((i) => f.images.add(i));
-    r.sounds.forEach((s) => f.sounds.add(s));
+// 4. crawl. Each file's *own* references are cached (small); a folder's art/sounds are gathered by walking them.
+const CONTENT = /(?:\/Content\/|\.\/)lang\/([A-Za-z0-9_./-]+\.(?:json|png|sajson))/g;
+const SOUND = /"id"\s*:\s*"(se_[A-Za-z0-9_]+)"/g;
+interface Refs {
+  deps: string[];
+  images: string[];
+  sounds: string[];
+}
+const refs = new Map<string, Refs>();
+async function refsOf(path: string): Promise<Refs> {
+  const cached = refs.get(path);
+  if (cached) return cached;
+  const out: Refs = { deps: [], images: [], sounds: [] };
+  refs.set(path, out);
+  const data = await net.get(path);
+  if (data && /\.(json|sajson)$/.test(path)) {
+    const text = new TextDecoder().decode(data);
+    for (const m of text.matchAll(CONTENT)) {
+      const p = m[1]!.replace(/^ww\/compile\/[a-z]+\//, "").replace(/\/\/+/g, "/");
+      out.deps.push(p);
+      if (p.endsWith(".png")) {
+        out.deps.push(p.replace(/\.png$/, ".json")); // its atlas (frame names), when it has one
+        if (p.includes("/effect_image/")) out.images.push(p.split("/").pop()!.replace(/\.png$/, ""));
+      }
+    }
+    for (const m of text.matchAll(SOUND)) out.sounds.push(m[1]!);
   }
-  if (++crawled % 200 === 0) console.log(`crawled ${crawled}/${folders.size}`);
+  return out;
+}
+/** Everything reachable from some files: the art and sounds they use (fetching what's missing). */
+async function reach(start: string[]) {
+  const images = new Set<string>();
+  const sounds = new Set<string>();
+  const seen = new Set<string>();
+  const queue = [...start];
+  while (queue.length) {
+    const p = queue.pop()!;
+    if (seen.has(p)) continue;
+    seen.add(p);
+    const r = await refsOf(p);
+    r.images.forEach((i) => images.add(i));
+    r.sounds.forEach((s) => sounds.add(s));
+    queue.push(...r.deps);
+  }
+  return { images, sounds };
+}
+const index: Record<string, Entry> = {};
+await net.run("crawl", [...folders.keys()], async (folder) => {
+  const files = [...folders.get(folder)!].sort();
+  const { images, sounds } = await reach(files.map((f) => `ab/ability/${folder}/${f}`));
+  index[folder] = { files, images: [...images].sort(), sounds: [...sounds].sort() };
 });
 
-// 4. Sounds.
-const sounds = new Set([...folders.values()].flatMap((f) => [...f.sounds]));
-let gotSounds = 0;
-await pool([...sounds], async (s) => {
-  if (await fetchPath(`se/se_ogg/${s}.ogg`)) gotSounds++;
+// 5. index
+const byFolder = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
+writeFileSync(indexFile, `${JSON.stringify(Object.fromEntries(Object.entries({ ...previous, ...index }).sort(([a], [b]) => byFolder(a, b))), null, 1)}\n`);
+
+// 6. sounds
+const wanted =
+  SOUNDS === "none" ? new Set<string>() : SOUNDS === "all" ? new Set(Object.values(index).flatMap((e) => e.sounds)) : (await reach(usedEffectPaths())).sounds;
+await net.run(`sounds (${SOUNDS})`, [...wanted], async (id) => {
+  await net.get(`se/se_ogg/${id}.ogg`);
 });
 
-writeIndex();
-console.log(`✓ ${folders.size} effect folders, ${seen.size} files crawled, ${gotSounds}/${sounds.size} sounds → ${OUT}`);
+console.log(`✓ ${Object.keys(index).length} effect folders indexed, ${wanted.size} sounds; ${net.downloaded} files downloaded (${net.requests} requests) → ${OUT}`);

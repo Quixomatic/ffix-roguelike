@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.97] - 2026-10-16
+
+The FFRK scrapers share one proper downloader — progress bars, parallel downloads with timeouts, no memory blow-ups — and effect sounds are fetched only for moves the game uses.
+
+### Added
+- **`scripts/lib/fetcher.ts`** — a reusable downloader for every asset scraper: disk cache (files mirror the server path), a remembered-missing list (`.missing`, so re-runs skip what the server doesn't have), a parallel pool with per-request **timeouts and retries** (one stalled connection can no longer hang a run), and **live progress bars** per stage — count, rate, ETA (periodic lines when output isn't a terminal).
+- `src/features/effects/effect-recipes.ts` — the weapon-attack and monster-default effect recipes as plain data (out of the Phaser player), with `usedEffectPaths()`: every effect file the game can play.
+
+### Changed
+- **`ffrk:effects`** runs in stages, each with a progress bar — catalog → probe → variants → crawl → index → sounds. The crawl caches each file's own references instead of growing per-effect sets (the old one reached 7 GB of RAM and was killed); a full re-crawl of 13,653 folders from cache takes ~1.5 minutes. **Sounds default to only those the game's effects use** (`--sounds used`, 66 right now; `--sounds all|none` too); `--skip-probe` refreshes from the indexed folders without re-probing 90,000 ids.
+- `ffrk:fetch` (sheets, weapons, relic icons) and `ffrk:names` (wiki images) use the shared fetcher — progress bars, timeouts, remembered misses.
+- `.docs/ffrk-assets.md` §7 documents the fetcher.
+
 ## [0.1.96] - 2026-10-16
 
 FF9's spells and Magic Swords play FFRK effects — 310 FF9 moves have one now — and the effects gallery has an "FF9 spells" tab to check and swap them.

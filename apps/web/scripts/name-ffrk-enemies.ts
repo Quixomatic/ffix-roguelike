@@ -14,11 +14,13 @@
  * The wiki's CDN answers with WebP unless the URL asks for `format=original`; files that came down as WebP are
  * fetched again.
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { PNG } from "pngjs";
+
+import { Fetcher, Progress } from "./lib/fetcher";
 
 const DATA = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".docs", "assets", "FFRK-data");
 const ENEMIES = join(DATA, "_raw", "enemies");
@@ -51,20 +53,14 @@ async function listWikiFiles(): Promise<WikiFile[]> {
 
 async function download(files: WikiFile[]) {
   mkdirSync(IMAGES, { recursive: true });
+  // Files saved as WebP by an older run are fetched again as the original PNG.
   const isPng = (file: string) => existsSync(file) && readFileSync(file).subarray(0, 4).toString("hex") === "89504e47";
-  const todo = files.filter((f) => !isPng(join(IMAGES, f.name)));
-  for (let i = 0; i < todo.length; i += CONCURRENCY)
-    await Promise.all(
-      todo.slice(i, i + CONCURRENCY).map(async (f) => {
-        try {
-          const res = await fetch(`${f.url}&format=original`, { headers: { "User-Agent": "Mozilla/5.0" } });
-          if (res.ok) writeFileSync(join(IMAGES, f.name), new Uint8Array(await res.arrayBuffer()));
-        } catch {
-          /* skipped; a re-run retries */
-        }
-      }),
-    );
-  console.log(`downloaded ${todo.length} new wiki images`);
+  for (const f of files) if (existsSync(join(IMAGES, f.name)) && !isPng(join(IMAGES, f.name))) unlinkSync(join(IMAGES, f.name));
+  const net = new Fetcher({ root: IMAGES, baseUrl: "", concurrency: CONCURRENCY, localPath: (name) => join(IMAGES, name), headers: { "User-Agent": "Mozilla/5.0" } });
+  await net.run("wiki images", files, async (f) => {
+    await net.get(f.name, `${f.url}&format=original`);
+  });
+  console.log(`downloaded ${net.downloaded} new wiki images`);
 }
 
 /** An RGBA image cropped to its opaque pixels. */
@@ -165,7 +161,10 @@ for (const f of readdirSync(ENEMIES).filter((f) => /^\d+\.json$/.test(f))) {
 }
 
 const found = new Map<string, { score: number; file: string }[]>();
-for (const name of readdirSync(IMAGES)) {
+const images = readdirSync(IMAGES);
+const bar = new Progress("matching", images.length);
+for (const name of images) {
+  bar.tick();
   const png = read(join(IMAGES, name));
   const img = png && trim(png);
   if (!img) continue;
@@ -175,6 +174,7 @@ for (const name of readdirSync(IMAGES)) {
   }
 }
 
+bar.done();
 const out: Record<string, { name: string; series: string; file: string; score: number; alts: string[] }> = {};
 for (const { id } of enemies.sort((a, b) => a.id.localeCompare(b.id))) {
   const hits = found.get(id)?.sort((a, b) => b.score - a.score);
