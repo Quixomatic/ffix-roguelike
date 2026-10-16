@@ -130,7 +130,6 @@ function HubCard({ to, title, art, lines, blurb, disabled, compact }: { to: stri
     <Link
       to={to}
       className={`ff-panel ff-lift group grid min-h-44 items-center gap-4 ${compact ? "grid-rows-[auto_1fr] px-4 py-4" : "grid-cols-[1fr_auto] px-6 py-5"}`}
-      aria-disabled={disabled || undefined}
     >
       <div className={`flex flex-col gap-1 ${compact ? "row-start-2 self-start" : ""}`}>
         <span className={`ff-display ${compact ? "text-2xl" : "text-3xl"}`}>{title}</span>

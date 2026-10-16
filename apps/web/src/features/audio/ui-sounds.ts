@@ -12,8 +12,8 @@
  * - an element can ask for another sound with `data-sound="purchase|buzzer|cancel|help|none"`.
  * Purchases play `uiSound("purchase")` when the buy succeeds.
  */
-import { useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import { playSfx, warmSfx } from "./music";
 
@@ -44,15 +44,21 @@ const isSound = (v: string | undefined): v is UiSound | "none" => v === "none" |
 
 /** Mounts `useUiSounds` (inside the asset gate, so the sound pack is loaded). */
 export function UiSounds() {
-  // The router numbers history entries; the one we're on tells a Back (lower) from a Forward (higher).
-  const index = useRouterState({ select: (s) => (s.location.state as { __TSR_index?: number } | undefined)?.__TSR_index });
-  const at = useRef(index);
-  at.current = index;
-  useUiSounds(at);
+  useUiSounds();
+  // The browser's Back (and a mouse's back button, or history.go(-n)) is backing out; Forward isn't. The router's
+  // history works out the direction on popstate and announces it.
+  const router = useRouter();
+  useEffect(
+    () =>
+      router.history.subscribe(({ action }) => {
+        if (action.type === "BACK" || (action.type === "GO" && action.index < 0)) backOut();
+      }),
+    [router],
+  );
   return null;
 }
 
-export function useUiSounds(historyIndex?: { current: number | undefined }) {
+export function useUiSounds() {
   useEffect(() => {
     warmSfx(UI_SOUNDS.map(url));
 
@@ -88,21 +94,11 @@ export function useUiSounds(historyIndex?: { current: number | undefined }) {
       if (t?.closest("input, textarea, select")) return;
       uiSound("cancel");
     };
-    // The browser's Back (and a mouse's back button) is backing out; Forward isn't. popstate fires before the router
-    // updates, so `historyIndex` still holds the entry we're leaving.
-    const onPop = () => {
-      const to = (window.history.state as { __TSR_index?: number } | null)?.__TSR_index;
-      const from = historyIndex?.current;
-      if (to == null || from == null || to >= from) return;
-      backOut();
-    };
     document.addEventListener("click", onClick, true);
     document.addEventListener("pointerup", onPointerUp, true);
     document.addEventListener("keydown", onKey, true);
-    window.addEventListener("popstate", onPop);
     return () => {
       observer.disconnect();
-      window.removeEventListener("popstate", onPop);
       document.removeEventListener("click", onClick, true);
       document.removeEventListener("pointerup", onPointerUp, true);
       document.removeEventListener("keydown", onKey, true);

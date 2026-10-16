@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.20] - 2026-10-16
+
+### Fixed
+- **The "can't do that" buzzer played when opening Supplies or Gear during a run.** The hub cards were marked `aria-disabled` to show that purchases wait, and the buzzer plays on pressing anything disabled, while the link still went to the page. The cards are plain links again (they still say "During a run: look, but changes wait"); clicking one ticks.
+- **The browser's Back made no sound.** v0.2.19 read the history index from the router's location state, which doesn't carry it. The router's own history works out Back / Forward / Go on popstate and announces it; the menu sounds now listen to that. Back (and a mouse's back button, or going back several steps) plays FF9's cancel, the same sound as "◂ Journeys", with the cursor tick held back. Forward plays no cancel.
+
 ## [0.2.19] - 2026-10-16
 
 ### Fixed
