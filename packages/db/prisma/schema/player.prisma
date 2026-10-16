@@ -30,6 +30,8 @@ model PlayerProfile {
   achievements String[] @default([])
   /// Gear unlocked into run drop pools (catalog, achievements, won runs) — FF9 item ids.
   gearUnlocked Int[]    @default([])
+  /// Camp supply ranks: FF9 item id → extra copies every run starts with (game-core SUPPLY_MAX).
+  supplyRanks  Json     @default("{}")
   /// Journeys cleared at least once (each unlocks the next) — game-core JOURNEYS ids.
   journeysCleared String[] @default([])
 

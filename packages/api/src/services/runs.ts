@@ -8,6 +8,7 @@ import {
   availableJourneys,
   upgradeRunState,
   campSupplies,
+  startingSupplies,
   ProfileError,
   RunError,
   runOutcome,
@@ -39,8 +40,10 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   if (!availableJourneys(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
 
   const seed = crypto.randomUUID();
-  // Consumables bought at camp are packed into this run and leave the stash.
-  const supplies = campSupplies(profile);
+  // The run starts with the starter kit plus the permanent supply ranks; one-off supplies still in the stash (bought
+  // before ranks) are packed too and leave the stash.
+  const packed = campSupplies(profile);
+  const supplies = startingSupplies(profile);
   let state: RunState;
   try {
     state = coreStartRun({
@@ -55,9 +58,9 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   } catch (e) {
     toTrpcError(e);
   }
-  const stash = Object.fromEntries(Object.entries(profile.stash).filter(([id]) => !(id in supplies)));
+  const stash = Object.fromEntries(Object.entries(profile.stash).filter(([id]) => !(id in packed)));
   return db.$transaction(async (tx) => {
-    if (Object.keys(supplies).length) await saveProfile(tx, profileId, { ...profile, stash });
+    if (Object.keys(packed).length) await saveProfile(tx, profileId, { ...profile, stash });
     return tx.run.create({
       data: { profileId, seed, journey, tier, party: partyKeys, world: state.world, state: state as object },
     });

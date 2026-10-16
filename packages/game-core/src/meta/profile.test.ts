@@ -7,7 +7,7 @@ import { getItem } from "@ffix-roguelike/game-data";
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
-import { applyRunOutcome, buySupply, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, trainStat, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, buySupplyRank, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -93,8 +93,22 @@ describe("camp", () => {
     p = unlockGear(p, entry.itemId);
     expect(p.gearUnlocked).toContain(entry.itemId);
     expect(gearCatalog(p).some((e) => e.itemId === entry.itemId)).toBe(false);
-    p = buySupply(p, itemByName("Potion").id);
-    expect(p.stash[itemByName("Potion").id]).toBe(1);
+  });
+
+  test("supply ranks: each rank adds one copy to every run's start, costs 10× price × rank, capped at SUPPLY_MAX", () => {
+    const potion = itemByName("Potion").id;
+    let p = newProfile();
+    p.gil = 1_000_000;
+    expect(supplyRankCost(p, potion)).toBe(50 * 10 * 1);
+    p = buySupplyRank(p, potion);
+    p = buySupplyRank(p, potion);
+    expect(p.gil).toBe(1_000_000 - 500 - 1000);
+    expect(startingSupplies(p)[potion]).toBe(2);
+    const run = startRun({ seed: "kit", tier: 0, party: [p.builds.zidane!], supplies: startingSupplies(p) });
+    expect(run.consumables.find((c) => c.itemId === potion)!.count).toBe(4 + 2);
+    for (let i = 2; i < SUPPLY_MAX; i++) p = buySupplyRank(p, potion);
+    expect(supplyRankCost(p, potion)).toBeNull();
+    expect(() => buySupplyRank(p, potion)).toThrow();
   });
 
   test("legendary gear is never in the catalog or base pools", () => {

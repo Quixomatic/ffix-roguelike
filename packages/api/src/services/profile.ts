@@ -67,6 +67,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       maxTier: row.maxTier,
       achievements: row.achievements,
       gearUnlocked: row.gearUnlocked,
+      supplyRanks: (row.supplyRanks ?? {}) as Record<number, number>,
       journeysCleared: row.journeysCleared,
       unlocked: row.characters.filter((c) => c.unlocked).map((c) => c.key),
       builds,
@@ -130,6 +131,7 @@ export async function saveProfile(tx: Tx, profileId: string, p: Profile) {
       legendClears: p.stats.legendClears ?? [],
       achievements: p.achievements ?? [],
       gearUnlocked: p.gearUnlocked ?? [],
+      supplyRanks: p.supplyRanks ?? {},
       journeysCleared: p.journeysCleared ?? [],
     },
   });

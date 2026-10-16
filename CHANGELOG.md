@@ -2,6 +2,22 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.91] - 2026-10-16
+
+Supplies are permanent starting-kit upgrades, bought like training.
+
+### Changed
+- **Camp → Supplies** no longer sells one-off items for your next run. Each supply (Potion, Phoenix Down, Antidote, Eye Drops, Echo Screen; Hi-Potion, Ether, Soft, Tent and Remedy, Elixir as you reach further worlds) has **5 ranks**: each rank adds one more of it to what **every** run starts with. Rows look like training — the item, its rank boxes, "rank/5", how many runs start with ("×6" = the starter kit's 4 Potions + 2 ranks), its exact effect and FF9's description, and "+ n gil".
+- **Ranks cost far more than buying the item in a run**: rank n costs 10 × the item's FF9 price × n — a Potion's ranks are 500, 1,000, 1,500, 2,000, 2,500 gil (`SUPPLY_COST_FACTOR`, `SUPPLY_MAX` in game-core `meta/profile.ts`).
+- Supplies already bought the old way are still packed into your next run.
+
+### Added
+- game-core `buySupplyRank`, `supplyRank`, `supplyRankCost`, `startingSupplies`; API `profile.buySupplyRank`; DB `player_profile.supplyRanks` (migration `supply_ranks`). Runs start with the starter kit + supply ranks.
+- `TrainRow` (character sheet) is reusable: any label, currency unit and label width.
+
+### Notes
+- Restart `pnpm dev` (schema change).
+
 ## [0.1.90] - 2026-10-16
 
 The camp's shops are two big buttons with their own windows, and "How runs work" is a dismissible help card.

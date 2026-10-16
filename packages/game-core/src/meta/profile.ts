@@ -50,8 +50,10 @@ export interface Profile {
   gil: number;
   unlocked: string[];
   builds: Record<string, CharacterBuild>;
-  /** Supplies (consumables) bought at camp, packed into the next run. */
+  /** One-off supplies bought at camp before supply ranks existed, packed into the next run (then gone). */
   stash: Record<number, number>;
+  /** Permanent starting-kit upgrades: item id → extra copies every run starts with (0–SUPPLY_MAX). */
+  supplyRanks?: Record<number, number>;
   /** Gear unlocked into run drop pools (catalog, achievements, won runs). */
   gearUnlocked?: number[];
   /** Journeys cleared at least once (each unlocks the next). */
@@ -109,6 +111,7 @@ export function newProfile(): Profile {
     unlocked: [...STARTING_CAST],
     builds,
     stash: {},
+    supplyRanks: {},
     stats: { runs: 0, wins: 0, battles: 0, bossKills: {}, eaten: 0, steals: 0, bestWorld: 0, highestTierWon: -1, soloWins: [] },
     achievements: [],
     gearUnlocked: [],
@@ -300,7 +303,12 @@ const SUPPLY_TIERS: string[][] = [
   ["Remedy", "Elixir"],
 ];
 
-/** Consumables sold at camp (more as you reach further worlds). They go into your next run and are used up there. */
+/** Most extra copies of one supply a run can start with. */
+export const SUPPLY_MAX = 5;
+/** Rank n of a supply costs this many times the item's FF9 price × n — far above buying it in a run. */
+export const SUPPLY_COST_FACTOR = 10;
+
+/** Supplies the camp can upgrade (more as you reach further worlds), with their FF9 price. */
 export function campSupplyStock(profile: Profile): { itemId: number; price: number }[] {
   return SUPPLY_TIERS.slice(0, Math.min(SUPPLY_TIERS.length, profile.stats.bestWorld + 1))
     .flat()
@@ -308,19 +316,42 @@ export function campSupplyStock(profile: Profile): { itemId: number; price: numb
     .map((i) => ({ itemId: i.id, price: i.price || 500 }));
 }
 
-/** Supplies packed for the next run (the stash only holds consumables now). */
-export function campSupplies(profile: Profile): Record<number, number> {
-  return Object.fromEntries(Object.entries(profile.stash).filter(([id, n]) => n > 0 && getItem(Number(id)).kind === "item"));
+/** Extra copies of `itemId` every run starts with. */
+export const supplyRank = (profile: Profile, itemId: number) => profile.supplyRanks?.[itemId] ?? 0;
+
+/** Gil for the next rank of a supply (null when maxed or not sold yet). */
+export function supplyRankCost(profile: Profile, itemId: number): number | null {
+  const entry = campSupplyStock(profile).find((e) => e.itemId === itemId);
+  const rank = supplyRank(profile, itemId);
+  if (!entry || rank >= SUPPLY_MAX) return null;
+  return entry.price * SUPPLY_COST_FACTOR * (rank + 1);
 }
 
-export function buySupply(profile: Profile, itemId: number): Profile {
-  const entry = campSupplyStock(profile).find((e) => e.itemId === itemId);
-  if (!entry) throw new ProfileError("Not sold here yet — reach further worlds");
-  if (profile.gil < entry.price) throw new ProfileError("Not enough gil");
+/** Buy the next rank of a supply: every run from now on starts with one more. */
+export function buySupplyRank(profile: Profile, itemId: number): Profile {
+  if (!campSupplyStock(profile).some((e) => e.itemId === itemId)) throw new ProfileError("Not available yet — reach further worlds");
+  const cost = supplyRankCost(profile, itemId);
+  if (cost == null) throw new ProfileError("Already at the most a run can start with");
+  if (profile.gil < cost) throw new ProfileError(`Need ${cost} gil`);
   const p = structuredClone(profile);
-  p.gil -= entry.price;
-  p.stash[itemId] = (p.stash[itemId] ?? 0) + 1;
+  p.gil -= cost;
+  p.supplyRanks = { ...(p.supplyRanks ?? {}), [itemId]: supplyRank(profile, itemId) + 1 };
   return p;
+}
+
+/**
+ * Consumables a run starts with on top of the starter kit: the permanent supply ranks, plus any one-off supplies
+ * bought before ranks existed (packed once, then gone — see `campSupplies`).
+ */
+export function startingSupplies(profile: Profile): Record<number, number> {
+  const out: Record<number, number> = { ...(profile.supplyRanks ?? {}) };
+  for (const [id, n] of Object.entries(campSupplies(profile))) out[Number(id)] = (out[Number(id)] ?? 0) + n;
+  return out;
+}
+
+/** One-off supplies still waiting in the stash (bought before supply ranks), packed into the next run. */
+export function campSupplies(profile: Profile): Record<number, number> {
+  return Object.fromEntries(Object.entries(profile.stash).filter(([id, n]) => n > 0 && getItem(Number(id)).kind === "item"));
 }
 
 /** Journeys the player can start, in order. */

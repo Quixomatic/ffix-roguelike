@@ -236,8 +236,11 @@ export function TrainingRows({
   );
 }
 
-/** One training row: name, rank boxes, "rank/max", resulting value, and a + button when buying is possible. */
-function TrainRow({
+/**
+ * One rank row (training, camp supplies): label, rank boxes, "rank/max", resulting value, and a "+ cost" button when
+ * buying is possible. `unit` names the currency ("CP", "gil"); `labelWidth` sizes the label column.
+ */
+export function TrainRow({
   label,
   hint,
   rank,
@@ -246,8 +249,10 @@ function TrainRow({
   cost,
   canBuy,
   onBuy,
+  unit = "CP",
+  labelWidth = "6.5rem",
 }: {
-  label: string;
+  label: ReactNode;
   hint: string;
   rank: number;
   max: number;
@@ -255,10 +260,12 @@ function TrainRow({
   cost: number;
   canBuy: boolean;
   onBuy?: () => void;
+  unit?: string;
+  labelWidth?: string;
 }) {
   const maxed = rank >= max;
   return (
-    <div className="grid grid-cols-[6.5rem_1fr_3rem_3.5rem_auto] items-center gap-2">
+    <div className="grid items-center gap-2" style={{ gridTemplateColumns: `${labelWidth} 1fr 3rem 3.5rem auto` }}>
       <span className="ff-title" title={hint}>
         {label}
       </span>
@@ -276,9 +283,9 @@ function TrainRow({
           className="min-w-[4.5rem] rounded border border-yellow-200/50 px-2 py-0.5 text-sm text-yellow-200 enabled:hover:bg-yellow-300/10 disabled:opacity-40"
           disabled={maxed || !canBuy}
           onClick={onBuy}
-          title={maxed ? "Maxed" : `Next: ${cost} CP`}
+          title={maxed ? "Maxed" : `Next: ${cost} ${unit}`}
         >
-          {maxed ? "Max" : `+ ${cost} CP`}
+          {maxed ? "Max" : `+ ${cost.toLocaleString()} ${unit}`}
         </button>
       ) : (
         <span />

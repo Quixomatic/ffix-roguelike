@@ -1,4 +1,4 @@
-import { buySupply, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { buySupplyRank, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -68,7 +68,8 @@ export const profileRouter = router({
     .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => unlockGear(p, input.itemId))),
 
   /** Supplies: buy a consumable with banked gil, packed into the next run. */
-  buySupply: protectedProcedure
+  /** Buy the next rank of a camp supply: every run starts with one more of it (capped). */
+  buySupplyRank: protectedProcedure
     .input(z.object({ itemId: z.number().int() }))
-    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buySupply(p, input.itemId))),
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buySupplyRank(p, input.itemId))),
 });
