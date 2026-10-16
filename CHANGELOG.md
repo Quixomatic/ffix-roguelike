@@ -2,6 +2,22 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.5] - 2026-10-16
+
+The effects gallery has a "To map" tab: every FF9 move, with what it plays now, filtered to the ones still needing an effect.
+
+### Added
+- **Effects gallery → "To map"** (the first tab): the moves themselves, not the effects.
+  - **What's listed:** every party command move, labelled with its command (Blue Magic, Sword Art, Summon…), and every monster move. A monster move is one row per name, covering all of FF9's copies of it ("Monster ×4").
+  - **Status per move:** **needs effect** (red), **generic default** (yellow, with what it falls back to: claw swipe, status sparkle…), **partly mapped**, **mapped** (green, with where it came from), or **staging** (FF9's script-only moves, which play nothing).
+  - **Filters:** Unmapped / All, Party / Enemy / Both, and search. The counts are in the header; right now 1 needs an effect (Flee, on purpose), 120 monster moves are on a generic default, 338 are mapped and 121 are staging.
+  - **Picking a move** plays what it plays now and pins it as the **target**: name, kind, how many copies, whether the other side (party/monster) uses the same name, and its candidates as one-click previews.
+  - **Assigning:** browse any tab (Candidates, FFRK named, Folders) and use the shown effect as the whole recipe or one phase (launch/shot/hit). It applies to every move with that name, party and monster, every copy. **Next unmapped →** moves to the next one; **clear** removes an assignment.
+- "FF9 moves" is renamed **Candidates**. Clicking a move name in the "Assign to an FF9 move" search makes it the target.
+
+### Fixed
+- **Assigning an effect to a monster move in the gallery only reached one of its copies**: FF9 has many same-named monster attacks (one per monster that uses it), and the gallery kept only the first. It now assigns every copy. Moves assigned by `effects:seed` weren't affected: it always covered every copy, and there are no partly-mapped moves.
+
 ## [0.2.4] - 2026-10-16
 
 Asset packs are gzipped: the first-visit download drops from 44 MB to 25 MB.
