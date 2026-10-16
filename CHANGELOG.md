@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.47] - 2026-10-16
+
+### Changed
+- **The run's frames are inset like the other hub pages**: the map / stage frame and the party sidebar have a 1.5rem margin to the window's left and right edges (was 0.5rem) and a little more room between them; battles get the same margin.
+
 ## [0.2.46] - 2026-10-16
 
 ### Added
