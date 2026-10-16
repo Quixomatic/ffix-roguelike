@@ -20,6 +20,15 @@ const OUT = join(HERE, "..", "public", "sprites", "ui");
 const ICONS: Record<string, [number, number]> = {
   "hand-down": [5, 3], // battle target cursor: a glove pointing down at the target
   "hand-right": [1, 0], // menu cursor glove
+  // Small glyphs (white, row 4) — instead of text characters in the UI (components/pixel-icon.tsx).
+  "arrow-up": [4, 0],
+  "arrow-down": [4, 1],
+  "arrow-right": [4, 2],
+  "arrow-left": [4, 3],
+  check: [4, 9],
+  cross: [4, 10],
+  star: [14, 13], // gold
+  lock: [2, 6], // gold padlock
 };
 
 const sheet = PNG.sync.read(readFileSync(SHEET));

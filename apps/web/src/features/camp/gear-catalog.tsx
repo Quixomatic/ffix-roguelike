@@ -4,6 +4,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/u
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { uiSound } from "@/features/audio/ui-sounds";
 import { ItemIcon } from "@/features/items/item-icon";
 import { ItemDetails } from "@/features/run/item-info";
@@ -11,7 +12,7 @@ import { trpc } from "@/utils/trpc";
 
 /**
  * The gear catalog as a grid of icon tiles: what you can unlock now (price; click to unlock), then what's
- * already unlocked (✓). Hovering a tile shows the item's full card — stats, FF9's help, abilities, who can wear it and
+ * already unlocked. Hovering a tile shows the item's full card — stats, FF9's help, abilities, who can wear it and
  * what it would change for each character.
  */
 export function GearCatalogGrid({ profile }: { profile: Profile }) {
@@ -61,7 +62,9 @@ export function GearCatalogGrid({ profile }: { profile: Profile }) {
             <div className="flex w-full flex-col items-center gap-1 rounded border border-emerald-300/40 bg-emerald-400/10 p-2 text-center">
               <ItemIcon itemId={i.id} size={40} />
               <span className="line-clamp-2 text-xs leading-tight">{i.name}</span>
-              <span className="text-xs text-emerald-300">Unlocked ✓</span>
+              <span className="inline-flex items-center gap-1 text-xs text-emerald-300">
+                <PixelIcon name="check" /> Unlocked
+              </span>
             </div>
           </Tile>
         ))}

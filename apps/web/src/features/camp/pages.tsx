@@ -3,6 +3,7 @@ import { getCharacter } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { ShopContents } from "@/features/hub/camp-shop";
 import { CharacterSheet } from "@/features/hub/character-sheet";
 import { trpc } from "@/utils/trpc";
@@ -23,7 +24,14 @@ export function PartyPage() {
         {rosterEntries(p).map((e) =>
           e.unlocked ? (
             <Link key={e.key} to="/party/$character" params={{ character: e.key }} className="ff-panel ff-lift p-3">
-              <CharacterCard entry={e} footer={<div className="text-xs text-yellow-200/80">Manage ▸</div>} />
+              <CharacterCard
+                entry={e}
+                footer={
+                  <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
+                    Manage <PixelIcon name="arrow-right" />
+                  </div>
+                }
+              />
             </Link>
           ) : (
             <div key={e.key} className="ff-panel p-3 opacity-60">
@@ -108,7 +116,7 @@ export function ChallengesPage() {
           <div key={a.id} className={`ff-panel flex flex-col gap-0.5 p-3 ${done.has(a.id) ? "" : "opacity-80"}`}>
             <div className="flex items-baseline justify-between gap-2">
               <span className="text-base">{a.name}</span>
-              {done.has(a.id) && <span className="text-sm text-yellow-200">✓</span>}
+              {done.has(a.id) && <PixelIcon name="check" label="Done" />}
             </div>
             <span className="text-xs text-[#c8d0ff]">{a.description}</span>
           </div>

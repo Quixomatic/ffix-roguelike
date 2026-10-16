@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.22] - 2026-10-16
+
+Pixel-art icons instead of text characters in the hub, and a compact Cleared badge.
+
+### Added
+- **`PixelIcon`** (`components/pixel-icon.tsx`): 16×16 pixel-art glyphs from the Time Fantasy icon pack, drawn crisp at 16 or 32 px. `sprites:ui` now ships `check`, `cross`, `star` (gold), `lock` (gold padlock) and `arrow-up/down/left/right` next to the gloves. They load from the `ui` asset pack (repacked and uploaded).
+
+### Changed
+- **No more text glyphs in the hub**: ✓, 🔒, ★, ▸, ◂ and ▶ are pixel icons. Covers the Cleared badge, locked journeys, Choose / Begin run / Continue, the "◂ Journeys" back link, the ★ on characters who can spend CP (cast line, cards, Party card), Manage, Unlocked gear and done challenges.
+- **The Cleared badge is compact and never wraps**: icon + "Cleared" on one line. `.ff-chip` doesn't wrap anywhere.
+
 ## [0.2.21] - 2026-10-16
 
 ### Changed

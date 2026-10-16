@@ -4,6 +4,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/u
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { itemName } from "@/features/run/item-info";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 
@@ -60,7 +61,7 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
             >
               <HeroSprite heroKey={e.key} size={size} silhouette={!e.unlocked} />
             </span>
-            {e.unlocked && canSpend(e.build) && <span className="absolute -top-1 right-0 text-sm text-yellow-200 [text-shadow:1px_1px_0_#000]">★</span>}
+            {e.unlocked && canSpend(e.build) && <PixelIcon name="star" label="Can spend CP" className="absolute -top-1 right-0" />}
           </HoverCardTrigger>
           <HoverCardContent side="bottom" sideOffset={6} className="theme-ff ff-panel w-72 rounded-md p-3 text-sm">
             <CharacterCard entry={e} />
@@ -102,7 +103,7 @@ export function CharacterCard({ entry: e, footer }: { entry: RosterEntry; footer
           <div className="ff-title">Start Lv {b.level}</div>
         </div>
         <span className={`ff-chip text-xs ${canSpend(b) ? "" : "opacity-70"}`}>
-          {cp} CP{canSpend(b) ? " ★" : ""}
+          {cp} CP{canSpend(b) && <PixelIcon name="star" />}
         </span>
       </div>
       <div className="grid grid-cols-4 gap-1 text-center text-xs">
@@ -113,7 +114,11 @@ export function CharacterCard({ entry: e, footer }: { entry: RosterEntry; footer
       </div>
       <div className="text-xs text-[#c8d0ff]">{gear.map(itemName).join(" · ") || "No gear"}</div>
       <div className="text-xs opacity-80">{1 + (b.unlockedSlots ?? []).length}/5 gear slots open</div>
-      {footer ?? <div className="text-xs text-yellow-200/80">Click to manage ▸</div>}
+      {footer ?? (
+        <div className="inline-flex items-center gap-1 text-xs text-yellow-200/80">
+          Click to manage <PixelIcon name="arrow-right" />
+        </div>
+      )}
     </div>
   );
 }

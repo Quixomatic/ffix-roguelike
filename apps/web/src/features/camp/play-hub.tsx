@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { Package, Settings, Trophy } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
@@ -49,7 +50,9 @@ export function PlayHub() {
             <span className="ff-display block text-xl">A run is in progress</span>
             <span className="text-sm text-[#c8d0ff]">Pick up where you left off. Party and shop changes wait until it ends.</span>
           </span>
-          <span className="ff-display text-2xl text-yellow-200">Continue ▶</span>
+          <span className="ff-display inline-flex items-center gap-2 text-2xl text-yellow-200">
+            Continue <PixelIcon name="arrow-right" size={32} />
+          </span>
         </Link>
       )}
 
@@ -87,7 +90,13 @@ export function PlayHub() {
               ))}
             </div>
           }
-          lines={[`${p.unlocked.length} recruited`, spenders.length ? <span className="text-yellow-200">★ {spenders.length} can spend CP</span> : "Train, gear and abilities"]}
+          lines={[`${p.unlocked.length} recruited`, spenders.length ? (
+              <span className="inline-flex items-center gap-1 text-yellow-200">
+                <PixelIcon name="star" /> {spenders.length} can spend CP
+              </span>
+            ) : (
+              "Train, gear and abilities"
+            )]}
           blurb="Spend Completion Points, unlock gear slots, learn abilities."
         />
         {/* Shops: two half-size cards in one slot — each shop is its own page. */}

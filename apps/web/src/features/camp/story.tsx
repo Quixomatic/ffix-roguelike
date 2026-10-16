@@ -5,6 +5,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
@@ -61,7 +62,14 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
           <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
           <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
         </div>
-        {cleared ? <span className="ff-chip text-xs">Cleared ✓</span> : !unlocked && <span className="ff-chip text-xs opacity-80">🔒</span>}
+        {cleared ? (
+          <span className="ff-chip shrink-0 gap-1 px-2 py-0 text-xs">
+            <PixelIcon name="check" />
+            Cleared
+          </span>
+        ) : (
+          !unlocked && <PixelIcon name="lock" size={32} label="Locked" className="shrink-0 opacity-90" />
+        )}
       </div>
       <div className="text-sm">
         {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
@@ -87,9 +95,9 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
         <button
           disabled={!unlocked}
           onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier: 0 } })}
-          className="ff-panel ff-lift px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
+          className="ff-panel ff-lift inline-flex items-center gap-1.5 px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
         >
-          Choose ▸
+          Choose <PixelIcon name="arrow-right" />
         </button>
       </div>
     </div>
@@ -159,8 +167,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <Link to="/story" data-sound="cancel" className="self-start text-sm text-[#c8d0ff] hover:text-white">
-        ◂ Journeys
+      <Link to="/story" data-sound="cancel" className="inline-flex items-center gap-1 self-start text-sm text-[#c8d0ff] hover:text-white">
+        <PixelIcon name="arrow-left" /> Journeys
       </Link>
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
         <div>
@@ -211,8 +219,14 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             );
           })}
         </div>
-        <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
-          {start.isPending ? "Setting out…" : "Begin run ▶"}
+        <button onClick={begin} disabled={!party.length || start.isPending || !!p.activeRunId} className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl disabled:pointer-events-none disabled:opacity-50">
+          {start.isPending ? (
+            "Setting out…"
+          ) : (
+            <>
+              Begin run <PixelIcon name="arrow-right" size={32} />
+            </>
+          )}
         </button>
       </div>
       {p.activeRunId && (
