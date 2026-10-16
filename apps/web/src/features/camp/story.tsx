@@ -24,7 +24,15 @@ export function journeyTiers(p: StoryProfile, journeyId: string): number[] {
 
 const tierLabel = (t: number) => (t === 0 ? "Normal" : `Tier ${t}`);
 
-/** The Story page: every journey as a card with its tier pips; choose one to pick a party for it. */
+/**
+ * The highest tier a journey has been cleared on, or null if it hasn't been. The rules don't track a tier per journey
+ * yet (only that it was cleared), so a cleared journey reads as Normal until they do.
+ */
+export function bestTierCleared(p: StoryProfile, journeyId: string): number | null {
+  return (p.journeysCleared ?? []).includes(journeyId) ? 0 : null;
+}
+
+/** The Story page: every journey as a card (its highest tier cleared); choose one to pick a party and tier for it. */
 export function StoryPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
@@ -35,20 +43,17 @@ export function StoryPage() {
       <PageTitle kicker="STORY" title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {JOURNEYS.map((j) => (
-          <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} cleared={(p.journeysCleared ?? []).includes(j.id)} tiers={journeyTiers(p, j.id)} />
+          <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} best={bestTierCleared(p, j.id)} />
         ))}
       </div>
-      <p className="text-xs text-[#c8d0ff]">
-        Tiers are per journey: Normal always, higher once that journey is cleared. Until the rules track a tier per journey, higher tiers are capped by your account's current tier ({tierLabel(Math.min(MAX_TIER, p.maxTier))}).
-      </p>
     </div>
   );
 }
 
-function JourneyCard({ journey: j, unlocked, cleared, tiers }: { journey: JourneyDef; unlocked: boolean; cleared: boolean; tiers: number[] }) {
+function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlocked: boolean; best: number | null }) {
   const navigate = useNavigate();
   const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
-  const [tier, setTier] = useState(tiers[tiers.length - 1] ?? 0);
+  const cleared = best != null;
   return (
     <div className={`ff-panel flex flex-col gap-3 p-4 ${unlocked ? "" : "opacity-75"}`}>
       <div className="flex items-start justify-between gap-2">
@@ -70,27 +75,18 @@ function JourneyCard({ journey: j, unlocked, cleared, tiers }: { journey: Journe
         </div>
       )}
       <div className="mt-auto flex items-center gap-2">
-        <div className="flex flex-1 flex-wrap gap-1" role="radiogroup" aria-label="Tier">
-          {Array.from({ length: MAX_TIER + 1 }, (_, t) => {
-            const ok = unlocked && tiers.includes(t);
-            return (
-              <button
-                key={t}
-                role="radio"
-                aria-checked={tier === t}
-                disabled={!ok}
-                title={ok ? tierLabel(t) : t === 0 ? "Locked" : "Clear the tier below on this journey"}
-                onClick={() => setTier(t)}
-                className={`size-7 rounded border text-xs transition ${tier === t && ok ? "border-yellow-300 bg-yellow-300/20 text-yellow-200" : ok ? "border-white/40 hover:bg-white/10" : "border-white/10 text-white/30"}`}
-              >
-                {t}
-              </button>
-            );
-          })}
-        </div>
+        <span className="flex-1 text-sm">
+          {cleared ? (
+            <>
+              Highest tier cleared: <span className="text-yellow-200">{tierLabel(best)}</span>
+            </>
+          ) : (
+            <span className="opacity-60">{unlocked ? "Not cleared yet" : ""}</span>
+          )}
+        </span>
         <button
           disabled={!unlocked}
-          onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier } })}
+          onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier: 0 } })}
           className="ff-panel ff-lift px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
         >
           Choose ▸

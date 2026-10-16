@@ -54,8 +54,11 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
       </div>
     );
   return (
-    <div className="h-svh p-4">
-      <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
+    // The same centred column as the other hub pages, the window filling the height between (the backdrop shows around it).
+    <div className="mx-auto flex h-svh max-w-6xl flex-col px-6 pb-6 pt-6">
+      <div className="min-h-0 flex-1">
+        <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
+      </div>
     </div>
   );
 }

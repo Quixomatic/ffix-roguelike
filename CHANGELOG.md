@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.21] - 2026-10-16
+
+### Changed
+- **Journey cards show the highest tier cleared** instead of tier toggles: "Highest tier cleared: Normal", or "Not cleared yet". **Choose ▸** opens the embark page, where the tier is picked (Normal first, higher tiers there once open). The rules don't track a tier per journey yet, only that it was cleared, so a cleared journey reads as Normal until they do (`bestTierCleared` in `camp/story.tsx`).
+- **The character page sits in the same centred column as the other hub pages** (`max-w-6xl`, same padding) instead of filling the whole width; the sheet fills the height between, with the dimmed title-screen backdrop showing around it.
+
 ## [0.2.20] - 2026-10-16
 
 ### Fixed
