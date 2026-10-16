@@ -28,9 +28,12 @@ export function DeltaChips({ change }: { change: GearChange }) {
       {stats.map((k) => {
         const d = change.deltas[k]!;
         return (
-          <span key={k} className={`whitespace-nowrap tabular-nums ${d > 0 ? "text-green-300" : "text-red-300"}`}>
-            <span aria-label={d > 0 ? "up" : "down"}>{d > 0 ? "▲" : "▼"}</span>
-            {Math.abs(d)} {STAT_LABEL[k]}
+          <span key={k} className="whitespace-nowrap tabular-nums">
+            <span className={d > 0 ? "text-green-300" : "text-red-300"}>
+              <span aria-label={d > 0 ? "up" : "down"}>{d > 0 ? "▲" : "▼"}</span>
+              {Math.abs(d)}
+            </span>{" "}
+            {STAT_LABEL[k]}
           </span>
         );
       })}

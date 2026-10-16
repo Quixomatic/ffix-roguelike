@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.84] - 2026-10-16
+
+### Changed
+- In gear comparisons only the caret and the number are coloured (green ▲ / red ▼); the stat name is normal text.
+
 ## [0.1.83] - 2026-10-16
 
 ### Changed
