@@ -70,7 +70,8 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
     );
   return (
     // The same centred column as the other hub pages, the window filling the height between (the backdrop shows around it).
-    <div className="mx-auto flex h-svh max-w-6xl flex-col px-6 pb-6 pt-6">
+    // (The shell's menu button takes 2.5rem above every page.)
+    <div className="mx-auto flex h-[calc(100svh-2.5rem)] max-w-6xl flex-col px-6 pb-6 pt-6">
       <div className="min-h-0 flex-1">
         <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
       </div>

@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.32] - 2026-10-16
+
+### Added
+- **The hub's sidebar slides away**, like Pokelike's: a round menu button sits inset on the top-left of the page, always visible, and slides the sidebar out of view and back. The sidebar slides while its column narrows to nothing, so the page widens smoothly. Your choice is remembered in this browser.
+  - The button is a cursor stop for the keyboard and controller. While the sidebar is away its links are off the cursor's map, so the cursor can't land on something hidden (`FocusSection disabled`), and the browser treats it as inert.
+  - Pages leave a little room at the top for the button; the character page's height accounts for it.
+
 ## [0.2.31] - 2026-10-16
 
 ### Changed
