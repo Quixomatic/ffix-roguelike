@@ -12,11 +12,19 @@ export interface SpellCandidates {
   /** FF9 action name (party abilities). */
   name: string;
   school: School;
-  /** FFRK effect folder ids, most likely first, with the reason. */
-  candidates: { folder: string; why: string }[];
+  /** Shown in the gallery ("Summon", "Blue Magic"…); spells leave it out. */
+  group?: string;
+  /** FFRK effect folder ids, most likely first, with the reason; `launch` names the folder file to use as the launch. */
+  candidates: Candidate[];
 }
 
-const c = (folder: string, why: string) => ({ folder, why });
+export interface Candidate {
+  folder: string;
+  why: string;
+  launch?: string;
+}
+
+export const c = (folder: string, why: string, launch?: string): Candidate => ({ folder, why, ...(launch ? { launch } : {}) });
 
 export const SPELL_CANDIDATES: SpellCandidates[] = [
   // ── white magic ──
@@ -80,15 +88,20 @@ const LAUNCH: Record<School, string> = {
 
 /**
  * The recipe for an FFRK effect folder: its own launch/shot when it has them (else the school's common launch and an
- * empty shot), and its hit — `<n>_hit.json` or `hit.json`. Null when the folder has no hit.
+ * empty shot), and its hit — `<n>_hit.json` or `hit.json`; a shot-only folder (FFRK's summons) plays like FFRK's own
+ * summon recipe. Null when the folder has neither. `launchFile` overrides
+ * the launch with another file of the folder (e.g. a summon's `magicite.json`, which brings the creature in).
  */
-export function folderRecipe(folder: string, files: string[], school: School): Record<string, string> | null {
+export function folderRecipe(folder: string, files: string[], school: School, launchFile?: string): Record<string, string> | null {
   const has = (f: string) => files.includes(f);
   const pick = (phase: string) => (has(`${folder}_${phase}.json`) ? `${folder}_${phase}.json` : has(`${phase}.json`) ? `${phase}.json` : null);
   const hit = pick("hit");
-  if (!hit) return null;
-  const launch = pick("launch");
   const shot = pick("shot");
+  // FFRK's summon abilities are shot-only: the creature is the shot (launch_summon → shot → empty hit).
+  if (!hit && shot)
+    return { launch: "ab/ability/common/launch_summon.json", shot: `ab/ability/${folder}/${shot}`, hit: "ab/ability/common/hit_empty.json" };
+  if (!hit) return null;
+  const launch = launchFile && has(launchFile) ? launchFile : pick("launch");
   return {
     launch: launch ? `ab/ability/${folder}/${launch}` : LAUNCH[school],
     shot: shot ? `ab/ability/${folder}/${shot}` : "ab/ability/common/shot_empty.json",

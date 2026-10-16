@@ -14,7 +14,8 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { folderRecipe, SPELL_CANDIDATES } from "../src/features/effects/spell-candidates";
+import { ALL_CANDIDATES } from "../src/features/effects/move-candidates";
+import { folderRecipe } from "../src/features/effects/spell-candidates";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const FX = join(ROOT, ".docs", "assets", "FFRK-data", "_raw", "effects");
@@ -57,11 +58,11 @@ for (const m of moves) {
   map.abilities[m.key] = { phases: hit.phases, from: `${catalog[hit.id]!.names.join(" / ")} (FFRK ${hit.id}${hit.exact ? "" : ", hit only"})` };
   added++;
 }
-// Then FF9 spells with no same-named FFRK ability: the first candidate from spell-candidates.ts (family + file-name
-// evidence), which the effects gallery's "FF9 spells" tab lets you check and swap.
+// Then FF9 moves with no same-named FFRK ability: the first candidate from spell-candidates.ts / move-candidates.ts
+// (family + file-name evidence), which the effects gallery's "FF9 moves" tab lets you check and swap.
 let guessed = 0;
-for (const spell of SPELL_CANDIDATES) {
-  const pick = spell.candidates.map((c) => ({ c, recipe: folderRecipe(c.folder, index[c.folder]?.files ?? [], spell.school) })).find((x) => x.recipe);
+for (const spell of ALL_CANDIDATES) {
+  const pick = spell.candidates.map((c) => ({ c, recipe: folderRecipe(c.folder, index[c.folder]?.files ?? [], spell.school, c.launch) })).find((x) => x.recipe);
   if (!pick) continue;
   for (const m of moves.filter((m) => m.name.trim().toLowerCase() === spell.name.toLowerCase())) {
     if (map.abilities[m.key]) continue;
@@ -69,7 +70,7 @@ for (const spell of SPELL_CANDIDATES) {
     guessed++;
   }
 }
-console.log(`✓ ${guessed} moves assigned from spell candidates`);
+console.log(`✓ ${guessed} moves assigned from move candidates`);
 
 map.abilities = Object.fromEntries(Object.entries(map.abilities).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true })));
 writeFileSync(MAP_FILE, `${JSON.stringify(map, null, 2)}\n`);

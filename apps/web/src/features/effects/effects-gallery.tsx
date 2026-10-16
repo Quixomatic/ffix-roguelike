@@ -5,7 +5,8 @@ import { useMemo, useState } from "react";
 import initialMap from "./ability-effects.json";
 import { EffectStage } from "./effect-stage";
 import { EFFECT_BASE } from "./ffrk-effect";
-import { folderRecipe, SPELL_CANDIDATES } from "./spell-candidates";
+import { ALL_CANDIDATES } from "./move-candidates";
+import { folderRecipe } from "./spell-candidates";
 
 /** `effects/index.json` (ffrk:effects): folder → its rig files, the effect art and sounds they use. */
 type EffectIndex = Record<string, { files: string[]; images: string[]; sounds: string[] }>;
@@ -28,7 +29,7 @@ interface Item {
   /** A whole FFRK ability recipe (from captured game data) rather than a folder's files. */
   recipe: boolean;
   search: string;
-  /** "FF9 spells" tab: the FF9 spell this candidate is for. */
+  /** "FF9 moves" tab: the FF9 move name this candidate is for. */
   spell?: string;
 }
 
@@ -96,12 +97,12 @@ export function EffectsGallery() {
       recipe: false,
       search: `${folder} ${catalog.data?.[folder]?.names.join(" ") ?? ""} ${e.images.join(" ")}`.toLowerCase(),
     }));
-    // FF9 spells with no same-named FFRK ability: each candidate folder as its own entry, to compare and pick.
-    const spells: Item[] = SPELL_CANDIDATES.flatMap((sp) =>
+    // FF9 moves with no same-named FFRK ability: each candidate folder as its own entry, to compare and pick.
+    const spells: Item[] = ALL_CANDIDATES.flatMap((sp) =>
       sp.candidates.flatMap((cand, i) => {
-        const phases = folderRecipe(cand.folder, idx[cand.folder]?.files ?? [], sp.school);
+        const phases = folderRecipe(cand.folder, idx[cand.folder]?.files ?? [], sp.school, cand.launch);
         if (!phases) return [];
-        return [{ key: `s:${sp.name}:${cand.folder}`, label: `${sp.name} — ${cand.folder}${i === 0 ? " (first pick)" : ""}`, sub: cand.why, phases, recipe: true, search: `${sp.name} ${cand.folder} ${cand.why}`.toLowerCase(), spell: sp.name }];
+        return [{ key: `s:${sp.name}:${cand.folder}`, label: `${sp.group ? `${sp.group} · ` : ""}${sp.name} — ${cand.folder}${i === 0 ? " (first pick)" : ""}`, sub: cand.why, phases, recipe: true, search: `${sp.group ?? ""} ${sp.name} ${cand.folder} ${cand.why}`.toLowerCase(), spell: sp.name }];
       }),
     );
     return { named, folders, spells };
@@ -163,7 +164,7 @@ export function EffectsGallery() {
         <div className="flex gap-1">
           {(["spells", "named", "folders"] as const).map((t) => (
             <button key={t} className="ff-option flex-1 px-1 text-xs data-[on=true]:text-yellow-200" data-on={tab === t} onClick={() => setTab(t)}>
-              {t === "spells" ? `FF9 spells (${SPELL_CANDIDATES.length})` : t === "named" ? `FFRK named (${items.named.length})` : `Folders (${items.folders.length})`}
+              {t === "spells" ? `FF9 moves (${ALL_CANDIDATES.length})` : t === "named" ? `FFRK named (${items.named.length})` : `Folders (${items.folders.length})`}
             </button>
           ))}
         </div>

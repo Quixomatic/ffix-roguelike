@@ -35,9 +35,57 @@ export interface RigNode {
     sprite?: { file: string; action: string; frame?: number };
     /** A particle effect (`pb_*.json`) started at rig frame `frame`. */
     particle?: { file: string; frame?: number };
-    anime?: Partial<Record<Channel, Segment[]>>;
+    /** `abjson` nodes: another rig (e.g. a summon's creature) drawn from its node `node`, at this node. */
+    link?: { url: string; node?: string };
+    anime?: Partial<Record<Channel, Segment[]>> & {
+      /** `abjson` nodes: when the linked rig plays a tag or stops (step segments `[f0, ·, f1, ·]`). */
+      linkAnim?: LinkStep[];
+    };
   };
   children?: RigNode[];
+}
+
+export interface LinkStep {
+  point: number[];
+  startAction: "play" | "stop";
+  startTag: string;
+  endAction: "play" | "stop";
+  endTag: string;
+}
+
+/** Where a linked rig is at `frame`: its own frame, or null while it hasn't started playing. */
+export function linkFrame(link: Rig, steps: LinkStep[] | undefined, frame: number, fps: number): number | null {
+  const events = (steps ?? [])
+    .flatMap((s) => [
+      { at: s.point[0]!, action: s.startAction, tag: s.startTag },
+      { at: s.point[s.point.length - 2]!, action: s.endAction, tag: s.endTag },
+    ])
+    .sort((a, b) => a.at - b.at);
+  let tag: string | null = null;
+  let since = 0;
+  let held: number | null = null;
+  for (const e of events) {
+    if (e.at > frame) break;
+    if (e.action === "play" && e.tag && link.tag[e.tag]) {
+      if (tag !== e.tag) {
+        tag = e.tag;
+        since = e.at;
+      }
+    } else if (e.action === "stop" && tag) {
+      held = tagFrame(link, tag, e.at - since, fps);
+      tag = null;
+    }
+  }
+  if (tag) return tagFrame(link, tag, frame - since, fps);
+  return held;
+}
+
+/** A rig's frame `elapsed` parent frames into its tag (looping when the tag loops, else holding the end). */
+function tagFrame(rig: Rig, tag: string, elapsed: number, parentFps: number): number {
+  const [start, end, loop] = rig.tag[tag]!;
+  const f = (elapsed * (rig.fps || parentFps)) / parentFps;
+  const len = Math.max(1, end - start);
+  return loop ? start + (f % len) : Math.min(end, start + f);
 }
 
 export interface RigAction {
@@ -152,18 +200,22 @@ export function poseAt(rig: Rig, frame: number): DrawPart[] {
   return evalRig(rig, frame).parts.filter((p) => p.packerid);
 }
 
-/** Evaluate every drawable node of the rig at `frame` (see `poseAt` for the conventions). */
-export function evalRig(rig: Rig, frame: number): RigEval {
+/**
+ * Evaluate every drawable node of the rig at `frame` (see `poseAt` for the conventions). `linked` returns the rig an
+ * `abjson` node links to (already loaded); without it, linked rigs aren't drawn.
+ */
+export function evalRig(rig: Rig, frame: number, linked?: (url: string) => Rig | undefined): RigEval {
   const out: DrawPart[] = [];
   const sprites: SpriteNode[] = [];
   const emitters: EmitterNode[] = [];
-  const walk = (n: RigNode, parent: M, alpha: number, tint: [number, number, number], root: boolean) => {
+  const walk = (n: RigNode, parent: M, alpha: number, tint: [number, number, number], root: boolean, f: number, fps: number) => {
+    const frame = f;
     if (SKIP.test(n.name) || n.type === "collision" || n.type === "attractor") return;
     const a = n.attrs ?? {};
     const an = a.anime ?? {};
     if (root) {
       // Starts hidden (the battle engine shows it); its transform is the stage placement.
-      for (const ch of n.children ?? []) walk(ch, parent, alpha, tint, false);
+      for (const ch of n.children ?? []) walk(ch, parent, alpha, tint, false, f, fps);
       return;
     }
     // "*visible*" group nodes start hidden and are switched on by the battle engine; everything else obeys.
@@ -189,10 +241,29 @@ export function evalRig(rig: Rig, frame: number): RigEval {
       out.push({ node: n.name, packerid: img.packerid ?? "", url: img.url, uvs, w, h, m: mul(node, [1, 0, 0, 1, -ax * w, -ay * h]), alpha: al, tint: tn, blend });
     } else if (n.type === "sprite" && a.sprite) sprites.push({ node: n.name, file: a.sprite.file, action: a.sprite.action, start: a.sprite.frame ?? 0, m: node, alpha: al, tint: tn, blend });
     else if (n.type === "particle" && a.particle) emitters.push({ node: n.name, file: a.particle.file, start: a.particle.frame ?? 0, m: node, alpha: al, tint: tn, blend });
-    for (const ch of n.children ?? []) walk(ch, node, al, tn, false);
+    else if (n.type === "abjson" && a.link?.url) {
+      const sub = linked?.(a.link.url);
+      const sf = sub ? linkFrame(sub, an.linkAnim, frame, fps) : null;
+      if (sub && sf !== null) {
+        const start = a.link.node ? findNode(sub.tree, a.link.node) : null;
+        // From the linked node down (its "*visible*" switch is on), or the whole rig minus its stage root.
+        if (start) walk({ ...start, attrs: { ...start.attrs, frame: [0, 0, 0, 0], rotation: undefined, scale: undefined } }, node, al, tn, false, sf, sub.fps || fps);
+        else for (const r of sub.tree) walk(r, node, al, tn, true, sf, sub.fps || fps);
+      }
+    }
+    for (const ch of n.children ?? []) walk(ch, node, al, tn, false, f, fps);
   };
-  for (const n of rig.tree) walk(n, [1, 0, 0, 1, 0, 0], 1, [1, 1, 1], true);
+  for (const n of rig.tree) walk(n, [1, 0, 0, 1, 0, 0], 1, [1, 1, 1], true, frame, rig.fps || 60);
   return { parts: out, sprites, emitters };
+}
+
+function findNode(tree: RigNode[], name: string): RigNode | null {
+  for (const n of tree) {
+    if (n.name === name) return n;
+    const hit = findNode(n.children ?? [], name);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 /** Bounding box of a pose in rig space. */

@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.2] - 2026-10-16
+
+Every party command and most monster special moves play an FFRK effect, summons bring their creature on screen, and the effects gallery's "FF9 moves" tab lists every pick to check and swap.
+
+### Added
+- **Move candidates** (`features/effects/move-candidates.ts`), in the same form as the spell candidates: FFRK effect folders for each move, most likely first, with the evidence. The evidence is FFRK's own file and image names (often Japanese: `ab_shiva`, `ab_efreet`, `img_issen` 一閃 = iai flash, `img_70582_senkoku` 宣告 = Doom, `img_gil_enki` thrown gil, `img_ycherry`, `img_dragons_crest`, `img_Luna`, `img_mighty_g`, `img_needle`, `img_missile`, `img_curse`, `img_library` = Libra), FFRK abilities that do the same thing, and the spell families. They cover:
+  - **Summon**: Shiva, Ifrit, Ramuh, Atomos, Odin, Leviathan, Bahamut and Ark (FFRK's own summons), plus Carbuncle, Fenrir and Madeen.
+  - **Sword Art and Flare Sword**: Darkside → Dark Buster, Iai Strike → `img_issen`, Armour Break → Armor Break, Thunder Slash → Thunder Strike, Shock and Stock Break → ground-cracking shock.
+  - **Dragon**: Lancer, Reis's Wind, Dragon Breath → Bahamut's Megaflare, White Draw, Luna, Six Dragons, Cherry Blossom, Dragon's Crest.
+  - **Skill**: Steal, Detect → Libra, Lucky Seven → slot reels, Thievery → Zidane's Dagger of Resolve, and the rest.
+  - **Flair**: Spare Change → thrown gil, Curse → `img_curse`, Countdown → Doom's countdown, and the rest.
+  - **Blue Magic**: all 23, which also gives the monsters that use these moves their own effect.
+  - **Eat, Focus**.
+  - **Monster moves**: about 120 names that had the generic claw swipe or status sparkle. Knives, swords, spears and axes use FFRK's weapon hits; tentacles, slams, beaks and wings use FFRK's monster attacks. Death and Doom moves, Needles, Flare/Nanoflare, Mind Blast, Glowing Eyes, bubbles, water and ice breaths, powders, shockwaves, cannons and boomerangs get their own art.
+- `effects:seed` assigned the first pick: **351 more moves**, 661 in all. Assignments made in the gallery are never overwritten. Every party command move now has an effect (Flee plays none on purpose); monsters went from 51 to 201 move names with their own effect.
+- **Summon creatures appear**: FFRK's summon effects embed the creature as a linked animation rig (`abjson` nodes, e.g. Shiva's launch plays `ab_shiva.json`'s `idle_add`). The rig evaluator now draws linked rigs on the schedule their link gives (`linkAnim` play/stop steps, the tag's own loop and frame rate), from the linked node down, in the node's transform. The effect loader loads linked rigs (nested too) with their images, particles and frame animations.
+- Shot-only effect folders (FFRK's summon abilities: Ramuh 60016, Phoenix, Mind Flare) play FFRK's own way: summon launch → the creature as the shot → empty hit.
+
+### Changed
+- **Effects gallery**: the "FF9 spells" tab is now **"FF9 moves"**. It lists every spell, command and monster-move candidate with its group ("Summon · Shiva — 62010 (first pick)"); "Use this for every FF9 *move*" assigns it to every party and monster move with that name.
+- The effects asset pack holds every file these effects use: 1,392 files, 20.7 MB (from 7 MB, mostly the summon creatures). It's packed and uploaded to R2.
+
 ## [0.2.1] - 2026-10-16
 
 The game loads its sprites, effects and music from Cloudflare R2, with a loading bar the first time and instant loads after.

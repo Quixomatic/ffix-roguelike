@@ -92,6 +92,8 @@ export interface EffectAsset {
   rig: Rig;
   particles: Map<string, EmitterDef[]>;
   sprites: Map<string, Sajson>;
+  /** Rigs linked by `abjson` nodes (e.g. a summon's creature), by server path. */
+  links: Map<string, Rig>;
   /** Rig frames the effect plays: the "play" tag, else the first tag. */
   range: [number, number];
 }
@@ -138,14 +140,28 @@ async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | 
   };
   const particleFiles = new Set<string>();
   const spriteFiles = new Set<string>();
+  const linkFiles: string[] = [];
   const walk = (n: Rig["tree"][number]) => {
     const a = n.attrs ?? {};
     if (a.image?.url) addImage(a.image.url, a.image.packerid ? (a.image.file ?? a.image.url.replace(/\.png$/, ".json")) : null);
     if (a.particle?.file) particleFiles.add(serverPath(a.particle.file));
     if (a.sprite?.file) spriteFiles.add(serverPath(a.sprite.file));
+    if (n.type === "abjson" && a.link?.url) linkFiles.push(serverPath(a.link.url));
     for (const c of n.children ?? []) walk(c);
   };
   rig.tree.forEach(walk);
+  // Linked rigs (a summon's creature…), and any they link in turn: their art, particles and sprites load too.
+  const links = new Map<string, Rig>();
+  while (linkFiles.length) {
+    const batch = [...new Set(linkFiles.splice(0))].filter((f) => !links.has(f));
+    const rigs = await Promise.all(batch.map((f) => getJson<Rig>(f)));
+    batch.forEach((f, i) => {
+      const r = rigs[i];
+      if (!r) return;
+      links.set(f, r);
+      r.tree.forEach(walk);
+    });
+  }
 
   const particles = new Map<string, EmitterDef[]>();
   await Promise.all(
@@ -196,7 +212,7 @@ async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | 
   }
   const tags = Object.values(rig.tag ?? {});
   const range = (rig.tag?.play ?? tags[0] ?? [0, 60]).slice(0, 2) as [number, number];
-  return { path, rig, particles, sprites, range };
+  return { path, rig, particles, sprites, links, range };
 }
 
 // ---------- particles ----------
@@ -448,7 +464,7 @@ export class FfrkEffectPlayer {
       }
     }
     const f = Math.min(this.frame, end);
-    const ev = evalRig(this.asset.rig, f);
+    const ev = evalRig(this.asset.rig, f, (url) => this.asset.links.get(serverPath(url)));
     this.drawImages(ev.parts);
     this.drawSprites(ev.sprites, f);
     // Emitters start at their node's frame and keep their own clock.

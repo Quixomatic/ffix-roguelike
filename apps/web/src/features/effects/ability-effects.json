@@ -392,6 +392,14 @@
       },
       "from": "Doomsday: FFRK 17014 — shards + sludge + stone"
     },
+    "a:49": {
+      "phases": {
+        "launch": "ab/ability/62010/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/62010/hit.json"
+      },
+      "from": "Shiva: FFRK 62010 — ab_shiva creature (magicite)"
+    },
     "a:50": {
       "phases": {
         "launch": "ab/ability/common/launch_empty.json",
@@ -399,6 +407,14 @@
         "hit": "ab/ability/31001/31001_hit.json"
       },
       "from": "Fire Sword: FFRK 31001 — Fire Strike"
+    },
+    "a:51": {
+      "phases": {
+        "launch": "ab/ability/62000/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/62000/hit.json"
+      },
+      "from": "Ifrit: FFRK 62000 — ab_efreet creature (magicite)"
     },
     "a:52": {
       "phases": {
@@ -408,6 +424,14 @@
       },
       "from": "Fira Sword: FFRK 31002 — fire spellblade 2"
     },
+    "a:53": {
+      "phases": {
+        "launch": "ab/ability/40420/launch.json",
+        "shot": "ab/ability/40420/shot.json",
+        "hit": "ab/ability/40420/hit.json"
+      },
+      "from": "Ramuh: FFRK 40420 — img_sammon_ramuh"
+    },
     "a:54": {
       "phases": {
         "launch": "ab/ability/common/launch_empty.json",
@@ -415,6 +439,14 @@
         "hit": "ab/ability/31002/31002_hit.json"
       },
       "from": "Firaga Sword: FFRK 31002 — fire spellblade 2"
+    },
+    "a:55": {
+      "phases": {
+        "launch": "ab/ability/62130/magicite.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/62130/hit.json"
+      },
+      "from": "Atomos: FFRK 62130 — ab_atomos creature (magicite)"
     },
     "a:56": {
       "phases": {
@@ -432,6 +464,14 @@
       },
       "from": "Blizzara Sword: FFRK 31006 — ice spellblade 2"
     },
+    "a:58": {
+      "phases": {
+        "launch": "ab/ability/62051/launch.json",
+        "shot": "ab/ability/62051/shot.json",
+        "hit": "ab/ability/62051/hit.json"
+      },
+      "from": "Odin: FFRK 62051 — img_odin, own launch"
+    },
     "a:59": {
       "phases": {
         "launch": "ab/ability/common/launch_empty.json",
@@ -439,6 +479,14 @@
         "hit": "ab/ability/31006/31006_hit.json"
       },
       "from": "Blizzaga Sword: FFRK 31006 — ice spellblade 2"
+    },
+    "a:60": {
+      "phases": {
+        "launch": "ab/ability/61990/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/61990/hit.json"
+      },
+      "from": "Leviathan: FFRK 61990 — ab_leviathan creature (magicite)"
     },
     "a:61": {
       "phases": {
@@ -448,6 +496,14 @@
       },
       "from": "Thunder Sword: FFRK 31009 — Thunder Strike"
     },
+    "a:62": {
+      "phases": {
+        "launch": "ab/ability/62070/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/62070/hit.json"
+      },
+      "from": "Bahamut: FFRK 62070 — ab_bahamut0 creature (magicite)"
+    },
     "a:63": {
       "phases": {
         "launch": "ab/ability/common/launch_empty.json",
@@ -456,6 +512,14 @@
       },
       "from": "Thundara Sword: FFRK 31010 — thunder spellblade 2"
     },
+    "a:64": {
+      "phases": {
+        "launch": "ab/ability/62140/magicite.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/62140/hit.json"
+      },
+      "from": "Ark: FFRK 62140 — ab_ark creature (magicite)"
+    },
     "a:65": {
       "phases": {
         "launch": "ab/ability/common/launch_empty.json",
@@ -463,6 +527,54 @@
         "hit": "ab/ability/31011/31011_hit.json"
       },
       "from": "Thundaga Sword: FFRK 31011 — thunder spellblade 3"
+    },
+    "a:66": {
+      "phases": {
+        "launch": "ab/ability/71282/launch.json",
+        "shot": "ab/ability/71282/shot.json",
+        "hit": "ab/ability/71282/hit.json"
+      },
+      "from": "Fenrir: FFRK 71282 — img_fenrir"
+    },
+    "a:67": {
+      "phases": {
+        "launch": "ab/ability/71282/launch.json",
+        "shot": "ab/ability/71282/shot.json",
+        "hit": "ab/ability/71282/hit.json"
+      },
+      "from": "Fenrir: FFRK 71282 — img_fenrir"
+    },
+    "a:68": {
+      "phases": {
+        "launch": "ab/ability/48051/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/48051/hit.json"
+      },
+      "from": "Carbuncle: FFRK 48051 — img_carbuncle_pk"
+    },
+    "a:69": {
+      "phases": {
+        "launch": "ab/ability/48051/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/48051/hit.json"
+      },
+      "from": "Carbuncle: FFRK 48051 — img_carbuncle_pk"
+    },
+    "a:70": {
+      "phases": {
+        "launch": "ab/ability/48051/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/48051/hit.json"
+      },
+      "from": "Carbuncle: FFRK 48051 — img_carbuncle_pk"
+    },
+    "a:71": {
+      "phases": {
+        "launch": "ab/ability/48051/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/48051/hit.json"
+      },
+      "from": "Carbuncle: FFRK 48051 — img_carbuncle_pk"
     },
     "a:72": {
       "phases": {
@@ -474,6 +586,14 @@
         "shot": "ab/ability/60015/60015_shot.json"
       },
       "from": "Phoenix (FFRK 60015)"
+    },
+    "a:74": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/60290/shot.json",
+        "hit": "ab/ability/60290/hit.json"
+      },
+      "from": "Madeen: FFRK 60290 — img_madeen"
     },
     "a:75": {
       "phases": {
@@ -491,6 +611,126 @@
       },
       "from": "Water Sword: FFRK 31013 — water spellblade"
     },
+    "a:77": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "Goblin Punch: FFRK 50501 — Punch"
+    },
+    "a:78": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "LV5 Death: FFRK 15300 — skull sprite"
+    },
+    "a:79": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/33077/hit.json"
+      },
+      "from": "LV4 Holy: FFRK 33077 — holy pillars"
+    },
+    "a:80": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10092/10092_hit.json"
+      },
+      "from": "LV3 Def-less: FFRK 10092 — Armor Break"
+    },
+    "a:81": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Doom: FFRK 70582 — img_70582_senkoku (宣告 = Doom)"
+    },
+    "a:82": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "Roulette: FFRK 15300 — skull sprite"
+    },
+    "a:83": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14001/14001_hit.json"
+      },
+      "from": "Aqua Breath: FFRK 14001 — water tier 2"
+    },
+    "a:84": {
+      "phases": {
+        "launch": "ab/ability/71485/launch.json",
+        "shot": "ab/ability/71485/shot.json",
+        "hit": "ab/ability/71485/hit.json"
+      },
+      "from": "Mighty Guard: FFRK 71485 — img_mighty_g_great_buff"
+    },
+    "a:85": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50226/50226_shot.json",
+        "hit": "ab/ability/50226/50226_hit.json"
+      },
+      "from": "Matra Magic: FFRK 50226 — img_missile"
+    },
+    "a:86": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Bad Breath: FFRK 15010 — sludge sprite (eff_doro)"
+    },
+    "a:87": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "Limit Glove: FFRK 50501 — Punch"
+    },
+    "a:88": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/33004/shot.json",
+        "hit": "ab/ability/33004/hit.json"
+      },
+      "from": "1,000 Needles: FFRK 33004 — img_needle"
+    },
+    "a:89": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Pumpkin Head: FFRK 10095 — Intimidate"
+    },
+    "a:90": {
+      "phases": {
+        "launch": "ab/ability/15040/15040_launch.json",
+        "shot": "ab/ability/15040/15040_shot.json",
+        "hit": "ab/ability/15040/15040_hit.json"
+      },
+      "from": "Night: FFRK 15040 — sleep (black utility)"
+    },
+    "a:91": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
     "a:92": {
       "phases": {
         "hit": "ab/ability/33011/hit.json",
@@ -500,17 +740,249 @@
       },
       "from": "Earth Shake (FFRK 61271)"
     },
+    "a:93": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20302/20302_hit.json"
+      },
+      "from": "Angel's Snack: FFRK 20302 — status-cure sparkle"
+    },
+    "a:94": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Frog Drop: FFRK 50216 — Body Slam (a drop from above)"
+    },
+    "a:95": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20526/20526_hit.json"
+      },
+      "from": "White Wind: FFRK 20526 — wind sprites"
+    },
+    "a:96": {
+      "phases": {
+        "launch": "ab/ability/71453/launch.json",
+        "shot": "ab/ability/71453/shot.json",
+        "hit": "ab/ability/71453/hit.json"
+      },
+      "from": "Vanish: FFRK 71453 — img_resolclear (fade out)"
+    },
+    "a:97": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Freeze: FFRK 12002 — Blizzaga"
+    },
+    "a:98": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50575/50575_shot.json",
+        "hit": "ab/ability/50575/50575_hit.json"
+      },
+      "from": "Mustard Bomb: FFRK 50575 — img_50575_bomb"
+    },
+    "a:99": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30031/30031_hit.json"
+      },
+      "from": "Magic Hammer: FFRK 30031 — hammer hit sprite"
+    },
+    "a:100": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/20010/20010_shot.json",
+        "hit": "ab/ability/20010/20010_hit.json"
+      },
+      "from": "Auto-Life: FFRK 20010 — raise-type with a shot"
+    },
+    "a:102": {
+      "phases": {
+        "launch": "ab/ability/71781/launch.json",
+        "shot": "ab/ability/71781/shot.json",
+        "hit": "ab/ability/71781/hit.json"
+      },
+      "from": "Detect: FFRK 71781 — img_library (Libra)"
+    },
+    "a:103": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "What's That!?: FFRK 10095 — Intimidate"
+    },
+    "a:104": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10116/10116_hit.json"
+      },
+      "from": "Soul Blade: FFRK 10116 — Blade Bash"
+    },
+    "a:105": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Annoy: FFRK 10095 — Intimidate"
+    },
+    "a:106": {
+      "phases": {
+        "launch": "ab/ability/70924/launch.json",
+        "shot": "ab/ability/70924/shot.json",
+        "hit": "ab/ability/70924/hit.json"
+      },
+      "from": "Sacrifice: FFRK 70924 — img_candleheal (self-giving heal)"
+    },
+    "a:107": {
+      "phases": {
+        "launch": "ab/ability/71416/launch.json",
+        "shot": "ab/ability/71416/shot.json",
+        "hit": "ab/ability/71416/hit.json"
+      },
+      "from": "Lucky Seven: FFRK 71416 — slot reels (img_break_heart_slot)"
+    },
+    "a:108": {
+      "phases": {
+        "launch": "ab/ability/70999/launch.json",
+        "shot": "ab/ability/70999/shot.json",
+        "hit": "ab/ability/70999/hit.json"
+      },
+      "from": "Thievery: FFRK 70999 — Dagger of Resolve (Zidane's)"
+    },
     "a:111": {
       "phases": {
         "hit": "ab/ability/70512/70512_hit.json"
       },
       "from": "Scoop Art (FFRK 70512, hit only)"
     },
+    "a:114": {
+      "phases": {
+        "launch": "ab/ability/71444/launch.json",
+        "shot": "ab/ability/71444/shot.json",
+        "hit": "ab/ability/71444/hit.json"
+      },
+      "from": "Meo Twister: FFRK 71444 — Solution 9 / img_mir_twister (Zidane's)"
+    },
     "a:115": {
       "phases": {
         "hit": "ab/ability/71444/hit.json"
       },
       "from": "Solution 9 (FFRK 71444, hit only)"
+    },
+    "a:117": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10003/10003_hit.json"
+      },
+      "from": "Lancer: FFRK 10003 — Jump (lance strike)"
+    },
+    "a:118": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20200/20200_hit.json"
+      },
+      "from": "Reis's Wind: FFRK 20200 — Regen range"
+    },
+    "a:119": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/60210/shot.json",
+        "hit": "ab/ability/60210/hit.json"
+      },
+      "from": "Dragon Breath: FFRK 60210 — Bahamut's Megaflare breath"
+    },
+    "a:120": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20001/20001_hit.json"
+      },
+      "from": "White Draw: FFRK 20001 — carelela sparkle"
+    },
+    "a:121": {
+      "phases": {
+        "launch": "ab/ability/71209/launch.json",
+        "shot": "ab/ability/71209/shot.json",
+        "hit": "ab/ability/71209/hit.json"
+      },
+      "from": "Luna: FFRK 71209 — img_Luna"
+    },
+    "a:122": {
+      "phases": {
+        "launch": "ab/ability/74262/launch.json",
+        "shot": "ab/ability/74262/shot.json",
+        "hit": "ab/ability/74262/hit.json"
+      },
+      "from": "Six Dragons: FFRK 74262 — img_sixt"
+    },
+    "a:123": {
+      "phases": {
+        "launch": "ab/ability/32287/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/32287/hit.json"
+      },
+      "from": "Cherry Blossom: FFRK 32287 — img_ycherry (cherry blossoms)"
+    },
+    "a:124": {
+      "phases": {
+        "launch": "ab/ability/71196/launch.json",
+        "shot": "ab/ability/71196/shot.json",
+        "hit": "ab/ability/71196/hit.json"
+      },
+      "from": "Dragon's Crest: FFRK 71196 — img_dragons_crest"
+    },
+    "a:125": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20000/20000_hit.json"
+      },
+      "from": "Chakra: FFRK 20000 — carele heal"
+    },
+    "a:126": {
+      "phases": {
+        "launch": "ab/ability/31564/launch.json",
+        "shot": "ab/ability/31564/shot.json",
+        "hit": "ab/ability/31564/hit.json"
+      },
+      "from": "Spare Change: FFRK 31564 — img_gil_enki (thrown gil)"
+    },
+    "a:127": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "No Mercy: FFRK 50501 — Punch"
+    },
+    "a:128": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20200/20200_hit.json"
+      },
+      "from": "Aura: FFRK 20200 — Regen range"
+    },
+    "a:129": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
     },
     "a:130": {
       "phases": {
@@ -520,6 +992,62 @@
       },
       "from": "Revive (FFRK 50599)"
     },
+    "a:131": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/15100/15100_shot.json",
+        "hit": "ab/ability/15100/15100_hit.json"
+      },
+      "from": "Demi Shock: FFRK 15100 — gravity-style damage"
+    },
+    "a:132": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Countdown: FFRK 70582 — img_70582_senkoku (宣告, Doom's countdown)"
+    },
+    "a:133": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20000/20000_hit.json"
+      },
+      "from": "Chakra: FFRK 20000 — carele heal"
+    },
+    "a:134": {
+      "phases": {
+        "launch": "ab/ability/31564/launch.json",
+        "shot": "ab/ability/31564/shot.json",
+        "hit": "ab/ability/31564/hit.json"
+      },
+      "from": "Spare Change: FFRK 31564 — img_gil_enki (thrown gil)"
+    },
+    "a:135": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "No Mercy: FFRK 50501 — Punch"
+    },
+    "a:136": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20200/20200_hit.json"
+      },
+      "from": "Aura: FFRK 20200 — Regen range"
+    },
+    "a:137": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
+    },
     "a:138": {
       "phases": {
         "hit": "ab/ability/50599/50599_hit.json",
@@ -527,6 +1055,46 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Revive (FFRK 50599)"
+    },
+    "a:139": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/15100/15100_shot.json",
+        "hit": "ab/ability/15100/15100_hit.json"
+      },
+      "from": "Demi Shock: FFRK 15100 — gravity-style damage"
+    },
+    "a:140": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Countdown: FFRK 70582 — img_70582_senkoku (宣告, Doom's countdown)"
+    },
+    "a:141": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/31029/31029_hit.json"
+      },
+      "from": "Darkside: FFRK 31029 — Dark Buster (dark spellblade)"
+    },
+    "a:142": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10116/10116_hit.json"
+      },
+      "from": "Minus Strike: FFRK 10116 — Blade Bash"
+    },
+    "a:143": {
+      "phases": {
+        "launch": "ab/ability/10236/launch.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10236/hit.json"
+      },
+      "from": "Iai Strike: FFRK 10236 — img_issen (一閃, iai flash) + sword"
     },
     "a:144": {
       "phases": {
@@ -536,6 +1104,22 @@
       },
       "from": "Power Break (FFRK 10091)"
     },
+    "a:145": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10092/10092_hit.json"
+      },
+      "from": "Armour Break: FFRK 10092 — Armor Break"
+    },
+    "a:146": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10093/10093_hit.json"
+      },
+      "from": "Mental Break: FFRK 10093 — Magic Break"
+    },
     "a:147": {
       "phases": {
         "hit": "ab/ability/10093/10093_hit.json",
@@ -544,11 +1128,51 @@
       },
       "from": "Magic Break (FFRK 10093)"
     },
+    "a:148": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10029/10029_hit.json"
+      },
+      "from": "Charge!: FFRK 10029 — Wrath (power surge)"
+    },
+    "a:149": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/31009/31009_hit.json"
+      },
+      "from": "Thunder Slash: FFRK 31009 — Thunder Strike"
+    },
+    "a:150": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Stock Break: FFRK 71153 — img_shock_ziware (ground-cracking shock)"
+    },
     "a:151": {
       "phases": {
         "hit": "ab/ability/70976/hit.json"
       },
       "from": "Climhazzard (FFRK 70976, hit only)"
+    },
+    "a:152": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shock: FFRK 71153 — img_shock_ziware"
+    },
+    "a:158": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Tsunami: FFRK 14002 — water tier 3"
     },
     "a:172": {
       "phases": {
@@ -559,6 +1183,14 @@
       },
       "from": "Jump (FFRK 10003)"
     },
+    "a:177": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Steal: FFRK 30004 — Zidane's dagger slash"
+    },
     "a:178": {
       "phases": {
         "hit": "ab/ability/10003/10003_hit.json",
@@ -567,6 +1199,54 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Jump (FFRK 10003)"
+    },
+    "a:181": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "a:183": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Eat: FFRK 50220 — Bite (img_fang2)"
+    },
+    "a:185": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Spear: FFRK 30044 — spear thrust"
+    },
+    "a:186": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Spear: FFRK 30044 — spear thrust"
+    },
+    "a:188": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/10006/10006_shot.json",
+        "hit": "ab/ability/10006/10006_hit.json"
+      },
+      "from": "Focus: FFRK 10006 — Boost"
+    },
+    "a:189": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Flare Sword: FFRK 11004 — Flare's hit"
     },
     "a:191": {
       "phases": {
@@ -625,6 +1305,14 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:18": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Slash: FFRK 30003 — sword slash"
+    },
     "e:19": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -640,6 +1328,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:22": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Slash: FFRK 30003 — sword slash"
     },
     "e:24": {
       "phases": {
@@ -681,11 +1377,35 @@
       },
       "from": "Cura: FFRK 20001 — carelela sprite (ケアルラ); FFRK's Hi-Potion uses it"
     },
+    "e:30": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Stock Break: FFRK 71153 — img_shock_ziware (ground-cracking shock)"
+    },
+    "e:31": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/31009/31009_hit.json"
+      },
+      "from": "Thunder Slash: FFRK 31009 — Thunder Strike"
+    },
     "e:33": {
       "phases": {
         "hit": "ab/ability/70976/hit.json"
       },
       "from": "Climhazzard (FFRK 70976, hit only)"
+    },
+    "e:34": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shock: FFRK 71153 — img_shock_ziware"
     },
     "e:38": {
       "phases": {
@@ -703,6 +1423,14 @@
       },
       "from": "Stop: FFRK 16021 — time-magic circle"
     },
+    "e:40": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Maelstrom: FFRK 14002 — water tier 3"
+    },
     "e:42": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -718,6 +1446,46 @@
         "hit": "ab/ability/15100/15100_hit.json"
       },
       "from": "Demi: FFRK 15100 — gravity-style damage"
+    },
+    "e:45": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Edge: FFRK 30003 — sword slash"
+    },
+    "e:46": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Doom: FFRK 70582 — img_70582_senkoku (宣告 = Doom)"
+    },
+    "e:52": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "LV2 Death +: FFRK 15300 — skull sprite"
+    },
+    "e:54": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
+    },
+    "e:55": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
     },
     "e:57": {
       "phases": {
@@ -831,6 +1599,22 @@
       },
       "from": "Fira / Hellfire (FFRK 11001)"
     },
+    "e:79": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50203/50203_shot.json",
+        "hit": "ab/ability/50203/50203_hit.json"
+      },
+      "from": "Hypnotize: FFRK 50203 — orso_eye"
+    },
+    "e:80": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Head Attack: FFRK 30054 — fist strike (knock)"
+    },
     "e:81": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -838,6 +1622,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:86": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "Roulette: FFRK 15300 — skull sprite"
+    },
+    "e:87": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50203/50203_shot.json",
+        "hit": "ab/ability/50203/50203_hit.json"
+      },
+      "from": "Hypnotize: FFRK 50203 — orso_eye"
     },
     "e:88": {
       "phases": {
@@ -863,6 +1663,14 @@
       },
       "from": "Silence: FFRK 20502 — status range"
     },
+    "e:91": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Virus Powder: FFRK 50346 — Pollen"
+    },
     "e:92": {
       "phases": {
         "launch": "ab/ability/15500/15500_launch.json",
@@ -879,6 +1687,14 @@
       },
       "from": "Reflect: FFRK 20508 — refrek sprite (リフレク)"
     },
+    "e:94": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Rrrragh!: FFRK 50216 — Body Slam"
+    },
     "e:100": {
       "phases": {
         "launch": "ab/ability/common/launch_white.json",
@@ -894,6 +1710,30 @@
         "hit": "ab/ability/20500/20500_hit.json"
       },
       "from": "Blind: FFRK 20500 — own hit sprite"
+    },
+    "e:102": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/31009/31009_hit.json"
+      },
+      "from": "Thunder Slash: FFRK 31009 — Thunder Strike"
+    },
+    "e:103": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Stock Break: FFRK 71153 — img_shock_ziware (ground-cracking shock)"
+    },
+    "e:104": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shock: FFRK 71153 — img_shock_ziware"
     },
     "e:106": {
       "phases": {
@@ -919,6 +1759,14 @@
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
     },
+    "e:109": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Eat: FFRK 50220 — Bite (img_fang2)"
+    },
     "e:110": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -926,6 +1774,86 @@
         "hit": "ab/ability/15010/15010_hit.json"
       },
       "from": "Poison: FFRK 15010 — sludge hit sprite"
+    },
+    "e:112": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:113": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30031/30031_hit.json"
+      },
+      "from": "Magic Hammer: FFRK 30031 — hammer hit sprite"
+    },
+    "e:115": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:116": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:117": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:118": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:119": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:120": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:121": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Mug: FFRK 30004 — dagger slash"
+    },
+    "e:122": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Wings: FFRK 50889 — Aerospark (wind)"
     },
     "e:123": {
       "phases": {
@@ -943,6 +1871,22 @@
       },
       "from": "Slow: FFRK 16020 — time-magic circle"
     },
+    "e:127": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20303/20303_hit.json"
+      },
+      "from": "Gradual Petrify: FFRK 20303 — stone art"
+    },
+    "e:128": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Saw: FFRK 30003 — sword slash"
+    },
     "e:129": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -950,6 +1894,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:134": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20526/20526_hit.json"
+      },
+      "from": "White Wind: FFRK 20526 — wind sprites"
+    },
+    "e:135": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Hit: FFRK 30054 — fist strike (knock)"
     },
     "e:136": {
       "phases": {
@@ -991,6 +1951,14 @@
       },
       "from": "Doomsday: FFRK 17014 — shards + sludge + stone"
     },
+    "e:147": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Nanoflare: FFRK 11004 — Flare"
+    },
     "e:148": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1013,6 +1981,46 @@
         "shot": "ab/ability/common/shot_empty_fast.json"
       },
       "from": "Holy (FFRK 61762)"
+    },
+    "e:150": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Flare Star: FFRK 11004 — Flare"
+    },
+    "e:151": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
+    },
+    "e:152": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "LV2 Doom: FFRK 70582 — img_70582_senkoku (宣告 = Doom)"
+    },
+    "e:153": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "LV3 Death: FFRK 15300 — skull sprite"
+    },
+    "e:155": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20007/20007_hit.json"
+      },
+      "from": "Curaja: FFRK 20007 — Curaga"
     },
     "e:156": {
       "phases": {
@@ -1038,6 +2046,14 @@
       },
       "from": "Berserk (FFRK 20514)"
     },
+    "e:161": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Nanoflare: FFRK 11004 — Flare"
+    },
     "e:162": {
       "phases": {
         "hit": "ab/ability/20514/20514_hit.json",
@@ -1046,6 +2062,14 @@
       },
       "from": "Berserk (FFRK 20514)"
     },
+    "e:163": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Knock Down: FFRK 30054 — fist strike (knock)"
+    },
     "e:164": {
       "phases": {
         "hit": "ab/ability/20007/20007_hit.json",
@@ -1053,6 +2077,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Curaga (FFRK 20007)"
+    },
+    "e:170": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Thorn Whip: FFRK 50213 — Eight Arms"
     },
     "e:171": {
       "phases": {
@@ -1070,6 +2102,62 @@
       },
       "from": "Might: FFRK 20506 — shield art"
     },
+    "e:181": {
+      "phases": {
+        "launch": "ab/ability/71453/launch.json",
+        "shot": "ab/ability/71453/shot.json",
+        "hit": "ab/ability/71453/hit.json"
+      },
+      "from": "Vanish: FFRK 71453 — img_resolclear (fade out)"
+    },
+    "e:182": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Spear: FFRK 30044 — spear thrust"
+    },
+    "e:183": {
+      "phases": {
+        "launch": "ab/ability/71444/launch.json",
+        "shot": "ab/ability/71444/shot.json",
+        "hit": "ab/ability/71444/hit.json"
+      },
+      "from": "Solution: FFRK 71444 — Solution 9 / img_mir_twister (Zidane's)"
+    },
+    "e:186": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:187": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shockwave: FFRK 71153 — img_shock_ziware"
+    },
+    "e:188": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Tidal Wave: FFRK 14002 — water tier 3"
+    },
+    "e:191": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "Death Cutter: FFRK 15300 — skull sprite"
+    },
     "e:193": {
       "phases": {
         "hit": "ab/ability/33011/hit.json",
@@ -1079,6 +2167,38 @@
       },
       "from": "Earth Shake (FFRK 61271)"
     },
+    "e:194": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Venom Powder: FFRK 50346 — Pollen"
+    },
+    "e:195": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Final Sentence: FFRK 70582 — img_70582_senkoku (宣告 = Doom)"
+    },
+    "e:197": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "Mega Death: FFRK 15300 — skull sprite"
+    },
+    "e:198": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Sword Quiver: FFRK 30003 — sword slash"
+    },
     "e:199": {
       "phases": {
         "hit": "ab/ability/11002/11002_hit.json",
@@ -1087,6 +2207,22 @@
       },
       "from": "Firaga (FFRK 11002)"
     },
+    "e:200": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Raining Swords: FFRK 30003 — sword slash"
+    },
+    "e:202": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50575/50575_shot.json",
+        "hit": "ab/ability/50575/50575_hit.json"
+      },
+      "from": "Mustard Bomb: FFRK 50575 — img_50575_bomb"
+    },
     "e:203": {
       "phases": {
         "launch": "ab/ability/20005/20005_launch.json",
@@ -1094,6 +2230,54 @@
         "hit": "ab/ability/20005/20005_hit.json"
       },
       "from": "Esuna: FFRK 20005 — water-drop cure, own launch/shot"
+    },
+    "e:204": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Leg: FFRK 50213 — Eight Arms"
+    },
+    "e:205": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Waterga: FFRK 14002 — water tier 3"
+    },
+    "e:206": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Ink: FFRK 50221 — Slime"
+    },
+    "e:209": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Water-gun: FFRK 14002 — water tier 3"
+    },
+    "e:212": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50533/50533_hit.json"
+      },
+      "from": "Bubble-gun: FFRK 50533 — img_bubble_gray"
+    },
+    "e:214": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
     },
     "e:220": {
       "phases": {
@@ -1110,6 +2294,14 @@
         "hit": "ab/ability/20526/20526_hit.json"
       },
       "from": "Float: FFRK 20526 — wind sprites"
+    },
+    "e:222": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Flare Star: FFRK 11004 — Flare"
     },
     "e:223": {
       "phases": {
@@ -1157,6 +2349,38 @@
         "hit": "ab/ability/15300/15300_hit.json"
       },
       "from": "Death: FFRK 15300 — skull sprite"
+    },
+    "e:236": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "LV4 Death: FFRK 15300 — skull sprite"
+    },
+    "e:237": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:240": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Blue Shockwave: FFRK 71153 — img_shock_ziware"
+    },
+    "e:241": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50234/50234_hit.json"
+      },
+      "from": "Neutron Ring: FFRK 50234 — Energy Ray"
     },
     "e:246": {
       "phases": {
@@ -1221,6 +2445,14 @@
       },
       "from": "Curaga (FFRK 20007)"
     },
+    "e:253": {
+      "phases": {
+        "launch": "ab/ability/71485/launch.json",
+        "shot": "ab/ability/71485/shot.json",
+        "hit": "ab/ability/71485/hit.json"
+      },
+      "from": "Mighty Guard: FFRK 71485 — img_mighty_g_great_buff"
+    },
     "e:254": {
       "phases": {
         "launch": "ab/ability/common/launch_white.json",
@@ -1228,6 +2460,38 @@
         "hit": "ab/ability/20200/20200_hit.json"
       },
       "from": "Regen: FFRK 20200 — white-magic status range"
+    },
+    "e:256": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Nanoflare: FFRK 11004 — Flare"
+    },
+    "e:257": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Judgment Sword: FFRK 30003 — sword slash"
+    },
+    "e:258": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Freeze: FFRK 12002 — Blizzaga"
+    },
+    "e:259": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Cleave: FFRK 30003 — sword slash"
     },
     "e:260": {
       "phases": {
@@ -1237,6 +2501,38 @@
       },
       "from": "Doomsday: FFRK 17014 — shards + sludge + stone"
     },
+    "e:263": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Countdown: FFRK 70582 — img_70582_senkoku (宣告, Doom's countdown)"
+    },
+    "e:264": {
+      "phases": {
+        "launch": "ab/ability/74142/launch.json",
+        "shot": "ab/ability/74142/shot.json",
+        "hit": "ab/ability/74142/hit.json"
+      },
+      "from": "Curse: FFRK 74142 — img_curse"
+    },
+    "e:265": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50575/50575_shot.json",
+        "hit": "ab/ability/50575/50575_hit.json"
+      },
+      "from": "Mustard Bomb: FFRK 50575 — img_50575_bomb"
+    },
+    "e:267": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Fist: FFRK 30054 — fist strike (knock)"
+    },
     "e:268": {
       "phases": {
         "hit": "ab/ability/20509/20509_hit.json",
@@ -1244,6 +2540,30 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Protect (FFRK 20509)"
+    },
+    "e:269": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Helm Divide: FFRK 30003 — sword slash"
+    },
+    "e:270": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Cleave: FFRK 30003 — sword slash"
+    },
+    "e:271": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Virus Crunch: FFRK 50220 — Bite"
     },
     "e:272": {
       "phases": {
@@ -1253,6 +2573,22 @@
       },
       "from": "Firaga (FFRK 11002)"
     },
+    "e:274": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Venom Breath: FFRK 15010 — sludge sprite"
+    },
+    "e:275": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Cold Breath: FFRK 12002 — Blizzaga"
+    },
     "e:276": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1260,6 +2596,22 @@
         "hit": "ab/ability/15300/15300_hit.json"
       },
       "from": "Death: FFRK 15300 — skull sprite"
+    },
+    "e:277": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Snowstorm: FFRK 12002 — Blizzaga"
+    },
+    "e:280": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Sting: FFRK 30044 — spear thrust"
     },
     "e:281": {
       "phases": {
@@ -1269,6 +2621,22 @@
       },
       "from": "Firaga (FFRK 11002)"
     },
+    "e:285": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Heave: FFRK 50216 — Body Slam"
+    },
+    "e:286": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Sword Quiver: FFRK 30003 — sword slash"
+    },
     "e:287": {
       "phases": {
         "hit": "ab/ability/11002/11002_hit.json",
@@ -1276,6 +2644,54 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Firaga (FFRK 11002)"
+    },
+    "e:290": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:297": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Waterga: FFRK 14002 — water tier 3"
+    },
+    "e:298": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Ink: FFRK 50221 — Slime"
+    },
+    "e:300": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Water-gun: FFRK 14002 — water tier 3"
+    },
+    "e:301": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Freeze: FFRK 12002 — Blizzaga"
+    },
+    "e:302": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "Death Cutter: FFRK 15300 — skull sprite"
     },
     "e:304": {
       "phases": {
@@ -1286,6 +2702,30 @@
       },
       "from": "Earth Shake (FFRK 61271)"
     },
+    "e:305": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Venom Powder: FFRK 50346 — Pollen"
+    },
+    "e:306": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/70582/70582_shot.json",
+        "hit": "ab/ability/70582/70582_hit.json"
+      },
+      "from": "Final Sentence: FFRK 70582 — img_70582_senkoku (宣告 = Doom)"
+    },
+    "e:308": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33052/shot.json",
+        "hit": "ab/ability/33052/hit.json"
+      },
+      "from": "Sandstorm: FFRK 33052 — earth (Quake)"
+    },
     "e:309": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -1293,6 +2733,30 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:310": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Counter Horn: FFRK 30044 — spear thrust"
+    },
+    "e:311": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Trouble Mucus: FFRK 50221 — Slime"
+    },
+    "e:312": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Slash: FFRK 30003 — sword slash"
     },
     "e:313": {
       "phases": {
@@ -1326,6 +2790,14 @@
       },
       "from": "Silence: FFRK 20502 — status range"
     },
+    "e:318": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/31009/31009_hit.json"
+      },
+      "from": "Thunder Slash: FFRK 31009 — Thunder Strike"
+    },
     "e:319": {
       "phases": {
         "hit": "ab/ability/33077/hit.json",
@@ -1340,6 +2812,22 @@
         "shot": "ab/ability/common/shot_empty_fast.json"
       },
       "from": "Holy (FFRK 61762)"
+    },
+    "e:320": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Right Stem: FFRK 50213 — Eight Arms"
+    },
+    "e:321": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Left Stem: FFRK 50213 — Eight Arms"
     },
     "e:326": {
       "phases": {
@@ -1357,6 +2845,14 @@
       },
       "from": "Fire (FFRK 11000)"
     },
+    "e:330": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Right Tentacle: FFRK 50213 — Eight Arms"
+    },
     "e:331": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1373,6 +2869,14 @@
       },
       "from": "Pollen (FFRK 50346)"
     },
+    "e:333": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Left Tentacle: FFRK 50213 — Eight Arms"
+    },
     "e:334": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1380,6 +2884,14 @@
         "hit": "ab/ability/13000/13000_hit.json"
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
+    },
+    "e:335": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Tentacle: FFRK 50213 — Eight Arms"
     },
     "e:336": {
       "phases": {
@@ -1404,6 +2916,22 @@
         "shot": "ab/ability/50346/50346_shot.json"
       },
       "from": "Pollen (FFRK 50346)"
+    },
+    "e:340": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Knife: FFRK 30004 — dagger slash"
+    },
+    "e:342": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "Goblin Punch: FFRK 50501 — Punch"
     },
     "e:343": {
       "phases": {
@@ -1491,6 +3019,30 @@
       },
       "from": "Water: FFRK 14000 — water tier 1"
     },
+    "e:360": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Dagger's first hit: FFRK 30004 — dagger slash"
+    },
+    "e:363": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20001/20001_hit.json"
+      },
+      "from": "Elixir: FFRK 20001 — carelela sparkle"
+    },
+    "e:364": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Spear: FFRK 30044 — spear thrust"
+    },
     "e:365": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1498,6 +3050,22 @@
         "hit": "ab/ability/17014/hit.json"
       },
       "from": "Doomsday: FFRK 17014 — shards + sludge + stone"
+    },
+    "e:369": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20526/20526_hit.json"
+      },
+      "from": "White Wind: FFRK 20526 — wind sprites"
+    },
+    "e:370": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Silent Slap: FFRK 30054 — fist strike (knock)"
     },
     "e:371": {
       "phases": {
@@ -1515,6 +3083,14 @@
       },
       "from": "Sleep: FFRK 15040 — black utility, own launch/shot"
     },
+    "e:378": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20502/20502_hit.json"
+      },
+      "from": "Devil's Kiss: FFRK 20502 — status range"
+    },
     "e:379": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -1522,6 +3098,30 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:380": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "String: FFRK 50213 — Eight Arms"
+    },
+    "e:381": {
+      "phases": {
+        "launch": "ab/ability/15040/15040_launch.json",
+        "shot": "ab/ability/15040/15040_shot.json",
+        "hit": "ab/ability/15040/15040_hit.json"
+      },
+      "from": "Night: FFRK 15040 — sleep (black utility)"
+    },
+    "e:382": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Stab: FFRK 30004 — dagger slash"
     },
     "e:383": {
       "phases": {
@@ -1531,6 +3131,22 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:386": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Ultra Sound Wave: FFRK 10095 — Intimidate (a shout)"
+    },
+    "e:389": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Stomach: FFRK 50220 — Bite"
+    },
     "e:390": {
       "phases": {
         "launch": "ab/ability/15011/15011_launch.json",
@@ -1538,6 +3154,14 @@
         "hit": "ab/ability/15011/15011_hit.json"
       },
       "from": "Drain: FFRK 15011 — water drop, own launch/shot"
+    },
+    "e:391": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
     },
     "e:392": {
       "phases": {
@@ -1563,6 +3187,22 @@
       },
       "from": "Fira / Hellfire (FFRK 11001)"
     },
+    "e:399": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Swallow: FFRK 50220 — Bite"
+    },
+    "e:401": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20526/20526_hit.json"
+      },
+      "from": "White Wind: FFRK 20526 — wind sprites"
+    },
     "e:403": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -1570,6 +3210,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:405": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33052/shot.json",
+        "hit": "ab/ability/33052/hit.json"
+      },
+      "from": "Sandstorm: FFRK 33052 — earth (Quake)"
     },
     "e:408": {
       "phases": {
@@ -1579,6 +3227,14 @@
       },
       "from": "Fira / Hellfire (FFRK 11001)"
     },
+    "e:409": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33052/shot.json",
+        "hit": "ab/ability/33052/hit.json"
+      },
+      "from": "Sandstorm: FFRK 33052 — earth (Quake)"
+    },
     "e:412": {
       "phases": {
         "launch": "ab/ability/15011/15011_launch.json",
@@ -1587,6 +3243,22 @@
       },
       "from": "Drain: FFRK 15011 — water drop, own launch/shot"
     },
+    "e:413": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Wings: FFRK 50889 — Aerospark (wind)"
+    },
+    "e:415": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Viral Smoke: FFRK 50346 — Pollen"
+    },
     "e:416": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1594,6 +3266,70 @@
         "hit": "ab/ability/18000/18000_hit.json"
       },
       "from": "Bio: FFRK 18000 — img_bio"
+    },
+    "e:417": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Venom Powder: FFRK 50346 — Pollen"
+    },
+    "e:418": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Dive: FFRK 50216 — Body Slam"
+    },
+    "e:419": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:428": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Wings: FFRK 50889 — Aerospark (wind)"
+    },
+    "e:430": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Viral Smoke: FFRK 50346 — Pollen"
+    },
+    "e:431": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Venom Powder: FFRK 50346 — Pollen"
+    },
+    "e:437": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Venom Breath: FFRK 15010 — sludge sprite"
+    },
+    "e:438": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Cold Breath: FFRK 12002 — Blizzaga"
     },
     "e:440": {
       "phases": {
@@ -1611,6 +3347,30 @@
       },
       "from": "Firaga (FFRK 11002)"
     },
+    "e:443": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Body Ram: FFRK 50216 — Body Slam"
+    },
+    "e:446": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50575/50575_shot.json",
+        "hit": "ab/ability/50575/50575_hit.json"
+      },
+      "from": "Mustard Bomb: FFRK 50575 — img_50575_bomb"
+    },
+    "e:447": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50952/hit.json"
+      },
+      "from": "Cannon: FFRK 50952 — eff_gun"
+    },
     "e:448": {
       "phases": {
         "hit": "ab/ability/11002/11002_hit.json",
@@ -1618,6 +3378,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Firaga (FFRK 11002)"
+    },
+    "e:450": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Crash: FFRK 50216 — Body Slam"
     },
     "e:451": {
       "phases": {
@@ -1635,6 +3403,14 @@
       },
       "from": "Water: FFRK 14000 — water tier 1"
     },
+    "e:454": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Stinger: FFRK 30044 — spear thrust"
+    },
     "e:455": {
       "phases": {
         "launch": "ab/ability/common/launch_white.json",
@@ -1642,6 +3418,14 @@
         "hit": "ab/ability/20000/20000_hit.json"
       },
       "from": "Cure: FFRK 20000 — carele sprite (ケアル)"
+    },
+    "e:457": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Hack: FFRK 30003 — sword slash"
     },
     "e:458": {
       "phases": {
@@ -1651,6 +3435,22 @@
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
     },
+    "e:459": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Whirl Slash: FFRK 30003 — sword slash"
+    },
+    "e:460": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Wing: FFRK 50889 — Aerospark (wind)"
+    },
     "e:461": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1658,6 +3458,14 @@
         "hit": "ab/ability/12000/12000_hit.json"
       },
       "from": "Blizzard: FFRK 12000 — ice tier 1 (12001 Blizzara, 12002 Blizzaga)"
+    },
+    "e:462": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Tsunami: FFRK 14002 — water tier 3"
     },
     "e:463": {
       "phases": {
@@ -1691,6 +3499,22 @@
       },
       "from": "Blizzard: FFRK 12000 — ice tier 1 (12001 Blizzara, 12002 Blizzaga)"
     },
+    "e:467": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Hit: FFRK 30054 — fist strike (knock)"
+    },
+    "e:469": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Head Attack: FFRK 30054 — fist strike (knock)"
+    },
     "e:470": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1698,6 +3522,22 @@
         "hit": "ab/ability/12000/12000_hit.json"
       },
       "from": "Blizzard: FFRK 12000 — ice tier 1 (12001 Blizzara, 12002 Blizzaga)"
+    },
+    "e:471": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Rusty Knife: FFRK 30004 — dagger slash"
+    },
+    "e:472": {
+      "phases": {
+        "launch": "ab/ability/15040/15040_launch.json",
+        "shot": "ab/ability/15040/15040_shot.json",
+        "hit": "ab/ability/15040/15040_hit.json"
+      },
+      "from": "Sleeping Juice: FFRK 15040 — sleep"
     },
     "e:474": {
       "phases": {
@@ -1707,6 +3547,22 @@
       },
       "from": "Blizzard: FFRK 12000 — ice tier 1 (12001 Blizzara, 12002 Blizzaga)"
     },
+    "e:478": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shockwave: FFRK 71153 — img_shock_ziware"
+    },
+    "e:480": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15300/15300_hit.json"
+      },
+      "from": "LV5 Death: FFRK 15300 — skull sprite"
+    },
     "e:482": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -1714,6 +3570,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:483": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Head Attack: FFRK 30054 — fist strike (knock)"
     },
     "e:484": {
       "phases": {
@@ -1731,6 +3595,30 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:489": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Zombie Breath: FFRK 15010 — sludge sprite"
+    },
+    "e:490": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Slap: FFRK 30054 — fist strike (knock)"
+    },
+    "e:495": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Chop: FFRK 30003 — sword slash"
+    },
     "e:496": {
       "phases": {
         "launch": "ab/ability/15011/15011_launch.json",
@@ -1739,6 +3627,14 @@
       },
       "from": "Drain: FFRK 15011 — water drop, own launch/shot"
     },
+    "e:497": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Ram: FFRK 50216 — Body Slam"
+    },
     "e:500": {
       "phases": {
         "hit": "ab/ability/12002/12002_hit.json",
@@ -1746,6 +3642,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:501": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Knife: FFRK 30004 — dagger slash"
+    },
+    "e:514": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
     },
     "e:515": {
       "phases": {
@@ -1795,6 +3707,14 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:523": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Freeze: FFRK 12002 — Blizzaga"
+    },
     "e:524": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -1819,6 +3739,30 @@
       },
       "from": "Firaga (FFRK 11002)"
     },
+    "e:530": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Rolling Attack: FFRK 50216 — Body Slam"
+    },
+    "e:531": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Waterga: FFRK 14002 — water tier 3"
+    },
+    "e:532": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14001/14001_hit.json"
+      },
+      "from": "Aqua Breath: FFRK 14001 — water tier 2"
+    },
     "e:533": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1826,6 +3770,78 @@
         "hit": "ab/ability/14000/14000_hit.json"
       },
       "from": "Water: FFRK 14000 — water tier 1"
+    },
+    "e:534": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "LV2 Flare: FFRK 11004 — Flare"
+    },
+    "e:536": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Bad Breath: FFRK 15010 — sludge sprite (eff_doro)"
+    },
+    "e:537": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33004/shot.json",
+        "hit": "ab/ability/33004/hit.json"
+      },
+      "from": "3,000 Needles: FFRK 33004 — img_needle"
+    },
+    "e:538": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Pumpkin Head: FFRK 10095 — Intimidate"
+    },
+    "e:539": {
+      "phases": {
+        "launch": "ab/ability/15040/15040_launch.json",
+        "shot": "ab/ability/15040/15040_shot.json",
+        "hit": "ab/ability/15040/15040_hit.json"
+      },
+      "from": "Night: FFRK 15040 — sleep (black utility)"
+    },
+    "e:540": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:541": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Cocytus: FFRK 12002 — Blizzaga"
+    },
+    "e:543": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30031/30031_hit.json"
+      },
+      "from": "Magic Hammer: FFRK 30031 — hammer hit sprite"
+    },
+    "e:544": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Impale: FFRK 30044 — spear thrust"
     },
     "e:545": {
       "phases": {
@@ -1835,6 +3851,22 @@
       },
       "from": "Water: FFRK 14000 — water tier 1"
     },
+    "e:546": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Water-gun: FFRK 14002 — water tier 3"
+    },
+    "e:551": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14001/14001_hit.json"
+      },
+      "from": "Aqua Breath: FFRK 14001 — water tier 2"
+    },
     "e:552": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1842,6 +3874,14 @@
         "hit": "ab/ability/14000/14000_hit.json"
       },
       "from": "Water: FFRK 14000 — water tier 1"
+    },
+    "e:553": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50203/50203_shot.json",
+        "hit": "ab/ability/50203/50203_hit.json"
+      },
+      "from": "Glowing Eyes: FFRK 50203 — orso_eye"
     },
     "e:554": {
       "phases": {
@@ -1859,6 +3899,14 @@
       },
       "from": "Water: FFRK 14000 — water tier 1"
     },
+    "e:556": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50203/50203_shot.json",
+        "hit": "ab/ability/50203/50203_hit.json"
+      },
+      "from": "Glowing Eyes: FFRK 50203 — orso_eye"
+    },
     "e:557": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -1866,6 +3914,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:558": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Mucus: FFRK 50221 — Slime"
     },
     "e:559": {
       "phases": {
@@ -1882,6 +3938,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:561": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Heave: FFRK 50216 — Body Slam"
     },
     "e:562": {
       "phases": {
@@ -1907,6 +3971,22 @@
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
     },
+    "e:566": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20303/20303_hit.json"
+      },
+      "from": "Stone: FFRK 20303 — stone art"
+    },
+    "e:567": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Beak: FFRK 50220 — Bite"
+    },
     "e:568": {
       "phases": {
         "launch": "ab/ability/15011/15011_launch.json",
@@ -1924,6 +4004,30 @@
       },
       "from": "Rush (FFRK 61272)"
     },
+    "e:587": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20522/20522_hit.json"
+      },
+      "from": "Twister: FFRK 20522 — tornado"
+    },
+    "e:588": {
+      "phases": {
+        "launch": "ab/ability/71153/launch.json",
+        "shot": "ab/ability/71153/shot.json",
+        "hit": "ab/ability/71153/hit.json"
+      },
+      "from": "Shockwave: FFRK 71153 — img_shock_ziware"
+    },
+    "e:590": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Horn: FFRK 30044 — spear thrust"
+    },
     "e:591": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -1931,6 +4035,14 @@
         "hit": "ab/ability/18000/18000_hit.json"
       },
       "from": "Bio: FFRK 18000 — img_bio"
+    },
+    "e:592": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/33077/hit.json"
+      },
+      "from": "LV4 Holy: FFRK 33077 — holy pillars"
     },
     "e:593": {
       "phases": {
@@ -1940,6 +4052,14 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:594": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Blade: FFRK 30003 — sword slash"
+    },
     "e:595": {
       "phases": {
         "hit": "ab/ability/13002/13002_hit.json",
@@ -1947,6 +4067,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Thundaga (FFRK 13002)"
+    },
+    "e:596": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "High Wind: FFRK 50889 — Aerospark (wind)"
+    },
+    "e:598": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Smash: FFRK 30054 — fist strike (knock)"
     },
     "e:599": {
       "phases": {
@@ -1956,6 +4092,14 @@
         "shot": "ab/ability/33011/shot.json"
       },
       "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:601": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
     },
     "e:605": {
       "phases": {
@@ -1973,6 +4117,14 @@
       },
       "from": "Stop: FFRK 16021 — time-magic circle"
     },
+    "e:613": {
+      "phases": {
+        "launch": "ab/ability/11004/11004_launch.json",
+        "shot": "ab/ability/11004/11004_shot.json",
+        "hit": "ab/ability/11004/11004_hit.json"
+      },
+      "from": "Flare Star: FFRK 11004 — Flare"
+    },
     "e:616": {
       "phases": {
         "hit": "ab/ability/11002/11002_hit.json",
@@ -1980,6 +4132,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Firaga (FFRK 11002)"
+    },
+    "e:619": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Bad Breath: FFRK 15010 — sludge sprite (eff_doro)"
     },
     "e:620": {
       "phases": {
@@ -1989,6 +4149,14 @@
       },
       "from": "Thundaga (FFRK 13002)"
     },
+    "e:621": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Virus Tentacles: FFRK 50213 — Eight Arms"
+    },
     "e:623": {
       "phases": {
         "launch": "ab/ability/15500/15500_launch.json",
@@ -1996,6 +4164,14 @@
         "hit": "ab/ability/15500/15500_hit.json"
       },
       "from": "Osmose: FFRK 15500 — water drop, own launch/shot"
+    },
+    "e:624": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Blade: FFRK 30003 — sword slash"
     },
     "e:625": {
       "phases": {
@@ -2005,6 +4181,14 @@
       },
       "from": "Thundaga (FFRK 13002)"
     },
+    "e:626": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "High Wind: FFRK 50889 — Aerospark (wind)"
+    },
     "e:628": {
       "phases": {
         "hit": "ab/ability/33011/hit.json",
@@ -2013,6 +4197,22 @@
         "shot": "ab/ability/33011/shot.json"
       },
       "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:630": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
+    },
+    "e:631": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Heave: FFRK 50216 — Body Slam"
     },
     "e:632": {
       "phases": {
@@ -2053,6 +4253,14 @@
         "hit": "ab/ability/13000/13000_hit.json"
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
+    },
+    "e:639": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Cocytus: FFRK 12002 — Blizzaga"
     },
     "e:641": {
       "phases": {
@@ -2133,6 +4341,22 @@
       },
       "from": "Osmose: FFRK 15500 — water drop, own launch/shot"
     },
+    "e:654": {
+      "phases": {
+        "launch": "ab/ability/common/launch_summon.json",
+        "shot": "ab/ability/60027/60027_shot.json",
+        "hit": "ab/ability/common/hit_empty.json"
+      },
+      "from": "Mind Blast: FFRK 60027 — img_60027_mindflare"
+    },
+    "e:655": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Freeze: FFRK 12002 — Blizzaga"
+    },
     "e:656": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2140,6 +4364,78 @@
         "hit": "ab/ability/18000/18000_hit.json"
       },
       "from": "Bio: FFRK 18000 — img_bio"
+    },
+    "e:657": {
+      "phases": {
+        "launch": "ab/ability/71453/launch.json",
+        "shot": "ab/ability/71453/shot.json",
+        "hit": "ab/ability/71453/hit.json"
+      },
+      "from": "Vanish: FFRK 71453 — img_resolclear (fade out)"
+    },
+    "e:658": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "The Drop: FFRK 50216 — Body Slam"
+    },
+    "e:662": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Stretch: FFRK 50216 — Body Slam"
+    },
+    "e:664": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Knife: FFRK 30004 — dagger slash"
+    },
+    "e:665": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Trouble Knife: FFRK 30004 — dagger slash"
+    },
+    "e:672": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Taste steel!: FFRK 30003 — sword slash"
+    },
+    "e:674": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50213/50213_hit.json"
+      },
+      "from": "Clamp Pinch: FFRK 50213 — Eight Arms"
+    },
+    "e:687": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Slash: FFRK 30003 — sword slash"
+    },
+    "e:698": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Heave: FFRK 50216 — Body Slam"
     },
     "e:699": {
       "phases": {
@@ -2149,6 +4445,22 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:703": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "Limit Glove: FFRK 50501 — Punch"
+    },
+    "e:704": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Horn: FFRK 30044 — spear thrust"
+    },
     "e:705": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2156,6 +4468,14 @@
         "hit": "ab/ability/18000/18000_hit.json"
       },
       "from": "Bio: FFRK 18000 — img_bio"
+    },
+    "e:706": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/33077/hit.json"
+      },
+      "from": "LV4 Holy: FFRK 33077 — holy pillars"
     },
     "e:707": {
       "phases": {
@@ -2165,6 +4485,22 @@
       },
       "from": "Thundara (FFRK 13001)"
     },
+    "e:708": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Hack: FFRK 30003 — sword slash"
+    },
+    "e:709": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Slice: FFRK 30003 — sword slash"
+    },
     "e:710": {
       "phases": {
         "hit": "ab/ability/11000/11000_hit.json",
@@ -2172,6 +4508,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fire (FFRK 11000)"
+    },
+    "e:711": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Steal: FFRK 30004 — Zidane's dagger slash"
     },
     "e:712": {
       "phases": {
@@ -2197,6 +4541,62 @@
       },
       "from": "Osmose: FFRK 15500 — water drop, own launch/shot"
     },
+    "e:715": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Propeller Wind: FFRK 50889 — Aerospark (wind)"
+    },
+    "e:716": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50889/hit.json"
+      },
+      "from": "Whirlwind: FFRK 50889 — Aerospark (wind)"
+    },
+    "e:717": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50234/50234_hit.json"
+      },
+      "from": "Photon: FFRK 50234 — Energy Ray"
+    },
+    "e:718": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50619/50619_shot.json",
+        "hit": "ab/ability/50619/50619_hit.json"
+      },
+      "from": "Boomerang: FFRK 50619 — img_boomerang"
+    },
+    "e:720": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20303/20303_hit.json"
+      },
+      "from": "Petrify: FFRK 20303 — stone art"
+    },
+    "e:730": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20303/20303_hit.json"
+      },
+      "from": "Stone: FFRK 20303 — stone art"
+    },
+    "e:735": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50952/hit.json"
+      },
+      "from": "Rapid Fire: FFRK 50952 — eff_gun"
+    },
     "e:736": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2204,6 +4604,14 @@
         "hit": "ab/ability/13000/13000_hit.json"
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
+    },
+    "e:737": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Antenna: FFRK 30044 — spear thrust"
     },
     "e:738": {
       "phases": {
@@ -2213,6 +4621,22 @@
       },
       "from": "Fire (FFRK 11000)"
     },
+    "e:739": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Web: FFRK 50221 — Slime"
+    },
+    "e:740": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Stab: FFRK 30004 — dagger slash"
+    },
     "e:741": {
       "phases": {
         "launch": "ab/ability/common/launch_white.json",
@@ -2220,6 +4644,14 @@
         "hit": "ab/ability/20000/20000_hit.json"
       },
       "from": "Cure: FFRK 20000 — carele sprite (ケアル)"
+    },
+    "e:742": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30004/30004_hit.json"
+      },
+      "from": "Stab: FFRK 30004 — dagger slash"
     },
     "e:743": {
       "phases": {
@@ -2237,6 +4669,38 @@
       },
       "from": "Shell (FFRK 20517)"
     },
+    "e:747": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Ram: FFRK 50216 — Body Slam"
+    },
+    "e:748": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Pumpkin Head: FFRK 10095 — Intimidate"
+    },
+    "e:749": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Fat Press: FFRK 50216 — Body Slam"
+    },
+    "e:751": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Hit: FFRK 30054 — fist strike (knock)"
+    },
     "e:752": {
       "phases": {
         "hit": "ab/ability/12002/12002_hit.json",
@@ -2244,6 +4708,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:753": {
+      "phases": {
+        "launch": "ab/ability/15040/15040_launch.json",
+        "shot": "ab/ability/15040/15040_shot.json",
+        "hit": "ab/ability/15040/15040_hit.json"
+      },
+      "from": "Night: FFRK 15040 — sleep (black utility)"
     },
     "e:755": {
       "phases": {
@@ -2269,6 +4741,14 @@
       },
       "from": "Shell (FFRK 20517)"
     },
+    "e:760": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20507/20507_hit.json"
+      },
+      "from": "Dispelga: FFRK 20507 — glass pieces (dispel)"
+    },
     "e:761": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2276,6 +4756,14 @@
         "hit": "ab/ability/15300/15300_hit.json"
       },
       "from": "Death: FFRK 15300 — skull sprite"
+    },
+    "e:762": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Spear: FFRK 30044 — spear thrust"
     },
     "e:763": {
       "phases": {
@@ -2285,6 +4773,14 @@
       },
       "from": "Fire (FFRK 11000)"
     },
+    "e:764": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Sword Quiver: FFRK 30003 — sword slash"
+    },
     "e:766": {
       "phases": {
         "hit": "ab/ability/11002/11002_hit.json",
@@ -2292,6 +4788,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Firaga (FFRK 11002)"
+    },
+    "e:767": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30003/30003_hit.json"
+      },
+      "from": "Raining Swords: FFRK 30003 — sword slash"
+    },
+    "e:768": {
+      "phases": {
+        "launch": "ab/ability/71444/launch.json",
+        "shot": "ab/ability/71444/shot.json",
+        "hit": "ab/ability/71444/hit.json"
+      },
+      "from": "Meo Twister: FFRK 71444 — Solution 9 / img_mir_twister (Zidane's)"
     },
     "e:771": {
       "phases": {
@@ -2301,6 +4813,46 @@
       },
       "from": "Drain: FFRK 15011 — water drop, own launch/shot"
     },
+    "e:772": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Waterga: FFRK 14002 — water tier 3"
+    },
+    "e:773": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50533/50533_hit.json"
+      },
+      "from": "Bubble-gun: FFRK 50533 — img_bubble_gray"
+    },
+    "e:775": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Ink: FFRK 50221 — Slime"
+    },
+    "e:776": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20507/20507_hit.json"
+      },
+      "from": "Dispelga: FFRK 20507 — glass pieces (dispel)"
+    },
+    "e:777": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20507/20507_hit.json"
+      },
+      "from": "Release Dispelga: FFRK 20507 — glass pieces (dispel)"
+    },
     "e:779": {
       "phases": {
         "hit": "ab/ability/12001/12001_hit.json",
@@ -2308,6 +4860,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzara (FFRK 12001)"
+    },
+    "e:780": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Shriek: FFRK 10095 — Intimidate (a shout)"
     },
     "e:781": {
       "phases": {
@@ -2326,6 +4886,22 @@
       },
       "from": "Water: FFRK 14000 — water tier 1"
     },
+    "e:783": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50533/50533_hit.json"
+      },
+      "from": "Bubbles: FFRK 50533 — img_bubble_gray"
+    },
+    "e:784": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30021/30021_hit.json"
+      },
+      "from": "Hatchet: FFRK 30021 — axe hit (eff_ono 斧)"
+    },
     "e:785": {
       "phases": {
         "hit": "ab/ability/20509/20509_hit.json",
@@ -2333,6 +4909,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Protect (FFRK 20509)"
+    },
+    "e:786": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50220/50220_hit.json"
+      },
+      "from": "Beak: FFRK 50220 — Bite"
     },
     "e:787": {
       "phases": {
@@ -2366,6 +4950,14 @@
       },
       "from": "Thunder: FFRK 13000 — lightning tier 1 (13001 Thundara, 13002 Thundaga)"
     },
+    "e:794": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20502/20502_hit.json"
+      },
+      "from": "Silent Kiss: FFRK 20502 — status range"
+    },
     "e:795": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -2373,6 +4965,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:796": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
     },
     "e:797": {
       "phases": {
@@ -2382,6 +4982,14 @@
       },
       "from": "Fire (FFRK 11000)"
     },
+    "e:798": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/40199/hit.json"
+      },
+      "from": "Blowup: FFRK 40199 — img_bomb"
+    },
     "e:800": {
       "phases": {
         "hit": "ab/ability/12002/12002_hit.json",
@@ -2389,6 +4997,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:801": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Ink: FFRK 50221 — Slime"
+    },
+    "e:802": {
+      "phases": {
+        "launch": "ab/ability/71485/launch.json",
+        "shot": "ab/ability/71485/shot.json",
+        "hit": "ab/ability/71485/hit.json"
+      },
+      "from": "Mighty Guard: FFRK 71485 — img_mighty_g_great_buff"
     },
     "e:804": {
       "phases": {
@@ -2398,6 +5022,30 @@
       },
       "from": "Death: FFRK 15300 — skull sprite"
     },
+    "e:805": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Zombie Powder: FFRK 50346 — Pollen"
+    },
+    "e:806": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Ultra Sound Wave: FFRK 10095 — Intimidate (a shout)"
+    },
+    "e:807": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Venom Breath: FFRK 15010 — sludge sprite"
+    },
     "e:809": {
       "phases": {
         "hit": "ab/ability/13002/13002_hit.json",
@@ -2405,6 +5053,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Thundaga (FFRK 13002)"
+    },
+    "e:810": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/15010/15010_hit.json"
+      },
+      "from": "Venom Breath: FFRK 15010 — sludge sprite"
     },
     "e:811": {
       "phases": {
@@ -2414,6 +5070,14 @@
       },
       "from": "Thundaga (FFRK 13002)"
     },
+    "e:812": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30021/30021_hit.json"
+      },
+      "from": "Axe: FFRK 30021 — axe hit (eff_ono 斧)"
+    },
     "e:813": {
       "phases": {
         "hit": "ab/ability/13001/13001_hit.json",
@@ -2421,6 +5085,30 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Thundara (FFRK 13001)"
+    },
+    "e:814": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50501/50501_shot.json",
+        "hit": "ab/ability/50501/50501_hit.json"
+      },
+      "from": "Goblin Punch: FFRK 50501 — Punch"
+    },
+    "e:815": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30021/30021_hit.json"
+      },
+      "from": "Axe: FFRK 30021 — axe hit (eff_ono 斧)"
+    },
+    "e:816": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Head Attack: FFRK 30054 — fist strike (knock)"
     },
     "e:817": {
       "phases": {
@@ -2439,6 +5127,22 @@
       },
       "from": "Haste (FFRK 61763)"
     },
+    "e:819": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/33004/shot.json",
+        "hit": "ab/ability/33004/hit.json"
+      },
+      "from": "1,000 Needles: FFRK 33004 — img_needle"
+    },
+    "e:821": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Hit: FFRK 30054 — fist strike (knock)"
+    },
     "e:822": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -2446,6 +5150,14 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:823": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Charge: FFRK 50216 — Body Slam"
     },
     "e:824": {
       "phases": {
@@ -2455,6 +5167,22 @@
       },
       "from": "Blizzara (FFRK 12001)"
     },
+    "e:833": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33052/shot.json",
+        "hit": "ab/ability/33052/hit.json"
+      },
+      "from": "Sandstorm: FFRK 33052 — earth (Quake)"
+    },
+    "e:834": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/14002/14002_hit.json"
+      },
+      "from": "Maelstrom: FFRK 14002 — water tier 3"
+    },
     "e:835": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2463,6 +5191,14 @@
       },
       "from": "Demi: FFRK 15100 — gravity-style damage"
     },
+    "e:836": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33052/shot.json",
+        "hit": "ab/ability/33052/hit.json"
+      },
+      "from": "Sandstorm: FFRK 33052 — earth (Quake)"
+    },
     "e:837": {
       "phases": {
         "hit": "ab/ability/11001/11001_hit.json",
@@ -2470,6 +5206,30 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:838": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30044/30044_hit.json"
+      },
+      "from": "Counter Horn: FFRK 30044 — spear thrust"
+    },
+    "e:839": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50221/50221_hit.json"
+      },
+      "from": "Trouble Mucus: FFRK 50221 — Slime"
+    },
+    "e:840": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/33004/shot.json",
+        "hit": "ab/ability/33004/hit.json"
+      },
+      "from": "10,000 Needles: FFRK 33004 — img_needle"
     },
     "e:841": {
       "phases": {
@@ -2486,6 +5246,22 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Berserk (FFRK 20514)"
+    },
+    "e:843": {
+      "phases": {
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50226/50226_shot.json",
+        "hit": "ab/ability/50226/50226_hit.json"
+      },
+      "from": "Matra Magic: FFRK 50226 — img_missile"
+    },
+    "e:844": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Heave: FFRK 50216 — Body Slam"
     },
     "e:845": {
       "phases": {
@@ -2512,6 +5288,30 @@
       },
       "from": "Comet: FFRK 19020 — commet hit sprite (コメット)"
     },
+    "e:855": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/10095/10095_hit.json"
+      },
+      "from": "Screech: FFRK 10095 — Intimidate (a shout)"
+    },
+    "e:857": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/50216/50216_hit.json"
+      },
+      "from": "Body Ram: FFRK 50216 — Body Slam"
+    },
+    "e:858": {
+      "phases": {
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/12002/12002_hit.json"
+      },
+      "from": "Cocytus: FFRK 12002 — Blizzaga"
+    },
     "e:860": {
       "phases": {
         "launch": "ab/ability/common/launch_black.json",
@@ -2527,6 +5327,22 @@
         "hit": "ab/ability/19050/19050_hit.json"
       },
       "from": "Meteor: FFRK 19050 — meteor sprite (メテオ)"
+    },
+    "e:863": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/50346/50346_shot.json",
+        "hit": "ab/ability/50346/50346_hit.json"
+      },
+      "from": "Virus Powder: FFRK 50346 — Pollen"
+    },
+    "e:869": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/30054/30054_hit.json"
+      },
+      "from": "Head Attack: FFRK 30054 — fist strike (knock)"
     },
     "e:870": {
       "phases": {
