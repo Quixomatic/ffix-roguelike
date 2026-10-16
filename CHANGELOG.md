@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.74] - 2026-10-16
+
+Only ever one song at a time — including through dev hot reloads.
+
+### Fixed
+- **A hot reload in development started the same song again on top of the one playing** (the reload re-ran the audio module, which made a second player while the first kept going). The player's state now lives on the page itself (`globalThis`), so a reload keeps using the same audio context and the track already playing.
+- **No overlapping tracks**: every music source still sounding is tracked; starting a track fades out and stops all the others, not just the last one.
+
 ## [0.1.73] - 2026-10-16
 
 Battles end when the last hit lands, not when the engine decides them; quieter default volumes.
