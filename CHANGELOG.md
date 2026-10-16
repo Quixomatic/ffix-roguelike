@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.39] - 2026-10-16
+
+### Changed
+- **Settings → Controller** suggests a full browser restart when no controller shows up (Chrome's controller support can get stuck in the background; ⋮ → Exit and reopen), and mentions Steam, which can hide controllers from browsers.
+
 ## [0.2.38] - 2026-10-16
 
 ### Fixed

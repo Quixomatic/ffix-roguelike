@@ -43,9 +43,15 @@ export function ControllerPanel() {
           an https address.
         </div>
       ) : !pads.length ? (
-        <div className="text-sm opacity-80">
-          No controller yet. Connect one and <span className="text-yellow-200">press any button on it</span> with this page focused — browsers only show a
-          controller to the page after that.
+        <div className="flex flex-col gap-1 text-sm opacity-80">
+          <span>
+            No controller yet. Connect one and <span className="text-yellow-200">press any button on it</span> with this page focused — browsers only show a
+            controller to the page after that.
+          </span>
+          <span className="text-xs">
+            Still nothing? <span className="text-yellow-200">Quit the browser completely and reopen it</span> (Chrome: ⋮ → Exit; it keeps running in the
+            background otherwise) — its controller support can get stuck. Steam can also hide controllers from browsers while it's running.
+          </span>
         </div>
       ) : (
         <div className="flex flex-col gap-2 text-sm">
