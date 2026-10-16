@@ -8,7 +8,9 @@
  */
 import { useEffect } from "react";
 
-import { MUSIC_TRACKS } from "./music.gen";
+import { cachedFetch, warmCache } from "@/lib/asset-cache";
+
+import { MUSIC_SLOTS, MUSIC_TRACKS } from "./music.gen";
 
 export { AREA_MUSIC, BOSS_MUSIC, MUSIC_SLOTS } from "./music.gen";
 
@@ -82,7 +84,7 @@ function load(id: string): Promise<AudioBuffer | null> {
   if (!S.buffers.has(id))
     S.buffers.set(
       id,
-      fetch(track.url)
+      cachedFetch(track.url)
         .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${r.status}`))))
         .then((b) => ac.decodeAudioData(b))
         .catch(() => null),
@@ -159,7 +161,7 @@ export function playSfx(url: string) {
   if (!S.sfxBuffers.has(url))
     S.sfxBuffers.set(
       url,
-      fetch(url)
+      cachedFetch(url)
         .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${r.status}`))))
         .then((b) => ac.decodeAudioData(b))
         .catch(() => null),
@@ -177,6 +179,11 @@ export function playSfx(url: string) {
 export function setSfxVolume(v: number) {
   S.sfxVolume = Math.max(0, Math.min(100, v)) / 100;
   if (S.sfxGain && S.ctx) S.sfxGain.gain.setTargetAtTime(S.sfxVolume, S.ctx.currentTime, 0.05);
+}
+
+/** Fetch the tracks every session uses (title, camp, battle, boss, victory, game over) into the asset cache. */
+export function preloadCoreMusic() {
+  warmCache(Object.values(MUSIC_SLOTS).map((id) => MUSIC_TRACKS[id]?.url).filter((u): u is string => !!u));
 }
 
 /** Play `id` while this component wants it (the most recent caller wins; null = silence). */

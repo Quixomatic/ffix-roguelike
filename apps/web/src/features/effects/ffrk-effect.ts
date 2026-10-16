@@ -11,6 +11,7 @@
 import Phaser from "phaser";
 
 import { playSfx } from "@/features/audio/music";
+import { cachedFetch } from "@/lib/asset-cache";
 import { evalRig, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
 
 export const EFFECT_BASE = import.meta.env.DEV ? "/ffrk-raw" : "/effects";
@@ -101,7 +102,7 @@ const getJson = <T>(path: string): Promise<T | null> => {
   if (!jsonCache.has(url))
     jsonCache.set(
       url,
-      fetch(url)
+      cachedFetch(url)
         .then((r) => (r.ok ? r.json() : null))
         .catch(() => null),
     );
@@ -166,13 +167,23 @@ async function doLoad(scene: Phaser.Scene, path: string): Promise<EffectAsset | 
     }),
   );
 
-  // Textures: atlases where frame names are used, plain images otherwise.
+  // Textures: atlases where frame names are used, plain images otherwise. Both come through the asset cache
+  // (Phaser gets a blob URL and the parsed atlas), so they survive hard reloads.
+  const toLoad = await Promise.all(
+    [...images]
+      .filter(([png]) => !scene.textures.exists(textureKey(png)))
+      .map(async ([png, atlas]) => {
+        const res = await cachedFetch(urlOf(png)).catch(() => null);
+        if (!res?.ok) return null;
+        const blobUrl = URL.createObjectURL(await res.blob());
+        return { key: textureKey(png), blobUrl, atlas: atlas ? await getJson<object>(atlas) : null };
+      }),
+  );
   let queued = 0;
-  for (const [png, atlas] of images) {
-    const k = textureKey(png);
-    if (scene.textures.exists(k)) continue;
-    if (atlas) scene.load.atlas(k, urlOf(png), urlOf(atlas));
-    else scene.load.image(k, urlOf(png));
+  for (const t of toLoad) {
+    if (!t || scene.textures.exists(t.key)) continue;
+    if (t.atlas) scene.load.atlas(t.key, t.blobUrl, t.atlas);
+    else scene.load.image(t.key, t.blobUrl);
     queued++;
   }
   if (queued) {

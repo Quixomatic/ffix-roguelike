@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-import { setMusicVolume, setSfxVolume } from "@/features/audio/music";
+import { preloadCoreMusic, setMusicVolume, setSfxVolume } from "@/features/audio/music";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
@@ -71,5 +71,7 @@ export function SettingsSync() {
   useEffect(() => {
     setSfxVolume(settings.sfxVolume);
   }, [settings.sfxVolume]);
+  // Warm the asset cache with the tracks every session plays.
+  useEffect(() => preloadCoreMusic(), []);
   return null;
 }

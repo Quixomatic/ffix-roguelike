@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.75] - 2026-10-16
+
+Music, sounds and spell effects are cached in the browser, so they load instantly after the first time — even after a hard reload.
+
+### Added
+- **Asset cache** (`lib/asset-cache.ts`, the browser's Cache Storage): music tracks, ability sounds and FFRK effect files (rigs, particle files, frame animations, effect images and their atlases) are downloaded once and then read from disk. Hard reloads skip the browser's normal HTTP cache, but not this one. The cache is versioned (`ffix-assets-v1`); old versions are cleared automatically.
+- **Core music is warmed in the background** when the app is idle — Title, Camp, Battle, Boss, Victory, Game Over — so the first battle doesn't wait for its track.
+
 ## [0.1.74] - 2026-10-16
 
 Only ever one song at a time — including through dev hot reloads.
