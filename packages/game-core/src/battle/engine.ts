@@ -773,7 +773,7 @@ export class BattleEngine {
     // Jump: Freya leaves the battlefield; Spear lands later.
     if (kind === "ability" && (action.id === 178 || action.id === 172)) {
       const inTrance = action.id === 172;
-      this.emit({ type: "actionStart", actorId: actor.id, name: "Jump", kind: "ability", targetIds: targets.map((t) => t.id) });
+      this.emit({ type: "actionStart", actorId: actor.id, name: "Jump", kind: "ability", targetIds: targets.map((t) => t.id), actionId: action.id });
       const countdown = statusInfoOf("jump")!.duration * 4 * (60 - actor.spirit);
       this.alterStatus(actor, "jump", actor);
       actor.jump = { countdown, targetIds: inTrance ? [] : targets.map((t) => t.id), trance: inTrance };
@@ -818,7 +818,7 @@ export class BattleEngine {
     } else for (const t of targets) hits.push({ target: t, reflected: 0 });
 
     const name = cmd.kind === "attack" ? (kind === "counter" ? "Counter" : "Attack") : action.name;
-    this.emit({ type: "actionStart", actorId: actor.id, name, kind: cmd.kind, targetIds: hits.map((h) => h.target.id) });
+    this.emit({ type: "actionStart", actorId: actor.id, name, kind: cmd.kind, targetIds: hits.map((h) => h.target.id), actionId: action.id, itemId: cmd.itemId });
     const ai = this.ai;
     if (ai) {
       const [cmdNo, sub] = this.ff9CommandIds(actor, cmd, source);

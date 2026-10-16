@@ -30,6 +30,7 @@ export function BattleView({ initial, theme, onEnd }: Props) {
     bridgeRef.current = {
       getState: () => engine.state,
       theme,
+      speed: battle.speed,
       highlighted: new Set(),
       activeId: null,
       onUnitClick: (id) => pickRef.current?.(id),
@@ -47,6 +48,7 @@ export function BattleView({ initial, theme, onEnd }: Props) {
   const activeId = selectedId && ready.includes(selectedId) ? selectedId : (ready[0] ?? null);
   const actor = activeId ? engine.unit(activeId) : null;
   bridgeRef.current.activeId = activeId;
+  bridgeRef.current.speed = battle.speed;
 
   const party = state.units.filter((u) => u.side === "party");
   const enemies = state.units.filter((u) => u.side === "enemy");

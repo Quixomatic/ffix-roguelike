@@ -186,7 +186,9 @@ export interface InputRecord {
 
 export type BattleEvent =
   | { type: "turnReady"; unitId: string }
-  | { type: "actionStart"; actorId: string; name: string; kind: CommandKind; targetIds: string[] }
+  /** `actionId` (the battle action: FF9 action id, or FF9_ACTION_BASE + bestiary index for monster attacks) and
+   * `itemId` are for presentation (effects); nothing in the rules reads them. */
+  | { type: "actionStart"; actorId: string; name: string; kind: CommandKind; targetIds: string[]; actionId?: number; itemId?: number }
   | { type: "damage"; targetId: string; amount: number; crit?: boolean; mp?: boolean }
   | { type: "heal"; targetId: string; amount: number; mp?: boolean }
   | { type: "miss"; targetId: string }

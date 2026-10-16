@@ -1,3 +1,1332 @@
 {
-  "abilities": {}
+  "abilities": {
+    "a:3": {
+      "phases": {
+        "hit": "ab/ability/20007/20007_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Curaga (FFRK 20007)"
+    },
+    "a:11": {
+      "phases": {
+        "hit": "ab/ability/20517/20517_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Shell (FFRK 20517)"
+    },
+    "a:12": {
+      "phases": {
+        "hit": "ab/ability/20509/20509_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Protect (FFRK 20509)"
+    },
+    "a:13": {
+      "phases": {
+        "hit": "ab/ability/33013/hit.json",
+        "launch": "ab/ability/61760/skill_3_launch.json",
+        "miss_hit": "ab/ability/33013/hit.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Haste (FFRK 61763)"
+    },
+    "a:18": {
+      "phases": {
+        "hit": "ab/ability/20514/20514_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Berserk (FFRK 20514)"
+    },
+    "a:24": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "a:25": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "a:26": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "a:27": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "a:30": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "a:31": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "a:34": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "a:35": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "a:72": {
+      "phases": {
+        "hit": "ab/ability/common/hit_empty.json",
+        "launch": "ab/ability/common/launch_summon.json",
+        "miss_hit": "ab/ability/60015/hit_miss.json",
+        "return_hit": "ab/ability/20200/20200_hit.json",
+        "return_shot": "ab/ability/common/shot_empty.json",
+        "shot": "ab/ability/60015/60015_shot.json"
+      },
+      "from": "Phoenix (FFRK 60015)"
+    },
+    "a:92": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "a:130": {
+      "phases": {
+        "hit": "ab/ability/50599/50599_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Revive (FFRK 50599)"
+    },
+    "a:138": {
+      "phases": {
+        "hit": "ab/ability/50599/50599_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Revive (FFRK 50599)"
+    },
+    "a:144": {
+      "phases": {
+        "hit": "ab/ability/10091/10091_hit.json",
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Power Break (FFRK 10091)"
+    },
+    "a:147": {
+      "phases": {
+        "hit": "ab/ability/10093/10093_hit.json",
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Magic Break (FFRK 10093)"
+    },
+    "a:172": {
+      "phases": {
+        "hit": "ab/ability/10003/10003_hit.json",
+        "launch": "ab/ability/common/launch_empty.json",
+        "miss_hit": "ab/ability/10003/hit_miss.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Jump (FFRK 10003)"
+    },
+    "a:178": {
+      "phases": {
+        "hit": "ab/ability/10003/10003_hit.json",
+        "launch": "ab/ability/common/launch_empty.json",
+        "miss_hit": "ab/ability/10003/hit_miss.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Jump (FFRK 10003)"
+    },
+    "e:1": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:2": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:3": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:4": {
+      "phases": {
+        "hit": "ab/ability/50216/50216_hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/50216/50216_hit.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Rush (FFRK 61272)"
+    },
+    "e:5": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:7": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:19": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:21": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:24": {
+      "phases": {
+        "hit": "ab/ability/10092/10092_hit.json",
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Armor Break (FFRK 10092)"
+    },
+    "e:25": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:26": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:38": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:42": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:57": {
+      "phases": {
+        "hit": "ab/ability/50005/50005_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Electrocute / Megavolt (FFRK 50005)"
+    },
+    "e:59": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:61": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:63": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:68": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:72": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:73": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:74": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:78": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:81": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:106": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:123": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:129": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:136": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:138": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:140": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:149": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "e:160": {
+      "phases": {
+        "hit": "ab/ability/20514/20514_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Berserk (FFRK 20514)"
+    },
+    "e:162": {
+      "phases": {
+        "hit": "ab/ability/20514/20514_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Berserk (FFRK 20514)"
+    },
+    "e:164": {
+      "phases": {
+        "hit": "ab/ability/20007/20007_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Curaga (FFRK 20007)"
+    },
+    "e:171": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:193": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:199": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:224": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "e:225": {
+      "phases": {
+        "hit": "ab/ability/20007/20007_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Curaga (FFRK 20007)"
+    },
+    "e:247": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "e:249": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:250": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:251": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:252": {
+      "phases": {
+        "hit": "ab/ability/20007/20007_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Curaga (FFRK 20007)"
+    },
+    "e:268": {
+      "phases": {
+        "hit": "ab/ability/20509/20509_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Protect (FFRK 20509)"
+    },
+    "e:272": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:281": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:287": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:304": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:309": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:313": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:314": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:319": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "e:329": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:332": {
+      "phases": {
+        "hit": "ab/ability/50346/50346_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50346/50346_shot.json"
+      },
+      "from": "Pollen (FFRK 50346)"
+    },
+    "e:338": {
+      "phases": {
+        "hit": "ab/ability/50346/50346_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50346/50346_shot.json"
+      },
+      "from": "Pollen (FFRK 50346)"
+    },
+    "e:339": {
+      "phases": {
+        "hit": "ab/ability/50346/50346_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/50346/50346_shot.json"
+      },
+      "from": "Pollen (FFRK 50346)"
+    },
+    "e:343": {
+      "phases": {
+        "hit": "ab/ability/50216/50216_hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/50216/50216_hit.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Rush (FFRK 61272)"
+    },
+    "e:345": {
+      "phases": {
+        "hit": "ab/ability/33039/hit.json",
+        "hit_1": "ab/ability/33039/hit_1.json",
+        "hit_2": "ab/ability/33039/hit_2.json",
+        "launch": "ab/ability/61660/launch.json",
+        "miss_hit": "ab/ability/33039/hit.json",
+        "miss_hit_1": "ab/ability/33039/hit_1.json",
+        "miss_hit_2": "ab/ability/33039/hit_2.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Double Slash (FFRK 61661)"
+    },
+    "e:347": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:349": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:354": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:355": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:356": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:371": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:379": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:383": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:392": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:395": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:398": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:403": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:408": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:440": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:442": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:448": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:463": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:465": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:482": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:484": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:488": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:500": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:521": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:522": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:524": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:526": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:528": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:554": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:557": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:560": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:563": {
+      "phases": {
+        "hit": "ab/ability/50005/50005_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Electrocute / Megavolt (FFRK 50005)"
+    },
+    "e:570": {
+      "phases": {
+        "hit": "ab/ability/50216/50216_hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/50216/50216_hit.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Rush (FFRK 61272)"
+    },
+    "e:593": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:595": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:599": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:616": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:620": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:625": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:628": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:632": {
+      "phases": {
+        "hit": "ab/ability/50005/50005_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Electrocute / Megavolt (FFRK 50005)"
+    },
+    "e:633": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:634": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:641": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:642": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:643": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:646": {
+      "phases": {
+        "hit": "ab/ability/33077/hit.json",
+        "hit_1": "ab/ability/33077/hit_1.json",
+        "hit_2": "ab/ability/33077/hit_2.json",
+        "hit_3": "ab/ability/33077/hit_3.json",
+        "launch": "ab/ability/61760/launch.json",
+        "miss_hit": "ab/ability/33077/hit.json",
+        "miss_hit_1": "ab/ability/33077/hit_1.json",
+        "miss_hit_2": "ab/ability/33077/hit_2.json",
+        "miss_hit_3": "ab/ability/33077/hit_3.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Holy (FFRK 61762)"
+    },
+    "e:699": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:707": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:710": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:713": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:738": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:745": {
+      "phases": {
+        "hit": "ab/ability/20517/20517_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Shell (FFRK 20517)"
+    },
+    "e:752": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:755": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:758": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:759": {
+      "phases": {
+        "hit": "ab/ability/20517/20517_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Shell (FFRK 20517)"
+    },
+    "e:763": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:766": {
+      "phases": {
+        "hit": "ab/ability/11002/11002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Firaga (FFRK 11002)"
+    },
+    "e:779": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:781": {
+      "phases": {
+        "hit": "ab/ability/50775/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/50775/hit.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Crush (FFRK 61273)"
+    },
+    "e:785": {
+      "phases": {
+        "hit": "ab/ability/20509/20509_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Protect (FFRK 20509)"
+    },
+    "e:787": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:789": {
+      "phases": {
+        "hit": "ab/ability/50220/50220_hit.json",
+        "launch": "ab/ability/common/launch_blue.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Bite / Chomp (FFRK 50220)"
+    },
+    "e:790": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:795": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:797": {
+      "phases": {
+        "hit": "ab/ability/11000/11000_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fire (FFRK 11000)"
+    },
+    "e:800": {
+      "phases": {
+        "hit": "ab/ability/12002/12002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzaga (FFRK 12002)"
+    },
+    "e:809": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:811": {
+      "phases": {
+        "hit": "ab/ability/13002/13002_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundaga (FFRK 13002)"
+    },
+    "e:813": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:818": {
+      "phases": {
+        "hit": "ab/ability/33013/hit.json",
+        "launch": "ab/ability/61760/skill_3_launch.json",
+        "miss_hit": "ab/ability/33013/hit.json",
+        "shot": "ab/ability/common/shot_empty_fast.json"
+      },
+      "from": "Haste (FFRK 61763)"
+    },
+    "e:822": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:824": {
+      "phases": {
+        "hit": "ab/ability/12001/12001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Blizzara (FFRK 12001)"
+    },
+    "e:837": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "e:841": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:842": {
+      "phases": {
+        "hit": "ab/ability/20514/20514_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Berserk (FFRK 20514)"
+    },
+    "e:845": {
+      "phases": {
+        "hit": "ab/ability/13001/13001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Thundara (FFRK 13001)"
+    },
+    "e:846": {
+      "phases": {
+        "hit": "ab/ability/33011/hit.json",
+        "launch": "ab/ability/61270/launch.json",
+        "miss_hit": "ab/ability/33011/hit.json",
+        "shot": "ab/ability/33011/shot.json"
+      },
+      "from": "Earth Shake (FFRK 61271)"
+    },
+    "e:870": {
+      "phases": {
+        "hit": "ab/ability/11001/11001_hit.json",
+        "launch": "ab/ability/common/launch_black.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Fira / Hellfire (FFRK 11001)"
+    }
+  }
 }

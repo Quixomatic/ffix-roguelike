@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.68] - 2026-10-16
+
+Spells and abilities play FFRK's effects in battle: Vivi's Fire bursts on the target, Curaga sparkles, and the damage numbers wait for the hit.
+
+### Added
+- **Effects in battle.** When a move has an FFRK effect, it plays the way FFRK's client chains them: the **launch** on the caster (e.g. the black-magic circle), then the **shot** flying from caster to target (when there is one), then the **hit** on every target — each phase starting at the previous one's hand-off frame. **Damage/heal numbers, Miss/Guard, status pops, KOs and the hurt pose wait for the impact** instead of appearing as the move starts. Effects play faster at ×2/×4 and are drawn at the heroes' pixel scale (FFRK's own size ratio). Every effect a fight can use (party commands, monster AI moves, the FF9 scene's attack table) is preloaded when the battle opens; a move whose effect isn't loaded yet just shows its result as before.
+- **First pass of assignments** (`pnpm -F web effects:seed`, `scripts/seed-ability-effects.ts`): **158 FF9 moves** — party abilities and monster attacks — whose names are FFRK ability names get that ability's recipe: Fire/Fira/Firaga, Blizzara/Blizzaga, Thundara/Thundaga, Curaga, Protect, Shell, Haste, Berserk, Holy, Phoenix, Jump, Power/Magic Break, Earth Shake, and monster moves like Pollen, Megavolt/Electrocute, Armor Break, Rush. It never overwrites an assignment made in the effects gallery. Plain "Attack" is left for the weapon-hit effects.
+
+### Changed
+- game-core `actionStart` events carry the `actionId`/`itemId` (presentation only; replays and rules are unchanged).
+
 ## [0.1.67] - 2026-10-16
 
 The effects gallery plays FFRK's named abilities with the exact files the game used — and Fire actually shows.

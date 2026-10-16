@@ -3,8 +3,10 @@
  * this scene only reads state and plays effects; clicks on units are reported back for targeting.
  */
 import { isShownUnit, type BattleEvent, type BattleState, type BattleUnit } from "@ffix-roguelike/game-core";
+import { bestiary } from "@ffix-roguelike/game-data";
 import Phaser from "phaser";
 
+import { playActionEffect, preloadEffects } from "@/features/effects/battle-effects";
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
@@ -22,6 +24,8 @@ export interface BattleBridge {
   /** Units currently highlighted as possible targets. */
   highlighted: Set<string>;
   activeId: string | null;
+  /** Battle speed (×1/×2/×4): effects play this much faster. */
+  speed: number;
 }
 
 interface UnitView {
@@ -117,6 +121,7 @@ export class BattleScene extends Phaser.Scene {
       v.backRow = u.backRow;
     });
 
+    this.preloadActionEffects(state);
     this.bridge.play = (events) => this.playEvents(events);
     // Fill the space we're given: lay out for the current size, and again whenever it changes.
     this.layout(this.scale.width, this.scale.height);
@@ -356,56 +361,95 @@ export class BattleScene extends Phaser.Scene {
     v.holdUntil = this.time.now + p.ms;
   }
 
+  /** Load the FFRK effects of every move this fight can see: party commands, monster AI rules, the FF9 scene's attacks. */
+  private preloadActionEffects(state: BattleState) {
+    const ids = new Set<number>([176, 1000]);
+    for (const u of state.units) {
+      for (const c of u.commands ?? []) c.actionIds.forEach((id) => ids.add(id));
+      for (const r of u.ai ?? []) ids.add(r.actionId);
+    }
+    const scene = state.scene ? bestiary.scenes.find((s) => s.id === state.scene) : undefined;
+    for (const uid of scene?.attacks ?? []) if (uid >= 0) ids.add(2000 + uid);
+    preloadEffects(this, ids);
+  }
+
+  /** Engine results that belong to an action's impact (shown when its effect's hit lands). */
+  private static readonly IMPACT = new Set<BattleEvent["type"]>(["damage", "heal", "miss", "guard", "statusOn", "revive", "steal", "ko"]);
+
   private playEvents(events: BattleEvent[]) {
     let popupIndex = 0;
+    /** ms until the current action's effect hits (0 = no effect: show results at once). */
+    let impact = 0;
     for (const ev of events) {
-      switch (ev.type) {
-        case "actionStart": {
-          const v = this.views.get(ev.actorId);
-          if (!v) break;
-          const dir = this.bridge.getState().units.find((u) => u.id === ev.actorId)?.side === "party" ? -1 : 1;
-          this.act(ev.actorId, ev.kind);
-          this.tweens.add({ targets: v.sprite, x: v.home.x + dir * 40 * this.k, duration: 140, yoyo: true, ease: "Quad.easeOut" });
-          break;
+      if (ev.type === "actionStart") impact = this.startEffect(ev);
+      const index = popupIndex++;
+      if (impact > 0 && BattleScene.IMPACT.has(ev.type)) this.time.delayedCall(impact, () => this.playEvent(ev, index));
+      else this.playEvent(ev, index);
+    }
+  }
+
+  /** Play the FFRK effect for an action; returns the ms until its hit lands (0 when there's none). */
+  private startEffect(ev: Extract<BattleEvent, { type: "actionStart" }>): number {
+    const from = this.views.get(ev.actorId);
+    if (!from) return 0;
+    const to = ev.targetIds.map((id) => this.views.get(id)).filter((v): v is UnitView => !!v);
+    return (
+      playActionEffect(this, ev.actionId, {
+        from: { x: from.home.x, y: from.home.y },
+        to: to.map((v) => ({ x: v.home.x, y: v.home.y })),
+        scale: this.heroScale,
+        speed: this.bridge.speed,
+      }) ?? 0
+    );
+  }
+
+  private playEvent(ev: BattleEvent, popupIndex: number) {
+    switch (ev.type) {
+      case "actionStart": {
+        const v = this.views.get(ev.actorId);
+        if (!v) break;
+        const dir = this.bridge.getState().units.find((u) => u.id === ev.actorId)?.side === "party" ? -1 : 1;
+        this.act(ev.actorId, ev.kind);
+        this.tweens.add({ targets: v.sprite, x: v.home.x + dir * 40 * this.k, duration: 140, yoyo: true, ease: "Quad.easeOut" });
+        break;
+      }
+      case "damage":
+        this.popup(ev.targetId, ev.amount === 0 ? "0" : String(ev.amount), ev.mp ? "#c58cff" : ev.crit ? "#ffd84a" : "#ffffff", popupIndex, ev.crit);
+        if (!ev.mp && ev.amount > 0) {
+          this.shake(ev.targetId);
+          this.act(ev.targetId, "damage");
         }
-        case "damage":
-          this.popup(ev.targetId, ev.amount === 0 ? "0" : String(ev.amount), ev.mp ? "#c58cff" : ev.crit ? "#ffd84a" : "#ffffff", popupIndex++, ev.crit);
-          if (!ev.mp && ev.amount > 0) {
-            this.shake(ev.targetId);
-            this.act(ev.targetId, "damage");
-          }
-          break;
-        case "heal":
-          this.popup(ev.targetId, String(ev.amount), ev.mp ? "#9ad0ff" : "#7dff8a", popupIndex++);
-          break;
-        case "miss":
-          this.popup(ev.targetId, "Miss", "#dddddd", popupIndex++);
-          this.act(ev.targetId, "miss");
-          break;
-        case "guard":
-          this.popup(ev.targetId, "Guard", "#bbbbff", popupIndex++);
-          break;
-        case "statusOn":
-          if (ev.status !== "defend" && ev.status !== "trance" && ev.status !== "lowHp" && ev.status !== "jump") this.popup(ev.targetId, ev.status.toUpperCase(), "#ffb3e6", popupIndex++, false, 14);
-          break;
-        case "revive": {
-          this.popup(ev.targetId, "Revived", "#7dff8a", popupIndex++);
-          const v = this.views.get(ev.targetId);
-          if (v) v.holdUntil = 0;
-          break;
-        }
-        case "tranceStart":
-          this.popup(ev.unitId, "TRANCE!", "#ff66cc", popupIndex++, true);
-          this.cameras.main.flash(250, 255, 120, 200);
-          break;
-        case "steal":
-          if (ev.itemId != null) this.popup(ev.actorId, "Stole!", "#ffe066", popupIndex++);
-          break;
-        case "ko": {
-          const v = this.views.get(ev.targetId);
-          if (v) this.tweens.add({ targets: v.sprite, tint: 0xff0000, duration: 80, yoyo: true });
-          break;
-        }
+        break;
+      case "heal":
+        this.popup(ev.targetId, String(ev.amount), ev.mp ? "#9ad0ff" : "#7dff8a", popupIndex);
+        break;
+      case "miss":
+        this.popup(ev.targetId, "Miss", "#dddddd", popupIndex);
+        this.act(ev.targetId, "miss");
+        break;
+      case "guard":
+        this.popup(ev.targetId, "Guard", "#bbbbff", popupIndex);
+        break;
+      case "statusOn":
+        if (ev.status !== "defend" && ev.status !== "trance" && ev.status !== "lowHp" && ev.status !== "jump") this.popup(ev.targetId, ev.status.toUpperCase(), "#ffb3e6", popupIndex, false, 14);
+        break;
+      case "revive": {
+        this.popup(ev.targetId, "Revived", "#7dff8a", popupIndex);
+        const v = this.views.get(ev.targetId);
+        if (v) v.holdUntil = 0;
+        break;
+      }
+      case "tranceStart":
+        this.popup(ev.unitId, "TRANCE!", "#ff66cc", popupIndex, true);
+        this.cameras.main.flash(250, 255, 120, 200);
+        break;
+      case "steal":
+        if (ev.itemId != null) this.popup(ev.actorId, "Stole!", "#ffe066", popupIndex);
+        break;
+      case "ko": {
+        const v = this.views.get(ev.targetId);
+        if (v) this.tweens.add({ targets: v.sprite, tint: 0xff0000, duration: 80, yoyo: true });
+        break;
       }
     }
   }
