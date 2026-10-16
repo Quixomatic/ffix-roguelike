@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.1.65",
+  "version": "0.1.66",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,6 +16,7 @@
     "ffrk:organize": "bun scripts/organize-ffrk-atlases.ts",
     "ffrk:names": "bun scripts/name-ffrk-enemies.ts",
     "ffrk:effects": "bun scripts/fetch-ffrk-effects.ts",
+    "ffrk:effect-names": "bun scripts/name-ffrk-effects.ts",
     "sprites:enemies": "bun scripts/build-enemy-sprites.ts"
   },
   "dependencies": {

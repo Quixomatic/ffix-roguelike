@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.1.66] - 2026-10-16
+
+FFRK's own names for its effects, from captured game data, shown in the effects gallery.
+
+### Added
+- `pnpm -F web ffrk:effect-names` (`scripts/name-ffrk-effects.ts`): FFRK links an ability to its effect only in live battle data (`ability_animation_id`), and no public table exists. This collects every name → effect pair from the captured game payloads in RK² (rk-squared) test data, markcerqueira/ff-record-keeper and ffrk-proxy (cloned into `.refs/`): **327 effects named** — e.g. Fire 11000 / Fira 11001 / Firaga 11002, Blizzara 12001, Thundara 13001, Curaga 20007, Protect 20509, Shell 20517, Berserk 20514, Jump 10003, Power/Magic Break, Pollen 50346, Bite 50220, Phoenix 60015, and ~250 soul breaks.
+- The effects gallery shows those names in the list and the preview title, searches by them, and can list only named effects.
+
+### Changed
+- `ffrk:effects` writes its index as it goes (every 5,000 ids), so the gallery can browse a download in progress.
+
+### Notes
+- The effect ids are grouped by family (10xxx physical/support skills, 11–13xxx fire/ice/lightning magic, 20xxx white magic and items, 30–31xxx weapon hits and spellblades, 50xxx enemy attacks, 60–61xxx summons/magicite, 70xxx+ soul breaks), so unnamed neighbours (e.g. Blizzard ≈ 12000, Thunder ≈ 13000) can be confirmed by eye in the gallery.
+
 ## [0.1.65] - 2026-10-15
 
 FFRK's spell and ability effects: downloaded, playable, and browsable in a new effects gallery.

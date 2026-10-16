@@ -69,11 +69,24 @@ async function pool<T>(items: T[], fn: (item: T) => Promise<void>) {
 
 // 1. Which ids have effects.
 const found = new Map<number, { phases: string[]; images: Set<string>; sounds: Set<string> }>();
+
+/** Write `index.json`, merged with earlier runs over other id ranges. Called as the run goes, so the effects gallery
+ * can browse what's downloaded so far. */
+function writeIndex() {
+  const file = join(OUT, "index.json");
+  const previous = existsSync(file) ? (JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>) : {};
+  const merged = { ...previous, ...Object.fromEntries([...found.entries()].map(([id, f]) => [id, { phases: f.phases, images: [...f.images].sort(), sounds: [...f.sounds].sort() }])) };
+  mkdirSync(OUT, { recursive: true });
+  writeFileSync(file, `${JSON.stringify(Object.fromEntries(Object.entries(merged).sort((a, b) => Number(a[0]) - Number(b[0]))), null, 1)}\n`);
+}
 const ids = Array.from({ length: TO - FROM }, (_, k) => FROM + k);
 let probed = 0;
 await pool(ids, async (id) => {
   if (await fetchPath(`ab/ability/${id}/${id}_hit.json`)) found.set(id, { phases: ["hit"], images: new Set(), sounds: new Set() });
-  if (++probed % 5000 === 0) console.log(`probed ${probed}/${ids.length}, ${found.size} effects`);
+  if (++probed % 5000 === 0) {
+    console.log(`probed ${probed}/${ids.length}, ${found.size} effects`);
+    writeIndex();
+  }
 });
 await pool([...found.keys()], async (id) => {
   for (const ph of PHASES.slice(1)) if (await fetchPath(`ab/ability/${id}/${id}_${ph}.json`)) found.get(id)!.phases.push(ph);
@@ -139,11 +152,5 @@ await pool([...sounds], async (s) => {
   if (await fetchPath(`se/se_ogg/${s}.ogg`)) gotSounds++;
 });
 
-// Merge with earlier runs (other id ranges).
-const indexFile = join(OUT, "index.json");
-const previous = existsSync(indexFile) ? (JSON.parse(readFileSync(indexFile, "utf8")) as Record<string, unknown>) : {};
-const merged = { ...previous, ...Object.fromEntries([...found.entries()].map(([id, f]) => [id, { phases: f.phases, images: [...f.images].sort(), sounds: [...f.sounds].sort() }])) };
-const index = Object.fromEntries(Object.entries(merged).sort((a, b) => Number(a[0]) - Number(b[0])));
-mkdirSync(OUT, { recursive: true });
-writeFileSync(join(OUT, "index.json"), `${JSON.stringify(index, null, 1)}\n`);
+writeIndex();
 console.log(`✓ ${found.size} effects, ${seen.size} dependency files, ${gotSounds}/${sounds.size} sounds → ${OUT}`);

@@ -42,6 +42,18 @@ export function EffectsGallery() {
     enabled: import.meta.env.DEV,
     staleTime: Infinity,
   });
+  // FFRK's own names for effects, from captured game data (`pnpm -F web ffrk:effect-names`).
+  const names = useQuery({
+    queryKey: ["ffrk-effects-names"],
+    queryFn: async () => {
+      const r = await fetch(`${EFFECT_BASE}/names.json`);
+      return r.ok ? ((await r.json()) as Record<string, string[]>) : {};
+    },
+    enabled: import.meta.env.DEV,
+    staleTime: Infinity,
+  });
+  const ffrkName = (id: number) => names.data?.[id]?.join(" / ") ?? "";
+  const [namedOnly, setNamedOnly] = useState(false);
   const moves = useMoves();
   const [map, setMap] = useState<EffectMap>(initialMap as EffectMap);
   const [filter, setFilter] = useState("");
@@ -62,10 +74,18 @@ export function EffectsGallery() {
     const all = Object.entries(index.data ?? {});
     const q = filter.trim().toLowerCase();
     return all
-      .filter(([id, e]) => !q || id.startsWith(q) || e.images.some((i) => i.toLowerCase().includes(q)) || (used.get(Number(id)) ?? []).some((k) => moveName(k).toLowerCase().includes(q)))
+      .filter(([id]) => !namedOnly || names.data?.[id])
+      .filter(
+        ([id, e]) =>
+          !q ||
+          id.startsWith(q) ||
+          ffrkName(Number(id)).toLowerCase().includes(q) ||
+          e.images.some((i) => i.toLowerCase().includes(q)) ||
+          (used.get(Number(id)) ?? []).some((k) => moveName(k).toLowerCase().includes(q)),
+      )
       .map(([id, e]) => ({ id: Number(id), ...e }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index.data, filter, used]);
+  }, [index.data, names.data, filter, used, namedOnly]);
 
   const entry = selected != null ? index.data?.[selected] : undefined;
   const matchingMoves = moveFilter.trim() ? moves.filter((m) => m.name.toLowerCase().includes(moveFilter.trim().toLowerCase())).slice(0, 30) : [];
@@ -95,7 +115,10 @@ export function EffectsGallery() {
   return (
     <div className="grid h-[calc(100vh-4rem)] grid-cols-[16rem_1fr_20rem] gap-3 p-3">
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
-        <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder="id, art (fire, cure…), or move" value={filter} onChange={(e) => setFilter(e.target.value)} />
+        <input className="rounded bg-black/40 px-2 py-1 text-sm" placeholder="id, FFRK name, art (fire…), or move" value={filter} onChange={(e) => setFilter(e.target.value)} />
+        <label className="flex items-center gap-1.5 text-xs">
+          <input type="checkbox" checked={namedOnly} onChange={(e) => setNamedOnly(e.target.checked)} /> Only effects with an FFRK name
+        </label>
         <div className="text-xs opacity-70">{index.isLoading ? "Loading index…" : `${ids.length} effects`}</div>
         <div className="min-h-0 flex-1 overflow-y-auto">
           {ids.map((e) => (
@@ -109,7 +132,10 @@ export function EffectsGallery() {
               }}
             >
               <span className="tabular-nums">{e.id}</span>
-              <span className="truncate text-xs opacity-60">{(used.get(e.id) ?? []).map(moveName).join(", ") || e.images.map((i) => i.replace(/^img_(eff_)?/, "")).join(" ")}</span>
+              <span className="truncate text-xs">
+                {(used.get(e.id) ?? []).length ? <span className="text-yellow-200">{(used.get(e.id) ?? []).map(moveName).join(", ")} </span> : null}
+                {ffrkName(e.id) ? <span>{ffrkName(e.id)}</span> : <span className="opacity-50">{e.images.map((i) => i.replace(/^img_(eff_)?/, "")).join(" ")}</span>}
+              </span>
             </button>
           ))}
         </div>
@@ -118,6 +144,7 @@ export function EffectsGallery() {
       <div className="ff-window flex min-h-0 flex-col gap-2 p-2">
         <div className="flex items-center gap-2 text-sm">
           <span className="ff-display text-lg">{selected ?? "Pick an effect"}</span>
+          {selected != null && ffrkName(selected) && <span className="text-yellow-200">{ffrkName(selected)}</span>}
           {entry?.phases.map((p) => (
             <button key={p} className="ff-option px-2 data-[on=true]:text-yellow-200" data-on={phase === p} onClick={() => setPhase(p)}>
               {p}
