@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.31] - 2026-10-16
+
+### Changed
+- **Journey cards are clickable as a whole**, like the Party and Play hub cards, with the same lift on hover and the keyboard / controller cursor. The card is the link to its embark page; "Choose" is now a label on it. Locked journeys stay plain cards.
+
 ## [0.2.30] - 2026-10-16
 
 ### Fixed

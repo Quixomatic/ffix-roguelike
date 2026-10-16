@@ -52,12 +52,12 @@ export function StoryPage() {
   );
 }
 
+/** A journey as a card: the whole card opens the embark page (with the cards' lift); locked ones are plain. */
 function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlocked: boolean; best: number | null }) {
-  const navigate = useNavigate();
   const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
   const cleared = best != null;
-  return (
-    <div className={`ff-panel flex flex-col gap-3 p-4 ${unlocked ? "" : "opacity-75"}`}>
+  const body = (
+    <>
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
@@ -93,17 +93,21 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
             <span className="opacity-60">{unlocked ? "Not cleared yet" : ""}</span>
           )}
         </span>
-        <FocusItem>
-          <button
-            disabled={!unlocked}
-            onClick={() => navigate({ to: "/story/$journey", params: { journey: j.id }, search: { tier: 0 } })}
-            className="ff-panel ff-lift inline-flex items-center gap-1.5 px-4 py-1.5 text-lg disabled:pointer-events-none disabled:opacity-50"
-          >
+        {unlocked && (
+          <span className="inline-flex items-center gap-1.5 text-lg text-yellow-200">
             Choose <PixelIcon name="arrow-right" />
-          </button>
-        </FocusItem>
+          </span>
+        )}
       </div>
-    </div>
+    </>
+  );
+  if (!unlocked) return <div className="ff-panel flex flex-col gap-3 p-4 opacity-75">{body}</div>;
+  return (
+    <FocusItem>
+      <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className="ff-panel ff-lift flex flex-col gap-3 p-4">
+        {body}
+      </Link>
+    </FocusItem>
   );
 }
 
