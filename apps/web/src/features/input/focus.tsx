@@ -98,6 +98,9 @@ export function FocusSection({
 }) {
   const { ref, focusKey: key, focusSelf } = useFocusable<object, HTMLElement>({
     focusKey,
+    // A disabled section (e.g. the slid-away sidebar) is off the map itself too, not just its items — else the cursor
+    // could land on the empty section.
+    focusable: !disabled,
     trackChildren: true,
     saveLastFocusedChild: true,
     isFocusBoundary: boundary,

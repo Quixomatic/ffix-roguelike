@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.37] - 2026-10-16
+
+### Fixed
+- **WASD could land on the edge of the slid-away sidebar**: its links were off the cursor's map, but the sidebar section itself wasn't, so the cursor could land on the empty section. A disabled section is now off the map entirely.
+
 ## [0.2.36] - 2026-10-16
 
 ### Changed
