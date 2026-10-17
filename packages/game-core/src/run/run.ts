@@ -6,7 +6,7 @@
  * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
  * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
-import { findItem, getCharacter, getItem, itemByName, parseAbilityRef, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
+import { findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
 import type { BattleState, BattleUnit, InputRecord } from "../battle/types";
@@ -29,8 +29,9 @@ import {
   type CharacterBuild,
 } from "../stats";
 import { EVENTS, eventById, type EventOutcome } from "./events";
-import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, rollGear, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
+import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
+import { rollOffer, type RewardCard, type RewardOffer } from "../rewards/cards";
 import { CHOCOBO_DIGS, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
 export class RunError extends Error {}
@@ -77,8 +78,9 @@ export interface MemberProgress {
 export type RunPhase =
   | { kind: "map" }
   | { kind: "battle"; nodeId: string; nodeKind: BattleNodeKind; enemies: string[]; battle: BattleState }
-  | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean }
-  | { kind: "treasure"; gearChoices: number[]; gil: number }
+  /** `offer`: the reward cards (pick one). `gearChoices`: the old pick-a-gear rewards (saved runs from before cards). */
+  | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean; offer?: RewardOffer }
+  | { kind: "treasure"; gearChoices: number[]; gil: number; offer?: RewardOffer }
   | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
   | { kind: "synth"; name: string; recipes: number[] }
   | { kind: "stiltzkin"; offers: StiltzkinOffer[]; bought: number[] }
@@ -123,6 +125,10 @@ export interface RunState {
   unlockedGear: number[];
   /** Gear synthesized this run (item ids): unlocked when the run ends, won or lost. */
   synthesized?: number[];
+  /** Reward rerolls left this run (not used yet — .plans/rewards.md §3.9). */
+  rewardRerollsLeft?: number;
+  /** Boon / item ids banned from reward offers this run (not used yet). */
+  rewardBans?: string[];
   /** Wait (time stops while choosing) or Active battles — the player's setting; missing = wait. */
   battleMode?: "wait" | "active";
 }
@@ -286,7 +292,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "boss":
       return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
     case "treasure":
-      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 10, run.unlockedGear), gil: rng.int(80, 160) * (tierOf(run) + 1) };
+      run.phase = { kind: "treasure", gearChoices: [], gil: rng.int(80, 160) * (tierOf(run) + 1), offer: rollOffer(run, "treasure", rng) };
       return;
     case "shop": {
       const visit = shopStock(rng, run.world, partyKeys(run));
@@ -417,8 +423,10 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   const summary = applyRewards(next, rewards, final);
   const boss = phase.nodeKind === "boss";
   if (boss) next.stats.bossKills.push(...encounterEnemies(phase.enemies).map(killKey));
-  const gearChoices = phase.nodeKind === "battle" ? [] : rollGear(rng, next.world, partyKeys(next), 3, boss ? 60 : phase.nodeKind === "semiboss" ? 40 : 20, next.unlockedGear);
-  next.phase = { kind: "rewards", summary, gearChoices, boss };
+  // Reward cards: elites, the semi-boss and bosses always; a plain battle now and then (a surprise).
+  const source = phase.nodeKind === "battle" ? (rng.chance(sourceOf("surprise").chance ?? 0) ? "surprise" : null) : phase.nodeKind;
+  const offer = source ? rollOffer(next, source, rng) : undefined;
+  next.phase = { kind: "rewards", summary, gearChoices: [], boss, offer };
   next.rng = rng.state;
   return next;
 }
@@ -493,8 +501,16 @@ function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; 
 export function claimReward(run: RunState, choice: number | null): RunState {
   const p = run.phase;
   if (p.kind !== "rewards" && p.kind !== "treasure") throw new RunError("No reward to claim");
-  const next = structuredClone(run);
-  if (choice != null) {
+  let next = structuredClone(run);
+  if (p.offer) {
+    // Reward cards: take one (it applies at once), or skip for a little gil.
+    if (choice == null) next.gil += p.offer.cards.length ? p.offer.skipGil : 0;
+    else {
+      const card = p.offer.cards[choice];
+      if (!card) throw new RunError("Invalid choice");
+      next = applyCard(next, card);
+    }
+  } else if (choice != null) {
     const itemId = p.gearChoices[choice];
     if (itemId == null) throw new RunError("Invalid choice");
     addLoot(next, itemId);
@@ -506,6 +522,67 @@ export function claimReward(run: RunState, choice: number | null): RunState {
     else next.phase = { kind: "worldClear", cleared: next.world };
   } else next.phase = { kind: "map" };
   return next;
+}
+
+/** Level-ups outside battle (level boons): FF9's growth pool and HP / MP rise as from EXP. */
+function gainLevels(m: RunMember, levels: number) {
+  if (levels <= 0) return;
+  const before = m.build.level;
+  const target = Math.min(MAX_LEVEL, before + levels);
+  if (target <= before) return;
+  const oldMax = deriveStats(m.build);
+  m.build.exp = Math.max(m.build.exp, expForLevel(target));
+  m.build.level = levelForExp(m.build.exp);
+  accrueGrowth(m.build, before);
+  const st = deriveStats(m.build);
+  if (m.hp > 0) m.hp += st.maxHp - oldMax.maxHp;
+  m.mp += st.maxMp - oldMax.maxMp;
+  clampVitals(m);
+}
+
+/**
+ * Apply a reward card. Gear goes on the member it was for (bound to them; what it replaces goes to the bag), boons
+ * stack on the member (or everyone), AP goes to the ability, supplies and gil to the bag.
+ */
+export function applyCard(run: RunState, card: RewardCard): RunState {
+  let next = structuredClone(run);
+  switch (card.kind) {
+    case "gear": {
+      const uid = next.nextUid++;
+      next.gear.push({ uid, itemId: card.itemId, secured: false, holder: null, boundTo: card.key });
+      // Equip it straight away when the slot is open (it always is when offered).
+      if (slotUnlocked(member(next, card.key).build, card.slot)) next = equip(next, card.key, card.slot, uid);
+      return next;
+    }
+    case "boon": {
+      const targets = card.key ? [member(next, card.key)] : next.party;
+      for (const m of targets) {
+        const oldMax = deriveStats(m.build);
+        (m.build.boons ??= []).push({ boonId: card.boonId, name: card.name, stat: card.stat, amount: card.amount, rarity: card.rarity });
+        if (card.stat === "levels") gainLevels(m, card.amount);
+        else {
+          // Max HP / MP boons raise the current values too.
+          const st = deriveStats(m.build);
+          if (m.hp > 0) m.hp += Math.max(0, st.maxHp - oldMax.maxHp);
+          m.mp += Math.max(0, st.maxMp - oldMax.maxMp);
+          clampVitals(m);
+        }
+      }
+      return next;
+    }
+    case "ap": {
+      const m = member(next, card.key);
+      const cost = apCost(getCharacter(card.key), card.ref);
+      m.build.ap[card.ref] = Math.min(cost, (m.build.ap[card.ref] ?? 0) + card.amount);
+      return next;
+    }
+    case "supplies":
+      addConsumable(next, card.itemId, card.count);
+      return next;
+    case "gil":
+      next.gil += card.amount;
+      return next;
+  }
 }
 
 /** After a world's boss: travel to the next world (full heal). */
@@ -653,7 +730,7 @@ function applyOutcome(run: RunState, o: EventOutcome, rng: Rng) {
       for (let i = 0; i < o.count; i++) addLoot(run, findItemByName(o.name));
       return;
     case "gear":
-      run.phase = { kind: "treasure", gearChoices: rollGear(rng, run.world, partyKeys(run), 3, 25, run.unlockedGear), gil: 0 };
+      run.phase = { kind: "treasure", gearChoices: [], gil: 0, offer: rollOffer(run, "treasure", rng) };
       return;
     case "exp": {
       const alive = run.party.filter((m) => m.hp > 0);
@@ -788,8 +865,9 @@ export function runOutcome(run: RunState): RunOutcome {
   const won = run.phase.won;
   const builds = run.party.map((m) => {
     const b = structuredClone(m.build);
-    // Equipment isn't carried between runs — every run starts with starter gear in unlocked slots.
+    // Equipment isn't carried between runs — every run starts with starter gear in unlocked slots. Boons are this run's only.
     b.equipment = starterGear(b);
+    delete b.boons;
     b.supports = b.supports.filter((id) => activeSupports(b).has(id));
     return b;
   });

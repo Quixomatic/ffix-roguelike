@@ -2,6 +2,38 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.70] - 2026-10-17
+
+Targeted rewards, steps 5–6: elites, treasure, the semi-boss and bosses offer **reward cards**, each for one character, saying exactly what it does. Taking one applies it at once, so there's no equipping afterwards. Bosses always offer real gear upgrades.
+
+### Added
+- **Reward cards** (game-core `rewards/cards.ts`, `rollOffer`), rolled from the reward tables:
+  - **Gear upgrade**: a piece that's an upgrade for that character (`upgradeScore` above the source's threshold), from the area's map pool plus the gear you've unlocked. Rarer cards pick nearer the top of the list and may come from the next area's band. Taking it **equips it on them, bound to them**, and the piece it replaces goes to the bag. The card shows the stat changes, "Teaches …", and a warning when the old piece was still teaching something ("Stops learning Blizzara (24/50 AP)").
+  - **Boon**: a named, run-long bonus (Thief's Vigor +3 Strength, Black Mage's Focus, Vital Spring +12% max HP…), on one member or the whole party (Moogle Blessing, Party Training).
+    - **Level boons** (Burst of Growth) are real FF9 level-ups: growth pool, HP / MP and all.
+    - Boons stack, count in every stat, and end with the run.
+  - **AP surge**: AP toward an ability a member's gear is teaching ("+15 AP toward Fira (8 → 23/50)").
+  - **Supplies** (Potions… Elixirs by tier) and **gil**.
+- **Per source** (the `reward_source` table):
+  - Elite: pick 1 of 3, leading with a gear upgrade.
+  - Treasure: pick 1 of 2 (plus its gil).
+  - Semi-boss / boss: 3 gear upgrades, rare or better. If nobody has an upgrade left, epic+ boons instead.
+  - **Plain battles**: none, except a **surprise** pick of 2 on a lucky roll (3%): "A lucky find!".
+- **Targeting**: cards spread across the party and lean toward whoever has the most room to improve; no two cards for the same member and slot or the same item.
+- **Skip** pays a little gil (the source's skip gil × tier).
+- **The reward screen** (`reward-cards.tsx`):
+  - The cards side by side, each with the member's sprite, the rarity's colour (white / green / blue / purple / gold) on the frame and label, and the details above.
+  - Cards are cursor stops (keyboard / controller: move, A takes), and taking one plays the purchase chime.
+  - Skip shows its gil.
+- **Boons on display**: a Boons panel on the character sheet's Stats tab (stacked by name: total and ×times, coloured by the best rarity), and a ★ count on the party sidebar's card (hover: each boon).
+- `applyCard(run, card)`, `learning(build)`, `RunBoon` / `CharacterBuild.boons`, `boonTotal`. `RunState.rewardRerollsLeft` / `rewardBans` for later.
+- `pnpm sim run` takes reward cards (the first gear upgrade, else the first card) and logs them.
+- Tests: a boss offers three rare+ upgrades from the pool for several members; an elite leads with gear; no upgrades → epic+ boons; same seed → same offer; taking gear equips it, bound, old piece to the bag; a stat boon raises the stat and the run's end drops it; party and level boons; AP surge; skip pays gil (301 pass).
+
+### Changed
+- Treasure stages and the event that finds gear offer treasure cards instead of 3 loose items.
+- Runs saved mid-reward keep their old pick-a-gear screen.
+
 ## [0.2.69] - 2026-10-17
 
 Targeted rewards, step 4: judging whether a piece of gear is an upgrade for a character.

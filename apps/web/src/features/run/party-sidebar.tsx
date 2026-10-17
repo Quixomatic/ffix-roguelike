@@ -9,6 +9,7 @@ import { FocusItem } from "@/features/input/focus";
 import { MENU_EVENT } from "@/features/input/nav";
 
 import { itemEffectText, itemName } from "./item-info";
+import { boonText } from "./reward-cards";
 import type { RunActions } from "./use-run";
 
 /** Consumables that work outside battle (Potion, Hi-Potion, Ether, Elixir, Phoenix Down — FF9 script ids). */
@@ -176,6 +177,11 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
           })}
         </div>
         {(m.statuses?.length ?? 0) > 0 && <span className="truncate text-[0.7rem] text-purple-300">{m.statuses!.join(", ")}</span>}
+        {(m.build.boons?.length ?? 0) > 0 && (
+          <span className="shrink-0 rounded bg-yellow-300/15 px-1 text-[0.7rem] text-yellow-200" title={m.build.boons!.map((b) => `${b.name}: ${boonText(b.stat, b.amount)}`).join("\n")}>
+            ★{m.build.boons!.length}
+          </span>
+        )}
       </div>
 
       {canManage && (

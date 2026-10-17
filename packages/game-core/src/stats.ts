@@ -15,11 +15,13 @@ import {
   MAX_LEVEL,
   parseAbilityRef,
   type AbilityRef,
+  type BoonStat,
   type CharacterData,
   type Element,
   type EquipSlot,
   type Equipment,
   type ItemData,
+  type RarityId,
   type WeaponData,
 } from "@ffix-roguelike/game-data";
 
@@ -63,7 +65,21 @@ export interface CharacterBuild {
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
    */
   growth?: GrowthPool;
+  /** Run-long boons from reward cards (this run only — dropped when the run ends). */
+  boons?: RunBoon[];
 }
+
+/** A named boon a reward card gave this character for the rest of the run. Level boons are recorded but applied as level-ups. */
+export interface RunBoon {
+  boonId: string;
+  name: string;
+  stat: BoonStat;
+  amount: number;
+  rarity: RarityId;
+}
+
+/** Total of a stat's boons on a build. */
+export const boonTotal = (build: CharacterBuild, stat: BoonStat) => (build.boons ?? []).reduce((n, b) => (b.stat === stat ? n + b.amount : n), 0);
 
 export interface GrowthPool {
   speed: number;
@@ -363,6 +379,16 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
   }
   if (weapon) attackElements.push(...weapon.elements);
 
+  // Run-long boons from reward cards (after gear; FF9's caps still apply).
+  strength += boonTotal(build, "strength");
+  magic += boonTotal(build, "magic");
+  spirit += boonTotal(build, "spirit");
+  speed += boonTotal(build, "speed");
+  defence += boonTotal(build, "defence");
+  evade += boonTotal(build, "evade");
+  magicDefence += boonTotal(build, "magicDefence");
+  magicEvade += boonTotal(build, "magicEvade");
+
   strength = Math.min(STAT_CAPS.strength, strength);
   magic = Math.min(STAT_CAPS.magic, magic);
   spirit = Math.min(STAT_CAPS.spirit, spirit);
@@ -377,6 +403,8 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
   if (supports.has(6)) maxHp = Math.floor(maxHp * 1.2);
   if (supports.has(7)) maxMp = Math.floor(maxMp * 1.1);
   if (supports.has(8)) maxMp = Math.floor(maxMp * 1.2);
+  maxHp = Math.floor((maxHp * (100 + boonTotal(build, "maxHpPct"))) / 100);
+  maxMp = Math.floor((maxMp * (100 + boonTotal(build, "maxMpPct"))) / 100);
 
   return {
     level: lv,
@@ -386,7 +414,7 @@ export function deriveStats(build: CharacterBuild): DerivedStats {
     strength,
     magic,
     spirit,
-    attack: weapon?.power ?? 5,
+    attack: (weapon?.power ?? 5) + boonTotal(build, "attack"),
     defence,
     evade,
     magicDefence,

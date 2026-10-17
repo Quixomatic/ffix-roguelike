@@ -11,6 +11,7 @@ import { FocusItem } from "@/features/input/focus";
 import { dialogOpen, isEditable } from "@/features/input/nav";
 
 import { itemName } from "./item-info";
+import { BoonList } from "./reward-cards";
 import { fieldItems } from "./party-sidebar";
 import type { RunActions } from "./use-run";
 
@@ -115,6 +116,9 @@ export function RunCharacterSheet({
             <div className="flex flex-col gap-3">
               <Panel title="Stats" right={(m.statuses?.length ?? 0) > 0 ? <span className="text-purple-300">{m.statuses!.join(", ")}</span> : undefined}>
                 <StatBars stats={st} current={{ hp: m.hp, mp: m.mp }} exp={{ into: m.build.exp - expFrom, span: Math.max(1, expTo - expFrom), total: m.build.exp }} />
+              </Panel>
+              <Panel title="Boons" right={<span className="opacity-70">this run only</span>}>
+                <BoonList boons={m.build.boons ?? []} />
               </Panel>
               <Panel title="Training" right={<span className="opacity-70">bought with CP at camp</span>}>
                 <TrainingRows build={m.build} stats={st} />

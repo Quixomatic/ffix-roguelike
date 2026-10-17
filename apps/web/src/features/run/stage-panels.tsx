@@ -8,6 +8,7 @@ import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { FocusItem } from "@/features/input/focus";
 
 import { ItemCard, itemName } from "./item-info";
+import { RewardOfferView } from "./reward-cards";
 import type { RunActions, RunReport } from "./use-run";
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -28,7 +29,12 @@ export function RewardsPanel({ run, phase, actions }: { run: RunState; phase: Ex
   const pending = actions.claim.isPending;
   return (
     <VictoryScreen title={phase.boss ? "Boss defeated!" : "Victory!"} summary={s}>
-      {phase.gearChoices.length > 0 ? (
+      {phase.offer && phase.offer.cards.length > 0 ? (
+        <>
+          {phase.offer.source === "surprise" && <div className="ff-title text-center text-yellow-200">A lucky find!</div>}
+          <RewardOfferView run={run} offer={phase.offer} actions={actions} />
+        </>
+      ) : phase.gearChoices.length > 0 ? (
         <>
           <div className="ff-title text-center text-base">Choose one</div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -59,16 +65,22 @@ export function TreasurePanel({ run, phase, actions }: { run: RunState; phase: E
   return (
     <Panel title="Treasure!">
       {phase.gil > 0 && <div className="ff-window p-3 text-lg">Found {phase.gil} gil.</div>}
-      <div className="grid gap-3 sm:grid-cols-3">
-        {phase.gearChoices.map((id, i) => (
-          <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
-        ))}
-      </div>
-      <FocusItem>
-        <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
-          Leave it
-        </button>
-      </FocusItem>
+      {phase.offer ? (
+        <RewardOfferView run={run} offer={phase.offer} actions={actions} />
+      ) : (
+        <>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {phase.gearChoices.map((id, i) => (
+              <ItemCard key={id} itemId={id} party={party} onClick={pending ? undefined : () => actions.claim.mutate({ choice: i })} />
+            ))}
+          </div>
+          <FocusItem>
+            <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.claim.mutate({ choice: null })}>
+              Leave it
+            </button>
+          </FocusItem>
+        </>
+      )}
     </Panel>
   );
 }

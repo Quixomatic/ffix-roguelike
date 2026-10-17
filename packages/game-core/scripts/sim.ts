@@ -339,9 +339,17 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
         break;
       }
       case "rewards":
-      case "treasure":
-        run = claimReward(run, p.gearChoices.length ? 0 : null);
+      case "treasure": {
+        // Reward cards: take the first gear upgrade, else the first card (a simple player); old saves: the first gear.
+        const cards = p.offer?.cards ?? [];
+        if (cards.length) {
+          const i = Math.max(0, cards.findIndex((x) => x.kind === "gear"));
+          const card = cards[i]!;
+          say(c.dim(`   ${p.offer!.source} reward (${card.rarity}): ${card.kind === "gear" ? `${getItem(card.itemId).name} for ${card.key}` : card.kind === "boon" ? `${card.name} +${card.amount} ${card.stat} for ${card.key ?? "party"}` : card.kind}`));
+          run = claimReward(run, i);
+        } else run = claimReward(run, p.gearChoices.length ? 0 : null);
         break;
+      }
       case "shop": {
         const idx = p.stock.findIndex((x) => x.itemId === itemByName("Potion").id);
         while (idx >= 0 && run.gil > 300) run = buy(run, idx);
