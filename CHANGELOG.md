@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.62] - 2026-10-17
+
+### Fixed
+- **The map's progress track and hints weren't centred**: they were centred on the part of the map left of the floating party, so they sat off to the left. They're centred on the whole map frame now, the same whether the party floats over the map or is docked beside it.
+
 ## [0.2.61] - 2026-10-17
 
 Map shapes can be anything valid (any number of stages per round, a gauntlet of single stages), the map shows where you are ("1-3") on a progress track, and you can look around it with the mouse, the right stick or View.

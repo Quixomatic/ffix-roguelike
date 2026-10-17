@@ -122,7 +122,6 @@ export function RunScreen() {
             <Overworld
               run={run}
               busy={actions.move.isPending}
-              rightInset={floating}
               onMove={(nodeId) => actions.move.mutate({ nodeId })}
               onAction={(a) => {
                 if (a === "triangle") setManaging(run.party[0]!.build.key);

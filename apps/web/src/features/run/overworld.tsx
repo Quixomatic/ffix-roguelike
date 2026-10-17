@@ -110,14 +110,11 @@ export function Overworld({
   onMove,
   busy,
   onAction,
-  rightInset,
 }: {
   run: RunState;
   onMove(nodeId: string): void;
   busy: boolean;
   onAction?(action: Action): void;
-  /** The party floats over the map's right edge: keep the overlays clear of it. */
-  rightInset?: boolean;
 }) {
   // The map has the controls while it's up (keyboard + controller through Phaser's input); a panel opened over it takes
   // them back for the menus until it closes (input/owner.ts).
@@ -161,8 +158,8 @@ export function Overworld({
     <div className="relative h-full w-full overflow-hidden">
       {/* The area, map and journey are in the party sidebar. */}
       <div ref={hostRef} className="absolute inset-0" />
-      {/* Overlays, over the part of the map the party doesn't cover. */}
-      <div className={`pointer-events-none absolute inset-y-0 left-0 ${rightInset ? "right-[18.5rem]" : "right-0"}`}>
+      {/* Overlays, centred on the whole map frame (whether or not the party floats over it). */}
+      <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-x-0 top-3 flex justify-center">
           <div className="flex items-center gap-1.5 text-xs text-white/75 [text-shadow:0_1px_2px_#000]">
             {looking ? (
