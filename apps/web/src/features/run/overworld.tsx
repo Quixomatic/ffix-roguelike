@@ -65,9 +65,9 @@ export function Overworld({ run, onMove, busy, onAction }: { run: RunState; onMo
       {/* The area, map and journey are in the party sidebar. */}
       <div ref={hostRef} className="absolute inset-0" />
       {hover && (
-        <div className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
+        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 ff-window px-4 py-1 text-base">{KIND_TEXT[hover.kind]}</div>
       )}
-      <div className="pointer-events-none absolute bottom-14 right-3 flex items-center gap-1.5 text-xs text-white/70 [text-shadow:0_1px_2px_#000]">
+      <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-1.5 text-xs text-white/70 [text-shadow:0_1px_2px_#000]">
         {device === "pad" ? "D-pad / stick to walk" : "WASD / arrows to walk"} · <ButtonHint action="confirm" /> enter a stage · or click a glowing stage
       </div>
     </div>

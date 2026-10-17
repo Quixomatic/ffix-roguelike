@@ -11,7 +11,7 @@ import { dialogOpen, isEditable, MENU_EVENT } from "@/features/input/nav";
 import { inputOwner } from "@/features/input/owner";
 
 import { Overworld } from "./overworld";
-import { PartySidebar } from "./party-sidebar";
+import { PartySidebar, type PartyLayout } from "./party-sidebar";
 import { RunCharacterSheet } from "./run-character-sheet";
 import { RunDock, type DockTab } from "./run-dock";
 import { ChocoboPanel, StiltzkinPanel } from "./special-panels";
@@ -28,6 +28,8 @@ export function RunScreen() {
   const run = active.data?.state;
   const [managing, setManaging] = useState<string | null>(null);
   const [dock, setDock] = useState<DockTab | null>(null);
+  const [partyLayout, setPartyLayout] = usePartyLayout();
+  const floating = partyLayout === "overlay";
   // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs. Hooks stay above
   // the early returns so every render calls the same ones.
   const scriptReady = useBattleScript(run?.phase.kind === "battle" ? run.phase.battle.scene : undefined);
@@ -91,6 +93,16 @@ export function RunScreen() {
       </FocusSection>
     );
 
+  const partyProps = {
+    run,
+    actions,
+    canManage,
+    onManage: setManaging,
+    onBag: () => setDock("inventory"),
+    layout: partyLayout,
+    onLayout: setPartyLayout,
+  };
+
   return (
     <>
     <RunButtons
@@ -102,8 +114,8 @@ export function RunScreen() {
       }}
     />
     {/* Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
-        The map / stage on the left, the party on the right (the hub's own sidebar slides in on the left). */}
-    <div className="grid h-svh min-h-0 gap-3 p-4 lg:grid-cols-[1fr_17rem]">
+        The map / stage fills it; the party floats over its right edge, or sits in its own column beside it ("docked"). */}
+    <div className={`grid h-svh min-h-0 gap-3 p-4 ${floating ? "" : "lg:grid-cols-[1fr_17rem]"}`}>
       <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
@@ -122,7 +134,7 @@ export function RunScreen() {
           // Each stage's screen is its own cursor section (inside the hub's page section — its own key, never "page"):
           // arriving on it puts the cursor on its first item.
           <FocusSection key={`${run.world}-${run.position}-${phase.kind}`} focusKey="run-stage" autoFocus>
-          <div className="absolute inset-0 overflow-y-auto p-3 pb-16 pt-14">
+          <div className={`absolute inset-0 overflow-y-auto p-3 pt-14 ${floating ? "pr-[18.5rem]" : ""}`}>
             {/* pt-14: room for the menu button floating in the frame's corner. */}
             {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
@@ -136,15 +148,38 @@ export function RunScreen() {
           </div>
           </FocusSection>
         )}
-        <RunDock run={run} actions={actions} canManage={canManage} tab={dock} onTab={setDock} />
+        <RunDock run={run} actions={actions} canManage={canManage} tab={dock} onTab={setDock} besideParty={floating} />
+        {floating && <PartySidebar {...partyProps} className="absolute bottom-3 right-3 top-3 z-20 w-[17rem]" />}
       </main>
-      <PartySidebar run={run} actions={actions} canManage={canManage} onManage={setManaging} />
+      {!floating && <PartySidebar {...partyProps} />}
       {managing && canManage && (
         <RunCharacterSheet run={run} keyName={managing} actions={actions} onClose={() => setManaging(null)} onSwitch={setManaging} />
       )}
     </div>
     </>
   );
+}
+
+const PARTY_LAYOUT_KEY = "ffix-run-party-layout";
+
+/** The party's place on the run screen (floating over the game, or docked beside it), remembered in this browser. */
+function usePartyLayout(): [PartyLayout, (layout: PartyLayout) => void] {
+  const [layout, setLayout] = useState<PartyLayout>(() => {
+    try {
+      return localStorage.getItem(PARTY_LAYOUT_KEY) === "docked" ? "docked" : "overlay";
+    } catch {
+      return "overlay";
+    }
+  });
+  const set = (next: PartyLayout) => {
+    setLayout(next);
+    try {
+      localStorage.setItem(PARTY_LAYOUT_KEY, next);
+    } catch {
+      /* not remembered */
+    }
+  };
+  return [layout, set];
 }
 
 /**

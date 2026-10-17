@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.58] - 2026-10-17
+
+The run's party floats over the game, with a toggle to dock it beside the game as before, and the floating tab bar at the bottom of the map is gone.
+
+### Changed
+- **The party sidebar floats over the game's right edge** by default, so the map / stage screen gets the whole frame. The toggle at the top-left of the sidebar (next to the area name) docks it back in its own column beside the game, the previous layout, and toggles it back. Your choice is remembered in this browser.
+  - Stage screens (shops, rewards…) leave room on the right for the floating party.
+  - The bag opens to the party's left when the party floats over the game, and at the right edge when it's docked.
+- **No more Items / Gear / Run tabs floating at the bottom centre of the map.** The bag is a panel with those three tabs in its header (with LB / RB hints and close / B). It opens from the party sidebar's new **Bag** button or X.
+- **Party · Bag · Menu buttons** under the party cards replace the hint line, each with its button hint (Y, X, Start). Party opens the first member's sheet; Menu opens the hub's sidebar.
+- The map's stage description and walking hint sit at the bottom of the frame (they had room left for the old tabs): the description centred, the hint bottom-left, clear of the floating party.
+
 ## [0.2.57] - 2026-10-17
 
 ### Fixed

@@ -1,10 +1,12 @@
 import { deriveStats, EQUIP_SLOTS, expForLevel, getJourney, WORLDS, type RunMember, type RunState } from "@ffix-roguelike/game-core";
 import { findItem, getCharacter, MAX_LEVEL } from "@ffix-roguelike/game-data";
+import { PanelRight, PanelRightDashed } from "lucide-react";
 
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { ButtonHint } from "@/features/input/button-hint";
 import { FocusItem } from "@/features/input/focus";
+import { MENU_EVENT } from "@/features/input/nav";
 
 import { itemEffectText, itemName } from "./item-info";
 import type { RunActions } from "./use-run";
@@ -13,16 +15,49 @@ import type { RunActions } from "./use-run";
 const FIELD_ITEM_SCRIPTS = [69, 70, 71, 72, 76];
 export const fieldItems = (run: RunState) => run.consumables.filter((c) => c.count > 0 && FIELD_ITEM_SCRIPTS.includes(findItem(c.itemId)?.effect?.scriptId ?? -1));
 
+/** Where the run's party sits: floating over the game (the default), or docked in its own column beside it. */
+export type PartyLayout = "overlay" | "docked";
+
 /**
- * Left sidebar of a run: gil and where you are, then the party filling the height — portrait, vitals, key stats,
- * lasting statuses, equipped gear and quick actions (manage, use a field item on that member).
+ * The run's party, on the right: gil and where you are, then the party filling the height — portrait, vitals, key
+ * stats, lasting statuses, equipped gear and quick actions (manage, use a field item on that member) — and the Party,
+ * Bag and Menu buttons. The header's toggle floats it over the game or docks it beside it (`layout`).
  */
-export function PartySidebar({ run, actions, canManage, onManage }: { run: RunState; actions: RunActions; canManage: boolean; onManage(key: string): void }) {
+export function PartySidebar({
+  run,
+  actions,
+  canManage,
+  onManage,
+  onBag,
+  layout,
+  onLayout,
+  className = "",
+}: {
+  run: RunState;
+  actions: RunActions;
+  canManage: boolean;
+  onManage(key: string): void;
+  onBag(): void;
+  layout: PartyLayout;
+  onLayout(layout: PartyLayout): void;
+  className?: string;
+}) {
   const journey = getJourney(run.journey);
+  const floating = layout === "overlay";
   return (
-    <aside className="flex min-h-0 flex-col gap-2">
-      <div className="ff-window flex items-center justify-between px-3 py-2">
-        <div className="min-w-0">
+    <aside className={`flex min-h-0 flex-col gap-2 ${className}`}>
+      <div className="ff-window flex items-center justify-between gap-2 px-3 py-2">
+        <FocusItem>
+          <button
+            className="shrink-0 rounded p-0.5 opacity-70 hover:bg-white/10 hover:opacity-100"
+            title={floating ? "Dock the party beside the game" : "Float the party over the game"}
+            aria-label={floating ? "Dock the party beside the game" : "Float the party over the game"}
+            onClick={() => onLayout(floating ? "docked" : "overlay")}
+          >
+            {floating ? <PanelRightDashed size={18} /> : <PanelRight size={18} />}
+          </button>
+        </FocusItem>
+        <div className="min-w-0 flex-1">
           <div className="ff-display truncate text-base">{WORLDS[run.world]!.name}</div>
           <div className="ff-title truncate text-xs">
             {journey.name} · map {run.stage + 1}/{journey.areas.length}
@@ -34,8 +69,22 @@ export function PartySidebar({ run, actions, canManage, onManage }: { run: RunSt
         </div>
       </div>
       {canManage && (
-        <div className="flex items-center justify-end gap-1.5 px-1 text-xs opacity-80">
-          Party <ButtonHint action="triangle" /> · Bag <ButtonHint action="x" /> · Menu <ButtonHint action="menu" />
+        <div className="grid grid-cols-3 gap-1 text-sm">
+          <FocusItem>
+            <button className="ff-window flex items-center justify-center gap-1.5 py-1" onClick={() => onManage(run.party[0]!.build.key)}>
+              <ButtonHint action="triangle" /> Party
+            </button>
+          </FocusItem>
+          <FocusItem>
+            <button className="ff-window flex items-center justify-center gap-1.5 py-1" onClick={onBag}>
+              <ButtonHint action="x" /> Bag
+            </button>
+          </FocusItem>
+          <FocusItem>
+            <button className="ff-window flex items-center justify-center gap-1.5 py-1" onClick={() => window.dispatchEvent(new Event(MENU_EVENT))}>
+              <ButtonHint action="menu" /> Menu
+            </button>
+          </FocusItem>
         </div>
       )}
       <div className="flex min-h-0 flex-1 flex-col gap-2">

@@ -24,13 +24,28 @@ const TABS: { id: DockTab; label: string; glyph: string }[] = [
 ];
 
 /**
- * Bottom centre of the run screen: tabs that slide a panel out over the map (on the right) — the item bag, every piece of gear the
- * party carries, and the run's progress (with Abandon).
+ * The bag: a panel over the run's map / stage, on the right (left of the party when the party floats over the game,
+ * `besideParty`), with three tabs in its header: the items, every piece of gear the party carries, and the run's
+ * progress (with Abandon). Opened from the party sidebar's Bag button, or X.
  *
- * Controls: X (key or button) opens the bag; while a panel is open it has the controls (the map waits): LB / RB (Q / E)
- * flip between Items, Gear and Run, B / Escape or X closes it and hands the controls back.
+ * Controls: while it's open it has the controls (the map waits): LB / RB (Q / E) flip between Items, Gear and Run, and
+ * B / Escape or X closes it and hands the controls back.
  */
-export function RunDock({ run, actions, canManage, tab, onTab }: { run: RunState; actions: RunActions; canManage: boolean; tab: DockTab | null; onTab(tab: DockTab | null): void }) {
+export function RunDock({
+  run,
+  actions,
+  canManage,
+  tab,
+  onTab,
+  besideParty,
+}: {
+  run: RunState;
+  actions: RunActions;
+  canManage: boolean;
+  tab: DockTab | null;
+  onTab(tab: DockTab | null): void;
+  besideParty?: boolean;
+}) {
   const setTab = onTab;
   useInputOwner("menu", { active: !!tab, onCancel: () => setTab(null) });
   useEffect(() => {
@@ -47,43 +62,40 @@ export function RunDock({ run, actions, canManage, tab, onTab }: { run: RunState
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [tab, setTab]);
+  if (!tab) return null;
   return (
-    <>
-      <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1">
-        {tab ? <ButtonHint action="l1" className="mr-1" /> : <ButtonHint action="x" className="mr-1" />}
-        {TABS.map((t) => (
-          <FocusItem key={t.id}>
-            <button
-              className="ff-window flex items-center gap-1.5 px-3 py-1 text-sm data-[on=true]:text-yellow-200 data-[on=true]:brightness-125"
-              data-on={tab === t.id}
-              onClick={() => setTab(tab === t.id ? null : t.id)}
-            >
-              <span className="text-base leading-none">{t.glyph}</span>
-              {t.label}
-            </button>
-          </FocusItem>
-        ))}
-        {tab && <ButtonHint action="r1" className="ml-1" />}
-      </div>
-      {tab && (
-        // The open panel has the cursor (its own section, so the cursor starts in it — keyed so each tab starts on its first item).
-        <FocusSection key={tab} focusKey="run-dock" autoFocus>
-        <div data-run-panel className="ff-window absolute bottom-14 right-2 top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
-          <div className="flex items-center justify-between">
-            <span className="ff-display text-lg">{TABS.find((t) => t.id === tab)!.label}</span>
-            <FocusItem>
-              <button className="flex items-center gap-1.5" onClick={() => setTab(null)} aria-label="Close">
-                <ButtonHint action="cancel" /> ✕
+    // The open panel has the cursor (its own section, so the cursor starts in it — keyed so each tab starts on its first item).
+    <FocusSection key={tab} focusKey="run-dock" autoFocus>
+      <div
+        data-run-panel
+        className={`ff-window absolute bottom-3 top-3 z-30 flex w-80 flex-col gap-2 overflow-y-auto p-3 ${besideParty ? "right-[18.5rem]" : "right-3"}`}
+      >
+        <div className="flex items-center gap-1">
+          <ButtonHint action="l1" />
+          {TABS.map((t) => (
+            <FocusItem key={t.id}>
+              <button
+                className="flex items-center gap-1 rounded px-1.5 py-0.5 text-sm opacity-75 hover:bg-white/10 hover:opacity-100 data-[on=true]:bg-white/15 data-[on=true]:text-yellow-200 data-[on=true]:opacity-100"
+                data-on={tab === t.id}
+                onClick={() => setTab(t.id)}
+              >
+                <span className="leading-none">{t.glyph}</span>
+                {t.label}
               </button>
             </FocusItem>
-          </div>
-          {tab === "inventory" && <InventoryPanel run={run} actions={actions} canManage={canManage} />}
-          {tab === "gear" && <GearBagPanel run={run} />}
-          {tab === "run" && <RunInfoPanel run={run} actions={actions} />}
+          ))}
+          <ButtonHint action="r1" />
+          <FocusItem>
+            <button className="ml-auto flex items-center gap-1.5" onClick={() => setTab(null)} aria-label="Close">
+              <ButtonHint action="cancel" /> ✕
+            </button>
+          </FocusItem>
         </div>
-        </FocusSection>
-      )}
-    </>
+        {tab === "inventory" && <InventoryPanel run={run} actions={actions} canManage={canManage} />}
+        {tab === "gear" && <GearBagPanel run={run} />}
+        {tab === "run" && <RunInfoPanel run={run} actions={actions} />}
+      </div>
+    </FocusSection>
   );
 }
 
