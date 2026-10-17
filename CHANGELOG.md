@@ -2,6 +2,32 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.71] - 2026-10-17
+
+Targeted rewards, step 7: the management page for the reward and gear tables, **`/admin/rewards`**. For admins only; the sidebar shows them a "Rewards & gear" link.
+
+### Added
+- **Gear availability** tab: every gear piece (all 224).
+  - Filters: search, status (map pool / catalog / legendary / disabled), "in the map pool of" an area.
+  - Each row shows how the piece shows up (n areas, its catalog price, legendary, or **nowhere** in red).
+  - The editor (with the item's FF9 price and who wears it):
+    - enabled
+    - legendary (achievements only)
+    - each area's map pool, with a **boss only** toggle per area
+    - in the gear catalog, with its price and the tier it appears from
+    - notes
+- **Boons** tab: every boon with its amounts per rarity.
+  - The editor: name, description, stat, member / party, the amount per rarity (empty = never at that rarity), weight, from tier, which characters roll it more, enabled.
+  - **New boon** and **Delete**.
+- **Sources** tab: surprise / elite / treasure / semi-boss / boss. Each sets the number of cards, its guarantee (none / one gear / all gear), the lowest rarity, the upgrade threshold, the gil for skipping, the surprise chance, and the rarity and card-type weights.
+- **Rarities** tab: name, colour (picker), AP surge, gil, supplies, next-band chance.
+- **Roles** tab: per character, the weight of each stat change and of each ability the gear would teach.
+- **Preview** tab: pick a source, an area, a party (up to four, all slots open) and a level, and see 8 rolled offers with each card's rarity colour (gear with its upgrade score, boons with their amounts). Change the seed for more.
+- **Export to seed files** writes the tables into `packages/db/seed/rewards` so tuning can be committed (development servers only).
+- Every save is validated (zod), written, and **live at once**: the server reloads the tables and the game's copy refreshes, so the next reward offer, drop pool and gear catalog use it.
+- API: `admin.rewardTables`, `saveRarity`, `saveRole`, `saveSource`, `saveBoon`, `deleteBoon`, `saveGear`, `preview`, `exportSeeds`, all `adminProcedure`.
+- Everything on the page is a cursor stop (keyboard / controller).
+
 ## [0.2.70] - 2026-10-17
 
 Targeted rewards, steps 5–6: elites, treasure, the semi-boss and bosses offer **reward cards**, each for one character, saying exactly what it does. Taking one applies it at once, so there's no equipping afterwards. Bosses always offer real gear upgrades.

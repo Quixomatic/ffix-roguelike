@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
+import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -14,7 +14,7 @@ import { FocusItem, FocusSection } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
-import { authClient } from "@/lib/auth-client";
+import { authClient, isAdminUser } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
 import pkg from "../../../package.json";
@@ -207,6 +207,8 @@ function Sidebar({ open }: { open: boolean }) {
         {MORE_NAV.map((n) => (
           <NavLink key={n.to} item={n} />
         ))}
+        {/* Admins: the reward and gear-availability tables. */}
+        {isAdminUser(session?.user) && <NavLink item={{ to: "/admin/rewards", label: "Rewards & gear", icon: Wrench }} />}
       </nav>
 
       {/* The original single-page camp, tucked away while the hub grows. */}

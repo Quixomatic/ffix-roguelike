@@ -3,6 +3,7 @@ import { contentRouter } from "./content";
 import { profileRouter } from "./profile";
 import { runRouter } from "./run";
 import { settingsRouter } from "./settings";
+import { adminRouter } from "./admin";
 import { devRouter } from "./dev";
 
 export const appRouter = router({
@@ -20,5 +21,6 @@ export const appRouter = router({
   run: runRouter,
   settings: settingsRouter,
   dev: devRouter,
+  admin: adminRouter,
 });
 export type AppRouter = typeof appRouter;
