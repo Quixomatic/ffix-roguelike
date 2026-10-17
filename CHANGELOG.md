@@ -2,6 +2,42 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.55] - 2026-10-17
+
+The Phaser screens use Phaser's own input, and they no longer fight the menus for the controls. On a run: Y opens the party, X the bag, LB / RB flip between them, and B hands the controls back to the map.
+
+### Changed
+- **The overworld and battles read keyboard and controller through Phaser's own input**: its keyboard plugin and its gamepad plugin (`input.gamepad: true`), not key presses faked from the controller. `SceneInput` (`features/input/scene-input.ts`) turns both into the game's actions. It merges every connected pad (including hat-switch D-pads), repeats held directions for the battle menu's cursor, and ignores presses while typing in a text field.
+- **One table of controls** (`features/input/actions.ts`): each action's keys, controller buttons and labels. Phaser screens read it natively; menus still get the controller as key presses (the poller sends each button as its action's key), as before.
+
+  | | Keyboard | Controller |
+  |---|---|---|
+  | Move | ↑↓←→ / WASD | D-pad / left stick |
+  | Confirm | Enter / Space | A |
+  | Cancel | Escape / Backspace | B |
+  | Bag; in battle, Auto | X | X |
+  | Party; in battle, next ready character | C | Y |
+  | Previous / next (members, bag tabs; in battle, target side / all) | Q (Tab) / E | LB / RB |
+  | Battle speed | V | View |
+  | Menu | M | Start |
+
+- **Who has the controls is explicit** (`features/input/owner.ts`). This replaces pausing the menus whenever the map or a battle was mounted.
+  - The map or a battle owns them while it's up.
+  - Anything opened over it claims them for the menus and hands them back on close: the party sheet, the bag, the hub's menu (Start), and confirmation dialogs.
+  - While a game screen has them, the menus' cursor is paused and the controller sends no key presses. While a menu has them, the scene ignores its input.
+  - A button held across a hand-off doesn't press anything on the other side, and the press that closes a panel (Enter on ✕, Escape) never reaches the map.
+- **Cancel closes what's on top**: Escape / Backspace / B close the open panel or dialog (the character sheet now closes on Escape too), and only go Back when nothing is open.
+- The battle menu takes its presses from the battle scene instead of listening to the window.
+
+### Added
+- **Y (C) opens the party** on the map and the stage screens: the character sheet of the first member. **LB / RB (Q / E)** flip to the previous / next member (their names are in the sheet's header), and **Y or B** closes it.
+- **X opens the bag** (the dock's Items panel). While it's open, **LB / RB** flip between Items, Gear and Run, and **X or B** closes it. The open panel has the cursor.
+- **Start opens the hub's menu over the map or a battle** and takes the cursor into it; B or Start again returns to the game. A sidebar that was already out stays out.
+- **Battle**: **X** toggles Auto, **View (V)** cycles the speed, **Start (M)** opens the menu.
+- **Button hints** (`ButtonHint`): coloured A / B / X / Y rounds and LB / RB / Start / View pills after a controller press, keycaps after a key press. They're on the dock (X, then LB / RB), the bag's close (B), the party sidebar (Party Y · Bag X · Menu Start), the character sheet (LB / RB with the members' names), Auto and speed, the battle menu's side swap (LB) and All (RB), and the map's walking hint.
+- **Abandon run** asks in an FF confirmation dialog instead of the browser's `confirm()`, so it works with the cursor.
+- Settings → Controller lists the new buttons.
+
 ## [0.2.54] - 2026-10-16
 
 ### Fixed

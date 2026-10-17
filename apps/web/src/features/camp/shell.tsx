@@ -4,7 +4,7 @@ import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
 import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
 
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
@@ -12,6 +12,7 @@ import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { FocusItem, FocusSection } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
+import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
@@ -108,18 +109,35 @@ export function HubShell() {
   const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
-  // M / the controller's Start: open or close the menu, and take the cursor with it.
+  // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  // M / the controller's Start: open or close the menu, and take the cursor (and the controls — over a game too) with
+  // it. Cancel (Escape / B) closes it again; a menu that was already out stays out and just gives the controls back.
+  const menuClaim = useRef<{ release(): void; opened: boolean } | null>(null);
   useEffect(() => {
+    const close = () => {
+      const claim = menuClaim.current;
+      menuClaim.current = null;
+      claim?.release();
+      if (!claim || claim.opened) toggle();
+      requestAnimationFrame(() => void setFocus(PAGE_FOCUS));
+    };
     const onMenu = () => {
-      const opening = !open;
-      toggle();
-      requestAnimationFrame(() => void setFocus(opening ? SIDEBAR_FOCUS : PAGE_FOCUS));
+      // Over a game (the overworld, a battle) an open sidebar doesn't have the cursor yet: Start takes it there.
+      if (open && !menuClaim.current && inputOwner() !== "game") return close();
+      if (menuClaim.current) return close();
+      if (!open) toggle();
+      menuClaim.current = { release: claimInput("menu", close), opened: !open };
+      requestAnimationFrame(() => void setFocus(SIDEBAR_FOCUS));
     };
     window.addEventListener(MENU_EVENT, onMenu);
     return () => window.removeEventListener(MENU_EVENT, onMenu);
   }, [open, toggle]);
-  // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
-  const path = useRouterState({ select: (s) => s.location.pathname });
+  // Going to another page (a sidebar link) ends the menu's claim on the controls.
+  useEffect(() => {
+    menuClaim.current?.release();
+    menuClaim.current = null;
+  }, [path]);
   return (
     <div
       className={`theme-ff grid h-full bg-background transition-[grid-template-columns] duration-300 ease-out ${open ? "grid-cols-[15rem_minmax(0,1fr)]" : "grid-cols-[0rem_minmax(0,1fr)]"}`}

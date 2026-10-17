@@ -1,17 +1,15 @@
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { FocusItem, FocusSection } from "@/features/input/focus";
+import { useInputOwner } from "@/features/input/owner";
 
 /**
  * A full-screen FF-style window over the page (like the character sheet): fixed header with the title, optional
  * header content and a close button; the body scrolls. Escape or clicking outside closes it.
  */
 export function GameDialog({ title, headerRight, onClose, children }: { title: ReactNode; headerRight?: ReactNode; onClose(): void; children: ReactNode }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => (e.key === "Escape" || (e.key === "Backspace" && !(e.target as Element | null)?.closest("input, textarea, select"))) && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  // Has the controls while open; Escape / Backspace / B close it (input/nav.ts routes cancel to the top claim).
+  useInputOwner("menu", { onCancel: onClose });
   // The cursor starts inside and stays there until it closes.
   return (
     <FocusSection boundary autoFocus>

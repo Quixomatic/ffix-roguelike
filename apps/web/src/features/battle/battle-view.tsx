@@ -3,7 +3,10 @@ import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
-import { useNavPause } from "@/features/input/nav";
+import type { Action } from "@/features/input/actions";
+import { ButtonHint } from "@/features/input/button-hint";
+import { MENU_EVENT } from "@/features/input/nav";
+import { useInputOwner } from "@/features/input/owner";
 
 import { createBattleGame, type BattleBridge } from "./battle-scene";
 import { CommandMenu } from "./command-menu";
@@ -20,8 +23,10 @@ interface Props {
 
 /** A full battle: Phaser battlefield (filling its parent — give it a height) with FF9-style menu windows on top. */
 export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }: Props) {
-  // The battle menu has its own cursor (arrows / Enter / Escape): menu navigation steps aside while it's up.
-  useNavPause();
+  // The battle has the controls while it's up: the battle scene reads keyboard and controller through Phaser's input
+  // and hands the presses to the battle menu (menus' cursor navigation steps aside; see input/owner.ts).
+  useInputOwner("game");
+  const listeners = useRef(new Set<(a: Action) => void>());
   const hostRef = useRef<HTMLDivElement>(null);
   const bridgeRef = useRef<BattleBridge | null>(null);
   const pickRef = useRef<((id: string) => void) | null>(null);
@@ -68,6 +73,14 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
   const actor = activeId ? engine.unit(activeId) : null;
   bridgeRef.current.activeId = activeId;
   bridgeRef.current.speed = battle.speed;
+  // X toggles Auto, View the speed, Start the hub's menu; the rest drive the battle menu.
+  const nextSpeed = battle.speed === 1 ? 2 : battle.speed === 2 ? 4 : 1;
+  bridgeRef.current.onAction = (a) => {
+    if (a === "x") battle.setAuto(!battle.auto);
+    else if (a === "select") battle.setSpeed(nextSpeed);
+    else if (a === "menu") window.dispatchEvent(new Event(MENU_EVENT));
+    else for (const fn of listeners.current) fn(a);
+  };
 
   const party = state.units.filter((u) => u.side === "party");
   const enemies = state.units.filter((u) => u.side === "enemy");
@@ -83,11 +96,11 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
       )}
 
       <div className="absolute right-2 top-2 flex gap-2 text-sm">
-        <button className="ff-window px-2 py-0.5" data-on={battle.auto} onClick={() => battle.setAuto(!battle.auto)}>
-          Auto {battle.auto ? "ON" : "OFF"}
+        <button className="ff-window flex items-center gap-1.5 px-2 py-0.5" data-on={battle.auto} onClick={() => battle.setAuto(!battle.auto)}>
+          <ButtonHint action="x" /> Auto {battle.auto ? "ON" : "OFF"}
         </button>
-        <button className="ff-window px-2 py-0.5" onClick={() => battle.setSpeed(battle.speed === 1 ? 2 : battle.speed === 2 ? 4 : 1)}>
-          ×{battle.speed}
+        <button className="ff-window flex items-center gap-1.5 px-2 py-0.5" onClick={() => battle.setSpeed(nextSpeed)}>
+          <ButtonHint action="select" /> ×{battle.speed}
         </button>
       </div>
 
@@ -108,6 +121,10 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
               aimRef.current = aim;
             }}
             onNextActor={ready.length > 1 ? () => setSelectedId(ready[(ready.indexOf(activeId!) + 1) % ready.length]!) : undefined}
+            subscribe={(fn) => {
+              listeners.current.add(fn);
+              return () => listeners.current.delete(fn);
+            }}
           />
         ) : null}
         <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="flex-1">

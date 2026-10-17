@@ -3,6 +3,7 @@ import { findItem, getCharacter, MAX_LEVEL } from "@ffix-roguelike/game-data";
 
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
+import { ButtonHint } from "@/features/input/button-hint";
 import { FocusItem } from "@/features/input/focus";
 
 import { itemEffectText, itemName } from "./item-info";
@@ -32,6 +33,11 @@ export function PartySidebar({ run, actions, canManage, onManage }: { run: RunSt
           <div className="tabular-nums text-yellow-200">{run.gil}</div>
         </div>
       </div>
+      {canManage && (
+        <div className="flex items-center justify-end gap-1.5 px-1 text-xs opacity-80">
+          Party <ButtonHint action="triangle" /> · Bag <ButtonHint action="x" /> · Menu <ButtonHint action="menu" />
+        </div>
+      )}
       <div className="flex min-h-0 flex-1 flex-col gap-2">
         {run.party.map((m) => (
           <MemberCard key={m.build.key} run={run} member={m} actions={actions} canManage={canManage} onManage={() => onManage(m.build.key)} />

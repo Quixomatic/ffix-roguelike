@@ -1,18 +1,36 @@
 import { canEquip, deriveStats, EQUIP_SLOTS, expForLevel, gemsMax, gemsUsed, slotUnlocked, type RunState } from "@ffix-roguelike/game-core";
 import { getCharacter, getItem, MAX_LEVEL, type EquipSlot } from "@ffix-roguelike/game-data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, TrainingRows } from "@/features/gear/character-panels";
 import { DollFigure, EquipmentList, GearPicker, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { ItemIcon } from "@/features/items/item-icon";
+import { actionForKey } from "@/features/input/actions";
+import { ButtonHint } from "@/features/input/button-hint";
 import { FocusItem } from "@/features/input/focus";
+import { dialogOpen, isEditable } from "@/features/input/nav";
 
 import { itemName } from "./item-info";
 import { fieldItems } from "./party-sidebar";
 import type { RunActions } from "./use-run";
 
-/** A party member during a run: paperdoll on the left; Stats, Equipment, Abilities, Support and Items tabs. */
-export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: RunState; keyName: string; actions: RunActions; onClose(): void }) {
+/**
+ * A party member during a run: paperdoll on the left; Stats, Equipment, Abilities, Support and Items tabs.
+ * LB / RB (Q / E) flip to the previous / next member (`onSwitch`); Y (C) or B / Escape closes it.
+ */
+export function RunCharacterSheet({
+  run,
+  keyName,
+  actions,
+  onClose,
+  onSwitch,
+}: {
+  run: RunState;
+  keyName: string;
+  actions: RunActions;
+  onClose(): void;
+  onSwitch?(key: string): void;
+}) {
   const m = run.party.find((p) => p.build.key === keyName)!;
   const st = deriveStats(m.build);
   const char = getCharacter(keyName);
@@ -39,6 +57,25 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
     setSlot(s);
     setTab("equipment");
   };
+  const at = run.party.findIndex((p) => p.build.key === keyName);
+  const neighbour = (d: 1 | -1) => run.party[(at + d + run.party.length) % run.party.length]!.build.key;
+  const many = run.party.length > 1 && !!onSwitch;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || isEditable(e.target as Element)) return;
+      // Another dialog over the sheet keeps its keys.
+      if (document.querySelectorAll("[role='dialog'], [data-modal]").length > 1 && dialogOpen()) return;
+      const a = actionForKey(e);
+      if ((a === "l1" || a === "r1") && many) {
+        setSlot(null);
+        onSwitch!(neighbour(a === "r1" ? 1 : -1));
+      } else if (a === "triangle") onClose();
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
 
   return (
     <CharacterModal
@@ -48,6 +85,19 @@ export function RunCharacterSheet({ run, keyName, actions, onClose }: { run: Run
         </>
       }
       onClose={onClose}
+      headerRight={
+        many && (
+          <div className="flex items-center gap-2 text-sm">
+            <button className="flex items-center gap-1.5 opacity-80 hover:opacity-100" onClick={() => onSwitch!(neighbour(-1))}>
+              <ButtonHint action="l1" /> {getCharacter(neighbour(-1)).name}
+            </button>
+            <span className="opacity-40">·</span>
+            <button className="flex items-center gap-1.5 opacity-80 hover:opacity-100" onClick={() => onSwitch!(neighbour(1))}>
+              {getCharacter(neighbour(1)).name} <ButtonHint action="r1" />
+            </button>
+          </div>
+        )
+      }
       tab={tab}
       onTab={setTab}
       doll={

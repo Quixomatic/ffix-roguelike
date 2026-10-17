@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@ffix-rog
 import type { ReactNode } from "react";
 
 import { FocusItem, FocusSection } from "@/features/input/focus";
+import { useInputOwner } from "@/features/input/owner";
 
 /**
  * An FF window asking to confirm something destructive (wiping a run…). The cursor starts on Cancel and stays inside;
@@ -22,6 +23,8 @@ export function ConfirmDialog({
   confirmLabel: string;
   onConfirm(): void;
 }) {
+  // Has the controls while open (over a game too); cancel closes it.
+  useInputOwner("menu", { active: open, onCancel: () => onOpenChange(false) });
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false} className="theme-ff ff-panel max-w-md rounded-md p-5 text-base sm:max-w-md">

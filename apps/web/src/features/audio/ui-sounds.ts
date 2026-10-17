@@ -15,6 +15,8 @@
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 
+import { inputOwner } from "@/features/input/owner";
+
 import { playSfx, warmSfx } from "./music";
 
 export const UI_SOUNDS = ["cursor", "cancel", "buzzer", "purchase", "help"] as const;
@@ -89,7 +91,8 @@ export function useUiSounds() {
       uiSound("buzzer");
     };
     const onKey = (e: KeyboardEvent) => {
-      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat) return;
+      // A Phaser screen with the controls plays its own sounds (the battle menu's cancel).
+      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat || inputOwner() === "game") return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("input, textarea, select")) return;
       uiSound("cancel");

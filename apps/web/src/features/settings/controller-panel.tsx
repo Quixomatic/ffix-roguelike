@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { Panel } from "@/features/gear/character-panels";
-import { connectedPads, padInput, type PadKey } from "@/features/input/nav";
+import type { Action } from "@/features/input/actions";
+import { connectedPads, padInput } from "@/features/input/nav";
 
 type PadView = { id: string; index: number; mapping: string; buttons: number[]; axes: number[] };
 
@@ -12,7 +13,7 @@ type PadView = { id: string; index: number; mapping: string; buttons: number[]; 
  */
 export function ControllerPanel() {
   const [pads, setPads] = useState<PadView[]>([]);
-  const [input, setInput] = useState<Record<PadKey, boolean> | null>(null);
+  const [input, setInput] = useState<Set<Action> | null>(null);
   const secure = typeof window !== "undefined" && window.isSecureContext;
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export function ControllerPanel() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const reading = input ? (Object.entries(input) as [PadKey, boolean][]).filter(([, on]) => on).map(([k]) => k) : [];
+  const reading = input ? [...input] : [];
   return (
     <Panel title="Controller" className="md:col-span-2">
       {!secure ? (
@@ -71,8 +72,9 @@ export function ControllerPanel() {
             The game reads: <span className="text-yellow-200">{reading.length ? reading.join(" + ") : "nothing"}</span>
             <span className="opacity-60">
               {" "}
-              (D-pad / left stick move · A = 0 confirms · B = 1 backs out · Start = 9 menu · in battle: LB = 4 swaps the target side, RB = 5 all / single,
-              Y = 3 next ready character)
+              (D-pad / left stick move · A = 0 confirm · B = 1 cancel · X = 2 · Y = 3 · LB = 4 · RB = 5 · View = 8 · Start = 9 menu. On a run: Y opens
+              the party, X the bag, LB / RB flip between them. In battle: LB swaps the target side, RB all / single, Y next ready character, X Auto,
+              View the speed.)
             </span>
           </div>
         </div>

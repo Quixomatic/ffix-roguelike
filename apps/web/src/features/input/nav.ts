@@ -5,15 +5,17 @@
  *   `FocusSection`s, which remember their last focused item). The first arrow press on a page focuses its first item.
  * - **Confirm**: Enter (the browser's own) or Space (ours, the same for links and buttons) presses the control the
  *   cursor is on (`cursorTarget`: the browser's focus, else Norigin's marked item). Norigin's Enter is unused.
- * - **Back**: Escape or Backspace backs out (the router's Back) when no dialog is open; dialogs close on their own Escape.
- *   In a text field or dropdown, Escape lets go of it instead (the cursor takes over again).
+ * - **Back**: Escape or Backspace backs out: the top input claim's cancel (a panel over the game closes), else the
+ *   router's Back when no dialog is open; dialogs close on their own Escape. In a text field or dropdown, Escape lets
+ *   go of it instead (the cursor takes over again).
  * - **Menu**: M (or the controller's Start) opens / closes the hub's sidebar and moves the cursor into / out of it.
- * - **Controller**: the D-pad / left stick send arrow-key events (repeating while held), A presses the focused control
- *   (or sends Enter where the screen has its own controls), B sends Escape, Start the menu — so battles and the
- *   overworld, which already listen for those keys, work with a controller too.
+ * - **Controller**, in menus: each button arrives as its action's key (`actions.ts`): the D-pad / left stick as arrows
+ *   (repeating while held), A presses the focused control, B sends Escape, Start M, LB / RB Q / E, Y C, X X, View V.
  *
- * Screens with their own controls (the overworld's walking, the battle menu, Phaser) pause menu navigation while they're
- * mounted (`useNavPause`). Typing in a text field pauses it too, so WASD types. Norigin runs with native events (it never
+ * Phaser screens (the overworld, battles) read the keyboard and controller themselves, with Phaser's own input
+ * (`SceneInput`). Who has the controls is explicit (`owner.ts`): while a Phaser screen owns them, menu navigation is
+ * paused and the controller sends no key presses; a panel opened over it claims them back for the menus, and cancel
+ * closes it. Typing in a text field pauses navigation too, so WASD types. Norigin runs with native events (it never
  * swallows keys); this layer decides when it acts.
  *
  * `<html data-input="keys|pointer">` records the last input, so focus rings only show when navigating by keys.
@@ -29,6 +31,9 @@ import {
 } from "@noriginmedia/norigin-spatial-navigation";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
+
+import { ACTIONS, isDirection, KEY_BINDINGS, padActions, REPEAT_DELAY, REPEAT_EVERY, type Action } from "./actions";
+import { inputOwner, onInputChange, ownerCancel, setInputDevice } from "./owner";
 
 /** Focus keys of the shell's two sections: the page's content and the sidebar. */
 export const PAGE_FOCUS = "page";
@@ -52,17 +57,17 @@ const ARROWS: Record<string, "up" | "down" | "left" | "right"> = {
   KeyD: "right",
 };
 
-type NavState = { started: boolean; manual: number; editing: boolean };
+type NavState = { started: boolean; editing: boolean };
 // On globalThis so a dev hot reload doesn't init twice.
-const S: NavState = ((globalThis as { __ffixNav?: NavState }).__ffixNav ??= { started: false, manual: 0, editing: false });
+const S: NavState = ((globalThis as { __ffixNav?: NavState }).__ffixNav ??= { started: false, editing: false });
 
 /** Typing goes here (a slider isn't typing: ↑/↓ still move the cursor off it; it keeps ←/→ — see `isSliderKey`). */
-const isEditable = (el: Element | null) =>
+export const isEditable = (el: Element | null) =>
   !!el && ((el.matches("input, textarea, select, [contenteditable=''], [contenteditable='true']") && !el.matches("input[type='range']")) || !!el.closest("[contenteditable='true']"));
 const isSliderKey = (el: Element | null, dir: string) => !!el?.matches("input[type='range']") && (dir === "left" || dir === "right");
-const dialogOpen = () => !!document.querySelector("[role='dialog'], [data-modal]");
-/** Menu navigation is off: a screen with its own controls is up, or the player is typing. */
-export const navPaused = () => S.manual > 0 || S.editing;
+export const dialogOpen = () => !!document.querySelector("[role='dialog'], [data-modal]");
+/** Menu navigation is off: a Phaser screen has the controls (`owner.ts`), or the player is typing. */
+export const navPaused = () => inputOwner() === "game" || S.editing;
 const applyPause = () => (navPaused() ? pause() : resume());
 
 export function startNav() {
@@ -90,8 +95,10 @@ export function startNav() {
     "keydown",
     (e) => {
       if (!e.ctrlKey && !e.metaKey && !e.altKey) root.dataset.input = "keys";
+      // A real key press (the controller's are synthetic): show keyboard hints.
+      if (e.isTrusted) setInputDevice("keyboard");
       // Escape in a text field or dropdown lets go of it: the cursor and arrows take over again (not Back).
-      if (e.key === "Escape" && isEditable(e.target as Element) && S.manual === 0) {
+      if (e.key === "Escape" && isEditable(e.target as Element) && inputOwner() === "menu") {
         e.preventDefault();
         e.stopImmediatePropagation();
         (e.target as HTMLElement).blur();
@@ -99,7 +106,7 @@ export function startNav() {
         if (cur && doesFocusableExist(cur)) void setFocus(cur);
         return;
       }
-      // M: the menu (the hub's sidebar).
+      // M: the menu (the hub's sidebar). A Phaser screen with the controls sends it itself.
       if (e.code === "KeyM" && !e.repeat && !navPaused() && !isEditable(e.target as Element) && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
         window.dispatchEvent(new Event(MENU_EVENT));
@@ -122,8 +129,8 @@ export function startNav() {
     true,
   );
   // Space = Enter in menus: it presses the focused control (links included — browsers only do buttons), once, on release
-  // (as browsers press buttons), and never scrolls the page. Text fields keep their spaces; screens with their own
-  // controls (battle menu, map) already treat Space as Enter.
+  // (as browsers press buttons), and never scrolls the page. Text fields keep their spaces; Phaser screens take Space
+  // as confirm themselves.
   const spaceTarget = (e: KeyboardEvent) => {
     if (e.code !== "Space" || e.ctrlKey || e.metaKey || e.altKey || navPaused() || isEditable(e.target as Element)) return null;
     return cursorTarget();
@@ -169,29 +176,29 @@ export function startNav() {
     S.editing = false;
     applyPause();
   });
+  // A Phaser screen taking the controls (or giving them back) pauses / resumes the menus' cursor.
+  onInputChange(applyPause);
+  applyPause();
   startGamepad();
 }
 
-/** Pause menu navigation while the calling component (a screen with its own controls) is mounted. */
-export function useNavPause(active = true) {
-  useEffect(() => {
-    if (!active) return;
-    S.manual += 1;
-    applyPause();
-    return () => {
-      S.manual -= 1;
-      applyPause();
-    };
-  }, [active]);
-}
-
-/** Mounts navigation for the app: starts it once, and makes Escape / Backspace back out (the router's Back) outside dialogs. */
+/**
+ * Mounts navigation for the app: starts it once, and makes Escape / Backspace back out: the top input claim's cancel
+ * (a panel over the game closes), else the router's Back outside dialogs.
+ */
 export function NavRoot() {
   const router = useRouter();
   useEffect(() => {
     startNav();
     const onKey = (e: KeyboardEvent) => {
-      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat || e.defaultPrevented || navPaused() || isEditable(e.target as Element) || dialogOpen()) return;
+      if ((e.key !== "Escape" && e.key !== "Backspace") || e.repeat || e.defaultPrevented || navPaused() || isEditable(e.target as Element)) return;
+      const cancel = ownerCancel();
+      if (cancel) {
+        e.preventDefault();
+        cancel();
+        return;
+      }
+      if (dialogOpen()) return;
       e.preventDefault();
       if (router.history.canGoBack()) router.history.back();
     };
@@ -201,50 +208,31 @@ export function NavRoot() {
   return null;
 }
 
-// ── Controller ──────────────────────────────────────────────────────────────────────────────────────────────────────
+// ── Controller (menus) ──────────────────────────────────────────────────────────────────────────────────────────────
 
-const PAD_KEYS = {
-  up: ["ArrowUp", "ArrowUp"],
-  down: ["ArrowDown", "ArrowDown"],
-  left: ["ArrowLeft", "ArrowLeft"],
-  right: ["ArrowRight", "ArrowRight"],
-  enter: ["Enter", "Enter"],
-  escape: ["Escape", "Escape"],
-  menu: ["m", "KeyM"],
-  // FF9's shoulder / Triangle buttons, as the battle menu's keys: L1 swap target side, R1 all / single, Y next character.
-  l1: ["q", "KeyQ"],
-  r1: ["e", "KeyE"],
-  triangle: ["c", "KeyC"],
-} as const;
-export type PadKey = keyof typeof PAD_KEYS;
-const REPEAT_DELAY = 350;
-const REPEAT_EVERY = 120;
-
-const KEY_CODES: Record<string, number> = { ArrowUp: 38, ArrowDown: 40, ArrowLeft: 37, ArrowRight: 39, Enter: 13, Escape: 27, m: 77, q: 81, e: 69, c: 67 };
-
-/** A real-looking key event: `keyCode`/`which` too, which Phaser's keyboard reads (the constructor can't set them). */
-function keyEvent(type: "keydown" | "keyup", key: string, code: string) {
+/** A real-looking key event: `keyCode`/`which` too (the constructor can't set them). */
+function keyEvent(type: "keydown" | "keyup", key: string, code: string, keyCode: number) {
   const ev = new KeyboardEvent(type, { key, code, bubbles: true, cancelable: true });
-  const keyCode = KEY_CODES[key] ?? 0;
   Object.defineProperty(ev, "keyCode", { get: () => keyCode });
   Object.defineProperty(ev, "which", { get: () => keyCode });
   return ev;
 }
 
-function sendKey(k: PadKey) {
-  const [key, code] = PAD_KEYS[k];
+/** Send an action to the menus as its key (`actions.ts`: the first key bound to it). */
+function sendKey(a: Action) {
+  const { key, code, keyCode } = KEY_BINDINGS[a][0]!;
   document.documentElement.dataset.input = "keys";
   const target = document.activeElement ?? document.body;
-  target.dispatchEvent(keyEvent("keydown", key, code));
-  target.dispatchEvent(keyEvent("keyup", key, code));
+  target.dispatchEvent(keyEvent("keydown", key, code, keyCode));
+  target.dispatchEvent(keyEvent("keyup", key, code, keyCode));
 }
 
-/** A: press the focused control in menus; where a screen has its own controls, send Enter. */
+/** A: press the control the cursor is on; with none (e.g. a menu with its own cursor), send Enter. */
 function confirm() {
-  const el = navPaused() ? null : cursorTarget();
+  const el = S.editing ? null : cursorTarget();
   if (el) {
     if (!(el as HTMLButtonElement).disabled) el.click();
-  } else sendKey("enter");
+  } else sendKey("confirm");
 }
 
 const PRESSABLE = "button, a[href], [role='button'], summary";
@@ -271,50 +259,20 @@ export function connectedPads(): Gamepad[] {
   }
 }
 
+/** What every connected controller is pressing, as actions, merged (Windows often adds idle virtual pads next to the real one). */
+export function padInput(): Set<Action> {
+  const out = new Set<Action>();
+  for (const pad of connectedPads()) padActions((i) => !!pad.buttons[i]?.pressed, (i) => pad.axes[i], pad.mapping === "standard", out);
+  return out;
+}
+
 /**
- * A controller's D-pad, read both ways: "standard" pads have buttons 12–15; many others (DirectInput / generic) report
- * a hat switch as one axis (usually axes[9]: −1 up, −0.43 right, 0.14 down, 0.71 left, in between for diagonals,
- * and > 1 at rest).
+ * The menus' controller: polls the pads and sends each press as its action's key. While a Phaser screen has the
+ * controls it sends nothing (the scene reads the pads itself), but keeps track of what's held, so a button held across
+ * a hand-off doesn't press anything on the other side.
  */
-function dpad(pad: Gamepad) {
-  const b = (i: number) => !!pad.buttons[i]?.pressed;
-  const out = { up: b(12), down: b(13), left: b(14), right: b(15) };
-  if (pad.mapping !== "standard") {
-    const hat = pad.axes[9];
-    if (hat != null && hat >= -1.05 && hat <= 1.05) {
-      const near = (v: number) => Math.abs(hat - v) < 0.2;
-      out.up ||= near(-1) || near(-0.71) || near(1);
-      out.right ||= near(-0.71) || near(-0.43) || near(-0.14);
-      out.down ||= near(-0.14) || near(0.14) || near(0.43);
-      out.left ||= near(0.43) || near(0.71) || near(1);
-    }
-  }
-  return out;
-}
-
-/** What every connected controller is pressing, merged (Windows often adds idle virtual pads next to the real one). */
-export function padInput(): Record<PadKey, boolean> {
-  const out: Record<PadKey, boolean> = { up: false, down: false, left: false, right: false, enter: false, escape: false, menu: false, l1: false, r1: false, triangle: false };
-  for (const pad of connectedPads()) {
-    const b = (i: number) => !!pad.buttons[i]?.pressed;
-    const [x = 0, y = 0] = pad.axes;
-    const d = dpad(pad);
-    out.up ||= d.up || y < -0.5;
-    out.down ||= d.down || y > 0.5;
-    out.left ||= d.left || x < -0.5;
-    out.right ||= d.right || x > 0.5;
-    out.enter ||= b(0);
-    out.escape ||= b(1);
-    out.menu ||= b(9);
-    out.l1 ||= b(4);
-    out.r1 ||= b(5);
-    out.triangle ||= b(3);
-  }
-  return out;
-}
-
 function startGamepad() {
-  const held = new Map<PadKey, number>();
+  const held = new Map<Action, number>();
   let running = false;
   const loop = () => {
     // Keep polling while any controller is connected (a pad can read as missing for a frame).
@@ -325,19 +283,22 @@ function startGamepad() {
     }
     const down = padInput();
     const now = performance.now();
-    for (const k of Object.keys(down) as PadKey[]) {
-      if (!down[k]) {
-        held.delete(k);
+    const menus = inputOwner() === "menu";
+    for (const a of ACTIONS) {
+      if (!down.has(a)) {
+        held.delete(a);
         continue;
       }
-      const since = held.get(k);
-      const repeats = k === "up" || k === "down" || k === "left" || k === "right";
+      const since = held.get(a);
       if (since == null) {
-        held.set(k, now);
-        k === "enter" ? confirm() : sendKey(k);
-      } else if (repeats && now - since > REPEAT_DELAY) {
-        held.set(k, now - REPEAT_DELAY + REPEAT_EVERY);
-        sendKey(k);
+        held.set(a, now);
+        if (!menus) continue;
+        setInputDevice("pad");
+        if (a === "confirm") confirm();
+        else sendKey(a);
+      } else if (menus && isDirection(a) && now - since > REPEAT_DELAY) {
+        held.set(a, now - REPEAT_DELAY + REPEAT_EVERY);
+        sendKey(a);
       }
     }
     requestAnimationFrame(loop);

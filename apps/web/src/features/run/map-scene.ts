@@ -6,6 +6,8 @@
 import type { MapNode, NodeKind, WorldMap } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
+import type { Action } from "@/features/input/actions";
+import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 import { buildMapLayout, COL_STEP, TILE, type Dir, type MapLayout, type TilePoint } from "./map/layout";
@@ -22,6 +24,8 @@ export interface MapBridge {
   onHover(node: MapNode | null): void;
   /** True while a server move is in flight: the map ignores input. */
   isBusy(): boolean;
+  /** Buttons the map doesn't use itself (Y party, X bag, Start menu…), for the run screen. */
+  onAction?(action: Action): void;
 }
 
 const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number }> = {
@@ -93,7 +97,7 @@ export class MapScene extends Phaser.Scene {
   private bob?: Phaser.Tweens.Tween;
   private animated = false;
   private walker!: Walker;
-  private keys!: Record<"up" | "down" | "left" | "right" | "w" | "a" | "s" | "d", Phaser.Input.Keyboard.Key>;
+  private controls!: SceneInput;
   private hints: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[] = [];
   private walkingNow = false;
   private lastHeading: Dir | null = null;
@@ -157,20 +161,10 @@ export class MapScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
 
-    // Held keys are polled (not captured, so the rest of the page keeps its keys); presses come as events.
-    const kb = this.input.keyboard!;
-    const K = Phaser.Input.Keyboard.KeyCodes;
-    this.keys = {
-      up: kb.addKey(K.UP, false),
-      down: kb.addKey(K.DOWN, false),
-      left: kb.addKey(K.LEFT, false),
-      right: kb.addKey(K.RIGHT, false),
-      w: kb.addKey(K.W, false),
-      a: kb.addKey(K.A, false),
-      s: kb.addKey(K.S, false),
-      d: kb.addKey(K.D, false),
-    };
-    kb.on("keydown", this.onKey, this);
+    // Keyboard and controller through Phaser's own input (only while the map has the controls — see owner.ts): held
+    // directions are polled each frame, presses come as actions.
+    this.controls = new SceneInput(this);
+    this.controls.on(this.onAction.bind(this));
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -332,33 +326,26 @@ export class MapScene extends Phaser.Scene {
     return this.walker.arrived !== null || this.bridge.isBusy();
   }
 
-  /** The direction held on the keyboard, unless the player is typing somewhere. */
+  /** The direction held (keyboard or controller). */
   private heldDir(): Dir | null {
-    if (typingElsewhere()) return null;
-    const k = this.keys;
-    if (k.left.isDown || k.a.isDown) return "left";
-    if (k.right.isDown || k.d.isDown) return "right";
-    if (k.up.isDown || k.w.isDown) return "up";
-    if (k.down.isDown || k.s.isDown) return "down";
+    const c = this.controls;
+    if (c.isDown("left")) return "left";
+    if (c.isDown("right")) return "right";
+    if (c.isDown("up")) return "up";
+    if (c.isDown("down")) return "down";
     return null;
   }
 
-  private onKey(ev: KeyboardEvent) {
-    if (this.locked() || typingElsewhere()) return;
-    // Enter/Space enters the stage the party is standing on.
-    if (ev.key === "Enter" || ev.key === " ") {
+  private onAction(a: Action) {
+    if (a === "up" || a === "down" || a === "left" || a === "right") {
+      // Fresh presses can turn the party around mid-road; held ones only start/continue walking (in update).
+      if (!this.locked() && this.walker.press(a)) this.afterMoveChange();
+    } else if (a === "confirm") {
+      // Enter / Space / A enters the stage the party is standing on.
+      if (this.locked()) return;
       const id = this.walker.confirm();
-      if (id) {
-        ev.preventDefault();
-        this.commit(id);
-      }
-      return;
-    }
-    const dir = KEY_DIR[ev.key.toLowerCase()];
-    if (!dir) return;
-    ev.preventDefault();
-    // Fresh presses can turn the party around mid-road; held keys only start/continue walking (in update).
-    if (this.walker.press(dir)) this.afterMoveChange();
+      if (id) this.commit(id);
+    } else this.bridge.onAction?.(a);
   }
 
   private clickStage(id: string) {
@@ -482,24 +469,7 @@ export class MapScene extends Phaser.Scene {
   }
 }
 
-const KEY_DIR: Record<string, Dir> = {
-  arrowup: "up",
-  w: "up",
-  arrowdown: "down",
-  s: "down",
-  arrowleft: "left",
-  a: "left",
-  arrowright: "right",
-  d: "right",
-};
-
 const DIR_VEC: Record<Dir, { x: number; y: number }> = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
-
-/** True while focus is in a text field (keys belong to it then). */
-function typingElsewhere(): boolean {
-  const el = document.activeElement as HTMLElement | null;
-  return !!el && (el.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName));
-}
 
 export function createMapGame(parent: HTMLElement, bridge: MapBridge): Phaser.Game {
   return new Phaser.Game({
@@ -510,6 +480,7 @@ export function createMapGame(parent: HTMLElement, bridge: MapBridge): Phaser.Ga
     pixelArt: true,
     backgroundColor: "#000000",
     scale: { mode: Phaser.Scale.RESIZE },
+    ...PHASER_INPUT,
     scene: [],
     callbacks: {
       postBoot: (game) => {

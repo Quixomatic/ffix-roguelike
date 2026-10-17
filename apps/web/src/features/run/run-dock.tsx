@@ -1,16 +1,21 @@
 import { getJourney, WORLDS, type RunState } from "@ffix-roguelike/game-core";
 import { findItem, getCharacter } from "@ffix-roguelike/game-data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
-import { FocusItem } from "@/features/input/focus";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { actionForKey } from "@/features/input/actions";
+import { ButtonHint } from "@/features/input/button-hint";
+import { FocusItem, FocusSection } from "@/features/input/focus";
+import { dialogOpen, isEditable } from "@/features/input/nav";
+import { useInputOwner } from "@/features/input/owner";
 
 import { gearSummary, HelpText, itemEffectText, itemName } from "./item-info";
 import { fieldItems } from "./party-sidebar";
 import type { RunActions } from "./use-run";
 
-type DockTab = "inventory" | "gear" | "run";
+export type DockTab = "inventory" | "gear" | "run";
 
 const TABS: { id: DockTab; label: string; glyph: string }[] = [
   { id: "inventory", label: "Items", glyph: "🧪" },
@@ -21,12 +26,31 @@ const TABS: { id: DockTab; label: string; glyph: string }[] = [
 /**
  * Bottom centre of the run screen: tabs that slide a panel out over the map (on the right) — the item bag, every piece of gear the
  * party carries, and the run's progress (with Abandon).
+ *
+ * Controls: X (key or button) opens the bag; while a panel is open it has the controls (the map waits): LB / RB (Q / E)
+ * flip between Items, Gear and Run, B / Escape or X closes it and hands the controls back.
  */
-export function RunDock({ run, actions, canManage }: { run: RunState; actions: RunActions; canManage: boolean }) {
-  const [tab, setTab] = useState<DockTab | null>(null);
+export function RunDock({ run, actions, canManage, tab, onTab }: { run: RunState; actions: RunActions; canManage: boolean; tab: DockTab | null; onTab(tab: DockTab | null): void }) {
+  const setTab = onTab;
+  useInputOwner("menu", { active: !!tab, onCancel: () => setTab(null) });
+  useEffect(() => {
+    if (!tab) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || isEditable(e.target as Element) || dialogOpen()) return;
+      const a = actionForKey(e);
+      const i = TABS.findIndex((t) => t.id === tab);
+      if (a === "l1" || a === "r1") setTab(TABS[(i + (a === "r1" ? 1 : TABS.length - 1)) % TABS.length]!.id);
+      else if (a === "x") setTab(null);
+      else return;
+      e.preventDefault();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [tab, setTab]);
   return (
     <>
-      <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1">
+      <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1">
+        {tab ? <ButtonHint action="l1" className="mr-1" /> : <ButtonHint action="x" className="mr-1" />}
         {TABS.map((t) => (
           <FocusItem key={t.id}>
             <button
@@ -39,14 +63,17 @@ export function RunDock({ run, actions, canManage }: { run: RunState; actions: R
             </button>
           </FocusItem>
         ))}
+        {tab && <ButtonHint action="r1" className="ml-1" />}
       </div>
       {tab && (
-        <div className="ff-window absolute bottom-14 right-2 top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
+        // The open panel has the cursor (its own section, so the cursor starts in it — keyed so each tab starts on its first item).
+        <FocusSection key={tab} focusKey="run-dock" autoFocus>
+        <div data-run-panel className="ff-window absolute bottom-14 right-2 top-2 z-20 flex w-80 flex-col gap-2 overflow-y-auto p-3">
           <div className="flex items-center justify-between">
             <span className="ff-display text-lg">{TABS.find((t) => t.id === tab)!.label}</span>
             <FocusItem>
-              <button onClick={() => setTab(null)} aria-label="Close">
-                ✕
+              <button className="flex items-center gap-1.5" onClick={() => setTab(null)} aria-label="Close">
+                <ButtonHint action="cancel" /> ✕
               </button>
             </FocusItem>
           </div>
@@ -54,6 +81,7 @@ export function RunDock({ run, actions, canManage }: { run: RunState; actions: R
           {tab === "gear" && <GearBagPanel run={run} />}
           {tab === "run" && <RunInfoPanel run={run} actions={actions} />}
         </div>
+        </FocusSection>
       )}
     </>
   );
@@ -150,6 +178,7 @@ function GearBagPanel({ run }: { run: RunState }) {
 /** Where the run is and how it's going; abandoning lives here. */
 function RunInfoPanel({ run, actions }: { run: RunState; actions: RunActions }) {
   const journey = getJourney(run.journey);
+  const [confirming, setConfirming] = useState(false);
   const rows: [string, string | number][] = [
     ["Journey", journey.name],
     ["Area", `${WORLDS[run.world]!.name} (map ${run.stage + 1}/${journey.areas.length})`],
@@ -183,13 +212,14 @@ function RunInfoPanel({ run, actions }: { run: RunState; actions: RunActions }) 
       <FocusItem>
         <button
           className="mt-2 rounded border border-red-400/50 px-2 py-1 text-sm text-red-300 hover:bg-red-900/30"
-          onClick={() => {
-            if (confirm("Abandon this run? You still earn Completion Points and keep learned abilities; gear found this run is lost.")) actions.abandon.mutate();
-          }}
+          onClick={() => setConfirming(true)}
         >
           Abandon run
         </button>
       </FocusItem>
+      <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Abandon this run?" confirmLabel="Abandon run" onConfirm={() => actions.abandon.mutate()}>
+        It ends as a loss: you still earn Completion Points and keep learned abilities, and half the gil is banked; gear found this run is lost.
+      </ConfirmDialog>
     </div>
   );
 }

@@ -17,6 +17,7 @@ import type { ReactNode } from "react";
 
 import { HelpText } from "@/features/run/item-info";
 import { FocusItem, FocusSection } from "@/features/input/focus";
+import { useInputOwner } from "@/features/input/owner";
 
 /** A titled section of the character sheet. */
 export function Panel({ title, right, className = "", children }: { title: ReactNode; right?: ReactNode; className?: string; children: ReactNode }) {
@@ -329,6 +330,8 @@ export function CharacterModal({
   onClose(): void;
 }) {
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
+  // As a dialog it has the controls (over the map too); Escape / Backspace / B close it.
+  useInputOwner("menu", { active: !inline, onCancel: onClose });
   const window = (
       <div className={`ff-window flex flex-col overflow-hidden ${inline ? "h-full w-full" : "h-[90vh] w-[95vw] max-w-[1400px]"}`} onClick={(e) => e.stopPropagation()}>
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/15 px-4 py-3">

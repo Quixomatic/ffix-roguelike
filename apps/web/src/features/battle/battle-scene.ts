@@ -7,6 +7,8 @@ import { bestiary, findItem } from "@ffix-roguelike/game-data";
 import Phaser from "phaser";
 
 import { playActionEffect, preloadEffects } from "@/features/effects/battle-effects";
+import type { Action } from "@/features/input/actions";
+import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
@@ -40,6 +42,8 @@ export interface BattleBridge {
    */
   impactAt: Map<string, number>;
   settleAt: number;
+  /** Set by the battle view: the battle's controls (keyboard + controller through Phaser's input) as actions. */
+  onAction?: (action: Action) => void;
 }
 
 interface UnitView {
@@ -120,6 +124,9 @@ export class BattleScene extends Phaser.Scene {
   }
 
   create() {
+    // The battle's controls: Phaser's keyboard and gamepad plugins, as actions for the battle menu (React). Held
+    // directions repeat, like a menu cursor. Only while the battle has the controls (see owner.ts).
+    new SceneInput(this, { repeat: true }).on((a) => this.bridge.onAction?.(a));
     const state = this.bridge.getState();
     const enemies = state.units.filter((u) => u.side === "enemy");
     const party = state.units.filter((u) => u.side === "party");
@@ -547,6 +554,7 @@ export function createBattleGame(parent: HTMLElement, bridge: BattleBridge): Pha
     backgroundColor: "#000000",
     // Fill the host element; the scene lays itself out for the real size (see BattleScene.layout).
     scale: { mode: Phaser.Scale.RESIZE },
+    ...PHASER_INPUT,
     scene: [],
     callbacks: {
       postBoot: (game) => {

@@ -1,16 +1,19 @@
 import { WORLDS } from "@ffix-roguelike/game-core";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AREA_MUSIC, MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { BattleView } from "@/features/battle/battle-view";
 import { useBattleScript } from "@/features/battle/use-battle-script";
+import { actionForKey, type Action } from "@/features/input/actions";
 import { FocusItem, FocusSection } from "@/features/input/focus";
+import { dialogOpen, isEditable, MENU_EVENT } from "@/features/input/nav";
+import { inputOwner } from "@/features/input/owner";
 
 import { Overworld } from "./overworld";
 import { PartySidebar } from "./party-sidebar";
 import { RunCharacterSheet } from "./run-character-sheet";
-import { RunDock } from "./run-dock";
+import { RunDock, type DockTab } from "./run-dock";
 import { ChocoboPanel, StiltzkinPanel } from "./special-panels";
 import { EventPanel, MooglePanel, RewardsPanel, RunOverPanel, ShopPanel, SynthPanel, TreasurePanel, WorldClearPanel } from "./stage-panels";
 import { useActiveRun, useRunActions } from "./use-run";
@@ -24,6 +27,7 @@ export function RunScreen() {
   const actions = useRunActions();
   const run = active.data?.state;
   const [managing, setManaging] = useState<string | null>(null);
+  const [dock, setDock] = useState<DockTab | null>(null);
   // The fight's FF9 AI script (fetched per battle) must be registered before its engine runs. Hooks stay above
   // the early returns so every render calls the same ones.
   const scriptReady = useBattleScript(run?.phase.kind === "battle" ? run.phase.battle.scene : undefined);
@@ -56,6 +60,7 @@ export function RunScreen() {
   }
 
   const phase = run.phase;
+  const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
 
   if (phase.kind === "battle")
     return (
@@ -86,16 +91,32 @@ export function RunScreen() {
       </FocusSection>
     );
 
-  const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
-
   return (
+    <>
+    <RunButtons
+      onAction={(a) => {
+        // Y: the party (character sheets, LB / RB through the members). X: the bag. Start: the hub's menu.
+        if (a === "triangle" && canManage) setManaging(run.party[0]!.build.key);
+        else if (a === "x") setDock("inventory");
+        else if (a === "menu") window.dispatchEvent(new Event(MENU_EVENT));
+      }}
+    />
     // Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
     // The map / stage on the left, the party on the right (the hub's own sidebar slides in on the left).
     <div className="grid h-svh min-h-0 gap-3 p-4 lg:grid-cols-[1fr_17rem]">
       <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
-            <Overworld run={run} busy={actions.move.isPending} onMove={(nodeId) => actions.move.mutate({ nodeId })} />
+            <Overworld
+              run={run}
+              busy={actions.move.isPending}
+              onMove={(nodeId) => actions.move.mutate({ nodeId })}
+              onAction={(a) => {
+                if (a === "triangle") setManaging(run.party[0]!.build.key);
+                else if (a === "x") setDock("inventory");
+                else if (a === "menu") window.dispatchEvent(new Event(MENU_EVENT));
+              }}
+            />
           </div>
         ) : (
           // Each stage's screen is its own cursor section (inside the hub's page section — its own key, never "page"):
@@ -115,10 +136,36 @@ export function RunScreen() {
           </div>
           </FocusSection>
         )}
-        <RunDock run={run} actions={actions} canManage={canManage} />
+        <RunDock run={run} actions={actions} canManage={canManage} tab={dock} onTab={setDock} />
       </main>
       <PartySidebar run={run} actions={actions} canManage={canManage} onManage={setManaging} />
-      {managing && canManage && <RunCharacterSheet run={run} keyName={managing} actions={actions} onClose={() => setManaging(null)} />}
+      {managing && canManage && (
+        <RunCharacterSheet run={run} keyName={managing} actions={actions} onClose={() => setManaging(null)} onSwitch={setManaging} />
+      )}
     </div>
+    </>
   );
+}
+
+/**
+ * The run's shortcuts on the stage screens (shops, rewards…), where the menus have the controls: C / Y opens the
+ * party, X the bag. (On the map, the map's own controls send them — see Overworld.) Not while a panel or dialog is up.
+ */
+function RunButtons({ onAction }: { onAction(a: Action): void }) {
+  const ref = useRef(onAction);
+  ref.current = onAction;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || inputOwner() !== "menu" || dialogOpen() || isEditable(e.target as Element)) return;
+      const a = actionForKey(e);
+      if (a !== "triangle" && a !== "x") return;
+      // Only when nothing has claimed the controls over the run (a dock panel, the menu).
+      if (document.querySelector("[data-run-panel]")) return;
+      e.preventDefault();
+      ref.current(a);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  return null;
 }
