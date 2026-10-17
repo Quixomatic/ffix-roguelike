@@ -2,13 +2,13 @@ import { type Profile } from "@ffix-roguelike/game-core";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../index";
+import { adminProcedure, isAdmin, protectedProcedure, router } from "../index";
 import { loadProfile, saveProfile } from "../services/profile";
 
-/** Dev/admin tools: on unless the server runs with NODE_ENV=production (deploys must set it). */
+/** Dev tools: admins only, and never when the server runs with NODE_ENV=production (deploys must set it). */
 export const devToolsEnabled = () => process.env.NODE_ENV !== "production";
 
-const devProcedure = protectedProcedure.use(({ next }) => {
+const devProcedure = adminProcedure.use(({ next }) => {
   if (!devToolsEnabled()) throw new TRPCError({ code: "FORBIDDEN", message: "Dev tools are disabled in production" });
   return next();
 });
@@ -21,7 +21,7 @@ async function changeProfile(db: Parameters<typeof loadProfile>[0], userId: stri
 
 /** Testing aids on your own profile: unlock/relock characters, grant Completion Points and banked gil. */
 export const devRouter = router({
-  enabled: protectedProcedure.query(() => devToolsEnabled()),
+  enabled: protectedProcedure.query(({ ctx }) => devToolsEnabled() && isAdmin(ctx.session)),
 
   /** Put a character on the roster or take them off it (Zidane always stays). */
   setUnlocked: devProcedure.input(z.object({ key: z.string(), unlocked: z.boolean() })).mutation(({ ctx, input }) =>

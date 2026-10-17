@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ModeToggle } from "./mode-toggle";
 import UserMenu from "./user-menu";
 import { FocusItem } from "@/features/input/focus";
+import { authClient, isAdminUser } from "@/lib/auth-client";
 
 export default function Header() {
   const links = [
@@ -12,6 +13,8 @@ export default function Header() {
     { to: "/battle", label: "Practice" },
     { to: "/items", label: "Items" },
   ] as const;
+  const { data: session } = authClient.useSession();
+  const admin = isAdminUser(session?.user);
 
   return (
     <header className="border-b-2 border-[#e8e8f4]/70 bg-gradient-to-b from-[#24317a] to-[#141b52] shadow-[0_2px_0_rgba(0,0,0,0.6)]">
@@ -38,11 +41,13 @@ export default function Header() {
                   Effects
                 </Link>
               </FocusItem>
-              <FocusItem>
-                <Link to="/dev" className="text-sm text-orange-300 opacity-80 hover:opacity-100 [&.active]:opacity-100" title="Dev tools (development only)">
-                  Dev
-                </Link>
-              </FocusItem>
+              {admin && (
+                <FocusItem>
+                  <Link to="/dev" className="text-sm text-orange-300 opacity-80 hover:opacity-100 [&.active]:opacity-100" title="Dev tools (admins, development only)">
+                    Dev
+                  </Link>
+                </FocusItem>
+              )}
             </>
           )}
           <FocusItem>

@@ -30,3 +30,16 @@ export const protectedProcedure = t.procedure.use(withContent).use(({ ctx, next 
     },
   });
 });
+
+/** Signed in with the admin role (better-auth's admin plugin; grant with apps/server `scripts/set-role.ts`). */
+export const isAdmin = (session: { user: { role?: string | null } } | null | undefined) => (session?.user.role ?? null) === "admin";
+
+export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (!isAdmin(ctx.session)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Admin access required",
+    });
+  }
+  return next({ ctx });
+});

@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.67] - 2026-10-17
+
+Admin accounts, set up like ChannelGuide's: better-auth's admin plugin, an admin-only tRPC procedure, and a script to grant the role.
+
+### Added
+- **Roles** with better-auth's **`admin()` plugin** (`packages/auth`): built-in "admin" and "user" (the default). The user table gets `role`, `banned`, `banReason` and `banExpires`, and the session table `impersonatedBy` (migration `admin_plugin`).
+- **`adminProcedure`** (`packages/api/src/index.ts`): signed in with the admin role, else FORBIDDEN. `isAdmin(session)` is beside it. The coming reward / gear tables admin page uses them.
+- **`adminClient()`** in the web's auth client, so `session.user.role` is typed. `isAdminUser(user)` is for showing admin-only UI (the server checks too).
+- **`apps/server/scripts/set-role.ts [email] [admin|user]`**, a proper script like the probes. With no arguments it lists every account and its role. With an email (or a prefix matching exactly one account) and a role, it sets it.
+  - Run from apps/server: `bun scripts/set-role.ts <email> admin`.
+  - James's account is admin.
+
+### Changed
+- **Dev tools are admins only** (and still never on a production server): the dev router uses `adminProcedure`, and the header's Dev link shows only to admins. The Dev page says how to get access.
+
+### Notes
+- Restart `pnpm dev` (auth plugin and schema changed). If the Dev link doesn't show, sign out and back in so the session picks up the role.
+
 ## [0.2.66] - 2026-10-17
 
 First step of targeted rewards (`.plans/rewards.md`): the bag shows only what's in it, gear can be bound to one character, and synthesizing a piece unlocks it for good.

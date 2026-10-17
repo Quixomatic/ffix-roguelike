@@ -1,6 +1,7 @@
 import type { Database } from "@ffix-roguelike/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { admin } from "better-auth/plugins";
 
 export type AuthConfig = {
   BETTER_AUTH_URL: string;
@@ -28,7 +29,14 @@ export function createAuth(
         httpOnly: true,
       },
     },
-    plugins: [],
+    plugins: [
+      // Roles (the ChannelGuide setup): built-in "admin" / "user". Admins manage the game's tables (rewards, gear
+      // availability) and use the dev tools. Grant with `bun scripts/set-role.ts <email> admin` (apps/server).
+      admin({
+        defaultRole: "user",
+        adminRoles: ["admin"],
+      }),
+    ],
   });
 }
 

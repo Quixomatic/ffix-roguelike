@@ -23,7 +23,12 @@ export function DevPage() {
   const p = profile.data;
 
   if (enabled.data === false)
-    return <div className="ff-window m-4 p-4">Dev tools are off — the server isn't running in development mode.</div>;
+    return (
+      <div className="ff-window m-4 p-4">
+        Dev tools are off: they need an admin account (apps/server: <code>bun scripts/set-role.ts &lt;email&gt; admin</code>) and a server in
+        development mode.
+      </div>
+    );
   if (!p) return <div className="p-4">Loading…</div>;
 
   return (
