@@ -41,6 +41,8 @@ export interface GearInstance {
   /** Starter gear the character brought (true) vs gear found during the run (false). */
   secured: boolean;
   holder: { key: string; slot: EquipSlot } | null;
+  /** Reward gear offered for one character: only they can equip it. Unset = anyone who can wear it. */
+  boundTo?: string;
 }
 
 export interface RunMember {
@@ -119,6 +121,8 @@ export interface RunState {
   stats: RunStats;
   /** Gear the player has unlocked into drop pools (snapshot at run start). */
   unlockedGear: number[];
+  /** Gear synthesized this run (item ids): unlocked when the run ends, won or lost. */
+  synthesized?: number[];
   /** Wait (time stops while choosing) or Active battles — the player's setting; missing = wait. */
   battleMode?: "wait" | "active";
 }
@@ -561,6 +565,8 @@ export function synthesize(run: RunState, recipeId: number): RunState {
   addLoot(next, recipe.result);
   const made = next.gear.at(-1);
   if (made && made.itemId === recipe.result) made.secured = secured;
+  // Synthesizing is hard enough to earn the unlock by itself: it's kept whether the run is won or lost.
+  if (!getItem(recipe.result).effect) next.synthesized = [...new Set([...(next.synthesized ?? []), recipe.result])];
   return next;
 }
 
@@ -674,6 +680,11 @@ function assertCanManage(run: RunState) {
   if (!["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(run.phase.kind)) throw new RunError("Can't change gear right now");
 }
 
+/** Whether `key` may wear this gear instance in `slot`: they can equip the item, and it isn't bound to someone else. */
+export function canWearInstance(key: string, inst: GearInstance, slot: EquipSlot): boolean {
+  return (!inst.boundTo || inst.boundTo === key) && canEquip(key, getItem(inst.itemId), slot);
+}
+
 /** Equip a gear instance (or clear the slot with uid = null). */
 export function equip(run: RunState, key: string, slot: EquipSlot, uid: number | null): RunState {
   assertCanManage(run);
@@ -688,10 +699,11 @@ export function equip(run: RunState, key: string, slot: EquipSlot, uid: number |
     const inst = next.gear.find((g) => g.uid === uid);
     if (!inst) throw new RunError("You don't have that");
     if (!canEquip(key, getItem(inst.itemId), slot)) throw new RunError(`${getCharacter(key).name} can't equip that there`);
+    if (inst.boundTo && inst.boundTo !== key) throw new RunError(`That was found for ${getCharacter(inst.boundTo).name}`);
     if (inst.holder && inst.holder.key !== key) {
       // Swap: the other character gets this character's current piece if they can wear it, else empties.
       const other = inst.holder;
-      if (current && canEquip(other.key, getItem(current.itemId), other.slot)) current.holder = { ...other };
+      if (current && canWearInstance(other.key, current, other.slot)) current.holder = { ...other };
       else if (current) current.holder = null;
     } else if (current) current.holder = null;
     inst.holder = { key, slot };
@@ -762,6 +774,8 @@ export interface RunOutcome {
   builds: CharacterBuild[];
   /** Gear found this run (item ids, unique). Unlocked into future drop pools if the run was won. */
   foundGear: number[];
+  /** Gear synthesized this run: unlocked whether the run was won or lost. */
+  synthesized?: number[];
   gilEarned: number;
   stats: RunStats;
   worldReached: number;
@@ -783,6 +797,7 @@ export function runOutcome(run: RunState): RunOutcome {
     won,
     builds,
     foundGear: [...new Set(run.gear.filter((g) => !g.secured).map((g) => g.itemId))],
+    synthesized: run.synthesized ?? [],
     gilEarned: won ? run.gil : Math.floor(run.gil / 2),
     stats: run.stats,
     worldReached: WORLDS[run.world]?.tier ?? 0,

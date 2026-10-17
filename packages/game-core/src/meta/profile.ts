@@ -177,13 +177,16 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
       unlockedSlots: before?.unlockedSlots ?? [],
     };
   }
-  // A won run brings its gear home: everything found is unlocked into future drop pools.
+  // A won run brings its gear home: everything found is unlocked into future drop pools. Synthesized gear is
+  // unlocked either way (it's hard enough to make).
   const gearUnlocked: number[] = [];
-  if (outcome.won) {
-    const have = new Set(p.gearUnlocked ?? []);
-    for (const id of outcome.foundGear) if (!have.has(id)) gearUnlocked.push(id);
-    p.gearUnlocked = [...have, ...gearUnlocked];
+  const have = new Set(p.gearUnlocked ?? []);
+  for (const id of [...(outcome.won ? outcome.foundGear : []), ...(outcome.synthesized ?? [])]) {
+    if (have.has(id)) continue;
+    have.add(id);
+    gearUnlocked.push(id);
   }
+  p.gearUnlocked = [...have];
   p.gil += outcome.gilEarned;
   p.stats.runs++;
   p.stats.battles += outcome.stats.battles;

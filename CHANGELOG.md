@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.66] - 2026-10-17
+
+First step of targeted rewards (`.plans/rewards.md`): the bag shows only what's in it, gear can be bound to one character, and synthesizing a piece unlocks it for good.
+
+### Changed
+- **The gear picker** (character sheet → Equipment) lists only what's in the bag. Gear another party member is wearing isn't offered any more, so you can't pull it off them from here.
+- **The bag** (Gear tab) lists unequipped gear only. Each member's own gear is on their sheet.
+- **Synthesizing a piece unlocks it into future runs straight away, won run or lost.** It's hard enough to make. Gear found (not synthesized) still unlocks only when the run is won. (`RunState.synthesized`, `RunOutcome.synthesized`, `applyRunOutcome`.)
+
+### Added
+- **Bound gear** (`GearInstance.boundTo`): gear found for one character can be equipped only by them. For the coming reward cards; nothing binds gear yet.
+  - `equip` refuses anyone else ("That was found for Vivi").
+  - Optimize gear skips it for the others.
+  - Swapping never hands it to someone else.
+  - The picker and bag mark it ("found for Vivi", with their portrait).
+  - `canWearInstance(key, inst, slot)` in game-core.
+- Tests: a synthesized piece is unlocked after a lost run, and found gear isn't; bound gear refuses another member, and optimize leaves it alone (287 pass).
+
 ## [0.2.65] - 2026-10-17
 
 ### Added

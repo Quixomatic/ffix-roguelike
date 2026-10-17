@@ -157,12 +157,13 @@ function ItemEffectLine({ itemId }: { itemId: number }) {
   );
 }
 
-/** Every piece of gear the party carries: who wears it, and whether it's safe (starter/won) or found this run. */
+/** The gear in the bag (not worn by anyone): whether it's safe (starter/won) or found this run, and who it was found for. */
 function GearBagPanel({ run }: { run: RunState }) {
-  const sorted = [...run.gear].sort((a, b) => Number(!!a.holder) - Number(!!b.holder) || (findItem(a.itemId)?.kind ?? "").localeCompare(findItem(b.itemId)?.kind ?? ""));
+  const sorted = run.gear.filter((g) => !g.holder).sort((a, b) => (findItem(a.itemId)?.kind ?? "").localeCompare(findItem(b.itemId)?.kind ?? ""));
   return (
     <div className="flex flex-col gap-1">
       <div className="text-xs opacity-70">Found gear (orange) goes home only if the run is won. Equip from a character's Manage sheet.</div>
+      {!sorted.length && <div className="text-sm opacity-60">Nothing in the bag: everything is being worn.</div>}
       {sorted.map((g) => {
         const item = findItem(g.itemId);
         if (!item) return null;
@@ -173,12 +174,10 @@ function GearBagPanel({ run }: { run: RunState }) {
               <div className={`truncate ${g.secured ? "" : "text-orange-300"}`}>{item.name}</div>
               <div className="truncate text-xs text-[#c8d0ff]">{gearSummary(item) || "—"}</div>
             </div>
-            {g.holder ? (
-              <span title={`On ${getCharacter(g.holder.key).name}`}>
-                <HeroSprite heroKey={g.holder.key} size={24} />
+            {g.boundTo && (
+              <span title={`Found for ${getCharacter(g.boundTo).name}: only they can wear it`}>
+                <HeroSprite heroKey={g.boundTo} size={24} />
               </span>
-            ) : (
-              <span className="text-xs opacity-60">bag</span>
             )}
           </div>
         );

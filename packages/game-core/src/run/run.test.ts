@@ -218,6 +218,46 @@ describe("synthesis & selling", () => {
     expect(run.gil).toBeGreaterThan(gil);
   });
 
+  test("synthesized gear is unlocked when the run ends, even a lost one", async () => {
+    const { synthesize, abandonRun, runOutcome } = await import("./run");
+    const { synthesis, itemByName } = await import("@ffix-roguelike/game-data");
+    const profile = newProfile();
+    let run = startRun({ seed: "synth2", tier: 0, party: [profile.builds.zidane!] });
+    const recipe = synthesis.find((r) => r.result === itemByName("Butterfly Sword").id)!;
+    run.gil = 1000;
+    run.gear.push({ uid: 501, itemId: recipe.ingredients[0]!, secured: false, holder: null });
+    run.gear.push({ uid: 502, itemId: recipe.ingredients[1]!, secured: false, holder: null });
+    run.phase = { kind: "synth", name: "test", recipes: [recipe.id] };
+    run = synthesize(run, recipe.id);
+    run = abandonRun({ ...run, phase: { kind: "map" } });
+    const outcome = runOutcome(run);
+    expect(outcome.won).toBe(false);
+    const report = applyRunOutcome(profile, outcome, 0);
+    expect(report.profile.gearUnlocked).toContain(recipe.result);
+    // Found (not synthesized) gear from a lost run stays locked.
+    expect(report.profile.gearUnlocked).not.toContain(recipe.ingredients[0]);
+  });
+});
+
+describe("bound gear", () => {
+  test("reward gear found for one character can't be equipped by another, and optimize leaves it alone", async () => {
+    const { equip } = await import("./run");
+    const { itemByName } = await import("@ffix-roguelike/game-data");
+    const profile = newProfile();
+    profile.builds.vivi!.unlockedSlots = ["armor"];
+    profile.builds.zidane!.unlockedSlots = ["armor"];
+    let run = startRun({ seed: "bound", tier: 0, party: [profile.builds.zidane!, profile.builds.vivi!] });
+    // A strong shirt both can wear, found for Vivi.
+    const shirt = itemByName("Silk Shirt").id;
+    run.gear.push({ uid: 900, itemId: shirt, secured: false, holder: null, boundTo: "vivi" });
+    run.phase = { kind: "map" };
+    expect(() => equip(run, "zidane", "armor", 900)).toThrow();
+    run = equip(run, "vivi", "armor", 900);
+    expect(run.gear.find((g) => g.uid === 900)!.holder).toEqual({ key: "vivi", slot: "armor" });
+    run = equip(run, "vivi", "armor", null);
+    run = optimizeParty(run);
+    expect(run.gear.find((g) => g.uid === 900)!.holder?.key).not.toBe("zidane");
+  });
 });
 
 describe("special stages & supplies", () => {

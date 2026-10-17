@@ -1,4 +1,4 @@
-import { canEquip, deriveStats, EQUIP_SLOTS, expForLevel, gemsMax, gemsUsed, slotUnlocked, type RunState } from "@ffix-roguelike/game-core";
+import { canWearInstance, deriveStats, EQUIP_SLOTS, expForLevel, gemsMax, gemsUsed, slotUnlocked, type RunState } from "@ffix-roguelike/game-core";
 import { getCharacter, getItem, MAX_LEVEL, type EquipSlot } from "@ffix-roguelike/game-data";
 import { useEffect, useState } from "react";
 
@@ -37,7 +37,8 @@ export function RunCharacterSheet({
   const [slot, setSlot] = useState<EquipSlot | null>(null);
   const [tab, setTab] = useState("stats");
   const items = fieldItems(run);
-  const options = slot ? run.gear.filter((g) => (!g.holder || g.holder.key !== keyName || g.holder.slot !== slot) && canEquip(keyName, getItem(g.itemId), slot)) : [];
+  // Only what's in the bag: gear another member wears isn't listed, and reward gear found for someone else can't go on.
+  const options = slot ? run.gear.filter((g) => !g.holder && canWearInstance(keyName, g, slot)) : [];
   const lv = m.build.level;
   const expFrom = expForLevel(lv);
   const expTo = lv >= MAX_LEVEL ? expFrom : expForLevel(lv + 1);
@@ -135,8 +136,8 @@ export function RunCharacterSheet({
                     itemId: g.itemId,
                     caption: (
                       <>
-                        {g.holder ? <span className="opacity-60">(on {getCharacter(g.holder.key).name})</span> : null}
-                        {!g.secured && <span className="text-orange-300"> · found</span>}
+                        {g.boundTo && <span className="text-yellow-200">found for {getCharacter(g.boundTo).name}</span>}
+                        {!g.secured && <span className="text-orange-300">{g.boundTo ? " · " : ""}found</span>}
                       </>
                     ),
                   }))}
