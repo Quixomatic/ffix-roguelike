@@ -9,7 +9,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { registerBestiary, registerGameData, type GameData } from "./index";
+import { registerBestiary, registerGameData, registerRewardTables, type GameData, type RewardTables } from "./index";
 import type { FF9Bestiary } from "./types";
 
 /** The committed FF9 seed data (packages/db/seed/ff9) — what the server loads into Postgres. */
@@ -55,8 +55,29 @@ export function loadGameDataCache(): GameData {
   return data;
 }
 
-/** Everything a game-rules process needs except battle scripts: game tables + bestiary. */
+/** The committed reward / gear-availability seed data (packages/db/seed/rewards) — what the server seeds into Postgres. */
+export const REWARD_CACHE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "db", "seed", "rewards");
+export const REWARD_SEED_FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json" } as const;
+
+export const hasRewardCache = () => Object.values(REWARD_SEED_FILES).every((f) => existsSync(join(REWARD_CACHE_DIR, f)));
+
+/** Read the reward tables from their seed files and register them. */
+export function loadRewardCache(): RewardTables {
+  const read = <T>(f: string) => JSON.parse(readFileSync(join(REWARD_CACHE_DIR, f), "utf8")) as T;
+  const tables: RewardTables = {
+    rarities: read(REWARD_SEED_FILES.rarities),
+    roles: read(REWARD_SEED_FILES.roles),
+    sources: read(REWARD_SEED_FILES.sources),
+    boons: read(REWARD_SEED_FILES.boons),
+    gear: read(REWARD_SEED_FILES.gear),
+  };
+  registerRewardTables(tables);
+  return tables;
+}
+
+/** Everything a game-rules process needs except battle scripts: game tables + bestiary (+ reward tables, once seeded). */
 export function loadFf9Cache(): void {
   loadGameDataCache();
   loadBestiaryCache();
+  if (hasRewardCache()) loadRewardCache();
 }

@@ -1,15 +1,15 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 
 import type { Context } from "./context";
-import { ensureFf9Content } from "./services/content";
+import { ensureFf9Content, ensureRewardContent } from "./services/content";
 
 export const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
 
-/** Game rules need FF9's battle data registered (loaded from the DB once per process). */
+/** Game rules need FF9's data and the reward tables registered (loaded from the DB once per process). */
 const withContent = t.middleware(async ({ ctx, next }) => {
-  await ensureFf9Content(ctx.db);
+  await Promise.all([ensureFf9Content(ctx.db), ensureRewardContent(ctx.db)]);
   return next();
 });
 

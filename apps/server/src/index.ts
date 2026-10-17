@@ -1,5 +1,6 @@
 import { appRouter } from "@ffix-roguelike/api/routers/index";
 import { seedFf9 } from "@ffix-roguelike/db/seed-ff9";
+import { seedRewards } from "@ffix-roguelike/db/seed-rewards";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -49,6 +50,14 @@ try {
   if (result === "seeded") console.log("FF9 battle data seeded");
 } catch (err) {
   console.error("FF9 battle data seeding failed:", err);
+}
+// Reward / gear-availability tables: insert rows the database doesn't have yet (edits are never overwritten).
+try {
+  const added = await seedRewards(db);
+  const total = Object.values(added).reduce((a, b) => a + b, 0);
+  if (total) console.log(`Reward tables seeded: ${Object.entries(added).filter(([, n]) => n).map(([k, n]) => `${n} ${k}`).join(", ")}`);
+} catch (err) {
+  console.error("Reward tables seeding failed:", err);
 }
 
 export default app;

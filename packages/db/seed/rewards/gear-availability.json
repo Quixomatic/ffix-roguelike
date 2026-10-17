@@ -1,0 +1,3525 @@
+[
+  {
+    "itemId": 0,
+    "name": "Hammer",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 500,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 1,
+    "name": "Dagger",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 2,
+    "name": "Mage Masher",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 3,
+    "name": "Mythril Dagger",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 4,
+    "name": "Gladius",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 5,
+    "name": "Zorlin Shape",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 6,
+    "name": "Orichalcon",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 7,
+    "name": "Butterfly Sword",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 2600,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 8,
+    "name": "The Ogre",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3400,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 9,
+    "name": "Exploda",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 5600,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 10,
+    "name": "Rune Tooth",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 7600,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 11,
+    "name": "Angel Bless",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 14000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 12,
+    "name": "Sargatanas",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 19000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 13,
+    "name": "Masamune",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 26000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 14,
+    "name": "The Tower",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 60000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 15,
+    "name": "Ultima Weapon",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 16,
+    "name": "Broadsword",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 17,
+    "name": "Iron Sword",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 18,
+    "name": "Mythril Sword",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 19,
+    "name": "Blood Sword",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3800,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 20,
+    "name": "Ice Brand",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 21,
+    "name": "Coral Sword",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 22,
+    "name": "Diamond Sword",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 23,
+    "name": "Flame Saber",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 24,
+    "name": "Rune Blade",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 25,
+    "name": "Defender",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 26,
+    "name": "Save the Queen",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 27,
+    "name": "Ultima Sword",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 28,
+    "name": "Excalibur",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 38000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 29,
+    "name": "Ragnarok",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 58000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 30,
+    "name": "Excalibur II",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 31,
+    "name": "Javelin",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 32,
+    "name": "Mythril Spear",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 33,
+    "name": "Partisan",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 34,
+    "name": "Ice Lance",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 35,
+    "name": "Trident",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 36,
+    "name": "Heavy Lance",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 37,
+    "name": "Obelisk",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 38,
+    "name": "Holy Lance",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 39,
+    "name": "Kain's Lance",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 30000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 40,
+    "name": "Dragon's Hair",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 41,
+    "name": "Cat's Claws",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 42,
+    "name": "Poison Knuckles",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 43,
+    "name": "Mythril Claws",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 44,
+    "name": "Scissor Fangs",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 45,
+    "name": "Dragon's Claws",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 20720,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 46,
+    "name": "Tiger Fangs",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 47,
+    "name": "Avenger",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 48,
+    "name": "Kaiser Knuckles",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 49,
+    "name": "Duel Claws",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 43000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 50,
+    "name": "Rune Claws",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 51,
+    "name": "Air Racket",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 52,
+    "name": "Multina Racket",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 53,
+    "name": "Magic Racket",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 54,
+    "name": "Mythril Racket",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 55,
+    "name": "Priest's Racket",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 16000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 56,
+    "name": "Tiger Racket",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 57,
+    "name": "Rod",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 58,
+    "name": "Mythril Rod",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 59,
+    "name": "Stardust Rod",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 60,
+    "name": "Healing Rod",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 61,
+    "name": "Asura's Rod",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 62,
+    "name": "Wizard Rod",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 63,
+    "name": "Whale Whisker",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 64,
+    "name": "Golem's Flute",
+    "mapPools": [
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 65,
+    "name": "Lamia's Flute",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 66,
+    "name": "Fairy Flute",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 67,
+    "name": "Hamelin",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 68,
+    "name": "Siren's Flute",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 69,
+    "name": "Angel Flute",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 16600,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 70,
+    "name": "Mage Staff",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 71,
+    "name": "Flame Staff",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 72,
+    "name": "Ice Staff",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 73,
+    "name": "Lightning Staff",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 74,
+    "name": "Oak Staff",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 75,
+    "name": "Cypress Pile",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 76,
+    "name": "Octagon Rod",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 77,
+    "name": "High Mage Staff",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 78,
+    "name": "Mace of Zeus",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 79,
+    "name": "Fork",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 80,
+    "name": "Needle Fork",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 81,
+    "name": "Mythril Fork",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 82,
+    "name": "Silver Fork",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 83,
+    "name": "Bistro Fork",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 84,
+    "name": "Gastro Fork",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 85,
+    "name": "Pinwheel",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 86,
+    "name": "Rising Sun",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 87,
+    "name": "Wing Edge",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 6000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 88,
+    "name": "Wrist",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 89,
+    "name": "Leather Wrist",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 90,
+    "name": "Glass Armlet",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 91,
+    "name": "Bone Wrist",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 92,
+    "name": "Mythril Armlet",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 93,
+    "name": "Magic Armlet",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 94,
+    "name": "Chimera Armlet",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 95,
+    "name": "Egoist's Armlet",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 96,
+    "name": "N-Kai Armlet",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 97,
+    "name": "Jade Armlet",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 98,
+    "name": "Thief Gloves",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 99,
+    "name": "Dragon Wrist",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 100,
+    "name": "Power Wrist",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 101,
+    "name": "Bracer",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 102,
+    "name": "Bronze Gloves",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 103,
+    "name": "Silver Gloves",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 104,
+    "name": "Mythril Gloves",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 105,
+    "name": "Thunder Gloves",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 106,
+    "name": "Diamond Gloves",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 107,
+    "name": "Venetia Shield",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 108,
+    "name": "Defense Gloves",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 109,
+    "name": "Genji Gloves",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 110,
+    "name": "Aegis Gloves",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 111,
+    "name": "Gauntlets",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 17600,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 112,
+    "name": "Leather Hat",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 113,
+    "name": "Straw Hat",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3000,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 114,
+    "name": "Feather Hat",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 115,
+    "name": "Steepled Hat",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 116,
+    "name": "Headgear",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 117,
+    "name": "Magus Hat",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 118,
+    "name": "Bandana",
+    "mapPools": [
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 119,
+    "name": "Mage's Hat",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 120,
+    "name": "Lamia's Tiara",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 121,
+    "name": "Ritual Hat",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 122,
+    "name": "Twist Headband",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 123,
+    "name": "Mantra Band",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 124,
+    "name": "Dark Hat",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 125,
+    "name": "Green Beret",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 126,
+    "name": "Black Hood",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 127,
+    "name": "Red Hat",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 128,
+    "name": "Golden Hairpin",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 129,
+    "name": "Coronet",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 130,
+    "name": "Flash Hat",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 131,
+    "name": "Adaman Hat",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 132,
+    "name": "Thief Hat",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 133,
+    "name": "Holy Miter",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 134,
+    "name": "Golden Skullcap",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 24000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 135,
+    "name": "Circlet",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 136,
+    "name": "Rubber Helm",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 137,
+    "name": "Bronze Helm",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 138,
+    "name": "Iron Helm",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 139,
+    "name": "Barbut",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 140,
+    "name": "Mythril Helm",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 141,
+    "name": "Gold Helm",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 142,
+    "name": "Cross Helm",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 143,
+    "name": "Diamond Helm",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 144,
+    "name": "Platinum Helm",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 145,
+    "name": "Kaiser Helm",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 146,
+    "name": "Genji Helmet",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 147,
+    "name": "Grand Helm",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 148,
+    "name": "Aloha T-shirt",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 38000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 149,
+    "name": "Leather Shirt",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 150,
+    "name": "Silk Shirt",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 151,
+    "name": "Leather Plate",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 152,
+    "name": "Bronze Vest",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 153,
+    "name": "Chain Plate",
+    "mapPools": [
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 154,
+    "name": "Mythril Vest",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 155,
+    "name": "Adaman Vest",
+    "mapPools": [
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 156,
+    "name": "Magician Cloak",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 157,
+    "name": "Survival Vest",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 158,
+    "name": "Brigandine",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 159,
+    "name": "Judo Uniform",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 160,
+    "name": "Power Vest",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 161,
+    "name": "Gaia Gear",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 162,
+    "name": "Demon's Vest",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 163,
+    "name": "Minerva's Plate",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 164,
+    "name": "Ninja Gear",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 165,
+    "name": "Dark Gear",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 166,
+    "name": "Rubber Suit",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 167,
+    "name": "Brave Suit",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 168,
+    "name": "Cotton Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 8000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 169,
+    "name": "Silk Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 11600,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 170,
+    "name": "Magician Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 16000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 171,
+    "name": "Glutton's Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 32000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 172,
+    "name": "White Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 58000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 173,
+    "name": "Black Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 58000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 174,
+    "name": "Light Robe",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 80000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 175,
+    "name": "Robe of Lords",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 176,
+    "name": "Tin Armor",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 177,
+    "name": "Bronze Armor",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "alexandria"
+      },
+      {
+        "area": "evil-forest"
+      },
+      {
+        "area": "mist-plains"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 178,
+    "name": "Linen Cuirass",
+    "mapPools": [
+      {
+        "area": "cornelia"
+      },
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      },
+      {
+        "area": "ice-cavern"
+      },
+      {
+        "area": "eunorus-plains"
+      },
+      {
+        "area": "dali"
+      },
+      {
+        "area": "lindblum-fields"
+      },
+      {
+        "area": "festival-of-the-hunt"
+      },
+      {
+        "area": "qus-marsh"
+      },
+      {
+        "area": "gizamaluke-grotto"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 179,
+    "name": "Chain Mail",
+    "mapPools": [
+      {
+        "area": "baron"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 180,
+    "name": "Mythril Armor",
+    "mapPools": [
+      {
+        "area": "baron"
+      },
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 181,
+    "name": "Plate Mail",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 182,
+    "name": "Gold Armor",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 183,
+    "name": "Shield Armor",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 184,
+    "name": "Demon's Mail",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 185,
+    "name": "Diamond Armor",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 186,
+    "name": "Platina Armor",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 187,
+    "name": "Carabini Mail",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 188,
+    "name": "Dragon Mail",
+    "mapPools": [
+      {
+        "area": "ruin"
+      }
+    ],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 189,
+    "name": "Genji Armor",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 190,
+    "name": "Maximillian",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 45200,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 191,
+    "name": "Grand Armor",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 192,
+    "name": "Desert Boots",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3000,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 193,
+    "name": "Magician Shoes",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 15000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 194,
+    "name": "Germinas Boots",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 8000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 195,
+    "name": "Sandals",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 2400,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 196,
+    "name": "Feather Boots",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 12000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 197,
+    "name": "Battle Boots",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 42000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 198,
+    "name": "Running Shoes",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 66000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 199,
+    "name": "Anklet",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 6400,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 200,
+    "name": "Power Belt",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 14000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 201,
+    "name": "Black Belt",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 22000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 202,
+    "name": "Glass Buckle",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3200,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 203,
+    "name": "Madain's Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 15000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 204,
+    "name": "Rosetta Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 72000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 205,
+    "name": "Reflect Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 14000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 206,
+    "name": "Coral Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 8000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 207,
+    "name": "Promist Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 18000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 208,
+    "name": "Rebirth Ring",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 20000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 209,
+    "name": "Protect Ring",
+    "mapPools": [],
+    "catalog": false,
+    "catalogPrice": null,
+    "catalogFromTier": 0,
+    "legendary": true,
+    "enabled": true
+  },
+  {
+    "itemId": 210,
+    "name": "Pumice Piece",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 211,
+    "name": "Pumice",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 212,
+    "name": "Yellow Scarf",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 3600,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 213,
+    "name": "Gold Choker",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 8000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 214,
+    "name": "Fairy Earrings",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 12000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 215,
+    "name": "Angel Earrings",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 216,
+    "name": "Pearl Rouge",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 8000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 217,
+    "name": "Pearl Armlet",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 1960,
+    "catalogFromTier": 0,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 218,
+    "name": "Cachusha",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 6000,
+    "catalogFromTier": 1,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 219,
+    "name": "Barette",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 14000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 220,
+    "name": "Extension",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 20000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 221,
+    "name": "Ribbon",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 222,
+    "name": "Maiden Prayer",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  },
+  {
+    "itemId": 223,
+    "name": "Ancient Aroma",
+    "mapPools": [],
+    "catalog": true,
+    "catalogPrice": 40000,
+    "catalogFromTier": 2,
+    "legendary": false,
+    "enabled": true
+  }
+]

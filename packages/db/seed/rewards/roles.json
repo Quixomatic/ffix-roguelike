@@ -1,0 +1,198 @@
+[
+  {
+    "key": "zidane",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 4,
+      "defence": 1.5,
+      "evade": 2,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Thief: speed, strength, evade"
+  },
+  {
+    "key": "vivi",
+    "weights": {
+      "magic": 4,
+      "spirit": 2,
+      "speed": 2,
+      "magicDefence": 2,
+      "magicEvade": 1.5,
+      "defence": 1,
+      "maxMp": 0.15,
+      "maxHp": 0.05,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 8,
+    "preferredAbilities": [],
+    "notes": "Black mage: magic first"
+  },
+  {
+    "key": "garnet",
+    "weights": {
+      "magic": 3,
+      "spirit": 3,
+      "speed": 2,
+      "magicDefence": 2,
+      "magicEvade": 1.5,
+      "defence": 1,
+      "maxMp": 0.15,
+      "maxHp": 0.05,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 8,
+    "preferredAbilities": [],
+    "notes": "White magic and summons"
+  },
+  {
+    "key": "steiner",
+    "weights": {
+      "strength": 4,
+      "attack": 3,
+      "speed": 1.5,
+      "defence": 2.5,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.08,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Knight: strength, defence, HP"
+  },
+  {
+    "key": "freya",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 2.5,
+      "defence": 1.5,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Dragoon"
+  },
+  {
+    "key": "quina",
+    "weights": {
+      "magic": 3,
+      "strength": 2,
+      "spirit": 1.5,
+      "defence": 1.5,
+      "magicDefence": 1.5,
+      "maxHp": 0.08,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Blue mage: magic and bulk"
+  },
+  {
+    "key": "eiko",
+    "weights": {
+      "magic": 3,
+      "spirit": 3,
+      "speed": 2,
+      "magicDefence": 2,
+      "magicEvade": 1.5,
+      "defence": 1,
+      "maxMp": 0.15,
+      "maxHp": 0.05,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 8,
+    "preferredAbilities": [],
+    "notes": "White magic and summons"
+  },
+  {
+    "key": "amarant",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 3,
+      "defence": 1.5,
+      "evade": 2,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5,
+      "spirit": 1.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Monk: speed, strength"
+  },
+  {
+    "key": "beatrix",
+    "weights": {
+      "strength": 3.5,
+      "attack": 3,
+      "speed": 2,
+      "defence": 2,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5,
+      "magic": 1.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Holy knight"
+  },
+  {
+    "key": "blank",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 3,
+      "defence": 1.5,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Thief / fighter"
+  },
+  {
+    "key": "marcus",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 2,
+      "defence": 1.5,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Fighter"
+  },
+  {
+    "key": "cinna",
+    "weights": {
+      "strength": 3,
+      "attack": 3,
+      "speed": 2,
+      "defence": 1.5,
+      "evade": 1,
+      "magicDefence": 1,
+      "maxHp": 0.06,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 6,
+    "preferredAbilities": [],
+    "notes": "Fighter"
+  }
+]

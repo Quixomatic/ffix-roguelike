@@ -1,0 +1,271 @@
+[
+  {
+    "id": "thiefs-vigor",
+    "name": "Thief's Vigor",
+    "description": "Strength for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "strength",
+    "amounts": {
+      "common": 1,
+      "uncommon": 2,
+      "rare": 3,
+      "epic": 5,
+      "legendary": 10
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "zidane",
+      "blank",
+      "amarant",
+      "steiner",
+      "freya",
+      "beatrix"
+    ]
+  },
+  {
+    "id": "black-mages-focus",
+    "name": "Black Mage's Focus",
+    "description": "Magic for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "magic",
+    "amounts": {
+      "common": 1,
+      "uncommon": 2,
+      "rare": 3,
+      "epic": 5,
+      "legendary": 10
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "vivi",
+      "quina",
+      "garnet",
+      "eiko"
+    ]
+  },
+  {
+    "id": "summoners-calm",
+    "name": "Summoner's Calm",
+    "description": "Spirit for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "spirit",
+    "amounts": {
+      "common": 1,
+      "uncommon": 2,
+      "rare": 3,
+      "epic": 5,
+      "legendary": 10
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "garnet",
+      "eiko",
+      "amarant"
+    ]
+  },
+  {
+    "id": "winds-step",
+    "name": "Wind's Step",
+    "description": "Speed for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "speed",
+    "amounts": {
+      "common": 1,
+      "uncommon": 1,
+      "rare": 2,
+      "epic": 3,
+      "legendary": 5
+    },
+    "weight": 1,
+    "minTier": 0
+  },
+  {
+    "id": "dragons-edge",
+    "name": "Dragon's Edge",
+    "description": "Attack for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "attack",
+    "amounts": {
+      "common": 2,
+      "uncommon": 3,
+      "rare": 5,
+      "epic": 8,
+      "legendary": 15
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "freya",
+      "zidane",
+      "steiner"
+    ]
+  },
+  {
+    "id": "knights-bulwark",
+    "name": "Knight's Bulwark",
+    "description": "Defence for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "defence",
+    "amounts": {
+      "common": 1,
+      "uncommon": 2,
+      "rare": 3,
+      "epic": 5,
+      "legendary": 8
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "steiner",
+      "beatrix"
+    ]
+  },
+  {
+    "id": "mirage-veil",
+    "name": "Mirage Veil",
+    "description": "Evade for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "evade",
+    "amounts": {
+      "common": 2,
+      "uncommon": 3,
+      "rare": 5,
+      "epic": 8,
+      "legendary": 12
+    },
+    "weight": 1,
+    "minTier": 0
+  },
+  {
+    "id": "mystic-ward",
+    "name": "Mystic Ward",
+    "description": "Magic defence for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "magicDefence",
+    "amounts": {
+      "common": 1,
+      "uncommon": 2,
+      "rare": 3,
+      "epic": 5,
+      "legendary": 8
+    },
+    "weight": 1,
+    "minTier": 0
+  },
+  {
+    "id": "elusive-mind",
+    "name": "Elusive Mind",
+    "description": "Magic evade for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "magicEvade",
+    "amounts": {
+      "common": 2,
+      "uncommon": 3,
+      "rare": 5,
+      "epic": 8,
+      "legendary": 12
+    },
+    "weight": 1,
+    "minTier": 0
+  },
+  {
+    "id": "vital-spring",
+    "name": "Vital Spring",
+    "description": "Max HP (%) for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "maxHpPct",
+    "amounts": {
+      "common": 5,
+      "uncommon": 8,
+      "rare": 12,
+      "epic": 18,
+      "legendary": 30
+    },
+    "weight": 1,
+    "minTier": 0
+  },
+  {
+    "id": "ether-spring",
+    "name": "Ether Spring",
+    "description": "Max MP (%) for the rest of the run.",
+    "enabled": true,
+    "scope": "member",
+    "stat": "maxMpPct",
+    "amounts": {
+      "common": 5,
+      "uncommon": 8,
+      "rare": 12,
+      "epic": 18,
+      "legendary": 30
+    },
+    "weight": 1,
+    "minTier": 0,
+    "affinity": [
+      "vivi",
+      "garnet",
+      "eiko",
+      "quina"
+    ]
+  },
+  {
+    "id": "burst-of-growth",
+    "name": "Burst of Growth",
+    "description": "Real level-ups (FF9's growth and all).",
+    "enabled": true,
+    "scope": "member",
+    "stat": "levels",
+    "amounts": {
+      "common": 1,
+      "uncommon": 1,
+      "rare": 2,
+      "epic": 3,
+      "legendary": 5
+    },
+    "weight": 0.8,
+    "minTier": 0
+  },
+  {
+    "id": "moogle-blessing",
+    "name": "Moogle Blessing",
+    "description": "Max HP (%) for the whole party, for the rest of the run.",
+    "enabled": true,
+    "scope": "party",
+    "stat": "maxHpPct",
+    "amounts": {
+      "uncommon": 3,
+      "rare": 5,
+      "epic": 8,
+      "legendary": 12
+    },
+    "weight": 0.5,
+    "minTier": 0
+  },
+  {
+    "id": "party-training",
+    "name": "Party Training",
+    "description": "Level-ups for the whole party.",
+    "enabled": true,
+    "scope": "party",
+    "stat": "levels",
+    "amounts": {
+      "rare": 1,
+      "epic": 1,
+      "legendary": 2
+    },
+    "weight": 0.4,
+    "minTier": 0
+  }
+]

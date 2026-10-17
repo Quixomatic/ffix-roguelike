@@ -1,11 +1,10 @@
 /** Encounter selection, battle rewards, treasure and shop stock. */
-import { findItem, items, itemByName, shops, synthesis, type ItemData, type SynthesisRecipe } from "@ffix-roguelike/game-data";
+import { findItem, gearAvailability, items, itemByName, rewardTables, shops, synthesis, type ItemData, type SynthesisRecipe } from "@ffix-roguelike/game-data";
 
 import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
 import { encounterEnemies, getScene, isSceneRef, rollSceneGroup, sceneGroup } from "../content/ff9-scenes";
 import { WORLDS } from "../content/worlds";
-import { legendaryItems } from "../meta/achievements";
 import type { Rng } from "../rng";
 
 const GEAR_KINDS = new Set(["weapon", "wrist", "head", "armor", "accessory"]);
@@ -98,11 +97,21 @@ export function battleRewards(rng: Rng, group: string[], tier: number, state?: B
   return { exp, ap, gil: gil + (state?.gilBonus ?? 0), items: [...drops, ...(state?.stolen ?? [])] };
 }
 
-/** Gear stocked by the world's real FF9 shops — always in the drop pool, no unlock needed. */
-export function baseGear(world: number): Set<number> {
-  const w = WORLDS[world]!;
-  return new Set(w.shops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? []).filter((id) => !legendaryItems().has(id)));
+/**
+ * The area's map pool: gear that drops there without being unlocked (the gear_availability table; seeded from the
+ * area's FF9 shop stock). `bossOnly` pieces come only from the area's boss rewards, so they're left out unless asked.
+ */
+export function baseGear(world: number, opts: { bossOnly?: boolean } = {}): Set<number> {
+  const area = WORLDS[world]!.id;
+  return new Set(
+    rewardTables()
+      .gear.filter((g) => g.enabled && !g.legendary && g.mapPools.some((p) => p.area === area && (opts.bossOnly || !p.bossOnly)))
+      .map((g) => g.itemId),
+  );
 }
+
+/** Achievement-only gear (the gear_availability table's `legendary`): never drops, never sold. */
+export const isLegendaryGear = (itemId: number) => !!gearAvailability(itemId)?.legendary;
 
 /**
  * Gear that can drop in a world: its shops' stock, plus any gear the player has unlocked (camp catalog,
@@ -161,7 +170,7 @@ export function shopStock(rng: Rng, world: number, partyKeys: string[]): ShopVis
   const ids = [...new Set([...(store?.items ?? []), ...shop.items])];
   const stock = ids
     .map((id) => findItem(id))
-    .filter((i): i is ItemData => !!i && i.price > 0 && !legendaryItems().has(i.id))
+    .filter((i): i is ItemData => !!i && i.price > 0 && !isLegendaryGear(i.id))
     // Only gear someone in the party can use (consumables always).
     .filter((i) => i.kind === "item" || i.equippableBy.some((k) => partyKeys.includes(k)))
     .map((i) => ({ itemId: i.id, price: i.price }));

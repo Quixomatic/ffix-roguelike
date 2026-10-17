@@ -2,6 +2,39 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.68] - 2026-10-17
+
+Targeted rewards, step 3: the reward and gear-availability tables, in Postgres with committed seed files, and every gear piece accounted for in one table that the game now reads.
+
+### Added
+- **`gear_availability`**: one row per gear piece (all 224), saying how it can show up in runs.
+  - Its map pools (areas where it drops without unlocking, with an optional boss-only flag), whether it's in the gear catalog and at what price and from which progression tier, legendary (achievements only), enabled, notes.
+  - **The drop pools and the gear catalog now read it** (`baseGear`, `gearCatalog`; shops skip legendary gear by it).
+  - The seed reproduces the old rules exactly (140 pieces in map pools = each area's FF9 shop stock, 66 catalog-only, 18 legendary), so nothing changes in game until the table is edited.
+- **Reward tables** for the coming reward cards (first guesses, tuned later on the admin page):
+  - `reward_rarity`: common / uncommon / rare / epic / legendary, in white, green, blue, purple and gold, with the AP surge, gil, supplies and next-band chance per rarity.
+  - `reward_role`: what each of the 12 characters values in gear, as stat weights plus an ability weight.
+  - `reward_source`: surprise / elite / treasure / semi-boss / boss.
+    - Each sets the number of cards, the rarity and card-type weights, the upgrade threshold, the guarantee, the lowest rarity and the gil for skipping.
+    - Elites: at least one gear upgrade. Semi-bosses and bosses: all upgrades, rare or better. Surprises: 3% after a plain battle.
+  - `reward_boon`: 14 named boons (Thief's Vigor, Black Mage's Focus, Burst of Growth (level-ups), Moogle Blessing (party)…), each with amounts per rarity.
+- **Profile fields** `rewardRerolls` / `rewardBans` (charges for later; unused).
+- Migration `reward_tables`.
+- **Seeding**: seed files in `packages/db/seed/rewards`. The server seeds them on boot, **inserting missing rows only**, so edits are never overwritten.
+  - `pnpm -F @ffix-roguelike/db db:seed:rewards` does the same.
+  - `--export` writes the database back into the seed files.
+  - `bun packages/game-core/scripts/gen-reward-seeds.ts [--force]` writes the defaults.
+- **Registry**: game-data `registerRewardTables` / `rewardTables()` / `gearAvailability(itemId)`.
+  - The server loads the tables with the FF9 data (`ensureRewardContent`, `reloadRewardContent` for admin edits).
+  - The web app via `content.rewards`, re-registered when it changes.
+  - Tests and the sim from the seed files (`loadFf9Cache`).
+
+### Changed
+- `probe-gear.ts` reads the table: statuses now include disabled and "not in table" (a problem, like "nowhere"), boss-only counts per area, and each item's catalog tier and notes.
+
+### Notes
+- Restart `pnpm dev` (schema and server boot changed).
+
 ## [0.2.67] - 2026-10-17
 
 Admin accounts, set up like ChannelGuide's: better-auth's admin plugin, an admin-only tRPC procedure, and a script to grant the role.

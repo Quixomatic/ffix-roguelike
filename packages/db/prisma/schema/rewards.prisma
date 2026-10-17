@@ -1,0 +1,54 @@
+/// Reward and gear-availability tables: our own game design (.plans/rewards.md), not FF9 data. Seeded from
+/// packages/db/seed/rewards on server startup — missing rows only, so edits from the admin page are never
+/// overwritten — and loaded into game-data's reward registry (`registerRewardTables`). `data` holds the whole
+/// game-data record (RewardRarity, RewardRole, RewardSource, RewardBoon, GearAvailability).
+
+/// A reward rarity (common … legendary): colour, AP surge, gil, supplies, next-band chance.
+model RewardRarity {
+  id        String   @id
+  sort      Int
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("reward_rarity")
+}
+
+/// What a character values when judging gear upgrades (stat weights, ability weight).
+model RewardRole {
+  key       String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("reward_role")
+}
+
+/// Rules per reward source (surprise, elite, treasure, semiboss, boss): cards, weights, guarantee, skip gil.
+model RewardSource {
+  id        String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("reward_source")
+}
+
+/// A named run-long boon (stat, scope, amount per rarity).
+model RewardBoon {
+  id        String   @id
+  name      String
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("reward_boon")
+}
+
+/// How one gear piece can show up in runs: map pools per area, catalog, legendary. Every gear piece has a row.
+model GearAvailability {
+  itemId    Int      @id
+  name      String
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("gear_availability")
+}

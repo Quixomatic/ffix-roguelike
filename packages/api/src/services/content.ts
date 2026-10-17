@@ -7,6 +7,13 @@ import { registerBattleScripts } from "@ffix-roguelike/game-core";
 import {
   registerBestiary,
   registerGameData,
+  registerRewardTables,
+  type GearAvailability,
+  type RewardBoon,
+  type RewardRarity,
+  type RewardRole,
+  type RewardSource,
+  type RewardTables,
   type ActionData,
   type CharacterData,
   type FF9Bestiary,
@@ -74,6 +81,44 @@ export function ensureFf9Content(db: Database): Promise<Ff9Content> {
     throw err;
   });
   return loading;
+}
+
+let rewardsLoading: Promise<RewardTables> | null = null;
+
+/**
+ * The reward / gear-availability tables from Postgres, registered (game rules read them: drop pools, the gear
+ * catalog, reward offers). Loaded once per process; `reloadRewardContent` after an admin edit.
+ */
+export function ensureRewardContent(db: Database): Promise<RewardTables> {
+  rewardsLoading ??= (async () => {
+    const [rarities, roles, sources, boons, gear] = await Promise.all([
+      db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
+      db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
+      db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.rewardBoon.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+      db.gearAvailability.findMany({ orderBy: { itemId: "asc" }, select: { data: true } }),
+    ]);
+    if (!gear.length || !rarities.length) throw new Error("Reward tables missing — restart the server (it seeds them on boot)");
+    const tables: RewardTables = {
+      rarities: rows<RewardRarity>(rarities),
+      roles: rows<RewardRole>(roles),
+      sources: rows<RewardSource>(sources),
+      boons: rows<RewardBoon>(boons),
+      gear: rows<GearAvailability>(gear),
+    };
+    registerRewardTables(tables);
+    return tables;
+  })().catch((err) => {
+    rewardsLoading = null;
+    throw err;
+  });
+  return rewardsLoading;
+}
+
+/** Re-read the reward tables (after an admin edit). */
+export function reloadRewardContent(db: Database): Promise<RewardTables> {
+  rewardsLoading = null;
+  return ensureRewardContent(db);
 }
 
 /** A battle scene's compiled FF9 AI script (null if the scene has none). */

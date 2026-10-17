@@ -7,10 +7,10 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, items, MAIN_CAST, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, MAIN_CAST, rewardTables, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
 
-import { getArea, getJourney, JOURNEYS, journeyUnlocked, WORLDS } from "../content/worlds";
-import { baseGear, effectivePrice, isGear } from "../run/loot";
+import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
+import { effectivePrice } from "../run/loot";
 import type { RunOutcome } from "../run/run";
 import {
   activeSupports,
@@ -28,7 +28,7 @@ import {
   type CharacterBuild,
   type TrainStat,
 } from "../stats";
-import { ACHIEVEMENTS, awardAchievements, legendaryItems } from "./achievements";
+import { ACHIEVEMENTS, awardAchievements } from "./achievements";
 
 export interface ProfileStats {
   runs: number;
@@ -289,14 +289,12 @@ export const UNLOCK_PRICE_MULT = 2;
  * and isn't unlocked yet. Unlocking puts it into future runs' drops, shops and treasure for its world.
  */
 export function gearCatalog(profile: Profile): { itemId: number; price: number }[] {
-  const base = new Set(WORLDS.flatMap((w) => [...baseGear(w.index)]));
   const unlocked = new Set(profile.gearUnlocked ?? []);
-  // The best loot band among areas at or below the furthest progression tier reached.
-  const maxPrice = Math.max(...WORLDS.filter((w) => w.tier <= profile.stats.bestWorld).map((w) => w.gearPrice[1]));
-  return items
-    .filter((i) => isGear(i) && i.price > 0 && effectivePrice(i) <= maxPrice && !base.has(i.id) && !unlocked.has(i.id) && !legendaryItems().has(i.id))
-    .sort((a, b) => effectivePrice(a) - effectivePrice(b))
-    .map((i) => ({ itemId: i.id, price: effectivePrice(i) * UNLOCK_PRICE_MULT }));
+  // The gear_availability table says what the catalog sells, from which progression tier, and for how much.
+  return rewardTables()
+    .gear.filter((g) => g.enabled && g.catalog && !g.legendary && g.catalogPrice != null && g.catalogFromTier <= profile.stats.bestWorld && !unlocked.has(g.itemId))
+    .sort((a, b) => a.catalogPrice! - b.catalogPrice!)
+    .map((g) => ({ itemId: g.itemId, price: g.catalogPrice! }));
 }
 
 export function unlockGear(profile: Profile, itemId: number): Profile {

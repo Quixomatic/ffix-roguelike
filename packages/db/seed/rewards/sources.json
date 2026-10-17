@@ -1,0 +1,113 @@
+[
+  {
+    "id": "surprise",
+    "cards": 2,
+    "chance": 3,
+    "rarityWeights": {
+      "common": 0,
+      "uncommon": 55,
+      "rare": 30,
+      "epic": 12,
+      "legendary": 3
+    },
+    "typeWeights": {
+      "gear": 3,
+      "boon": 3,
+      "ap": 2,
+      "supplies": 1,
+      "gil": 1
+    },
+    "upgradeThreshold": 2,
+    "guarantee": "none",
+    "minRarity": "uncommon",
+    "skipGil": 50
+  },
+  {
+    "id": "elite",
+    "cards": 3,
+    "rarityWeights": {
+      "common": 50,
+      "uncommon": 30,
+      "rare": 14,
+      "epic": 5,
+      "legendary": 1
+    },
+    "typeWeights": {
+      "gear": 4,
+      "boon": 3,
+      "ap": 2,
+      "supplies": 1,
+      "gil": 1
+    },
+    "upgradeThreshold": 2,
+    "guarantee": "oneGear",
+    "minRarity": "common",
+    "skipGil": 100
+  },
+  {
+    "id": "treasure",
+    "cards": 2,
+    "rarityWeights": {
+      "common": 55,
+      "uncommon": 28,
+      "rare": 12,
+      "epic": 4,
+      "legendary": 1
+    },
+    "typeWeights": {
+      "gear": 3,
+      "boon": 2,
+      "ap": 1,
+      "supplies": 2,
+      "gil": 1
+    },
+    "upgradeThreshold": 1.5,
+    "guarantee": "none",
+    "minRarity": "common",
+    "skipGil": 80
+  },
+  {
+    "id": "semiboss",
+    "cards": 3,
+    "rarityWeights": {
+      "common": 0,
+      "uncommon": 0,
+      "rare": 70,
+      "epic": 25,
+      "legendary": 5
+    },
+    "typeWeights": {
+      "gear": 1,
+      "boon": 0,
+      "ap": 0,
+      "supplies": 0,
+      "gil": 0
+    },
+    "upgradeThreshold": 4,
+    "guarantee": "allGear",
+    "minRarity": "rare",
+    "skipGil": 200
+  },
+  {
+    "id": "boss",
+    "cards": 3,
+    "rarityWeights": {
+      "common": 0,
+      "uncommon": 0,
+      "rare": 60,
+      "epic": 32,
+      "legendary": 8
+    },
+    "typeWeights": {
+      "gear": 1,
+      "boon": 0,
+      "ap": 0,
+      "supplies": 0,
+      "gil": 0
+    },
+    "upgradeThreshold": 5,
+    "guarantee": "allGear",
+    "minRarity": "rare",
+    "skipGil": 300
+  }
+]

@@ -1,12 +1,12 @@
 /**
- * Inspector: how every gear piece can show up in runs (the Megabonk-style unlock model — see .plans/rewards.md §3.4).
- * A permanent tool; it reads what the game uses today (worked out from FF9's data in Postgres), and will read the
- * `gear_availability` table once that exists.
+ * Inspector: how every gear piece can show up in runs (the Megabonk-style unlock model — see .plans/rewards.md §3.4),
+ * from the `gear_availability` table (edited on the admin page; seeded from packages/db/seed/rewards). A permanent
+ * tool.
  *
  * Always prints:
- *   - every gear piece by how it can appear: starter (a character's FF9 starting gear), map pool (an area's FF9 shop
- *     stock — shows up without unlocking), catalog (buy at camp, then it joins drop pools), legendary (achievements
- *     only), and **nowhere** (a problem: the piece can never appear)
+ *   - every gear piece by how it can appear: starter (a character's FF9 starting gear), map pool (drops in an area
+ *     without unlocking), catalog (buy at camp, then it joins drop pools), legendary (achievements only), disabled,
+ *     and **nowhere** (a problem: an enabled piece that can never appear), and gear missing from the table
  *   - each area's map pool: its size and price band
  *   - the catalog-only and legendary pieces by name
  * With arguments, details for each:
@@ -18,10 +18,10 @@
  */
 import "varlock/auto-load";
 
-import { baseGear, effectivePrice, gearCatalog, isGear, legendaryItems, UNLOCK_PRICE_MULT, WORLDS } from "@ffix-roguelike/game-core";
-import { characters, items, synthesis, type ItemData } from "@ffix-roguelike/game-data";
+import { effectivePrice, gearCatalog, isGear, WORLDS } from "@ffix-roguelike/game-core";
+import { characters, gearAvailability, items, synthesis, type ItemData } from "@ffix-roguelike/game-data";
 
-import { ensureFf9Content } from "../../../packages/api/src/services/content";
+import { ensureFf9Content, ensureRewardContent } from "../../../packages/api/src/services/content";
 import { loadProfile } from "../../../packages/api/src/services/profile";
 import { db } from "../src/services";
 
@@ -35,18 +35,29 @@ let problems = 0;
 
 // ── load ─────────────────────────────────────────────────────────────────────
 await ensureFf9Content(db);
+await ensureRewardContent(db);
 const gear = items.filter(isGear);
-const pools = WORLDS.map((w) => ({ w, ids: baseGear(w.index) }));
-const inPool = new Set(pools.flatMap((p) => [...p.ids]));
-const legendary = legendaryItems();
+const pools = WORLDS.map((w) => ({
+  w,
+  ids: new Set(gear.filter((i) => gearAvailability(i.id)?.mapPools.some((p) => p.area === w.id)).map((i) => i.id)),
+  bossOnly: gear.filter((i) => gearAvailability(i.id)?.mapPools.some((p) => p.area === w.id && p.bossOnly)).length,
+}));
 const starterOf = new Map<number, string[]>();
 for (const ch of characters) {
   for (const id of Object.values(ch.defaultEquipment ?? {})) if (id != null) starterOf.set(id as number, [...(starterOf.get(id as number) ?? []), ch.name]);
 }
 const made = new Map(synthesis.map((r) => [r.result, r]));
 
-type Status = "map pool" | "catalog" | "legendary" | "nowhere";
-const statusOf = (i: ItemData): Status => (inPool.has(i.id) ? "map pool" : legendary.has(i.id) ? "legendary" : i.price > 0 ? "catalog" : "nowhere");
+type Status = "map pool" | "catalog" | "legendary" | "disabled" | "not in table" | "nowhere";
+const statusOf = (i: ItemData): Status => {
+  const a = gearAvailability(i.id);
+  if (!a) return "not in table";
+  if (!a.enabled) return "disabled";
+  if (a.legendary) return "legendary";
+  if (a.mapPools.length) return "map pool";
+  if (a.catalog && a.catalogPrice != null) return "catalog";
+  return "nowhere";
+};
 
 // ── summary ──────────────────────────────────────────────────────────────────
 console.log(c.h(`Gear: ${gear.length} pieces`));
@@ -54,19 +65,25 @@ const by = new Map<Status, ItemData[]>();
 for (const i of gear) by.set(statusOf(i), [...(by.get(statusOf(i)) ?? []), i]);
 const starters = gear.filter((i) => starterOf.has(i.id));
 console.log(`  starter gear         ${String(starters.length).padStart(4)}  ${c.dim("(always worn at the start; also counted below)")}`);
-for (const s of ["map pool", "catalog", "legendary", "nowhere"] as Status[]) console.log(`  ${s.padEnd(20)} ${String(by.get(s)?.length ?? 0).padStart(4)}`);
+for (const s of ["map pool", "catalog", "legendary", "disabled", "not in table", "nowhere"] as Status[]) console.log(`  ${s.padEnd(20)} ${String(by.get(s)?.length ?? 0).padStart(4)}`);
 const nowhere = by.get("nowhere") ?? [];
+const missing = by.get("not in table") ?? [];
 if (nowhere.length) {
   problems++;
-  console.log(c.bad(`can never appear: ${nowhere.map((i) => i.name).join(", ")}`));
-} else console.log(c.ok("every gear piece can appear somehow"));
+  console.log(c.bad(`enabled but can never appear: ${nowhere.map((i) => i.name).join(", ")}`));
+}
+if (missing.length) {
+  problems++;
+  console.log(c.bad(`missing from gear_availability (restart the server to seed, or add them on the admin page): ${missing.map((i) => i.name).join(", ")}`));
+}
+if (!nowhere.length && !missing.length) console.log(c.ok("every enabled gear piece can appear somehow"));
 
-console.log(c.h("Map pools (per area: FF9 shop stock — drops without unlocking)"));
-for (const { w, ids } of pools) {
-  console.log(`  ${w.name.padEnd(24)} ${String(ids.size).padStart(3)} pieces  ${c.dim(`band ${w.gearPrice[0]}–${w.gearPrice[1]} gil · tier ${w.tier}`)}`);
+console.log(c.h("Map pools (per area — drops without unlocking)"));
+for (const { w, ids, bossOnly } of pools) {
+  console.log(`  ${w.name.padEnd(24)} ${String(ids.size).padStart(3)} pieces${bossOnly ? ` (${bossOnly} boss-only)` : ""}  ${c.dim(`band ${w.gearPrice[0]}–${w.gearPrice[1]} gil · tier ${w.tier}`)}`);
 }
 
-console.log(c.h(`Catalog only (${by.get("catalog")?.length ?? 0}: buy at camp for ${UNLOCK_PRICE_MULT}× FF9 price)`));
+console.log(c.h(`Catalog only (${by.get("catalog")?.length ?? 0}: buy at camp)`));
 console.log(`  ${(by.get("catalog") ?? []).map((i) => i.name).join(", ")}`);
 console.log(c.h(`Legendary (${by.get("legendary")?.length ?? 0}: achievements only)`));
 console.log(`  ${(by.get("legendary") ?? []).map((i) => i.name).join(", ")}`);
@@ -80,9 +97,11 @@ for (const arg of process.argv.slice(2)) {
       console.log(c.h(`${i.name} (#${i.id}, ${i.kind})`));
       console.log(`  price ${i.price} gil${i.price < 10 ? ` (never sold in FF9 → priced ${effectivePrice(i)})` : ""} · equips: ${i.equippableBy.join(", ") || "nobody"}`);
       console.log(`  status: ${statusOf(i)}${starterOf.has(i.id) ? ` · starter for ${starterOf.get(i.id)!.join(", ")}` : ""}`);
-      const areas = pools.filter((p) => p.ids.has(i.id)).map((p) => p.w.name);
+      const a = gearAvailability(i.id);
+      const areas = (a?.mapPools ?? []).map((p) => `${WORLDS.find((w) => w.id === p.area)?.name ?? p.area}${p.bossOnly ? " (boss only)" : ""}`);
       console.log(`  map pools: ${areas.join(", ") || "none"}`);
-      if (statusOf(i) === "catalog") console.log(`  catalog: ${effectivePrice(i) * UNLOCK_PRICE_MULT} gil`);
+      if (a?.catalog) console.log(`  catalog: ${a.catalogPrice} gil, from tier ${a.catalogFromTier}`);
+      if (a?.notes) console.log(`  notes: ${a.notes}`);
       const r = made.get(i.id);
       if (r) console.log(`  synthesized from: ${r.ingredients.map((id) => items.find((x) => x.id === id)?.name ?? id).join(" + ")} (${r.price} gil)`);
     }
