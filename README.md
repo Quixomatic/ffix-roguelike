@@ -272,7 +272,7 @@ scripts/
 
 ### Prerequisites
 
-- **Node.js 22** and **Bun 1.3+**
+- **Node.js 22** (portless asks for **24+**; see below) and **Bun 1.3+**
 - **pnpm 10.34.7** (pinned in `package.json` — a global pnpm 10.x will hand off to it automatically)
 - **PostgreSQL** (any recent version)
 - *(Optional)* a Steam copy of **Final Fantasy IX** with **Memoria** installed — only needed to re-import the game
@@ -287,19 +287,30 @@ pnpm install
 #    apps/server/.env
 #      DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<db>?schema=public
 #      BETTER_AUTH_SECRET=<32+ random chars>
-#      BETTER_AUTH_URL=http://localhost:3000
-#      CORS_ORIGIN=http://localhost:3001
+#      BETTER_AUTH_URL=https://api.ffix.localhost
+#      CORS_ORIGIN=https://ffix.localhost
 #    apps/web/.env
-#      VITE_SERVER_URL=http://localhost:3000
+#      VITE_SERVER_URL=https://api.ffix.localhost
 
 pnpm -F @ffix-roguelike/db db:migrate:deploy   # apply migrations
 pnpm db:generate                               # generate the Prisma client
 
-# 2. Run everything (web on :3001, API on :3000)
+# 2. Once per machine: trust portless's local HTTPS certificate authority (Windows asks to confirm)
+pnpm exec portless trust
+
+# 3. Run everything through portless (web https://ffix.localhost, API https://api.ffix.localhost)
 pnpm dev
 ```
 
-Open <http://localhost:3001>, sign up, and press **Play**.
+Open <https://ffix.localhost>, sign up, and press **Play**.
+
+**[portless](https://portless.sh)** (a dev dependency, pinned) gives the dev servers stable named HTTPS URLs instead of
+ports. Each app's `dev` script is `portless`, which runs its `dev:app` script (the real command) on a free port behind
+a local HTTPS proxy on 443; the names live under `"portless"` in `apps/web/package.json` (`ffix`) and
+`apps/server/package.json` (`api.ffix`). `pnpm exec portless list` shows the routes, `pnpm exec portless doctor`
+checks the setup, `pnpm exec portless proxy stop` stops the proxy. To skip it: `PORTLESS=0 pnpm dev` (web on :3001, API
+on :3000; point the three URLs above back at `http://localhost:3001` / `:3000`), or `pnpm -F web dev:app` /
+`pnpm -F server dev:app`.
 
 ## Day-to-day development
 
@@ -307,7 +318,7 @@ Open <http://localhost:3001>, sign up, and press **Play**.
 
 | Command | What it does |
 |---|---|
-| `pnpm dev` | Web (Vite, :3001) + API (Bun, :3000). The API restarts on changes to any workspace package. |
+| `pnpm dev` | Web (Vite, https://ffix.localhost) + API (Bun, https://api.ffix.localhost), through portless. The API restarts on changes to any workspace package. |
 | `pnpm check-types` | Type-check every package (and build the web app). |
 | `pnpm -F @ffix-roguelike/game-core test` | Engine, run and profile tests (Bun). |
 | `pnpm sim <cmd>` | The simulator — see below. |

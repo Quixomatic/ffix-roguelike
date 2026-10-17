@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.56] - 2026-10-17
+
+Dev servers get stable HTTPS names through portless instead of port numbers: the web app at **https://ffix.localhost** and the API at **https://api.ffix.localhost**.
+
+### Added
+- **[portless](https://portless.sh) 0.15.8** as a pinned root dev dependency (pnpm). It runs each dev server on a free port behind a local HTTPS proxy (HTTP/2, port 443) with its own trusted certificate authority.
+- Set up the Turborepo way: each app's `dev` script is now `portless`, and the real command moved to `dev:app` (`vite dev`; `bun ../../scripts/dev-server.ts`). The names are under `"portless"` in each app's `package.json`: `ffix` for the web app; `api.ffix` for the server, with `proxy: true` because portless can't tell a Bun script is a server. `pnpm dev` at the root works as before through turbo. Portless sets `PORT` for both: Bun's server reads it, and Vite gets `--port` / `--host` injected.
+- turbo passes `PORTLESS` / `PORTLESS_*` through to `dev`, so `PORTLESS=0 pnpm dev` skips the proxy (web :3001, API :3000).
+- README: setup with `pnpm exec portless trust` (once per machine), the new URLs, `portless list` / `doctor` / `proxy stop`, and how to run without it.
+
+### Changed
+- Local env (not committed) points at the new names: server `BETTER_AUTH_URL=https://api.ffix.localhost`, `CORS_ORIGIN=https://ffix.localhost`; web `VITE_SERVER_URL=https://api.ffix.localhost`.
+
+### Notes
+- portless asks for Node 24+. This machine has Node 22.12: the CLI runs, but `portless doctor` reports Node as unsupported.
+- First run: `pnpm exec portless trust` adds the portless CA to Windows' certificate store (Windows asks to confirm), then restart `pnpm dev`.
+
 ## [0.2.55] - 2026-10-17
 
 The Phaser screens use Phaser's own input, and they no longer fight the menus for the controls. On a run: Y opens the party, X the bag, LB / RB flip between them, and B hands the controls back to the map.

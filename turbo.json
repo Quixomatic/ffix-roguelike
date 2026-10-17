@@ -54,5 +54,8 @@
     "VITE_SERVER_URL",
     "_VARLOCK_ENV_KEY"
   ],
+  // portless (https://ffix.localhost, https://api.ffix.localhost): let its settings through to `dev`, e.g.
+  // `PORTLESS=0 pnpm dev` to skip the proxy and use the old ports.
+  "globalPassThroughEnv": ["PORTLESS", "PORTLESS_*"],
   "globalDependencies": [".env*", "apps/*/.env*", "packages/*/.env*"]
 }
