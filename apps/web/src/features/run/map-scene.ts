@@ -111,6 +111,8 @@ export class MapScene extends Phaser.Scene {
   private dragged = false;
   /** Easing back to the party after looking around (Phaser's startFollow would jump there). */
   private returning = false;
+  /** Stages the route taken can't reach any more (drawn faded). */
+  private cutOff = new Set<string>();
   private hints: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[] = [];
   private walkingNow = false;
   private lastHeading: Dir | null = null;
@@ -148,6 +150,17 @@ export class MapScene extends Phaser.Scene {
     const here = byId.get(b.position)!;
     const reachableIds = new Set(here?.next ?? []);
     const visited = new Set(b.visited);
+    // Everything still ahead of the party (any number of rounds on). The rest of the stages not yet played are cut off
+    // by the route taken, and drawn faded, with their roads.
+    const ahead = new Set<string>();
+    const queue = [...(here?.next ?? [])];
+    while (queue.length) {
+      const id = queue.shift()!;
+      if (ahead.has(id)) continue;
+      ahead.add(id);
+      queue.push(...(byId.get(id)?.next ?? []));
+    }
+    this.cutOff = new Set(b.map.nodes.filter((n) => !ahead.has(n.id) && !visited.has(n.id) && n.id !== b.position).map((n) => n.id));
 
     this.drawGround(theme, worldW, worldH);
     this.drawRoads(theme, visited, reachableIds);
@@ -267,10 +280,11 @@ export class MapScene extends Phaser.Scene {
   private drawRoads(theme: { path: number; dark: number }, visited: Set<string>, reachable: Set<string>) {
     const L = this.layout;
     const nodeCentres = [...L.nodes.values()].map(center);
-    // 0 plain, 1 walked, 2 open from here — the highest wins where roads share beads.
+    // −1 cut off, 0 plain, 1 walked, 2 open from here — the highest wins where roads share beads.
     const beads = new Map<string, { x: number; y: number; state: number }>();
     for (const r of L.routes) {
-      const state = r.from === this.bridge.position && reachable.has(r.to) ? 2 : visited.has(r.from) && visited.has(r.to) ? 1 : 0;
+      const cut = this.cutOff.has(r.from) || this.cutOff.has(r.to) || (visited.has(r.from) && r.from !== this.bridge.position && !visited.has(r.to));
+      const state = r.from === this.bridge.position && reachable.has(r.to) ? 2 : visited.has(r.from) && visited.has(r.to) ? 1 : cut ? -1 : 0;
       for (let i = 0; i < r.tiles.length - 1; i++) {
         const a = center(r.tiles[i]!);
         const c = center(r.tiles[i + 1]!);
@@ -286,11 +300,11 @@ export class MapScene extends Phaser.Scene {
     }
     const g = this.add.graphics();
     for (const bd of beads.values()) {
-      g.fillStyle(0x000000, 0.35);
+      g.fillStyle(0x000000, bd.state < 0 ? 0.12 : 0.35);
       g.fillRect(bd.x - 2, bd.y - 1, 4, 4);
     }
     for (const bd of beads.values()) {
-      g.fillStyle(bd.state === 2 ? OPEN_PATH : bd.state === 1 ? WALKED_PATH : theme.path, 1);
+      g.fillStyle(bd.state === 2 ? OPEN_PATH : bd.state === 1 ? WALKED_PATH : theme.path, bd.state < 0 ? 0.3 : 1);
       g.fillRect(bd.x - 2, bd.y - 2, 4, 4);
     }
     // The open roads shimmer so the choices stand out.
@@ -309,7 +323,9 @@ export class MapScene extends Phaser.Scene {
     const style = NODE_STYLE[n.kind];
     const done = visited.has(n.id) && n.id !== b.position;
     const can = reachable.has(n.id);
-    const fill = done ? Phaser.Display.Color.ValueToColor(style.color).darken(35).desaturate(60).color : style.color;
+    /** Not reachable any more from the route taken. */
+    const cut = this.cutOff.has(n.id);
+    const fill = done ? Phaser.Display.Color.ValueToColor(style.color).darken(35).desaturate(60).color : cut ? Phaser.Display.Color.ValueToColor(style.color).darken(45).desaturate(85).color : style.color;
 
     if (can) {
       const pulse = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 9).setStrokeStyle(2, OPEN_PATH, 0.9).setDepth(1);
@@ -365,6 +381,8 @@ export class MapScene extends Phaser.Scene {
       .setStroke("#000000", 3)
       .setDepth(5));
     if (done) label.setAlpha(0.55);
+    // Cut off: faded right back, so the stages still ahead stand out.
+    if (cut) for (const o of [g, glyph, label]) o.setAlpha(0.35);
 
     const hit = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 11, 0xffffff, 0.001).setDepth(6).setInteractive({ useHandCursor: can });
     hit.on("pointerover", () => b.onHover(n));

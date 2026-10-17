@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.64] - 2026-10-17
+
+### Changed
+- **Stages your route can't reach any more are faded out on the map**, with their roads. Everything still ahead of the party, however many rounds on, stays as it was; the stages you've played stay greyed as before. The rest are drawn at a third of their strength, dark and desaturated: stages the last choice cut off, and the untaken branches behind you. So the choices still open, and where they can lead, stand out. Where a road is shared with a live one, the live one wins.
+
 ## [0.2.63] - 2026-10-17
 
 ### Fixed
