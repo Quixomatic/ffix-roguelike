@@ -2,6 +2,32 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.61] - 2026-10-17
+
+Map shapes can be anything valid (any number of stages per round, a gauntlet of single stages), the map shows where you are ("1-3") on a progress track, and you can look around it with the mouse, the right stick or View.
+
+### Added
+- **Map progress** at the bottom of the overworld:
+  - "1-3" means map 1, round 3: the round you're choosing now. "of 8" under it is the map's round count.
+  - A track of the map's rounds. Rounds already played show the icon of the stage you took there (battle, elite, shop, Moogle…), in green. The round you're on pulses. Rounds ahead are dim, with an icon when the whole round is one kind (the Moogles, the boss castle).
+  - Hover a pip for its round and stage.
+- **Look around the map**:
+  - **Mouse**: drag the map. A click without dragging still picks a stage.
+  - **Controller**: the right stick pans at any time.
+  - **Keyboard / D-pad**: **View (V)** turns on look mode, where the directions pan the camera; View, B or A brings the camera back to the party.
+  - Walking always brings the camera back to the party, and the hint at the top of the map says how to look around and how to come back.
+- **Map shapes per area**: `WorldDef.mapShape` (default `MAP_SHAPE`, 1-2-3-4-3-4-3-2-1).
+  - `checkMapShape` enforces the rules: the start and the boss are one stage each, every round has at least one stage, and neighbouring rounds differ by at most one stage. A 4 sits only between 3s, 4s and 5s. A one-stage-per-round gauntlet ([1, 1, 1, 1, 1]) is a straight road.
+  - `generateWorldMap` refuses an invalid shape.
+
+### Changed
+- What each stage is scales to the map's length: the first quarter of the rounds are plain fights (and a treasure / event at its end), Moogles are likelier in the middle round, and the semi-boss fortress (when an area has one) takes the middle round. For the default 9-round shape this is exactly what it was.
+- The map's overlays (the walking hint at the top, the stage description and progress track at the bottom) stay in the part of the map the floating party doesn't cover.
+
+### Verification
+- game-core tests: shape rules, a gauntlet is a straight line, mixed shapes stay connected (285 pass).
+- The headless layout check across 200 maps in four shapes: the default, a 5-stage middle, a gauntlet, and equal neighbouring rounds. No road crosses a stage or label, the roads mirror, forks branch in different directions, and every next stage can be walked to.
+
 ## [0.2.60] - 2026-10-17
 
 Every overworld map has the same symmetrical shape, Pokelike-style: start → 2 → 3 → 4 → 3 → 4 → 3 → 2 → boss, a diamond lattice of stages joined by SMW-style roads that fork and merge evenly.

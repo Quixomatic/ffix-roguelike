@@ -19,6 +19,11 @@ export interface WorldDef {
   /** Optional semi-boss fortress at the middle of the map (every path passes it). Each map's castle boss is
    *  already the "gym leader", so most areas leave this unset. */
   semiBoss?: string[];
+  /**
+   * Stages per round (column) on this area's map, start to boss — `MAP_SHAPE` when unset. First and last are 1, and
+   * neighbouring rounds differ by at most one stage (e.g. a one-stage-per-round gauntlet: [1, 1, 1, 1, 1]).
+   */
+  mapShape?: number[];
   boss: string[];
   /** Gear price band rewards are drawn from (FF9 shop prices as a power proxy). */
   gearPrice: [number, number];

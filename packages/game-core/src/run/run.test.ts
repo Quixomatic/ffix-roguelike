@@ -53,9 +53,18 @@ describe("map", () => {
     }
   });
 
-  test("any column size works, 1 included", () => {
-    const map = generateWorldMap(Rng.fromSeed("odd"), 1, [1, 1, 3, 1, 2, 1]);
-    expect(map.nodes.map((n) => n.col)).toEqual([0, 1, 2, 2, 2, 3, 4, 4, 5]);
+  test("any round size works, 1 included; neighbouring rounds differ by at most one", async () => {
+    const { checkMapShape } = await import("./map");
+    expect(checkMapShape([1, 2, 3, 4, 5, 4, 3, 2, 1])).toBeNull();
+    expect(checkMapShape([1, 1, 1, 1, 1])).toBeNull();
+    expect(checkMapShape([1, 3, 1])).not.toBeNull();
+    expect(checkMapShape([2, 2, 1])).not.toBeNull();
+    expect(() => generateWorldMap(Rng.fromSeed("bad"), 1, [1, 4, 1])).toThrow();
+    // A one-stage-per-round gauntlet is a straight line.
+    const line = generateWorldMap(Rng.fromSeed("line"), 1, [1, 1, 1, 1, 1]);
+    expect(line.nodes.every((n) => n.row === 0 && n.next.length === (n.col < 4 ? 1 : 0))).toBe(true);
+    const map = generateWorldMap(Rng.fromSeed("odd"), 1, [1, 1, 2, 3, 2, 1]);
+    expect(map.nodes.map((n) => n.col)).toEqual([0, 1, 2, 2, 3, 3, 3, 4, 4, 5]);
     const reach = new Set([map.startId]);
     const queue = [map.startId];
     while (queue.length) for (const id of getNode(map, queue.shift()!).next) if (!reach.has(id)) (reach.add(id), queue.push(id));

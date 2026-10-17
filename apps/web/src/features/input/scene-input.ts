@@ -63,6 +63,22 @@ export class SceneInput {
     return this.down.has(action);
   }
 
+  /** The controllers' right stick (−1…1 each way, 0 inside the dead zone), for looking around. 0 while not ours. */
+  rightStick(): { x: number; y: number } {
+    if (!this.owns()) return { x: 0, y: 0 };
+    let x = 0;
+    let y = 0;
+    for (const pad of this.scene.input.gamepad?.gamepads ?? []) {
+      if (!pad?.connected || pad.pad?.mapping !== "standard") continue;
+      const ax = pad.axes[2]?.getValue() ?? 0;
+      const ay = pad.axes[3]?.getValue() ?? 0;
+      if (Math.abs(ax) > Math.abs(x)) x = ax;
+      if (Math.abs(ay) > Math.abs(y)) y = ay;
+    }
+    const dead = (v: number) => (Math.abs(v) < 0.25 ? 0 : v);
+    return { x: dead(x), y: dead(y) };
+  }
+
   private owns() {
     return inputOwner() === "game" && !typingElsewhere();
   }

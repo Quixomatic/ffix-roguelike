@@ -40,41 +40,68 @@ export interface WorldMap {
   lattice?: boolean;
 }
 
-/** Stages per column, start to boss. Any column can be any size (1 included); the first and last must be 1. */
+/**
+ * Stages per round (column), start to boss — the default for every area (an area can set its own, `mapShape`). Any
+ * round can have any number of stages, 1 included, as long as the shape is valid (`checkMapShape`).
+ */
 export const MAP_SHAPE = [1, 2, 3, 4, 3, 4, 3, 2, 1];
 export const MAP_COLUMNS = MAP_SHAPE.length;
 /** The column that becomes a single semi-boss fortress (every path crosses it) when the area has a semi-boss. */
 export const SEMIBOSS_COLUMN = 4;
 
-function pickKind(rng: Rng, col: number): NodeKind {
-  if (col <= 2) return rng.weighted([
+/**
+ * Why a map shape can't be used, or null when it's fine: the start and the boss are one stage each, every round has
+ * at least one, and neighbouring rounds differ by at most one stage — so every stage links to the stages one lane up
+ * and down (or straight across) and the lattice stays symmetrical. (A 4 only ever sits between 3s, 4s or 5s.)
+ */
+export function checkMapShape(shape: readonly number[]): string | null {
+  if (shape.length < 2) return "a map needs at least a start and a boss";
+  if (shape[0] !== 1 || shape[shape.length - 1] !== 1) return "the start and the boss are one stage each";
+  for (let i = 0; i < shape.length; i++) {
+    if (!Number.isInteger(shape[i]) || shape[i]! < 1) return `round ${i} needs a whole number of stages, at least 1`;
+    if (i > 0 && Math.abs(shape[i]! - shape[i - 1]!) > 1) return `rounds ${i - 1} and ${i} differ by more than one stage (${shape[i - 1]} → ${shape[i]})`;
+  }
+  return null;
+}
+
+/** The shape an area's maps use. */
+export const mapShapeOf = (world: number): readonly number[] => WORLDS[world]?.mapShape ?? MAP_SHAPE;
+
+/** What a stage is, by how far along the map it is (`last` = the boss's column): the first quarter is plain fights. */
+function pickKind(rng: Rng, col: number, last: number): NodeKind {
+  const early = Math.round(last / 4);
+  const middle = Math.floor(last / 2);
+  if (col <= early) return rng.weighted([
     { weight: 8, value: "battle" as NodeKind },
-    { weight: col === 2 ? 2 : 0, value: "treasure" as NodeKind },
-    { weight: col === 2 ? 1 : 0, value: "event" as NodeKind },
+    { weight: col === early ? 2 : 0, value: "treasure" as NodeKind },
+    { weight: col === early ? 1 : 0, value: "event" as NodeKind },
   ]);
   return rng.weighted([
     { weight: 6, value: "battle" as NodeKind },
-    { weight: col >= 3 ? 2 : 0, value: "elite" as NodeKind },
+    { weight: 2, value: "elite" as NodeKind },
     { weight: 1.5, value: "treasure" as NodeKind },
     { weight: 1.2, value: "shop" as NodeKind },
     { weight: 1, value: "synth" as NodeKind },
-    { weight: col >= 3 ? 0.45 : 0, value: "stiltzkin" as NodeKind },
+    { weight: 0.45, value: "stiltzkin" as NodeKind },
     { weight: 0.8, value: "chocobo" as NodeKind },
     { weight: 1.5, value: "event" as NodeKind },
-    { weight: col === 4 ? 1.5 : 0.3, value: "moogle" as NodeKind },
+    { weight: col === middle ? 1.5 : 0.3, value: "moogle" as NodeKind },
   ]);
 }
 
-export function generateWorldMap(rng: Rng, world: number, shape: readonly number[] = MAP_SHAPE): WorldMap {
+export function generateWorldMap(rng: Rng, world: number, shape: readonly number[] = mapShapeOf(world)): WorldMap {
+  const problem = checkMapShape(shape);
+  if (problem) throw new Error(`Map shape [${shape.join(", ")}]: ${problem}`);
   const last = shape.length - 1;
   const maxLane = Math.max(...shape) - 1;
   const columns: MapNode[][] = [];
   for (let col = 0; col <= last; col++) {
-    // The semi-boss column is a single fortress (every path passes it) when the area has one.
-    const fortress = col === SEMIBOSS_COLUMN && !!WORLDS[world]?.semiBoss;
+    // The middle column is a single fortress (every path passes it) when the area has a semi-boss; the rounds either
+    // side join it by nearest lane.
+    const fortress = col === Math.floor(last / 2) && last >= 4 && !!WORLDS[world]?.semiBoss;
     const count = col === 0 || col === last || fortress ? 1 : Math.max(1, shape[col]!);
     const nodes = Array.from({ length: count }, (_, i): MapNode => {
-      const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : fortress ? "semiboss" : col === last - 1 ? "moogle" : pickKind(rng, col);
+      const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : fortress ? "semiboss" : col === last - 1 ? "moogle" : pickKind(rng, col, last);
       const lane = 2 * i - (count - 1);
       return {
         id: `w${world}c${col}r${i}`,

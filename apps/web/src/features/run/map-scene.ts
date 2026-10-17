@@ -26,6 +26,8 @@ export interface MapBridge {
   isBusy(): boolean;
   /** Buttons the map doesn't use itself (Y party, X bag, Start menu…), for the run screen. */
   onAction?(action: Action): void;
+  /** The camera left the party to look around (true), or came back to it (false). */
+  onLook?(looking: boolean): void;
 }
 
 const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number }> = {
@@ -78,6 +80,8 @@ const WALKED_PATH = 0x8a6a3a;
 const WALK_SPEED = 150;
 /** Roughly how many stage columns fit across the view (sets the zoom). */
 const VISIBLE_COLUMNS = 4.5;
+/** Looking around: screen pixels per second. */
+const PAN_SPEED = 700;
 /** Party sprite feet sit a little below the stage centre. */
 const PARTY_LIFT = 11;
 
@@ -98,6 +102,13 @@ export class MapScene extends Phaser.Scene {
   private animated = false;
   private walker!: Walker;
   private controls!: SceneInput;
+  /** Look mode (View / V): the directions pan the camera instead of walking. */
+  private looking = false;
+  /** The camera isn't following the party (look mode, the right stick, or a mouse drag moved it). */
+  private panned = false;
+  /** A mouse drag in progress (from where, and the camera's scroll then), and whether it has moved yet. */
+  private drag: { x: number; y: number; scrollX: number; scrollY: number } | null = null;
+  private dragged = false;
   private hints: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[] = [];
   private walkingNow = false;
   private lastHeading: Dir | null = null;
@@ -112,6 +123,10 @@ export class MapScene extends Phaser.Scene {
     this.hints = [];
     this.walkingNow = false;
     this.lastHeading = null;
+    this.looking = false;
+    this.panned = false;
+    this.drag = null;
+    this.dragged = false;
   }
 
   preload() {
@@ -165,6 +180,53 @@ export class MapScene extends Phaser.Scene {
     // directions are polled each frame, presses come as actions.
     this.controls = new SceneInput(this);
     this.controls.on(this.onAction.bind(this));
+
+    // Drag the map with the mouse to look around (a click without moving still picks a stage).
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer) => {
+      this.drag = { x: p.x, y: p.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
+      this.dragged = false;
+    });
+    this.input.on(Phaser.Input.Events.POINTER_MOVE, (p: Phaser.Input.Pointer) => {
+      const d = this.drag;
+      if (!d || !p.isDown) return;
+      if (!this.dragged && Math.hypot(p.x - d.x, p.y - d.y) < 6) return;
+      if (!this.dragged) {
+        this.dragged = true;
+        this.detachCamera();
+      }
+      cam.setScroll(d.scrollX - (p.x - d.x) / cam.zoom, d.scrollY - (p.y - d.y) / cam.zoom);
+    });
+    // Runs after the stages' own pointerup, so a drag that ends on a stage doesn't pick it.
+    this.input.on(Phaser.Input.Events.POINTER_UP, () => {
+      this.drag = null;
+      this.dragged = false;
+    });
+  }
+
+  // ---------------------------------------------------------------------------------------------------------
+  // Looking around
+
+  /** Stop following the party (the camera stays where it is, clamped to the map). */
+  private detachCamera() {
+    if (this.panned) return;
+    this.panned = true;
+    this.cameras.main.stopFollow();
+    this.bridge.onLook?.(true);
+  }
+
+  /** Back to the party: follow it again (eases over), and leave look mode. */
+  private recenter() {
+    this.looking = false;
+    if (!this.panned) return this.bridge.onLook?.(false);
+    this.panned = false;
+    this.cameras.main.startFollow(this.party, false, 0.12, 0.12);
+    this.bridge.onLook?.(false);
+  }
+
+  /** Pan the camera by screen pixels. */
+  private pan(dx: number, dy: number) {
+    const cam = this.cameras.main;
+    cam.setScroll(cam.scrollX + dx / cam.zoom, cam.scrollY + dy / cam.zoom);
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -285,7 +347,7 @@ export class MapScene extends Phaser.Scene {
     const hit = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 11, 0xffffff, 0.001).setDepth(6).setInteractive({ useHandCursor: can });
     hit.on("pointerover", () => b.onHover(n));
     hit.on("pointerout", () => b.onHover(null));
-    if (can) hit.on("pointerdown", () => this.clickStage(n.id));
+    if (can) hit.on("pointerup", () => !this.dragged && this.clickStage(n.id));
   }
 
   /** 2×2-tile castle standing on the boss stage. */
@@ -326,8 +388,9 @@ export class MapScene extends Phaser.Scene {
     return this.walker.arrived !== null || this.bridge.isBusy();
   }
 
-  /** The direction held (keyboard or controller). */
+  /** The direction held (keyboard or controller); none in look mode (the directions pan then). */
   private heldDir(): Dir | null {
+    if (this.looking) return null;
     const c = this.controls;
     if (c.isDown("left")) return "left";
     if (c.isDown("right")) return "right";
@@ -337,6 +400,13 @@ export class MapScene extends Phaser.Scene {
   }
 
   private onAction(a: Action) {
+    // View (V): look around — the directions pan the camera; View again, B or A comes back to the party.
+    if (a === "select") return this.looking ? this.recenter() : ((this.looking = true), this.detachCamera(), this.bridge.onLook?.(true));
+    if (this.looking) {
+      if (a === "cancel" || a === "confirm") this.recenter();
+      else if (a === "triangle" || a === "x" || a === "menu") this.bridge.onAction?.(a);
+      return;
+    }
     if (a === "up" || a === "down" || a === "left" || a === "right") {
       // Fresh presses can turn the party around mid-road; held ones only start/continue walking (in update).
       if (!this.locked() && this.walker.press(a)) this.afterMoveChange();
@@ -376,6 +446,17 @@ export class MapScene extends Phaser.Scene {
 
   update(_time: number, delta: number) {
     if (!this.walker) return;
+    // Looking around: the directions (look mode) or the right stick (any time) pan the camera.
+    const speed = (PAN_SPEED * delta) / 1000;
+    if (this.looking) {
+      const c = this.controls;
+      this.pan((Number(c.isDown("right")) - Number(c.isDown("left"))) * speed, (Number(c.isDown("down")) - Number(c.isDown("up"))) * speed);
+    }
+    const stick = this.controls.rightStick();
+    if (stick.x || stick.y) {
+      this.detachCamera();
+      this.pan(stick.x * speed, stick.y * speed);
+    }
     const w = this.walker;
     if (!this.locked()) {
       const held = this.heldDir();
@@ -402,6 +483,8 @@ export class MapScene extends Phaser.Scene {
   /** Called whenever a press/click changed what the walker is doing. */
   private afterMoveChange() {
     if (this.walker.moving) {
+      // Walking brings the camera back to the party.
+      if (this.panned) this.recenter();
       this.setWalking(true);
       this.showHints();
     }
