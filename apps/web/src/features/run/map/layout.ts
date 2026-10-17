@@ -3,8 +3,14 @@
  * every edge as an orthogonal (SMW-style) road with L-turns. Pure TS — no Phaser — so it can be rendered and
  * checked outside the browser. Nothing here feeds back into game-core: the map data stays exactly as generated.
  *
- * Routing works one column gap at a time: each edge gets a few candidate shapes (a Z through one of the lanes
- * in the gap, or an L that leaves/arrives vertically) and the best combination is searched exhaustively:
+ * Lattice maps (every map generated since the fixed symmetrical shape — `WorldMap.lattice`) are laid out exactly:
+ * each column's stages sit on their lanes around the middle line, and every link is a road that runs right, turns up
+ * or down one lane at the middle of the gap, and runs right again (`buildLatticeLayout`). Stages that link to the same
+ * column share that middle road, so routes branch and merge symmetrically, Pokelike-style, with SMW-style turns.
+ *
+ * Older saved maps (free rows and links) are routed one column gap at a time: each edge gets a few candidate shapes (a
+ * Z through one of the lanes in the gap, or an L that leaves/arrives vertically) and the best combination is searched
+ * exhaustively:
  *  - other stages (and a one-tile halo around them) are avoided, so roads never run through a stage;
  *  - edges that share a source or a target are encouraged to share road (branch/merge junctions);
  *  - unrelated roads may only cross at right angles, never run along each other or turn on each other.
@@ -145,7 +151,66 @@ interface Edge {
   to: string;
 }
 
+/** Tiles between neighbouring lanes on lattice maps (stages in one column are two lanes apart). */
+const LANE_STEP = 3;
+
+/** Tiles of a path through the given corner points (each step 4-connected). */
+function tilesThrough(pts: TilePoint[]): TilePoint[] {
+  const tiles: TilePoint[] = [pts[0]!];
+  for (let i = 1; i < pts.length; i++) {
+    const a = tiles[tiles.length - 1]!;
+    const b = pts[i]!;
+    const sx = Math.sign(b.x - a.x);
+    const sy = Math.sign(b.y - a.y);
+    for (let x = a.x + sx, y = a.y + sy; x !== b.x || y !== b.y; x += sx, y += sy) tiles.push({ x, y });
+    if (a.x !== b.x || a.y !== b.y) tiles.push({ x: b.x, y: b.y });
+  }
+  return tiles;
+}
+
+/** The roads and their branch trees, from placed stages and routed edges. */
+function finishLayout(cols: number, rows: number, nodes: Map<string, TilePoint>, routes: EdgeRoute[]): MapLayout {
+  const routeIndex = new Map(routes.map((r) => [`${r.from}>${r.to}`, r]));
+  const trees = new Map<string, Branch[]>();
+  const branchesFrom = (stage: string) => {
+    let t = trees.get(stage);
+    if (!t) {
+      t = buildBranches(routes.filter((r) => r.from === stage));
+      trees.set(stage, t);
+    }
+    return t;
+  };
+  return { cols, rows, nodes, routes, route: (from, to) => routeIndex.get(`${from}>${to}`), branchesFrom };
+}
+
+/**
+ * The fixed symmetrical layout: stages on their lanes (centred on the middle row), every link right → up/down at the
+ * middle of the gap → right. Links into or out of the same lanes share the middle road, so each stage's two exits
+ * fork at the middle of the gap and two entrances merge there.
+ */
+function buildLatticeLayout(map: WorldMap): MapLayout {
+  const last = Math.max(...map.nodes.map((n) => n.col));
+  const maxLane = Math.max(1, ...map.nodes.map((n) => Math.abs(n.row)));
+  const middle = TOP + maxLane * LANE_STEP;
+  const cols = MARGIN_X * 2 + last * COL_STEP + 1;
+  const rows = middle * 2 + 1;
+  const nodes = new Map<string, TilePoint>();
+  for (const n of map.nodes) nodes.set(n.id, { x: MARGIN_X + n.col * COL_STEP, y: middle + n.row * LANE_STEP });
+  const routes: EdgeRoute[] = [];
+  for (const n of map.nodes) {
+    const s = nodes.get(n.id)!;
+    for (const to of n.next) {
+      const t = nodes.get(to)!;
+      const turn = s.x + Math.floor((t.x - s.x) / 2);
+      const tiles = tilesThrough(s.y === t.y ? [s, t] : [s, { x: turn, y: s.y }, { x: turn, y: t.y }, t]);
+      routes.push({ from: n.id, to, tiles, corners: routeCorners(tiles) });
+    }
+  }
+  return finishLayout(cols, rows, nodes, routes);
+}
+
 export function buildMapLayout(map: WorldMap): MapLayout {
+  if (map.lattice) return buildLatticeLayout(map);
   const last = Math.max(...map.nodes.map((n) => n.col));
   const cols = MARGIN_X * 2 + last * COL_STEP + 1;
   const rows = TOP * 2 + ROW_STEP * 2 + 1;
@@ -314,18 +379,7 @@ export function buildMapLayout(map: WorldMap): MapLayout {
   }
 
   const routes: EdgeRoute[] = chosen.map(({ edge, raster }) => ({ from: edge.from, to: edge.to, tiles: raster.tiles, corners: routeCorners(raster.tiles) }));
-
-  const routeIndex = new Map(routes.map((r) => [`${r.from}>${r.to}`, r]));
-  const trees = new Map<string, Branch[]>();
-  const branchesFrom = (stage: string) => {
-    let t = trees.get(stage);
-    if (!t) {
-      t = buildBranches(routes.filter((r) => r.from === stage));
-      trees.set(stage, t);
-    }
-    return t;
-  };
-  return { cols, rows, nodes, routes, route: (from, to) => routeIndex.get(`${from}>${to}`), branchesFrom };
+  return finishLayout(cols, rows, nodes, routes);
 }
 
 /** Corner points of a route (tile coordinates), for walking segment by segment. */

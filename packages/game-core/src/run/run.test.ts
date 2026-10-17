@@ -4,7 +4,7 @@ import { autoBattle } from "../battle/autoplay";
 import { BattleEngine } from "../battle/engine";
 import { applyRunOutcome, newProfile } from "../meta/profile";
 import { Rng } from "../rng";
-import { generateWorldMap, getNode, MAP_COLUMNS } from "./map";
+import { generateWorldMap, getNode, MAP_COLUMNS, MAP_SHAPE } from "./map";
 import { optimizeParty } from "./optimize";
 import {
   buy,
@@ -33,6 +33,33 @@ describe("map", () => {
       for (const n of map.nodes) if (n.col < MAP_COLUMNS - 1) expect(n.next.length).toBeGreaterThan(0);
       for (const n of map.nodes.filter((x) => x.col === MAP_COLUMNS - 2)) expect(n.kind).toBe("moogle");
     }
+  });
+
+  test("every map has the same symmetrical shape: lanes centred, links one lane apart", () => {
+    for (let s = 0; s < 30; s++) {
+      const map = generateWorldMap(Rng.fromSeed(`shape${s}`), s % 3);
+      expect(map.lattice).toBe(true);
+      const shapeKey = (m: typeof map) => m.nodes.map((n) => `${n.col}:${n.row}>${n.next.map((id) => getNode(m, id).row).join(",")}`).join(" ");
+      // Same structure whatever the seed (only the stage kinds differ).
+      expect(shapeKey(map)).toBe(shapeKey(generateWorldMap(Rng.fromSeed("other"), s % 3)));
+      MAP_SHAPE.forEach((count, col) => {
+        const lanes = map.nodes.filter((n) => n.col === col).map((n) => n.row);
+        expect(lanes.length).toBe(count);
+        // Centred: mirrored around 0.
+        expect([...lanes].map((l) => 0 - l).sort((a, b) => a - b)).toEqual([...lanes].sort((a, b) => a - b));
+      });
+      // Neighbouring columns differ by one stage, so every link steps exactly one lane up or down.
+      for (const n of map.nodes) for (const id of n.next) expect(Math.abs(getNode(map, id).row - n.row)).toBe(1);
+    }
+  });
+
+  test("any column size works, 1 included", () => {
+    const map = generateWorldMap(Rng.fromSeed("odd"), 1, [1, 1, 3, 1, 2, 1]);
+    expect(map.nodes.map((n) => n.col)).toEqual([0, 1, 2, 2, 2, 3, 4, 4, 5]);
+    const reach = new Set([map.startId]);
+    const queue = [map.startId];
+    while (queue.length) for (const id of getNode(map, queue.shift()!).next) if (!reach.has(id)) (reach.add(id), queue.push(id));
+    expect(reach.size).toBe(map.nodes.length);
   });
 });
 

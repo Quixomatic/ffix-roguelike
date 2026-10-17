@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.60] - 2026-10-17
+
+Every overworld map has the same symmetrical shape, Pokelike-style: start → 2 → 3 → 4 → 3 → 4 → 3 → 2 → boss, a diamond lattice of stages joined by SMW-style roads that fork and merge evenly.
+
+### Changed
+- **Map generation** (game-core `run/map.ts`): a fixed column shape, `MAP_SHAPE = [1, 2, 3, 4, 3, 4, 3, 2, 1]`, for every map of every run. Only what each stage is (battle, shop, event…) is still random.
+  - Each column's stages sit on lanes centred on the map's middle line, so the map mirrors top to bottom.
+  - Each stage links to the stages one lane up and one lane down in the next column, so every path branches and merges the same way.
+  - Any column can have any number of stages, 1 included. `generateWorldMap` takes the shape as an optional argument.
+  - An area with a semi-boss still squeezes the middle column into one fortress, joined to its neighbours by nearest lane.
+  - The column before the castle is still all Moogles: two of them now.
+- **Map layout** (web `run/map/layout.ts`): lattice maps are laid out exactly, with no random wobble or scored routing.
+  - Every link runs right from the stage, turns up or down one lane at the middle of the gap, then runs right into the next stage.
+  - A stage's two exits fork in the middle of the gap, and two entrances merge there.
+  - Walking is unchanged: the party stops at each fork, holding a direction rolls through, you can reverse, and Enter / A goes into a stage.
+- Runs already in progress keep their current map (saved maps without the new flag use the old routing). Their next map uses the new shape.
+
+### Verification
+- New game-core tests: every map has exactly the shape, centred lanes, and links one lane apart, identical whatever the seed; odd shapes with single-stage columns stay fully connected. 285 pass.
+- A headless check of 200 generated maps: no road crosses a stage or its label, the road network mirrors top to bottom, every fork's branches leave in different directions, and the walker reaches every next stage from every stage.
+
 ## [0.2.59] - 2026-10-17
 
 ### Fixed

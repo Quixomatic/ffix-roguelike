@@ -1,8 +1,12 @@
 /**
  * Overworld map generation — a Super Mario World–style path of stages from the start to the boss castle.
- * Columns run left→right; each column has 1–3 stages and paths branch/merge between neighbouring rows, so
- * the player picks a route. Early stages are plain battles; elites, shops and events appear deeper in; the
- * column before the castle is always a Moogle (rest + mail gear home).
+ *
+ * Every map has the same shape, like Pokelike's: columns run left→right with a fixed number of stages each
+ * (`MAP_SHAPE`: start → 2 → 3 → 4 → 3 → 4 → 3 → 2 → boss), centred on the map's middle line so the whole map is
+ * symmetrical. Each stage links to the stages one step up and one step down in the next column (its "lanes" are one
+ * apart), which makes a diamond lattice: every route branches and merges the same way, and the player picks a path
+ * through it. Only what the stages *are* is random. Early stages are plain battles; elites, shops and events appear
+ * deeper in; the column before the castle is always Moogles (rest + mail gear home).
  */
 import { WORLDS } from "../content/worlds";
 import type { Rng } from "../rng";
@@ -12,6 +16,11 @@ export type NodeKind = "start" | "battle" | "elite" | "semiboss" | "treasure" | 
 export interface MapNode {
   id: string;
   col: number;
+  /**
+   * Position in the column. Lattice maps (`WorldMap.lattice`): the lane, centred on 0 and two apart within a column
+   * (a column of 4 has lanes −3, −1, 1, 3; of 3: −2, 0, 2), so linked stages are always one lane apart. Older maps:
+   * row 0–2.
+   */
   row: number;
   /** Layout position in map units (0–100 × 0–100). */
   x: number;
@@ -27,9 +36,14 @@ export interface WorldMap {
   nodes: MapNode[];
   startId: string;
   bossId: string;
+  /** Generated with the fixed symmetrical shape (`MAP_SHAPE`); saved maps from before it don't have this. */
+  lattice?: boolean;
 }
 
-export const MAP_COLUMNS = 9;
+/** Stages per column, start to boss. Any column can be any size (1 included); the first and last must be 1. */
+export const MAP_SHAPE = [1, 2, 3, 4, 3, 4, 3, 2, 1];
+export const MAP_COLUMNS = MAP_SHAPE.length;
+/** The column that becomes a single semi-boss fortress (every path crosses it) when the area has a semi-boss. */
 export const SEMIBOSS_COLUMN = 4;
 
 function pickKind(rng: Rng, col: number): NodeKind {
@@ -51,23 +65,23 @@ function pickKind(rng: Rng, col: number): NodeKind {
   ]);
 }
 
-export function generateWorldMap(rng: Rng, world: number): WorldMap {
-  const last = MAP_COLUMNS - 1;
+export function generateWorldMap(rng: Rng, world: number, shape: readonly number[] = MAP_SHAPE): WorldMap {
+  const last = shape.length - 1;
+  const maxLane = Math.max(...shape) - 1;
   const columns: MapNode[][] = [];
   for (let col = 0; col <= last; col++) {
-    // The middle column is a single semi-boss fortress (every path passes it) when the area has one.
+    // The semi-boss column is a single fortress (every path passes it) when the area has one.
     const fortress = col === SEMIBOSS_COLUMN && !!WORLDS[world]?.semiBoss;
-    const count = col === 0 || col === last || fortress ? 1 : col === last - 1 ? rng.int(1, 2) : rng.int(2, 3);
-    const rows = rng.shuffle([0, 1, 2]).slice(0, count).sort();
-    const nodes = rows.map((row): MapNode => {
+    const count = col === 0 || col === last || fortress ? 1 : Math.max(1, shape[col]!);
+    const nodes = Array.from({ length: count }, (_, i): MapNode => {
       const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : fortress ? "semiboss" : col === last - 1 ? "moogle" : pickKind(rng, col);
-      const centred = count === 1 ? 1 : row;
+      const lane = 2 * i - (count - 1);
       return {
-        id: `w${world}c${col}r${row}`,
+        id: `w${world}c${col}r${i}`,
         col,
-        row: centred,
+        row: lane,
         x: 6 + (col / last) * 88,
-        y: 20 + centred * 30 + (col === 0 || col === last ? 0 : rng.int(-6, 6)),
+        y: 50 + (maxLane ? (lane / maxLane) * 35 : 0),
         kind,
         next: [],
         depth: col / last,
@@ -76,21 +90,21 @@ export function generateWorldMap(rng: Rng, world: number): WorldMap {
     columns.push(nodes);
   }
 
-  // Connect each column to the next: every node gets ≥1 exit, every next node gets ≥1 entrance,
-  // and links only go to the nearest rows so paths don't cross wildly.
+  // The lattice: each stage links to the stages one lane up and down in the next column (the same lane when the
+  // columns are the same size). Columns whose sizes differ by more than one (a fortress) are joined by nearest lane,
+  // so every stage still has a way in and a way out.
   for (let col = 0; col < last; col++) {
     const here = columns[col]!;
     const there = columns[col + 1]!;
-    for (const a of here) {
-      const sorted = [...there].sort((p, q) => Math.abs(p.row - a.row) - Math.abs(q.row - a.row));
-      a.next.push(sorted[0]!.id);
-      if (sorted[1] && Math.abs(sorted[1].row - a.row) <= 1 && rng.chance(45)) a.next.push(sorted[1].id);
-    }
+    for (const a of here) for (const b of there) if (Math.abs(a.row - b.row) <= 1) a.next.push(b.id);
+    const nearest = (list: MapNode[], lane: number) => [...list].sort((p, q) => Math.abs(p.row - lane) - Math.abs(q.row - lane))[0]!;
+    for (const a of here) if (!a.next.length) a.next.push(nearest(there, a.row).id);
     for (const b of there) {
       if (here.some((a) => a.next.includes(b.id))) continue;
-      const nearest = [...here].sort((p, q) => Math.abs(p.row - b.row) - Math.abs(q.row - b.row))[0]!;
-      nearest.next.push(b.id);
+      nearest(here, b.row).next.push(b.id);
     }
+    // Keep each stage's exits top to bottom.
+    for (const a of here) a.next.sort((p, q) => there.find((n) => n.id === p)!.row - there.find((n) => n.id === q)!.row);
   }
 
   // No two elites back to back on the same path, and no shop right after a shop.
@@ -103,7 +117,7 @@ export function generateWorldMap(rng: Rng, world: number): WorldMap {
   }
 
   const nodes = columns.flat();
-  return { world, nodes, startId: columns[0]![0]!.id, bossId: columns[last]![0]!.id };
+  return { world, nodes, startId: columns[0]![0]!.id, bossId: columns[last]![0]!.id, lattice: true };
 }
 
 export function getNode(map: WorldMap, id: string): MapNode {
