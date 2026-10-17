@@ -19,3 +19,4 @@ export * from "./run/optimize";
 export * from "./meta/profile";
 export * from "./run/specials";
 export * from "./meta/achievements";
+export * from "./rewards/upgrade";

@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.69] - 2026-10-17
+
+Targeted rewards, step 4: judging whether a piece of gear is an upgrade for a character.
+
+### Added
+- **`upgradeScore(build, itemId)`** (game-core `rewards/upgrade.ts`): how good a piece of gear would be for this character in its slot. Null when they can't wear it, the slot is locked, or it's what they already wear.
+  - **Stat value**: the real stat changes from equipping it (`gearChange`: full derived stats against what they wear now), each weighted by the character's role from the `reward_role` table (Vivi weighs Magic 4, Steiner Strength 4 and Defence 2.5…). A character with no role row weighs every stat 1.
+  - **Ability value**: each unmastered ability the piece would start teaching, worth the role's ability weight (double for its preferred abilities). Mastered abilities count for nothing.
+  - **Loss**: each unmastered ability the replaced piece was teaching that nothing else will, at 60% of its value, since the old piece goes to the bag and can be swapped back. It's listed with its AP progress (`stopsLearning`) for the card's warning.
+  - Returns the parts, the change, `teaches` and `stopsLearning`.
+- **`upgradesFor(build, itemIds, threshold)`**: the upgrades among a pool, best first, at or above a reward source's threshold.
+- Tests: the stat value is the weighted real stat changes; a mage values Magic more than a fighter; an unmastered ability adds value and a mastered one doesn't; replacing a piece that's still teaching reports the ability and its AP; nothing for unwearable gear, a locked slot, or what's already worn; ordering and threshold (293 pass).
+
 ## [0.2.68] - 2026-10-17
 
 Targeted rewards, step 3: the reward and gear-availability tables, in Postgres with committed seed files, and every gear piece accounted for in one table that the game now reads.
