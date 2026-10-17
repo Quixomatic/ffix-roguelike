@@ -87,7 +87,7 @@ export function PartySidebar({
           </FocusItem>
         </div>
       )}
-      <div className="flex min-h-0 flex-1 flex-col gap-2">
+      <div className="flex min-h-0 flex-col gap-2">
         {run.party.map((m) => (
           <MemberCard key={m.build.key} run={run} member={m} actions={actions} canManage={canManage} onManage={() => onManage(m.build.key)} />
         ))}
@@ -126,7 +126,7 @@ function MemberCard({ run, member: m, actions, canManage, onManage }: { run: Run
   const expTo = lv >= MAX_LEVEL ? expFrom : expForLevel(lv + 1);
   const items = fieldItems(run);
   return (
-    <div className="ff-window flex max-h-[13rem] min-h-0 flex-1 flex-col gap-1 px-2 py-1.5">
+    <div className="ff-window flex max-h-[13rem] min-h-0 shrink flex-col gap-1 px-2 py-1.5">
       <div className="flex items-center gap-2">
         <FocusItem>
           <button

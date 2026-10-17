@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.59] - 2026-10-17
+
+### Fixed
+- **Optimize gear sat at the very bottom of the party sidebar**, with an empty gap above it: the member list stretched to fill the sidebar's height. The list now takes only the room its cards need (each card still at most 13rem, and shrinking to fit a full party in a short window), so Optimize gear sits right under the last party member.
+
 ## [0.2.58] - 2026-10-17
 
 The run's party floats over the game, with a toggle to dock it beside the game as before, and the floating tab bar at the bottom of the map is gone.
