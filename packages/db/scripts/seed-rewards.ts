@@ -6,14 +6,24 @@
  *                                                          the server also does this on startup)
  *   pnpm -F @ffix-roguelike/db db:seed:rewards --export   write the database back into the seed files (commit the
  *                                                          tuning done on the admin page)
+ *   pnpm -F @ffix-roguelike/db db:seed:rewards --reset <table>   reload one table from its seed file, discarding its
+ *                                                          edits (rarities, roles, sources, boons, gear)
  */
 import "varlock/auto-load";
 
 import { createPrismaClient } from "../src/index";
-import { exportRewardSeeds, seedRewards } from "../src/seed-rewards";
+import { exportRewardSeeds, resetRewardTable, REWARD_TABLES, seedRewards } from "../src/seed-rewards";
 
 const db = createPrismaClient({ DATABASE_URL: process.env.DATABASE_URL! });
-if (process.argv.includes("--export")) {
+const reset = process.argv[process.argv.indexOf("--reset") + 1];
+if (process.argv.includes("--reset")) {
+  if (!REWARD_TABLES.includes(reset as (typeof REWARD_TABLES)[number])) {
+    console.error(`✗ --reset needs a table: ${REWARD_TABLES.join(", ")}`);
+    process.exit(1);
+  }
+  const n = await resetRewardTable(db, reset as (typeof REWARD_TABLES)[number]);
+  console.log(`✓ ${reset}: reloaded ${n} rows from the seed file (restart the server or save on the admin page so it re-reads them)`);
+} else if (process.argv.includes("--export")) {
   await exportRewardSeeds(db);
   console.log("✓ reward tables exported to packages/db/seed/rewards");
 } else {

@@ -26,6 +26,7 @@ export const rarityInput = z.object({
   gil: z.number().int().min(0).max(1_000_000),
   supplies: z.number().int().min(0).max(99),
   nextBand: z.number().min(0).max(100),
+  bandSteps: z.number().int().min(0).max(10).optional(),
 });
 
 export const roleInput = z.object({

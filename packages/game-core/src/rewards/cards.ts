@@ -7,6 +7,7 @@
  * Rolling is pure: it reads the run and an Rng and returns the offer (stored in the run's phase).
  */
 import {
+  bandStepsOf,
   getCharacter,
   itemByName,
   rarityOf,
@@ -81,8 +82,19 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     return ids;
   };
   const here = poolFor(run.world);
-  const next = poolFor(nextTierArea(run.world));
-  const upgrades = (m: RunMember, rarity: RarityId) => upgradesFor(m.build, rng.chance(rarityOf(rarity).nextBand) ? next : here, src.upgradeThreshold);
+  // Rarer gear cards can reach higher areas' bands (epic two areas up, legendary three — the rarity table's bandSteps).
+  const higher = new Map<number, Set<number>>();
+  const poolUp = (steps: number) => {
+    if (steps <= 0) return here;
+    let world = run.world;
+    for (let i = 0; i < steps; i++) world = nextTierArea(world);
+    if (!higher.has(world)) higher.set(world, new Set([...here, ...poolFor(world)]));
+    return higher.get(world)!;
+  };
+  const upgrades = (m: RunMember, rarity: RarityId) => {
+    const r = rarityOf(rarity);
+    return upgradesFor(m.build, rng.chance(r.nextBand) ? poolUp(bandStepsOf(r)) : here, src.upgradeThreshold);
+  };
 
   const cards: RewardCard[] = [];
   const used = new Map<string, number>(); // member key → cards for them so far (spread the offer)

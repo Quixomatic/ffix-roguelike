@@ -1,5 +1,6 @@
 import { WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
+  bandStepsOf,
   BOON_STATS,
   CARD_TYPES,
   getCharacter,
@@ -466,7 +467,7 @@ function RarityEditor({ rarity }: { rarity: RewardRarity }) {
   const [d, setD] = useState<RewardRarity>(rarity);
   const save = useMutation(trpc.admin.saveRarity.mutationOptions(useSaved(rarity.name)));
   return (
-    <div className="ff-window grid grid-cols-2 items-end gap-2 p-3 sm:grid-cols-8" style={{ borderColor: d.color }}>
+    <div className="ff-window grid grid-cols-2 items-end gap-2 p-3 sm:grid-cols-9" style={{ borderColor: d.color }}>
       <Field label="Name">
         <Text value={d.name} onChange={(name) => setD({ ...d, name })} />
       </Field>
@@ -484,8 +485,11 @@ function RarityEditor({ rarity }: { rarity: RewardRarity }) {
       <Field label="Supplies">
         <Num value={d.supplies} onChange={(v) => setD({ ...d, supplies: v ?? 0 })} />
       </Field>
-      <Field label="Next band %">
+      <Field label="Higher band %">
         <Num value={d.nextBand} onChange={(v) => setD({ ...d, nextBand: v ?? 0 })} />
+      </Field>
+      <Field label="Areas up">
+        <Num value={d.bandSteps ?? bandStepsOf(d)} onChange={(v) => setD({ ...d, bandSteps: v ?? 0 })} />
       </Field>
       <Field label="Sort">
         <Num value={d.sort} onChange={(v) => setD({ ...d, sort: v ?? 0 })} />

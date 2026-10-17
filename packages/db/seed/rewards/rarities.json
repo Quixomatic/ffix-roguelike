@@ -7,7 +7,8 @@
     "apSurge": 5,
     "gil": 150,
     "supplies": 1,
-    "nextBand": 0
+    "nextBand": 0,
+    "bandSteps": 0
   },
   {
     "id": "uncommon",
@@ -17,7 +18,8 @@
     "apSurge": 10,
     "gil": 300,
     "supplies": 2,
-    "nextBand": 10
+    "nextBand": 10,
+    "bandSteps": 1
   },
   {
     "id": "rare",
@@ -27,7 +29,8 @@
     "apSurge": 15,
     "gil": 500,
     "supplies": 3,
-    "nextBand": 25
+    "nextBand": 25,
+    "bandSteps": 1
   },
   {
     "id": "epic",
@@ -37,7 +40,8 @@
     "apSurge": 25,
     "gil": 800,
     "supplies": 4,
-    "nextBand": 50
+    "nextBand": 60,
+    "bandSteps": 2
   },
   {
     "id": "legendary",
@@ -47,6 +51,7 @@
     "apSurge": 40,
     "gil": 1500,
     "supplies": 6,
-    "nextBand": 80
+    "nextBand": 100,
+    "bandSteps": 3
   }
 ]

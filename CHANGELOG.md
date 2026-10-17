@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.72] - 2026-10-17
+
+Targeted rewards, step 8 (first balance pass): rarer gear cards are actually better gear, and there's a sim report for tuning offers.
+
+### Changed
+- **Rarer gear cards reach higher areas' gear**. Rarity used to change little: the "next band" was the next area up, which in Disc 1 mostly stocks the same items. In the Evil Forest, a legendary boss card averaged a cheaper FF9 piece than a rare one.
+  - Each rarity now has `bandSteps`: common 0, uncommon 1, rare 1, epic 2, **legendary 3** areas up, with its chance (`nextBand`: 0 / 10 / 25 / **60 / 100**%). The higher pool keeps the area's own gear too.
+  - The admin page's Rarities tab edits both ("Higher band %", "Areas up").
+  - Evil Forest boss cards now average FF9 prices of 359 (rare), 492 (epic) and 686 (legendary) gil, with Mythril Dagger / Gloves, Glass Armlet and Silver Gloves appearing; before: 362 / 360 / 324.
+
+### Added
+- **`pnpm sim rewards [--source boss] [--world 4] [--party zidane,vivi,steiner] [--level 8] [--n 200]`**: offers in aggregate. It shows card kinds, rarities, who the cards are for, average upgrade score and FF9 price of gear per rarity, and the most-offered gear.
+- **`pnpm -F @ffix-roguelike/db db:seed:rewards --reset <table>`** reloads one reward table from its seed file, discarding its edits. Used here to load the new rarities into the dev database.
+
+### Notes
+- A 10-run solo-Zidane sim still stalls around the first journey: that's the open small-party balance question (Vivi from the start), not the reward cards.
+- Restart `pnpm dev` (or save any rarity on the admin page) so the server re-reads the rarities.
+
 ## [0.2.71] - 2026-10-17
 
 Targeted rewards, step 7: the management page for the reward and gear tables, **`/admin/rewards`**. For admins only; the sidebar shows them a "Rewards & gear" link.

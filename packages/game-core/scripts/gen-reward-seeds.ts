@@ -28,11 +28,11 @@ const only = args.filter((a) => !a.startsWith("--"));
 const amounts = (c: number, u: number, r: number, e: number, l: number): Record<RarityId, number> => ({ common: c, uncommon: u, rare: r, epic: e, legendary: l });
 
 const rarities: RewardRarity[] = [
-  { id: "common", name: "Common", color: "#e8e8f4", sort: 0, apSurge: 5, gil: 150, supplies: 1, nextBand: 0 },
-  { id: "uncommon", name: "Uncommon", color: "#6ee07a", sort: 1, apSurge: 10, gil: 300, supplies: 2, nextBand: 10 },
-  { id: "rare", name: "Rare", color: "#5aa0ff", sort: 2, apSurge: 15, gil: 500, supplies: 3, nextBand: 25 },
-  { id: "epic", name: "Epic", color: "#c07aff", sort: 3, apSurge: 25, gil: 800, supplies: 4, nextBand: 50 },
-  { id: "legendary", name: "Legendary", color: "#ffd34a", sort: 4, apSurge: 40, gil: 1500, supplies: 6, nextBand: 80 },
+  { id: "common", name: "Common", color: "#e8e8f4", sort: 0, apSurge: 5, gil: 150, supplies: 1, nextBand: 0, bandSteps: 0 },
+  { id: "uncommon", name: "Uncommon", color: "#6ee07a", sort: 1, apSurge: 10, gil: 300, supplies: 2, nextBand: 10, bandSteps: 1 },
+  { id: "rare", name: "Rare", color: "#5aa0ff", sort: 2, apSurge: 15, gil: 500, supplies: 3, nextBand: 25, bandSteps: 1 },
+  { id: "epic", name: "Epic", color: "#c07aff", sort: 3, apSurge: 25, gil: 800, supplies: 4, nextBand: 60, bandSteps: 2 },
+  { id: "legendary", name: "Legendary", color: "#ffd34a", sort: 4, apSurge: 40, gil: 1500, supplies: 6, nextBand: 100, bandSteps: 3 },
 ];
 
 // Stat weights per point of change. HP / MP changes are in the tens to hundreds, so they weigh little per point.

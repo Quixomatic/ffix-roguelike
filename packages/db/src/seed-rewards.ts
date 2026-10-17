@@ -36,6 +36,21 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
   return { rarities: results[0].count, roles: results[1].count, sources: results[2].count, boons: results[3].count, gear: results[4].count };
 }
 
+export const REWARD_TABLES = Object.keys(FILES) as (keyof typeof FILES)[];
+
+/** Throw away one table's rows and seed it again from its file (discards the admin page's edits to it). */
+export async function resetRewardTable(db: Database, table: keyof typeof FILES): Promise<number> {
+  const del = {
+    rarities: () => db.rewardRarity.deleteMany(),
+    roles: () => db.rewardRole.deleteMany(),
+    sources: () => db.rewardSource.deleteMany(),
+    boons: () => db.rewardBoon.deleteMany(),
+    gear: () => db.gearAvailability.deleteMany(),
+  }[table];
+  await del();
+  return (await seedRewards(db))[table];
+}
+
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
   const [rarities, roles, sources, boons, gear] = await Promise.all([

@@ -6,6 +6,8 @@
  *   pnpm sim balance [--world 0] [--levels 2,4,7] [--party zidane,vivi,steiner] [--n 40]
  *   pnpm sim run     [--journey evil-forest] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
  *   pnpm sim runs    [--count 20] [--seed meta]
+ *   pnpm sim rewards [--source boss] [--world 4] [--party zidane,vivi,steiner] [--level 8] [--n 200]
+ *                    — what reward offers look like (card kinds, rarities, gear quality, boons, fallbacks)
  *
  * `battle` is interactive: when a party member is ready you type a command (or pipe/script them):
  *   a <target>                attack            e.g. `a e0`
@@ -18,7 +20,7 @@
  */
 import { createInterface } from "node:readline";
 
-import { findItem, getItem, itemByName, items } from "@ffix-roguelike/game-data";
+import { findItem, getItem, itemByName, items, type EquipSlot, type RewardSourceId } from "@ffix-roguelike/game-data";
 import { loadBattleScriptCache, loadFf9Cache } from "@ffix-roguelike/game-data/cache";
 
 import {
@@ -54,6 +56,7 @@ import {
   partyUnit,
   raiseStartLevel,
   Rng,
+  rollOffer,
   runOutcome,
   startLevelCost,
   startRun,
@@ -432,7 +435,55 @@ function runsCmd() {
   console.log(c.dim(`\nunlocked gear: ${(profile.gearUnlocked ?? []).length} · achievements: ${(profile.achievements ?? []).length} · items in game: ${items.length}`));
 }
 
+/** Reward offers in aggregate, for tuning the reward tables (the admin page edits them; this reads the seed files). */
+function rewardsCmd() {
+  const source = (args.source ?? "boss") as RewardSourceId;
+  const world = num("world", WORLDS.findIndex((w) => w.id === "evil-forest"));
+  const keys = list("party", "zidane,vivi,steiner");
+  const level = num("level", 8);
+  const n = num("n", 200);
+  const builds = keys.map((k) => ({ ...newBuild(k, level), unlockedSlots: ["head", "wrist", "armor", "accessory"] as EquipSlot[] }));
+  const run: RunState = { ...startRun({ seed: "rewards", tier: 0, party: builds }), world, phase: { kind: "map" } };
+  const kinds = new Map<string, number>();
+  const rarities = new Map<string, number>();
+  const gearByRarity = new Map<string, { score: number; price: number; n: number }>();
+  const members = new Map<string, number>();
+  const items = new Map<string, number>();
+  let cards = 0;
+  for (let i = 0; i < n; i++) {
+    const offer = rollOffer(run, source, Rng.fromSeed(`r${i}`));
+    for (const card of offer.cards) {
+      cards++;
+      kinds.set(card.kind, (kinds.get(card.kind) ?? 0) + 1);
+      rarities.set(card.rarity, (rarities.get(card.rarity) ?? 0) + 1);
+      if ("key" in card) members.set(card.key ?? "party", (members.get(card.key ?? "party") ?? 0) + 1);
+      if (card.kind === "gear") {
+        const g = gearByRarity.get(card.rarity) ?? { score: 0, price: 0, n: 0 };
+        g.score += card.score;
+        g.price += getItem(card.itemId).price;
+        g.n++;
+        gearByRarity.set(card.rarity, g);
+        const name = getItem(card.itemId).name;
+        items.set(name, (items.get(name) ?? 0) + 1);
+      }
+    }
+  }
+  const pct = (m: Map<string, number>) => [...m].sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${((v / cards) * 100).toFixed(0)}%`).join(" · ");
+  console.log(c.bold(`${source} offers in ${WORLDS[world]!.name}, ${keys.join("/")} Lv${level} (all slots open), ${n} offers, ${cards} cards`));
+  console.log(`kinds:    ${pct(kinds)}`);
+  console.log(`rarities: ${pct(rarities)}`);
+  console.log(`for:      ${pct(members)}`);
+  for (const r of ["common", "uncommon", "rare", "epic", "legendary"]) {
+    const g = gearByRarity.get(r);
+    if (g) console.log(`gear ${r.padEnd(10)} avg score ${(g.score / g.n).toFixed(1).padStart(5)} · avg FF9 price ${Math.round(g.price / g.n).toString().padStart(5)} · ${g.n} cards`);
+  }
+  console.log(c.dim(`most offered gear: ${[...items].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => `${k} ×${v}`).join(", ")}`));
+}
+
 switch (cmd) {
+  case "rewards":
+    rewardsCmd();
+    break;
   case "battle":
     await battleCmd();
     break;

@@ -34,9 +34,15 @@ export interface RewardRarity {
   gil: number;
   /** How many of a consumable a supplies card of this rarity gives. */
   supplies: number;
-  /** Chance (0–100) that a gear card of this rarity comes from the next area's band. */
+  /** Chance (0–100) that a gear card of this rarity comes from a higher area's band. */
   nextBand: number;
+  /** How many areas up that higher band is (unset: common 0, uncommon / rare 1, epic 2, legendary 3). */
+  bandSteps?: number;
 }
+
+const DEFAULT_BAND_STEPS: Record<RarityId, number> = { common: 0, uncommon: 1, rare: 1, epic: 2, legendary: 3 };
+/** How many area bands up a gear card of this rarity can reach. */
+export const bandStepsOf = (r: RewardRarity) => r.bandSteps ?? DEFAULT_BAND_STEPS[r.id];
 
 /** What a character values (per character key), for judging which gear is an upgrade for them. */
 export interface RewardRole {
