@@ -109,6 +109,8 @@ export class MapScene extends Phaser.Scene {
   /** A mouse drag in progress (from where, and the camera's scroll then), and whether it has moved yet. */
   private drag: { x: number; y: number; scrollX: number; scrollY: number } | null = null;
   private dragged = false;
+  /** Easing back to the party after looking around (Phaser's startFollow would jump there). */
+  private returning = false;
   private hints: (Phaser.GameObjects.Graphics | Phaser.GameObjects.Text)[] = [];
   private walkingNow = false;
   private lastHeading: Dir | null = null;
@@ -127,6 +129,7 @@ export class MapScene extends Phaser.Scene {
     this.panned = false;
     this.drag = null;
     this.dragged = false;
+    this.returning = false;
   }
 
   preload() {
@@ -208,19 +211,38 @@ export class MapScene extends Phaser.Scene {
 
   /** Stop following the party (the camera stays where it is, clamped to the map). */
   private detachCamera() {
+    this.returning = false;
     if (this.panned) return;
     this.panned = true;
     this.cameras.main.stopFollow();
     this.bridge.onLook?.(true);
   }
 
-  /** Back to the party: follow it again (eases over), and leave look mode. */
+  /** Back to the party, and out of look mode: the camera eases over (`easeBack`), then follows it again. */
   private recenter() {
     this.looking = false;
-    if (!this.panned) return this.bridge.onLook?.(false);
-    this.panned = false;
-    this.cameras.main.startFollow(this.party, false, 0.12, 0.12);
+    if (this.panned) {
+      this.panned = false;
+      this.returning = true;
+    }
     this.bridge.onLook?.(false);
+  }
+
+  /** One frame of easing back to the party (it may be walking meanwhile); follows it again once there. */
+  private easeBack(delta: number) {
+    const cam = this.cameras.main;
+    const tx = cam.clampX(this.party.x - cam.width * cam.originX);
+    const ty = cam.clampY(this.party.y - cam.height * cam.originY);
+    const dx = tx - cam.scrollX;
+    const dy = ty - cam.scrollY;
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+      this.returning = false;
+      cam.startFollow(this.party, false, 0.12, 0.12);
+      return;
+    }
+    // Frame-rate independent ease, a little quicker than following.
+    const k = 1 - Math.pow(1 - 0.14, delta / (1000 / 60));
+    cam.setScroll(cam.scrollX + dx * k, cam.scrollY + dy * k);
   }
 
   /** Pan the camera by screen pixels. */
@@ -457,6 +479,7 @@ export class MapScene extends Phaser.Scene {
       this.detachCamera();
       this.pan(stick.x * speed, stick.y * speed);
     }
+    if (this.returning) this.easeBack(delta);
     const w = this.walker;
     if (!this.locked()) {
       const held = this.heldDir();

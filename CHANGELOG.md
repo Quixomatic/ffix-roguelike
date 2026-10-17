@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.63] - 2026-10-17
+
+### Fixed
+- **Coming back from looking around snapped the camera to the party**, which was jarring: walking (or View / B / A) restarted Phaser's camera follow, and starting a follow jumps straight to the target. The camera now eases back to the party over a moment (frame-rate independent, following it if it's already walking) and only then follows it again. Panning again while it's on its way back stops the return.
+
 ## [0.2.62] - 2026-10-17
 
 ### Fixed
