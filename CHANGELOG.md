@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.57] - 2026-10-17
+
+### Fixed
+- **The run screen showed a code comment as text** at the top ("// Fills the window with an even 1rem margin…"). v0.2.55 wrapped the run's layout in a fragment, which put a `//` comment inside JSX, where it renders. It's a `{/* */}` comment now. No other `//` comment sits in JSX in the files changed recently.
+
 ## [0.2.56] - 2026-10-17
 
 Dev servers get stable HTTPS names through portless instead of port numbers: the web app at **https://ffix.localhost** and the API at **https://api.ffix.localhost**.

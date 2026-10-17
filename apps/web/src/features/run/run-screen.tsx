@@ -101,8 +101,8 @@ export function RunScreen() {
         else if (a === "menu") window.dispatchEvent(new Event(MENU_EVENT));
       }}
     />
-    // Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
-    // The map / stage on the left, the party on the right (the hub's own sidebar slides in on the left).
+    {/* Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
+        The map / stage on the left, the party on the right (the hub's own sidebar slides in on the left). */}
     <div className="grid h-svh min-h-0 gap-3 p-4 lg:grid-cols-[1fr_17rem]">
       <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
