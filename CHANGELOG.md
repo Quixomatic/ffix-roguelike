@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.65] - 2026-10-17
+
+### Added
+- **`apps/server/scripts/probe-gear.ts`**, a permanent read-only inspector like the other probes, for how every gear piece can show up in runs (the unlock model the targeted-rewards plan builds on). Run from apps/server: `bun scripts/probe-gear.ts [item|email …]`.
+  - Every gear piece by how it can appear:
+    - starter gear
+    - map pool: an area's FF9 shop stock, which shows up without unlocking
+    - catalog: buy at camp, then it joins the drop pools
+    - legendary: achievements only
+    - nowhere: a problem, and it exits 1
+  - Each area's map-pool size and price band, and the catalog-only and legendary pieces by name.
+  - Per item (a name or prefix: `silk`, `mythril`): kind, price, who equips it, whose starter it is, every area pool that has it, catalog price, and the recipe that makes it.
+  - Per player (an email or prefix): their unlocked gear and the catalog they see now. It never creates a profile.
+- Today: 224 pieces, 140 in map pools, 66 catalog-only, 18 legendary, none that can never appear.
+
 ## [0.2.64] - 2026-10-17
 
 ### Changed
