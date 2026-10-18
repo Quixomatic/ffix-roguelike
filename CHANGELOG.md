@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.93] - 2026-10-18
+
+### Fixed
+- **Picking Skill made Zidane flee.** The battle menu ran a command straight away when it had only one usable ability, a shortcut meant for one-action commands like Steal and Jump. Early on, Zidane's Skill list holds only Flee (his Dagger teaches it), so choosing Skill fled the battle.
+  - Commands now run straight away only when FF9 defines them as a single action.
+  - List commands (Skill, Magic, Sword Art, Blue Magic…) always open their list, even with one entry.
+  - The same applied to anyone whose list command had one usable ability.
+
 ## [0.2.92] - 2026-10-18
 
 ### Changed

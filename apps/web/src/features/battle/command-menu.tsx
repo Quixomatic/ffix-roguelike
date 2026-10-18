@@ -1,5 +1,5 @@
 import { getBattleAction, isThrowable, type BattleCommand, type BattleEngine, type BattleUnit } from "@ffix-roguelike/game-core";
-import { findItem, type TargetType } from "@ffix-roguelike/game-data";
+import { findItem, getCharacter, type TargetType } from "@ffix-roguelike/game-data";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
@@ -158,7 +158,11 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
         out.push({ label: cmd.name, disabled: true, run: () => {} });
         continue;
       }
-      if (cmd.actionIds.length === 1) {
+      // A one-action command (Steal, Jump…) runs straight away. A list command with one usable ability so far (Zidane's
+      // Skill with only Flee learned) still opens its list, so picking it never fires that ability by surprise.
+      const data = getCharacter(actor.key);
+      const full = [...data.commands, ...data.trance].find((c) => c.id === cmd.id);
+      if (cmd.actionIds.length === 1 && (full?.actionIds.length ?? 1) === 1) {
         const a = getBattleAction(cmd.actionIds[0]!);
         out.push({
           label: cmd.name,
