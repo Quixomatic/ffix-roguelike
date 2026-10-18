@@ -10,7 +10,10 @@ import { findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
 import type { BattleEvent, BattleState, BattleUnit, InputRecord } from "../battle/types";
-import { battleMetrics, mergeBags, type MetricBag } from "../metrics/collect";
+import { battleMetrics, mergeBags, record, type MetricBag } from "../metrics/collect";
+
+/** Count something in this run's metrics (`metrics/registry.ts`). */
+const track = (run: RunState, key: string, value: number, o?: { subject?: string | number; character?: string }) => record((run.metrics ??= {}), key, value, o);
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
 import { encounterEnemies, isSceneRef, killKey, sceneGroup } from "../content/ff9-scenes";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
@@ -285,6 +288,7 @@ export function moveTo(run: RunState, nodeId: string): RunState {
   const rng = rngOf(next).fork(`node:${nodeId}`);
   next.position = nodeId;
   next.visited.push(nodeId);
+  track(next, "stages.entered", 1, { subject: node.kind });
   enterNode(next, node.kind, node.depth, nodeId, rng);
   next.rng = rngOf(next).fork(`after:${nodeId}`).state;
   return next;
@@ -513,10 +517,13 @@ export function claimReward(run: RunState, choice: number | null): RunState {
   let next = structuredClone(run);
   if (p.offer) {
     // Reward cards: take one (it applies at once), or skip for a little gil.
-    if (choice == null) next.gil += p.offer.cards.length ? p.offer.skipGil : 0;
-    else {
+    if (choice == null) {
+      next.gil += p.offer.cards.length ? p.offer.skipGil : 0;
+      track(next, "rewards.skipped", 1);
+    } else {
       const card = p.offer.cards[choice];
       if (!card) throw new RunError("Invalid choice");
+      track(next, "rewards.taken", 1, { subject: card.kind });
       next = applyCard(next, card);
     }
   } else if (choice != null) {
@@ -618,6 +625,8 @@ export function buy(run: RunState, index: number): RunState {
   if (run.gil < entry.price) throw new RunError("Not enough gil");
   const next = structuredClone(run);
   next.gil -= entry.price;
+  track(next, "shop.purchases", 1);
+  track(next, "shop.gil_spent", entry.price);
   addLoot(next, entry.itemId);
   if (isGearEntry && next.phase.kind === "shop") next.phase.sold.push(index);
   return next;
@@ -648,6 +657,8 @@ export function synthesize(run: RunState, recipeId: number): RunState {
   }
   next.consumables = next.consumables.filter((c) => c.count > 0);
   next.gil -= recipe.price;
+  track(next, "gear.synthesized", 1, { subject: recipe.result });
+  track(next, "shop.gil_spent", recipe.price);
   addLoot(next, recipe.result);
   const made = next.gear.at(-1);
   if (made && made.itemId === recipe.result) made.secured = secured;
@@ -665,6 +676,8 @@ export function sell(run: RunState, uid: number): RunState {
   const next = structuredClone(run);
   next.gear = next.gear.filter((g) => g.uid !== uid);
   next.gil += sellPrice(inst.itemId);
+  track(next, "gear.sold", 1);
+  track(next, "gear.sell_gil", sellPrice(inst.itemId));
   return next;
 }
 
@@ -677,6 +690,8 @@ export function buyOffer(run: RunState, index: number): RunState {
   if (run.gil < offer.price) throw new RunError("Not enough gil");
   const next = structuredClone(run);
   next.gil -= offer.price;
+  track(next, "shop.purchases", 1);
+  track(next, "shop.gil_spent", offer.price);
   for (const id of offer.items) addLoot(next, id);
   if (next.phase.kind === "stiltzkin") next.phase.bought.push(index);
   return next;
@@ -693,6 +708,7 @@ export function dig(run: RunState, index: number): RunState {
   if (next.phase.kind !== "chocobo") return next;
   next.phase.digsLeft--;
   next.phase.dug.push(index);
+  track(next, "chocobo.digs", 1);
   if (spot.type === "gil") next.gil += spot.amount;
   if (spot.type === "item") addLoot(next, spot.itemId);
   return next;
@@ -717,6 +733,7 @@ export function chooseEvent(run: RunState, index: number): RunState {
   const next = structuredClone(run);
   const rng = rngOf(next).fork(`event:${next.position}:${index}`);
   next.gil -= choice.cost ?? 0;
+  track(next, "events.chosen", 1, { subject: def.id });
   const rolled = rng.weighted(choice.outcomes.map((o) => ({ weight: o.weight, value: o })));
   next.phase = { kind: "event", eventId: def.id, result: rolled.text };
   applyOutcome(next, rolled.outcome, rng);
@@ -821,6 +838,7 @@ export function useConsumable(run: RunState, itemId: number, key: string): RunSt
   if (!stock || !fx) throw new RunError("You don't have that");
   const next = structuredClone(run);
   const m = member(next, key);
+  track(next, "items.used_field", 1, { subject: itemId, character: key });
   const st = deriveStats(m.build);
   const dead = m.hp <= 0;
   switch (fx.scriptId) {

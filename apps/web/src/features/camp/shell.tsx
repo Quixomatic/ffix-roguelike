@@ -43,6 +43,7 @@ const MORE_NAV: NavItem[] = [
 /** Admins only (better-auth's admin role). The effects gallery needs a development server (its FFRK library). */
 const ADMIN_NAV: NavItem[] = [
   { to: "/admin/rewards", label: "Rewards & gear", icon: Wrench },
+  { to: "/admin/metrics", label: "Metrics", icon: BarChart3 },
   { to: "/admin/practice", label: "Practice", icon: Sword },
   { to: "/admin/dev", label: "Dev tools", icon: FlaskConical },
   ...(import.meta.env.DEV ? [{ to: "/admin/effects", label: "Effects", icon: Sparkles }] : []),

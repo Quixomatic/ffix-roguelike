@@ -58,6 +58,7 @@ describe("metrics from play", () => {
     let run = startRun({ seed: "metrics", tier: 0, party: [{ ...profile.builds.zidane!, level: 10 }] });
     run = moveTo(run, getNode(run.map, run.position).next[0]!);
     expect(run.phase.kind).toBe("battle");
+    expect(bagValue(run.metrics, "stages.entered", { subject: "battle" })).toBe(1);
     if (run.phase.kind !== "battle") return;
     const done = autoBattle(new BattleEngine(structuredClone(run.phase.battle))).state;
     run = finishBattle(run, done.inputs);

@@ -7,7 +7,7 @@
 
 export type MetricAgg = "sum" | "max" | "min";
 /** What a metric's subject names: `enemies.killed` / `goblin`, `items.used` / `236`… */
-export type MetricSubject = "enemy" | "item" | "ability" | "status" | "journey" | "stage";
+export type MetricSubject = "enemy" | "item" | "ability" | "status" | "journey" | "stage" | "event" | "card";
 export type MetricSection = "battles" | "combat" | "support" | "runs" | "bosses" | "camp";
 
 export interface MetricDef {
@@ -69,7 +69,19 @@ export const METRICS: MetricDef[] = [
   m("runs.lost", "Runs lost", "Runs lost or abandoned.", "runs", "sum", true, { subject: "journey" }),
   m("runs.best_tier", "Highest tier won", "The highest difficulty tier a run was won on.", "runs", "max", false),
   m("runs.gil_earned", "Gil earned", "Gil brought home from runs.", "runs", "sum", false),
+  m("runs.win_streak", "Best win streak", "The most runs won in a row.", "runs", "max", false),
   m("levels.gained", "Levels gained", "Levels gained in runs.", "runs", "sum", true),
+  m("stages.entered", "Stages entered", "Stages entered on the map, by kind (battle, shop, Moogle…).", "runs", "sum", false, { subject: "stage" }),
+  m("shop.purchases", "Things bought", "Purchases in run shops and from Stiltzkin.", "runs", "sum", false),
+  m("shop.gil_spent", "Gil spent in runs", "Gil spent in run shops, at Stiltzkin and on synthesis.", "runs", "sum", false),
+  m("gear.synthesized", "Synthesized", "Items made at synthesis shops.", "runs", "sum", false, { subject: "item" }),
+  m("gear.sold", "Gear sold", "Gear sold in runs.", "runs", "sum", false),
+  m("gear.sell_gil", "Gil from selling", "Gil from gear sold in runs.", "runs", "sum", false),
+  m("events.chosen", "Event choices", "Choices made at ? events, by event.", "runs", "sum", false, { subject: "event" }),
+  m("chocobo.digs", "Chocobo digs", "Spots dug in Chocobo Hot & Cold.", "runs", "sum", false),
+  m("rewards.taken", "Reward cards taken", "Reward cards taken, by kind (gear, boon, AP…).", "runs", "sum", false, { subject: "card" }),
+  m("rewards.skipped", "Reward cards skipped", "Reward offers skipped for gil.", "runs", "sum", false),
+  m("items.used_field", "Items used on the map", "Items used outside battle.", "support", "sum", true, { subject: "item" }),
   // ── bosses ──
   m("bosses.defeated", "Bosses defeated", "Bosses (and semi-bosses) defeated.", "bosses", "sum", true, { subject: "enemy" }),
   // ── camp ──

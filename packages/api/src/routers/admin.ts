@@ -23,6 +23,7 @@ import { z } from "zod";
 
 import { adminProcedure, router } from "../index";
 import { ensureRewardContent, reloadRewardContent } from "../services/content";
+import { loadMetrics, metricLeaderboard } from "../services/metrics";
 
 const rarity = z.enum(RARITIES);
 const perRarity = <T extends z.ZodType>(v: T) => z.object(Object.fromEntries(RARITIES.map((r) => [r, v])) as Record<(typeof RARITIES)[number], T>);
@@ -240,6 +241,31 @@ export const adminRouter = router({
     await ctx.db.achievement.delete({ where: { id: input.id } });
     return reloadRewardContent(ctx.db);
   }),
+
+  // ── metrics ──
+  /** Every player with a profile (for the metrics browser). */
+  players: adminProcedure.query(async ({ ctx }) => {
+    const rows = await ctx.db.playerProfile.findMany({
+      select: { id: true, runs: true, user: { select: { name: true, email: true } } },
+      orderBy: { createdAt: "asc" },
+    });
+    return rows.map((r) => ({ profileId: r.id, name: r.user.name, email: r.user.email, runs: r.runs }));
+  }),
+  /** One player's lifetime metrics and recruited characters. */
+  playerMetrics: adminProcedure.input(z.object({ profileId: z.string().max(40) })).query(async ({ ctx, input }) => {
+    const [metrics, characters] = await Promise.all([
+      loadMetrics(ctx.db, input.profileId),
+      ctx.db.playerCharacter.findMany({ where: { profileId: input.profileId, unlocked: true }, select: { key: true } }),
+    ]);
+    return { metrics, unlocked: characters.map((c) => c.key) };
+  }),
+  /** The top players for a metric (player total / any character / one character; overall or one subject). */
+  metricLeaderboard: adminProcedure
+    .input(z.object({ key: z.string().max(60), subject: z.string().max(60).optional(), character: z.string().max(20).optional(), limit: z.number().int().min(1).max(100).default(20) }))
+    .query(async ({ ctx, input }) => {
+      if (!metricDef(input.key)) throw bad(`Unknown metric ${input.key}`);
+      return metricLeaderboard(ctx.db, input.key, input);
+    }),
 
   /** Roll sample offers: a party (character keys at a level, all gear slots open), an area and a source. */
   preview: adminProcedure

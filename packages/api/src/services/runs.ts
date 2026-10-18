@@ -8,6 +8,7 @@ import {
   availableJourneys,
   bagDelta,
   mergeBags,
+  record,
   runEndMetrics,
   upgradeRunState,
   campSupplies,
@@ -110,6 +111,17 @@ export async function act(
       builds: after.party.map((m) => m.build),
       startLevels: Object.fromEntries(Object.entries(profile.builds).map(([k, b]) => [k, b.level])),
     });
+    // A won run extends the streak of runs won before it (most recent first).
+    if (won) {
+      const previous = await db.run.findMany({
+        where: { profileId, id: { not: row.id }, status: { in: ["WON", "LOST", "ABANDONED"] } },
+        orderBy: { endedAt: "desc" },
+        take: 200,
+        select: { status: true },
+      });
+      const streak = 1 + (previous.findIndex((r) => r.status !== "WON") === -1 ? previous.length : previous.findIndex((r) => r.status !== "WON"));
+      record(end, "runs.win_streak", streak);
+    }
     after = { ...after, metrics: mergeBags({ ...after.metrics }, end) };
   }
   // What this action added to the run's metrics joins the player's lifetime totals, in the same transaction.

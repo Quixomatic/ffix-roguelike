@@ -2,6 +2,35 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.5] - 2026-10-18
+
+Metrics: leaderboards and an admin view of every player's stats, plus 15 more metrics.
+
+### Added
+- **Admin → Metrics** (`/admin/metrics`, in the sidebar's Admin section):
+  - **Leaderboard** for any tracked metric, ranked by one of:
+    - **the player's total**;
+    - **the best single character** (showing whose number it is);
+    - **one character**.
+
+    It's for the whole metric or one subject (an enemy, item…), top 10 / 20 / 50 / 100. "Lowest ever" records (fastest win) rank lowest first. Click a player to see their stats.
+  - **Player stats**: pick any player and see their Stats page as they see it (party table, every metric, top tens).
+- **`metricLeaderboard`** (api `services/metrics.ts`): the top players for any metric / subject / character. The base for every leaderboard, including the endless challenge runs planned for later, which only need their own "furthest reached" record metric.
+- API: `admin.players`, `admin.playerMetrics`, `admin.metricLeaderboard`.
+- **More metrics:**
+  - stages entered by kind (battle, shop, Moogle…)
+  - things bought in run shops / from Stiltzkin, and gil spent there and on synthesis
+  - items synthesized (per item)
+  - gear sold, and gil from selling
+  - ? event choices (per event)
+  - Chocobo digs
+  - reward cards taken (by kind) and skipped
+  - items used on the map (per item, per character)
+  - **best win streak** (from the player's run history when a run is won)
+
+### Changed
+- The Stats page's body is a shared `MetricsOverview` (the admin player view uses it).
+
 ## [0.3.4] - 2026-10-18
 
 Metrics, step 5: the numbers are visible: a Stats page, each character's lifetime numbers, and an MVP at the end of a run.

@@ -50,11 +50,23 @@ const PARTY_COLUMNS = ["enemies.killed", "damage.dealt", "damage.best_hit", "hea
  */
 export function StatsPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
-  const [sortBy, setSortBy] = useState("enemies.killed");
   if (profile.isPending) return <div className="p-6">Loading…</div>;
   const p = (profile.data ?? null) as Profile | null;
-  const bag = p?.metrics ?? {};
-  const party = [...(p?.unlocked ?? [])].sort((a, b) => bagValue(bag, sortBy, { character: b }) - bagValue(bag, sortBy, { character: a }));
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-24 pt-6">
+      <div className="ff-window flex flex-col gap-1 px-5 py-3">
+        <div className="ff-display text-3xl">Stats</div>
+        <div className="text-sm text-[#c8d0ff]">Counted from the server's verified battles. Who landed each hit, damage and steals count from v0.3.1 on.</div>
+      </div>
+      <MetricsOverview bag={p?.metrics ?? {}} characters={p?.unlocked ?? []} />
+    </div>
+  );
+}
+
+/** A player's metrics: the party side by side (sortable), every metric by section, and the top tens. */
+export function MetricsOverview({ bag, characters }: { bag: MetricBag; characters: string[] }) {
+  const [sortBy, setSortBy] = useState("enemies.killed");
+  const party = [...characters].sort((a, b) => bagValue(bag, sortBy, { character: b }) - bagValue(bag, sortBy, { character: a }));
   const lists: { title: string; key: string }[] = [
     { title: "Most defeated", key: "enemies.killed" },
     { title: "Bosses", key: "bosses.defeated" },
@@ -63,12 +75,7 @@ export function StatsPage() {
   ];
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-24 pt-6">
-      <div className="ff-window flex flex-col gap-1 px-5 py-3">
-        <div className="ff-display text-3xl">Stats</div>
-        <div className="text-sm text-[#c8d0ff]">Counted from the server's verified battles. Who landed each hit, damage and steals count from v0.3.1 on.</div>
-      </div>
-
+    <>
       <section className="flex flex-col gap-2">
         <Heading title="Party" />
         <div className="ff-window overflow-x-auto p-2">
@@ -153,7 +160,7 @@ export function StatsPage() {
           );
         })}
       </div>
-    </div>
+    </>
   );
 }
 
