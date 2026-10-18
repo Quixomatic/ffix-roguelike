@@ -189,6 +189,17 @@
     0 3px 0 rgba(0, 0, 0, 0.6);
 }
 /* Selected (e.g. picked for the party): FF9's green window, like the old camp's party cards. */
+/* A footer section of an FF window / panel: divided off by the window's own border (a white line between dark ones),
+   with the window's gradient starting over beneath it. It reaches the window's inner dark ring, so give it negative
+   margins of the window's padding less 2px (e.g. `-mx-[14px] -mb-[14px]` in a `p-4` card) and its own padding. */
+.ff-panel-footer {
+  background: linear-gradient(180deg, #3a4fb0 0%, #24317a 45%, #141b52 100%);
+  border-top: 2px solid #e8e8f4;
+  border-radius: 0 0 3px 3px;
+  box-shadow:
+    0 -2px 0 #0c1238,
+    inset 0 2px 0 #0c1238;
+}
 .ff-panel[data-on="true"] {
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
   border-color: #c8f0c8;

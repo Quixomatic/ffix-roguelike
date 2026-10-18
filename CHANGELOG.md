@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.97] - 2026-10-18
+
+### Changed
+- **Journey cards have a footer section**: "Highest tier cleared" / "Not cleared yet" and Choose sit in their own section at the bottom of the card. The window's border runs across it (a white line between dark ones, like the card's edge), the window's gradient starts over beneath it, and it reaches the card's inner edges.
+- New **`.ff-panel-footer`** class, so any FF window or panel can have such a footer.
+
 ## [0.2.96] - 2026-10-18
 
 ### Changed

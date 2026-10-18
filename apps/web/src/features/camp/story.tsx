@@ -99,7 +99,8 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
           <span className="text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
         </div>
       )}
-      <div className="flex items-end gap-2">
+      {/* The footer is its own section of the card: the window's border across it, its gradient starting over. */}
+      <div className="ff-panel-footer -mx-[14px] -mb-[14px] mt-1 flex items-center gap-2 px-4 py-2.5">
         <span className="flex-1 text-sm">
           {cleared ? (
             <>
