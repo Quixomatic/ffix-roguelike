@@ -13,9 +13,9 @@ import {
   type TrainStat,
 } from "@ffix-roguelike/game-core";
 import { abilityName, getAction, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { PixelIcon } from "@/components/pixel-icon";
 import { HelpText } from "@/features/run/item-info";
 import { FocusItem, FocusSection } from "@/features/input/focus";
 import { useInputOwner } from "@/features/input/owner";
@@ -344,8 +344,8 @@ export function CharacterModal({
   useInputOwner("menu", { active: !inline, onCancel: onClose });
   const arrow = (dir: "left" | "right", go: () => void, name: string) => (
     <FocusItem>
-      <button type="button" className="flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-white/10" onClick={go} aria-label={name} title={name}>
-        <PixelIcon name={dir === "left" ? "arrow-left" : "arrow-right"} />
+      <button type="button" className="flex h-8 w-8 shrink-0 items-center justify-center rounded opacity-80 hover:bg-white/10 hover:opacity-100" onClick={go} aria-label={name} title={name}>
+        {dir === "left" ? <ChevronLeft className="size-6" /> : <ChevronRight className="size-6" />}
       </button>
     </FocusItem>
   );
@@ -361,11 +361,14 @@ export function CharacterModal({
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {headerRight}
-            <FocusItem>
-              <button className={inline ? "rounded border border-white/40 px-2.5 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
-                {inline ? "← Back" : "✕"}
-              </button>
-            </FocusItem>
+            {/* As a page, the breadcrumbs above go back; a dialog has its ✕. */}
+            {!inline && (
+              <FocusItem>
+                <button className="text-xl" onClick={onClose} aria-label="Close">
+                  ✕
+                </button>
+              </FocusItem>
+            )}
           </div>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">{doll}</div>

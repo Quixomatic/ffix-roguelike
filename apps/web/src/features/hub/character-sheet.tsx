@@ -102,7 +102,14 @@ export function CharacterSheet({
     <CharacterModal
       inline={inline}
       title={char.name}
-      headerRight={<span className="rounded border border-yellow-200/50 bg-black/30 px-2 py-0.5 text-lg text-yellow-200">{points} CP</span>}
+      headerRight={
+        <>
+          <span className="ff-display text-xl" title="Start level: every run starts here">
+            Lvl. {build.level}
+          </span>
+          <span className="rounded border border-yellow-200/50 bg-black/30 px-2 py-0.5 text-lg text-yellow-200">{points} CP</span>
+        </>
+      }
       cycle={cycle}
       onClose={onClose}
       tab={tab}

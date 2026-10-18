@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.105] - 2026-10-18
+
+### Changed
+- **Camp character page**:
+  - No "← Back" button: the breadcrumbs above (Home › Party › …) go back. The in-run sheet, a dialog, keeps its ✕.
+  - The top right shows the start level as **"Lvl. 5"** beside the CP.
+  - The arrows either side of the name are chevrons, on the camp page and in runs.
+
 ## [0.2.104] - 2026-10-18
 
 ### Changed
