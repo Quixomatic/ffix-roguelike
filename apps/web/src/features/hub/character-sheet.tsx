@@ -1,6 +1,9 @@
 import {
+  bagValue,
   deriveStats,
   EQUIP_SLOTS,
+  METRIC_SECTIONS,
+  METRICS,
   gemsMax,
   gemsUsed,
   nextSlotCost,
@@ -22,6 +25,7 @@ import { DollFigure, EquipmentList, type PaperdollSlot } from "@/features/gear/p
 import { trpc } from "@/utils/trpc";
 
 import { rosterEntries } from "@/features/camp/roster";
+import { formatMetric } from "@/features/hub/stats-page";
 
 import { StarterUpgrades } from "./starter-upgrades";
 
@@ -230,6 +234,25 @@ export function CharacterSheet({
                   ))}
                 </div>
               </Panel>
+              {/* Their lifetime metrics (the ones kept per character), by section. */}
+              <div className="grid gap-3 xl:grid-cols-2">
+                {METRIC_SECTIONS.map((s) => {
+                  const list = METRICS.filter((m) => m.section === s.id && m.perCharacter);
+                  if (!list.length) return null;
+                  return (
+                    <Panel key={s.id} title={s.label}>
+                      <div className="flex flex-col">
+                        {list.map((m) => (
+                          <div key={m.key} className="flex items-baseline justify-between gap-3 border-b border-white/5 py-0.5 last:border-0" title={m.description}>
+                            <span className="text-sm">{m.label}</span>
+                            <span className="tabular-nums text-yellow-200">{formatMetric(m, bagValue(profile?.metrics, m.key, { character: build.key }))}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Panel>
+                  );
+                })}
+              </div>
             </div>
           ),
         },

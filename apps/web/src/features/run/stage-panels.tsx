@@ -1,4 +1,4 @@
-import { achievement, eventById, getArea, getJourney, JOURNEYS, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, bagValue, eventById, getArea, getJourney, JOURNEYS, metricDef, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -276,6 +276,8 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
         ))}
       </div>
 
+      <RunSummary run={run} />
+
       {report && (
         <div className="ff-window flex flex-col gap-1 p-4 text-lg">
           <div className="tabular-nums text-yellow-200">+{Math.round(gil)} gil banked</div>
@@ -319,6 +321,54 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
           Back to camp
         </Link>
       </FocusItem>
+    </div>
+  );
+}
+
+/** This run's own metrics (`RunState.metrics`): the MVP, and each member's kills, damage, biggest hit and healing. */
+function RunSummary({ run }: { run: RunState }) {
+  const m = run.metrics;
+  if (!m || !bagValue(m, "battles.fought")) return null;
+  const cols = ["enemies.killed", "damage.dealt", "damage.best_hit", "healing.done"] as const;
+  const score = (k: string) => bagValue(m, "enemies.killed", { character: k }) * 1e9 + bagValue(m, "damage.dealt", { character: k });
+  const mvp = [...run.party].map((p) => p.build.key).sort((a, b) => score(b) - score(a))[0]!;
+  return (
+    <div className="ff-window flex flex-col gap-2 p-4">
+      <div className="flex items-center gap-3">
+        <span className="ff-display text-xl">This run</span>
+        {run.party.length > 1 && score(mvp) > 0 && (
+          <span className="ff-pop flex items-center gap-2 text-yellow-200" style={{ animationDelay: "900ms" }}>
+            <HeroSprite heroKey={mvp} size={32} anim="victory" /> MVP: {name(mvp)}
+          </span>
+        )}
+      </div>
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="ff-title text-left">
+            <th className="py-0.5 font-normal" />
+            {cols.map((c) => (
+              <th key={c} className="py-0.5 text-right font-normal">
+                {metricDef(c)!.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {run.party.map((p) => (
+            <tr key={p.build.key} className="border-t border-white/10">
+              <td className="py-0.5">{name(p.build.key)}</td>
+              {cols.map((c) => (
+                <td key={c} className="py-0.5 text-right tabular-nums">
+                  {Math.round(bagValue(m, c, { character: p.build.key })).toLocaleString()}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="text-xs opacity-70">
+        {bagValue(m, "battles.won")} battles won · {bagValue(m, "enemies.killed")} enemies defeated · {bagValue(m, "steals.succeeded")} items stolen
+      </div>
     </div>
   );
 }

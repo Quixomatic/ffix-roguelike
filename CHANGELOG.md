@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.4] - 2026-10-18
+
+Metrics, step 5: the numbers are visible: a Stats page, each character's lifetime numbers, and an MVP at the end of a run.
+
+### Added
+- **Stats page** (`/stats`, in the sidebar after Achievements):
+  - **Party**: every recruited character side by side, sortable by clicking a column (enemies defeated, damage dealt, biggest hit, healing, steals, times KO'd, battles won, runs won).
+  - **Every tracked metric, by section**: Battles, Combat, Support, Runs, Bosses, Camp. Durations show as m:ss; hover a line for what it counts.
+  - **Top tens**: most defeated enemies, bosses, items used, abilities used, by name.
+- **Character page → Record tab**: under runs / wins / bosses, that character's own lifetime metrics by section.
+- **Run-over screen → This run**: the run's own metrics.
+  - The **MVP** (most enemies defeated, then damage) with their victory pose.
+  - Each member's kills, damage dealt, biggest hit and healing for the run.
+  - Battles won, enemies defeated and items stolen.
+
 ## [0.3.3] - 2026-10-18
 
 Metrics, step 4: achievements can be built on any tracked metric.
