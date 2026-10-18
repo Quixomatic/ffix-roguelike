@@ -1,4 +1,4 @@
-import { createBattle, encounterNames, encounterUnits, newBuild, partyUnit, WORLDS, type BattleState } from "@ffix-roguelike/game-core";
+import { createBattle, encounterNames, encounterUnits, newBuild, partyUnit, TICKS_PER_SECOND, WORLDS, type BattleState } from "@ffix-roguelike/game-core";
 import { itemByName } from "@ffix-roguelike/game-data";
 import { useMemo, useState } from "react";
 
@@ -46,10 +46,14 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 p-3">
-      <div className="ff-window flex flex-wrap items-center gap-4 px-3 py-2 text-base">
+    // In the hub layout like the run: the window's full height with an even margin; the controls leave room for the
+    // menu button floating in the top-left corner.
+    <div className="flex h-svh min-h-0 flex-col gap-3 p-4">
+      <div className="ff-window ml-12 flex flex-wrap items-center gap-4 px-3 py-2 text-base">
+        <span className="ff-display text-lg">Practice</span>
         <label className="flex items-center gap-2">
           World
+          <FocusItem>
           <select className="rounded bg-[#0c1238] px-2" value={world} onChange={(e) => onChange({ world: Number(e.target.value), encounter: 0 })}>
             {WORLDS.map((x) => (
               <option key={x.index} value={x.index}>
@@ -57,9 +61,11 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
               </option>
             ))}
           </select>
+          </FocusItem>
         </label>
         <label className="flex items-center gap-2">
           Encounter
+          <FocusItem>
           <select className="rounded bg-[#0c1238] px-2" value={encounter % groups.length} onChange={(e) => onChange({ encounter: Number(e.target.value) })}>
             {groups.map((g, i) => (
               <option key={i} value={i}>
@@ -68,9 +74,11 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
               </option>
             ))}
           </select>
+          </FocusItem>
         </label>
         <label className="flex items-center gap-2">
           Party Lv
+          <FocusItem>
           <input
             type="number"
             min={1}
@@ -79,6 +87,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
             value={level}
             onChange={(e) => onChange({ level: Math.max(1, Math.min(99, Number(e.target.value) || 1)) })}
           />
+          </FocusItem>
         </label>
         <FocusItem>
           <button
@@ -93,7 +102,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
         </FocusItem>
         {result && (
           <span className="text-yellow-200">
-            {result.outcome} in {Math.round(result.tick / 20)}s
+            {result.outcome} in {Math.round(result.tick / TICKS_PER_SECOND)}s
             {result.stolen.length ? ` · stole ${result.stolen.length}` : ""}
           </span>
         )}
@@ -105,9 +114,6 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
           <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
         )}
       </div>
-      <p className="text-center text-sm text-muted-foreground">
-        Arrows + Enter to choose, Esc to go back, Tab to swap target side · click a ready party member to switch who acts
-      </p>
     </div>
   );
 }

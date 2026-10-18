@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Swords, Trophy, Undo2, Users, Wrench } from "lucide-react";
+import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Sword, Swords, Trophy, Undo2, Users, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -29,6 +29,7 @@ const GAME_NAV: NavItem[] = [
   { to: "/shops/supplies", label: "Supplies", icon: Store },
   { to: "/shops/gear", label: "Gear catalog", icon: Shield },
   { to: "/challenges", label: "Challenges", icon: Swords },
+  { to: "/battle", label: "Practice", icon: Sword },
 ];
 const MORE_NAV: NavItem[] = [
   { to: "/items", label: "Items", icon: Package },

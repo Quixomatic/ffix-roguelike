@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.75] - 2026-10-18
+
+The practice battle is in the hub layout.
+
+### Changed
+- **Practice battle (`/battle`) uses the hub's sidebar layout** instead of the header bar, like the run.
+  - It's in the sidebar as **Practice**, under Challenges.
+  - It plays its own battle music (the hub doesn't override it), keeps the gil / shortcut stack off the field, and fills the window with an even margin. The menu button floats in the top-left corner, and the controls bar leaves room for it.
+  - Open to anyone, signed in or not, as before; the title screen's practice links still land here.
+  - Route `/_hub/battle` (was `/battle`); the URL is unchanged.
+- The practice controls (world, encounter, party level, New fight) are cursor stops.
+- The result line counts seconds at FF9's 15 ticks per second (it divided by 20).
+- The old controls hint under the field is gone: the battle menu shows its buttons now.
+
 ## [0.2.74] - 2026-10-18
 
 Statuses look the way FFRK draws them: the bubble icon over a unit's head (Confuse's dizzy stars, Poison's bubbles, Sleep, Silence…), looping auras (Haste, Slow, Reflect, Regen…), Freeze's ice, Trance, and Doom's countdown, all from FFRK's own battle assets.
