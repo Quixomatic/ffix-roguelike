@@ -82,6 +82,43 @@ export function ItemGallery() {
   const shown = ofKind.filter((i) => showing === "all" || statuses.get(i.id)!.open === (showing === "open"));
   const open = ofKind.filter((i) => statuses.get(i.id)!.open).length;
 
+  /** One item tile: unlocked ones as they are, locked ones as a silhouette with a padlock (signed in). */
+  const tile = (i: ItemData) => {
+    const st = statuses.get(i.id)!;
+    // Signed out, nothing reads as locked: unlocks are per player.
+    const locked = !!session && !st.open;
+    const badge = session ? BADGE[st.kind] : null;
+    return (
+      <ItemPopover
+        key={i.id}
+        itemId={i.id}
+        party={roster}
+        extra={
+          session ? (
+            <div className={`flex items-center gap-1.5 text-xs ${st.open ? "text-emerald-200" : "text-orange-200"}`}>
+              {!st.open && <PixelIcon name="lock" size={16} />}
+              {st.label}
+            </div>
+          ) : undefined
+        }
+      >
+        <button
+          type="button"
+          data-sound="none"
+          className={`ff-window relative flex flex-col items-center gap-1 p-2 text-center hover:brightness-125 ${locked ? "opacity-80" : ""}`}
+        >
+          <span className={`flex items-center justify-center ${locked ? "[filter:brightness(0)_drop-shadow(0_0_1px_rgba(255,255,255,0.35))] opacity-70" : ""}`} style={{ width: size, height: size }}>
+            <ItemIcon itemId={i.id} size={size} />
+          </span>
+          {locked && <PixelIcon name="lock" size={16} className="absolute right-1.5 top-1.5" />}
+          {badge && !locked && <span className={`absolute right-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
+          {badge && locked && <span className={`absolute left-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
+          <span className={`w-full truncate text-xs ${locked ? "opacity-60" : ""}`}>{i.name}</span>
+        </button>
+      </ItemPopover>
+    );
+  };
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-3 p-4">
       <div className="ff-window flex flex-col gap-2 p-3">
@@ -143,43 +180,24 @@ export function ItemGallery() {
         </div>
       </div>
 
-      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${Math.max(88, size + 32)}px, 1fr))` }}>
-        {shown.map((i) => {
-          const st = statuses.get(i.id)!;
-          // Signed out, nothing reads as locked: unlocks are per player.
-          const locked = !!session && !st.open;
-          const badge = session ? BADGE[st.kind] : null;
-          return (
-            <ItemPopover
-              key={i.id}
-              itemId={i.id}
-              party={roster}
-              extra={
-                session ? (
-                  <div className={`flex items-center gap-1.5 text-xs ${st.open ? "text-emerald-200" : "text-orange-200"}`}>
-                    {!st.open && <PixelIcon name="lock" size={16} />}
-                    {st.label}
-                  </div>
-                ) : undefined
-              }
-            >
-              <button
-                type="button"
-                data-sound="none"
-                className={`ff-window relative flex flex-col items-center gap-1 p-2 text-center hover:brightness-125 ${locked ? "opacity-80" : ""}`}
-              >
-                <span className={`flex items-center justify-center ${locked ? "[filter:brightness(0)_drop-shadow(0_0_1px_rgba(255,255,255,0.35))] opacity-70" : ""}`} style={{ width: size, height: size }}>
-                  <ItemIcon itemId={i.id} size={size} />
-                </span>
-                {locked && <PixelIcon name="lock" size={16} className="absolute right-1.5 top-1.5" />}
-                {badge && !locked && <span className={`absolute right-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
-                {badge && locked && <span className={`absolute left-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
-                <span className={`w-full truncate text-xs ${locked ? "opacity-60" : ""}`}>{i.name}</span>
-              </button>
-            </ItemPopover>
-          );
-        })}
-      </div>
+      {/* A section per kind (Weapons, Head…), in the kind filter's order. */}
+      {KINDS.filter((k) => k.kind !== "all")
+        .map((k) => ({ ...k, list: shown.filter((i) => i.kind === k.kind) }))
+        .filter((g) => g.list.length)
+        .map((g) => (
+          <section key={g.kind} className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <span className="ff-display text-xl">{g.label}</span>
+              <span className="text-xs opacity-70">
+                {session ? `${g.list.filter((i) => statuses.get(i.id)!.open).length} / ${g.list.length}` : g.list.length}
+              </span>
+              <span className="h-px flex-1 bg-white/20" />
+            </div>
+            <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${Math.max(88, size + 32)}px, 1fr))` }}>
+              {g.list.map((i) => tile(i))}
+            </div>
+          </section>
+        ))}
       {!shown.length && <div className="ff-window p-4 text-center opacity-70">Nothing matches.</div>}
     </div>
   );

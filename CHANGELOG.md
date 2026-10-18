@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.79] - 2026-10-18
+
+### Changed
+- **The Items page is in sections**: Weapons, Head, Arm, Body, Accessories, Items, each under its own heading with a rule. Signed in, each heading shows how many of its items can turn up in your runs (e.g. "12 / 31"); signed out, how many there are. The filters (kind, In my runs / Locked, character, search) apply within the sections, and empty sections are left out.
+
 ## [0.2.78] - 2026-10-18
 
 The Items page shows what you've unlocked: anything that can't turn up in your runs yet is a dark silhouette with a padlock and says how to get it. Icons default to 64 px.
