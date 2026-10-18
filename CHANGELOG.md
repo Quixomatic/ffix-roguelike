@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.2] - 2026-10-18
+
+Metrics, step 3: lifetime metrics backfilled from the history recorded before metrics existed.
+
+### Added
+- **`apps/server/scripts/backfill-metrics.ts [email] [--before <ISO>] [--apply]`**, a permanent tool, dry run by default.
+  - **From every verified battle** (`run_battle`): fought / won (by stage kind) / lost / fled, time in battle, fastest win, enemies defeated by enemy, and bosses by boss. These go to the player and to every member of that run's party.
+  - **From every finished run:** finished / won / lost by journey (player and party), highest tier won, gil earned.
+  - **It refuses players who already have live metrics** unless `--before` limits it to history before metrics started, so nothing is counted twice.
+- **Run on the dev account:** 50 runs and 209 battles → 171 battles won, 279 enemies defeated, 22 bosses, 8 runs won.
+
+### Notes
+- **Per-character combat detail can't be rebuilt.** `run_battle` keeps each battle's seed and inputs but not its starting state (the party's levels, gear and HP at the time), so old battles can't be replayed exactly. Who landed each kill, damage and steals are counted from v0.3.1 on. The plan (`.plans/metrics.md`) assumed a replay was possible; it isn't.
+
 ## [0.3.1] - 2026-10-18
 
 Metrics, steps 1–2 (`.plans/metrics.md`): every battle, run and camp purchase now records metrics, lifetime per player and per character, and per run. The backfill, achievements on metrics and the Stats page come next.
