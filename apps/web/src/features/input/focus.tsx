@@ -1,5 +1,5 @@
 import { FocusContext, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
-import { cloneElement, createContext, useContext, useEffect, type ReactElement, type Ref, type RefObject } from "react";
+import { cloneElement, createContext, useContext, useEffect, useSyncExternalStore, type ReactElement, type Ref, type RefObject } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
 
@@ -31,25 +31,55 @@ const keysMode = () => document.documentElement.dataset.input === "keys";
 /** Inside a `FocusSection` with `disabled` (e.g. a slid-away sidebar), items are off the cursor's map. */
 const DisabledContext = createContext(false);
 
+/**
+ * Landing: whether the cursor has landed on the current page yet. Until it has, `skipOnLanding` items (breadcrumbs) are
+ * off the cursor's map, so arriving on a page — or the first key press that places the cursor — never starts there.
+ * Once the cursor is on any other item they're ordinary stops (↑ reaches them).
+ */
+let landed = false;
+const landingListeners = new Set<() => void>();
+const setLanded = (v: boolean) => {
+  if (landed === v) return;
+  landed = v;
+  for (const fn of landingListeners) fn();
+};
+/**
+ * A new page is rendering: its cursor hasn't landed yet. Called during the hub's render when the path changes, before
+ * the page's items mount (so it sets the flag without notifying anyone; the old page is going away).
+ */
+export const resetLanding = () => {
+  landed = false;
+};
+const useLanded = () =>
+  useSyncExternalStore(
+    (fn) => (landingListeners.add(fn), () => void landingListeners.delete(fn)),
+    () => landed,
+  );
+
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
 export function FocusItem({
   children,
   focusKey,
   onFocus,
   onArrow,
+  skipOnLanding,
 }: {
   children: ReactElement<ChildProps>;
   focusKey?: string;
   onFocus?(): void;
   /** Return false to keep a direction for the control itself (a slider's ←/→); the cursor doesn't move. */
   onArrow?(direction: string): boolean;
+  /** Never where the cursor first lands on a page (breadcrumbs); reachable once it's on the page. */
+  skipOnLanding?: boolean;
 }) {
   const disabled = useContext(DisabledContext);
+  const isLanded = useLanded();
   const { ref, focusSelf, focused } = useFocusable<object, HTMLElement>({
     focusKey,
-    focusable: !disabled,
+    focusable: !disabled && (!skipOnLanding || isLanded),
     onArrowPress: onArrow ? (direction) => onArrow(direction) : undefined,
     onFocus: (layout, _props, details) => {
+      if (!skipOnLanding) setLanded(true);
       // Keyboard / controller: bring it into view (the mouse already shows where it is).
       if (keysMode()) (layout.node as HTMLElement | undefined)?.scrollIntoView({ block: "nearest", inline: "nearest" });
       // Tick only for a move the player made: Norigin passes the key event that moved the cursor. Placing it by code

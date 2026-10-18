@@ -26,7 +26,8 @@ export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
         <Fragment key={`${c.label}-${i}`}>
           {i > 0 && <PixelIcon name="arrow-right" className="opacity-70" />}
           {c.to && i < crumbs.length - 1 ? (
-            <FocusItem>
+            // Arriving on a page lands on its content, never here; ↑ from the content's top reaches the trail.
+            <FocusItem skipOnLanding>
               {/* Routes are typed per path; the trail is data, so the link takes them loosely. */}
               <Link to={c.to as never} params={c.params as never} search={c.search as never} data-sound="cancel" className="text-[#c8d0ff] transition-colors hover:text-white">
                 {c.label}

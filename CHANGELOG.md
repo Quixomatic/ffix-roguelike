@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.106] - 2026-10-18
+
+### Fixed
+- **Keyboard / controller: arriving on a camp page put the cursor on the breadcrumbs' "Home"** instead of the page's content. Breadcrumbs are now skipped when the cursor first lands on a page, both on arrival and on the first key press that places the cursor once a page's data has loaded. Once the cursor is on the page they're ordinary stops, and ↑ from the top of the content reaches them.
+
+### Added
+- **`FocusItem skipOnLanding`** (`features/input/focus.tsx`): an item that's never where the cursor first lands on a page.
+  - Until the cursor lands on one of the page's other items, these are off the cursor's map.
+  - The hub resets this on each new page (`resetLanding`).
+
 ## [0.2.105] - 2026-10-18
 
 ### Changed

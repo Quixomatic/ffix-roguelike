@@ -10,7 +10,7 @@ import type { ComponentType } from "react";
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
-import { FocusItem, FocusSection } from "@/features/input/focus";
+import { FocusItem, FocusSection, resetLanding } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
@@ -122,6 +122,12 @@ export function HubShell() {
   const [open, toggle] = useSidebarOpen();
   // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
   const path = useRouterState({ select: (s) => s.location.pathname });
+  // A new page: the cursor hasn't landed on it yet (breadcrumbs are skipped until it has). Before the page renders.
+  const landingPath = useRef(path);
+  if (landingPath.current !== path) {
+    landingPath.current = path;
+    resetLanding();
+  }
   // M / the controller's Start: open or close the menu, and take the cursor (and the controls — over a game too) with
   // it. Cancel (Escape / B) closes it again; a menu that was already out stays out and just gives the controls back.
   const menuClaim = useRef<{ release(): void; opened: boolean } | null>(null);
