@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.81] - 2026-10-18
+
+### Changed
+- **The Items page renders much less work**:
+  - **Tiles are memoized** (`ItemTile`): changing a filter, the icon size or hovering re-renders only the tiles whose props changed, not all 255. The roster used for gear comparisons is memoized too, so it no longer invalidates every tile on each render.
+  - **Off-screen tiles skip layout and paint** (`content-visibility: auto`, with an intrinsic size so the scrollbar doesn't jump). They stay in the page, so the keyboard / controller cursor still reaches every item. Virtualizing would have removed them from the page.
+  - **Search is deferred** (`useDeferredValue`): typing stays responsive and the grid catches up a beat later.
+  - **Locked silhouettes use one CSS filter** (brightness) instead of two; the extra glow filter was costly to repaint on many tiles while scrolling.
+  - **Unlock status is worked out once per profile** (`itemStatuses`): the playable areas are computed once, not per item.
+
 ## [0.2.80] - 2026-10-18
 
 ### Fixed

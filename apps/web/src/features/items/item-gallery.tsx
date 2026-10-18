@@ -1,7 +1,7 @@
 import { rosterAtStart, type Profile } from "@ffix-roguelike/game-core";
 import { getCharacter, items, type ItemData } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { memo, useDeferredValue, useMemo, useState } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
 import { FocusItem } from "@/features/input/focus";
@@ -10,7 +10,7 @@ import { trpc } from "@/utils/trpc";
 
 import { ItemIcon } from "./item-icon";
 import { ItemPopover } from "./item-popover";
-import { itemStatus, type ItemStatus } from "./item-status";
+import { itemStatuses, type ItemStatus } from "./item-status";
 
 const KINDS = [
   { kind: "all", label: "All" },
@@ -73,52 +73,19 @@ export function ItemGallery() {
   const { data: session } = authClient.useSession();
   const profile = useQuery({ ...trpc.profile.get.queryOptions(), enabled: !!session });
   const p = (profile.data ?? null) as Profile | null;
-  const roster = p ? rosterAtStart(p) : undefined;
-
-  const statuses = useMemo(() => new Map(items.map((i) => [i.id, itemStatus(i, p)])), [p]);
+  // Stable between renders, so the memoized tiles only re-render when their own props change.
+  const roster = useMemo(() => (p ? rosterAtStart(p) : undefined), [p]);
+  const statuses = useMemo(() => itemStatuses(items, p), [p]);
+  // Typing in the search box stays responsive: the grid catches up a beat later.
+  const deferredQuery = useDeferredValue(query);
   const ofKind = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     return items.filter((i: ItemData) => (kind === "all" || i.kind === kind) && (!who || i.equippableBy.includes(who)) && (!q || i.name.toLowerCase().includes(q)));
-  }, [kind, who, query]);
+  }, [kind, who, deferredQuery]);
   const shown = ofKind.filter((i) => showing === "all" || statuses.get(i.id)!.open === (showing === "open"));
   const open = ofKind.filter((i) => statuses.get(i.id)!.open).length;
 
-  /** One item tile: unlocked ones as they are, locked ones as a silhouette with a padlock (signed in). */
-  const tile = (i: ItemData) => {
-    const st = statuses.get(i.id)!;
-    // Signed out, nothing reads as locked: unlocks are per player.
-    const locked = !!session && !st.open;
-    const badge = session ? BADGE[st.kind] : null;
-    return (
-      <ItemPopover
-        key={i.id}
-        itemId={i.id}
-        party={roster}
-        extra={
-          session ? (
-            <div className={`flex items-center gap-1.5 text-xs ${st.open ? "text-emerald-200" : "text-orange-200"}`}>
-              {!st.open && <PixelIcon name="lock" size={16} />}
-              {st.label}
-            </div>
-          ) : undefined
-        }
-      >
-        <button
-          type="button"
-          data-sound="none"
-          className={`ff-window relative flex flex-col items-center gap-1 p-2 text-center hover:brightness-125 ${locked ? "opacity-80" : ""}`}
-        >
-          <span className={`flex items-center justify-center ${locked ? "[filter:brightness(0)_drop-shadow(0_0_1px_rgba(255,255,255,0.35))] opacity-70" : ""}`} style={{ width: size, height: size }}>
-            <ItemIcon itemId={i.id} size={size} />
-          </span>
-          {locked && <PixelIcon name="lock" size={16} className="absolute right-1.5 top-1.5" />}
-          {badge && !locked && <span className={`absolute right-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
-          {badge && locked && <span className={`absolute left-1 top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
-          <span className={`w-full truncate text-xs ${locked ? "opacity-60" : ""}`}>{i.name}</span>
-        </button>
-      </ItemPopover>
-    );
-  };
+  const tile = (i: ItemData) => <ItemTile key={i.id} item={i} size={size} status={statuses.get(i.id)!} signedIn={!!session} roster={roster} />;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-3 p-4">
@@ -203,3 +170,55 @@ export function ItemGallery() {
     </div>
   );
 }
+
+/**
+ * One item tile (memoized: filters and hovers re-render only the tiles whose props change). Unlocked items show as they
+ * are, locked ones (signed in) as a black silhouette with a padlock. `content-visibility: auto` lets the browser skip
+ * laying out and painting tiles that are off screen, while they stay in the page for the keyboard / controller cursor.
+ */
+const ItemTile = memo(function ItemTile({
+  item,
+  size,
+  status,
+  signedIn,
+  roster,
+}: {
+  item: ItemData;
+  size: number;
+  status: ItemStatus;
+  signedIn: boolean;
+  roster: ReturnType<typeof rosterAtStart> | undefined;
+}) {
+  // Signed out, nothing reads as locked: unlocks are per player.
+  const locked = signedIn && !status.open;
+  const badge = signedIn ? BADGE[status.kind] : null;
+  return (
+    <ItemPopover
+      itemId={item.id}
+      party={roster}
+      extra={
+        signedIn ? (
+          <div className={`flex items-center gap-1.5 text-xs ${status.open ? "text-emerald-200" : "text-orange-200"}`}>
+            {!status.open && <PixelIcon name="lock" size={16} />}
+            {status.label}
+          </div>
+        ) : undefined
+      }
+    >
+      <button
+        type="button"
+        data-sound="none"
+        className="ff-window relative flex flex-col items-center gap-1 p-2 text-center hover:brightness-125"
+        style={{ contentVisibility: "auto", containIntrinsicSize: `auto ${size + 44}px` }}
+      >
+        {/* One cheap filter for the silhouette (no glow: filters on many tiles are costly to paint). */}
+        <span className={`flex items-center justify-center ${locked ? "opacity-60 [filter:brightness(0)]" : ""}`} style={{ width: size, height: size }}>
+          <ItemIcon itemId={item.id} size={size} />
+        </span>
+        {locked && <PixelIcon name="lock" size={16} className="absolute right-1.5 top-1.5" />}
+        {badge && <span className={`absolute ${locked ? "left-1" : "right-1"} top-1 rounded px-1 text-[0.6rem] ${badge.className}`}>{badge.text}</span>}
+        <span className={`w-full truncate text-xs ${locked ? "opacity-60" : ""}`}>{item.name}</span>
+      </button>
+    </ItemPopover>
+  );
+});

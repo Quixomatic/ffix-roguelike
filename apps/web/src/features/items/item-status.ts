@@ -11,14 +11,20 @@ export type ItemStatus =
   | { open: true; kind: "consumable" | "pool" | "unlocked" | "starter"; label: string }
   | { open: false; kind: "journey" | "catalog" | "legendary" | "nowhere"; label: string };
 
-export function itemStatus(item: ItemData, profile: Profile | null): ItemStatus {
+/** Every item's status for one player, worked out once (the playable areas are shared). */
+export function itemStatuses(items: readonly ItemData[], profile: Profile | null): Map<number, ItemStatus> {
+  const playable = profile ? new Set(availableJourneys(profile).flatMap((id) => getJourney(id).areas)) : null;
+  return new Map(items.map((i) => [i.id, itemStatus(i, profile, playable)]));
+}
+
+/** `playable`: the areas on journeys the player has unlocked (null = all — signed out). */
+export function itemStatus(item: ItemData, profile: Profile | null, playable: Set<string> | null = profile ? new Set(availableJourneys(profile).flatMap((id) => getJourney(id).areas)) : null): ItemStatus {
   if (item.kind === "item") return { open: true, kind: "consumable", label: "Shops and drops" };
   if ((profile?.gearUnlocked ?? []).includes(item.id)) return { open: true, kind: "unlocked", label: "Unlocked" };
   const a = gearAvailability(item.id);
   if (characters.some((c) => Object.values(c.defaultEquipment ?? {}).includes(item.id))) return { open: true, kind: "starter", label: "Starting gear" };
   if (a?.enabled && !a.legendary && a.mapPools.length) {
     // Only areas you can play: on a journey you've unlocked (signed out: all of them).
-    const playable = profile ? new Set(availableJourneys(profile).flatMap((id) => getJourney(id).areas)) : null;
     const open = a.mapPools.filter((p) => !playable || playable.has(p.area));
     const names = (list: { area: string }[]) => list.map((p) => WORLDS.find((w) => w.id === p.area)?.name ?? p.area);
     const short = (list: string[]) => (list.length > 2 ? `${list.slice(0, 2).join(", ")} +${list.length - 2}` : list.join(", "));
