@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BookOpen, Home, Menu, Package, Settings, Shield, Store, Sword, Swords, Trophy, Undo2, Users, Wrench } from "lucide-react";
+import { BookOpen, Home, Menu, Package, Settings, Shield, Sparkles, Store, Sword, Swords, Trophy, Undo2, Users, Wrench, FlaskConical } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -29,12 +29,18 @@ const GAME_NAV: NavItem[] = [
   { to: "/shops/supplies", label: "Supplies", icon: Store },
   { to: "/shops/gear", label: "Gear catalog", icon: Shield },
   { to: "/challenges", label: "Challenges", icon: Swords },
-  { to: "/battle", label: "Practice", icon: Sword },
 ];
 const MORE_NAV: NavItem[] = [
+  { to: "/battle", label: "Practice", icon: Sword },
   { to: "/items", label: "Items", icon: Package },
   { to: "/achievements", label: "Achievements", icon: Trophy },
   { to: "/settings", label: "Settings", icon: Settings },
+];
+/** Admins only (better-auth's admin role). The effects gallery needs a development server (its FFRK library). */
+const ADMIN_NAV: NavItem[] = [
+  { to: "/admin/rewards", label: "Rewards & gear", icon: Wrench },
+  { to: "/dev", label: "Dev tools", icon: FlaskConical },
+  ...(import.meta.env.DEV ? [{ to: "/effects", label: "Effects", icon: Sparkles }] : []),
 ];
 
 /**
@@ -208,9 +214,21 @@ function Sidebar({ open }: { open: boolean }) {
         {MORE_NAV.map((n) => (
           <NavLink key={n.to} item={n} />
         ))}
-        {/* Admins: the reward and gear-availability tables. */}
-        {isAdminUser(session?.user) && <NavLink item={{ to: "/admin/rewards", label: "Rewards & gear", icon: Wrench }} />}
       </nav>
+      {isAdminUser(session?.user) && (
+        <>
+          <div className="flex items-center gap-2 text-[0.65rem] uppercase tracking-wider text-orange-300/80">
+            <Separator className="flex-1 bg-orange-300/30" />
+            Admin
+            <Separator className="flex-1 bg-orange-300/30" />
+          </div>
+          <nav className="flex flex-col gap-0.5">
+            {ADMIN_NAV.map((n) => (
+              <NavLink key={n.to} item={n} />
+            ))}
+          </nav>
+        </>
+      )}
 
       {/* The original single-page camp, tucked away while the hub grows. */}
       <FocusItem>

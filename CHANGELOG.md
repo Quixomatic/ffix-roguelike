@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.76] - 2026-10-18
+
+An **Admin** section in the hub's sidebar holds the admin pages, and the dev tools and effects gallery move into the hub layout.
+
+### Changed
+- **Sidebar**:
+  - **Practice** sits with Items, Achievements and Settings.
+  - A new **Admin** section, shown to admins only, under an orange "Admin" divider: **Rewards & gear**, **Dev tools**, and **Effects** (development servers only, since it needs the local FFRK library).
+- **Dev tools (`/dev`) and the effects gallery (`/effects`) use the hub layout** instead of the header bar. The gallery fills the window with room for the menu button, without the shortcut stack.
+- **One admin guard** for all three: a pathless `_hub/_member/_admin` layout sends anyone without the admin role to Play (and the server checks the role on every admin request). Routes: `_admin/admin/rewards`, `_admin/dev`, `_admin/effects`; the URLs are unchanged. The effects gallery now needs an admin account too.
+- The header bar (now only on sign-in and the legacy camp) drops its Dev and Effects links.
+
 ## [0.2.75] - 2026-10-18
 
 The practice battle is in the hub layout.
