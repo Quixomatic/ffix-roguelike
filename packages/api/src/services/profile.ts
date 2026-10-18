@@ -57,6 +57,8 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       points: c.points,
       unlockedSlots: c.unlockedSlots as EquipSlot[],
       training: (c.training ?? {}) as CharacterBuild["training"],
+      starterTiers: (c.starterTiers ?? {}) as CharacterBuild["starterTiers"],
+      starterPicks: (c.starterPicks ?? {}) as CharacterBuild["starterPicks"],
     };
   }
   return {
@@ -110,6 +112,8 @@ function buildColumns(b: CharacterBuild) {
     points: b.points ?? 0,
     unlockedSlots: b.unlockedSlots ?? [],
     training: (b.training ?? {}) as object,
+    starterTiers: (b.starterTiers ?? {}) as object,
+    starterPicks: (b.starterPicks ?? {}) as object,
   };
 }
 

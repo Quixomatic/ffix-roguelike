@@ -5,14 +5,14 @@
  * nothing in game. Rarities, roles, sources and boons are first guesses (see .plans/rewards.md).
  *
  * Refuses to overwrite an existing file unless --force (the files may hold tuning exported from the admin page).
- * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]   (files: rarities roles sources boons gear)
+ * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]   (files: rarities roles sources boons gear starter)
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REWARD_CACHE_DIR, REWARD_SEED_FILES, loadGameDataCache } from "@ffix-roguelike/game-data/cache";
-import type { GearAvailability, RarityId, RewardBoon, RewardRarity, RewardRole, RewardSource } from "@ffix-roguelike/game-data";
-import { items } from "@ffix-roguelike/game-data";
+import type { GearAvailability, RarityId, RewardBoon, RewardRarity, RewardRole, RewardSource, StarterUpgrade } from "@ffix-roguelike/game-data";
+import { characters, items } from "@ffix-roguelike/game-data";
 
 import { legendaryItems } from "../src/meta/achievements";
 import { WORLDS } from "../src/content/worlds";
@@ -117,7 +117,108 @@ const gear: GearAvailability[] = items.filter(isGear).map((i) => {
   };
 });
 
-const files: Record<keyof typeof REWARD_SEED_FILES, unknown> = { rarities, roles, sources, boons, gear };
+// Starting-gear upgrade chains (.plans/starter-upgrades.md §5): per character and slot, tier I → II → III by item name.
+// Cost: gil = 3× the piece's FF9 price, CP 5 / 10 / 20; start level 5 / 10 / 15 (James, 2026-10-18).
+const CHAINS: Record<string, Partial<Record<StarterUpgrade["slot"], string[]>>> = {
+  zidane: {
+    weapon: ["Mage Masher", "Mythril Dagger", "Butterfly Sword"],
+    head: ["Feather Hat", "Headgear", "Bandana"],
+    wrist: ["Leather Wrist", "Glass Armlet", "Mythril Armlet"],
+    armor: ["Bronze Vest", "Chain Plate", "Mythril Vest"],
+    accessory: ["Glass Buckle", "Desert Boots", "Yellow Scarf"],
+  },
+  vivi: {
+    weapon: ["Ice Staff", "Flame Staff", "Lightning Staff"],
+    head: ["Feather Hat", "Magus Hat", "Mage's Hat"],
+    wrist: ["Leather Wrist", "Glass Armlet", "Magic Armlet"],
+    armor: ["Silk Shirt", "Bronze Vest", "Magician Cloak"],
+    accessory: ["Glass Buckle", "Gold Choker"],
+  },
+  garnet: {
+    weapon: ["Air Racket", "Mythril Rod", "Stardust Rod"],
+    head: ["Steepled Hat", "Bandana", "Lamia's Tiara"],
+    wrist: ["Glass Armlet", "Mythril Armlet", "Magic Armlet"],
+    armor: ["Bronze Vest", "Mythril Vest", "Magician Cloak"],
+    accessory: ["Desert Boots", "Cachusha"],
+  },
+  steiner: {
+    weapon: ["Iron Sword", "Mythril Sword", "Blood Sword"],
+    head: ["Iron Helm", "Barbut", "Mythril Helm"],
+    wrist: ["Bronze Gloves", "Silver Gloves", "Mythril Gloves"],
+    armor: ["Linen Cuirass", "Chain Mail", "Mythril Armor"],
+    accessory: ["Glass Buckle", "Yellow Scarf"],
+  },
+  freya: {
+    weapon: ["Mythril Spear", "Partisan"],
+    head: ["Bronze Helm", "Iron Helm", "Barbut"],
+    wrist: ["Silver Gloves", "Mythril Gloves"],
+    armor: ["Chain Mail", "Mythril Armor"],
+    accessory: ["Glass Buckle", "Coral Ring"],
+  },
+  quina: {
+    weapon: ["Needle Fork", "Mythril Fork"],
+    head: ["Feather Hat", "Bandana", "Mage's Hat"],
+    wrist: ["Glass Armlet", "Bone Wrist", "Magic Armlet"],
+    armor: ["Bronze Vest", "Mythril Vest", "Magician Cloak"],
+    accessory: ["Glass Buckle", "Yellow Scarf"],
+  },
+  eiko: {
+    weapon: ["Lamia's Flute", "Fairy Flute"],
+    head: ["Steepled Hat", "Lamia's Tiara", "Mage's Hat"],
+    wrist: ["Mythril Armlet", "Magic Armlet"],
+    armor: ["Bronze Vest", "Mythril Vest", "Magician Cloak"],
+    accessory: ["Anklet", "Pearl Rouge"],
+  },
+  amarant: {
+    weapon: ["Poison Knuckles", "Mythril Claws"],
+    head: ["Headgear", "Bandana", "Ritual Hat"],
+    wrist: ["Bone Wrist", "Mythril Armlet", "Chimera Armlet"],
+    armor: ["Survival Vest", "Brigandine"],
+    accessory: ["Coral Ring", "Power Belt"],
+  },
+  beatrix: {
+    head: ["Barbut", "Mythril Helm", "Gold Helm"],
+    wrist: ["Thunder Gloves", "Diamond Gloves"],
+    armor: ["Mythril Armor", "Plate Mail"],
+    accessory: ["Coral Ring", "Power Belt"],
+  },
+  blank: {
+    weapon: ["Iron Sword", "Mythril Sword", "Blood Sword"],
+    head: ["Headgear", "Bandana", "Ritual Hat"],
+    wrist: ["Leather Wrist", "Bone Wrist", "Mythril Armlet"],
+    armor: ["Leather Plate", "Bronze Vest", "Chain Plate"],
+    accessory: ["Glass Buckle", "Yellow Scarf"],
+  },
+};
+const TIER_CP = [5, 10, 20];
+const TIER_LEVEL = [5, 10, 15];
+const starter: StarterUpgrade[] = [];
+for (const [key, slots] of Object.entries(CHAINS)) {
+  const ch = characters.find((c) => c.key === key);
+  if (!ch) throw new Error(`Unknown character ${key}`);
+  for (const [slot, names] of Object.entries(slots) as [StarterUpgrade["slot"], string[]][]) {
+    names.forEach((name, i) => {
+      const item = items.find((x) => x.name === name);
+      if (!item) throw new Error(`Unknown item ${name}`);
+      if (item.kind !== slot || !item.equippableBy.includes(key)) throw new Error(`${ch.name} can't wear ${name} as ${slot}`);
+      starter.push({
+        id: `${key}:${slot}:${i + 1}`,
+        character: key,
+        slot,
+        tier: i + 1,
+        itemId: item.id,
+        name,
+        gil: effectivePrice(item) * 3,
+        cp: TIER_CP[i] ?? 20,
+        minStartLevel: TIER_LEVEL[i] ?? 15,
+        requires: null,
+        enabled: true,
+      });
+    });
+  }
+}
+
+const files: Record<keyof typeof REWARD_SEED_FILES, unknown> = { rarities, roles, sources, boons, gear, starter };
 mkdirSync(REWARD_CACHE_DIR, { recursive: true });
 for (const [k, data] of Object.entries(files) as [keyof typeof REWARD_SEED_FILES, unknown][]) {
   if (only.length && !only.includes(k)) continue;

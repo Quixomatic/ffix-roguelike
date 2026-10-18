@@ -11,9 +11,11 @@ import {
   getCharacter,
   getItem,
   getSupportAbility,
+  hasRewardTables,
   leveling,
   MAX_LEVEL,
   parseAbilityRef,
+  starterUpgradesFor,
   type AbilityRef,
   type BoonStat,
   type CharacterData,
@@ -60,6 +62,13 @@ export interface CharacterBuild {
   unlockedSlots?: EquipSlot[];
   /** Training ranks bought with Completion Points (0–TRAIN_MAX per stat), raising base stats for every run. */
   training?: Partial<Record<TrainStat, number>>;
+  /** Starting-gear upgrade tiers bought per slot (the starter_upgrade table): the highest owned tier is worn at the start. */
+  starterTiers?: Partial<Record<EquipSlot, number>>;
+  /**
+   * Which owned tier each slot starts with (0 = the FF9 piece), so a player can go back to an earlier piece to learn
+   * its abilities. Unset = the highest owned tier; buying a tier picks it.
+   */
+  starterPicks?: Partial<Record<EquipSlot, number>>;
   /**
    * FF9's hidden level-up bonus pool (FF9LEVEL_BONUS). Every level-up adds Str/Mag +3, Spirit +1, Stones +5,
    * plus the stat bonuses of the gear worn at that moment; stats gain pool ÷ 32. Optional for older saves.
@@ -181,16 +190,33 @@ function wearsStarter(slot: EquipSlot): boolean {
   return false;
 }
 
+/** The starting-gear tier a slot starts with: the picked one (0 = the FF9 piece), else the highest owned. */
+export function starterTierPicked(build: CharacterBuild, slot: EquipSlot): number {
+  const owned = build.starterTiers?.[slot] ?? 0;
+  return Math.max(0, Math.min(owned, build.starterPicks?.[slot] ?? owned));
+}
+
+/**
+ * The piece a character's starting-gear upgrades put in a slot: the item of the picked tier (null: none bought, the
+ * FF9 piece picked, or the tables aren't loaded). Only in unlocked slots — the weapon slot always is.
+ */
+export function starterUpgradeItem(build: CharacterBuild, slot: EquipSlot): number | null {
+  const tier = starterTierPicked(build, slot);
+  if (!tier || !slotUnlocked(build, slot) || !hasRewardTables()) return null;
+  const tiers = starterUpgradesFor(build.key, slot).filter((u) => u.tier <= tier);
+  return tiers.at(-1)?.itemId ?? null;
+}
+
 /**
  * What a character starts every run wearing: their FF9 starting weapon, their FF9 starting gear in each slot
  * they've unlocked, and in locked slots whatever STARTER_ARMOR allows. Some characters have no starting piece
- * for a slot.
+ * for a slot. Starting-gear upgrades (bought at camp) replace the FF9 piece in unlocked slots.
  */
 export function starterGear(build: CharacterBuild): Equipment {
   const def = getCharacter(build.key).defaultEquipment;
-  const pick = (slot: Exclude<EquipSlot, "weapon">) => (slotUnlocked(build, slot) || wearsStarter(slot) ? def[slot] : null);
+  const pick = (slot: Exclude<EquipSlot, "weapon">) => starterUpgradeItem(build, slot) ?? (slotUnlocked(build, slot) || wearsStarter(slot) ? def[slot] : null);
   return {
-    weapon: def.weapon,
+    weapon: starterUpgradeItem(build, "weapon") ?? def.weapon,
     head: pick("head"),
     wrist: pick("wrist"),
     armor: pick("armor"),

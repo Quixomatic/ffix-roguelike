@@ -110,12 +110,39 @@ export interface GearAvailability {
   notes?: string;
 }
 
+/**
+ * One tier of a character's starting-gear upgrade chain (`.plans/starter-upgrades.md`): bought once, permanently, it
+ * replaces what they start every run wearing in that slot. Tiers are bought in order.
+ */
+export interface StarterUpgrade {
+  /** `<character>:<slot>:<tier>`. */
+  id: string;
+  character: string;
+  slot: "weapon" | "head" | "wrist" | "armor" | "accessory";
+  /** 1, 2, 3… */
+  tier: number;
+  itemId: number;
+  /** Item name, for reading the table. */
+  name: string;
+  /** Cost in banked gil and in the character's Completion Points. */
+  gil: number;
+  cp: number;
+  /** The character's start level must be at least this. */
+  minStartLevel: number;
+  /** Extra requirement: a journey cleared and / or an achievement earned. */
+  requires?: { journey?: string; achievement?: string } | null;
+  enabled: boolean;
+  notes?: string;
+}
+
 export interface RewardTables {
   rarities: RewardRarity[];
   roles: RewardRole[];
   sources: RewardSource[];
   boons: RewardBoon[];
   gear: GearAvailability[];
+  /** Starting-gear upgrade tiers. */
+  starter: StarterUpgrade[];
 }
 
 let tables: RewardTables | null = null;
@@ -140,6 +167,11 @@ let gearIndex: Map<number, GearAvailability> | null = null;
 export function gearAvailability(itemId: number): GearAvailability | undefined {
   gearIndex ??= new Map(rewardTables().gear.map((g) => [g.itemId, g]));
   return gearIndex.get(itemId);
+}
+
+/** A character's enabled upgrade tiers for one slot, in order. */
+export function starterUpgradesFor(key: string, slot: StarterUpgrade["slot"]): StarterUpgrade[] {
+  return (rewardTables().starter ?? []).filter((u) => u.enabled && u.character === key && u.slot === slot).sort((a, b) => a.tier - b.tier);
 }
 
 export const rarityOf = (id: RarityId) => rewardTables().rarities.find((r) => r.id === id)!;

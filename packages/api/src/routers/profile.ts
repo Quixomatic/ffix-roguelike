@@ -1,4 +1,4 @@
-import { buySupplyRank, lockedCharacters, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { buyStarterUpgrade, buySupplyRank, lockedCharacters, pickStarterTier, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { z } from "zod";
 
@@ -55,6 +55,16 @@ export const profileRouter = router({
   unlockSlot: protectedProcedure
     .input(z.object({ key: z.string(), slot: z.enum(["head", "wrist", "armor", "accessory"]) }))
     .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => unlockSlot(p, input.key, input.slot))),
+
+  /** Buy a character's next starting-gear upgrade tier for a slot (banked gil + their CP). */
+  buyStarterUpgrade: protectedProcedure
+    .input(z.object({ key: z.string(), slot: z.enum(["weapon", "head", "wrist", "armor", "accessory"]) }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => buyStarterUpgrade(p, input.key, input.slot))),
+
+  /** Choose which owned starting-gear tier a slot starts runs with (0 = the FF9 piece). */
+  pickStarterTier: protectedProcedure
+    .input(z.object({ key: z.string(), slot: z.enum(["weapon", "head", "wrist", "armor", "accessory"]), tier: z.number().int().min(0).max(9) }))
+    .mutation(({ ctx, input }) => mutateProfile(ctx.db, ctx.session.user.id, (p) => pickStarterTier(p, input.key, input.slot, input.tier))),
 
   setSupports: protectedProcedure
     .input(z.object({ key: z.string(), supports: z.array(z.number().int()).max(64) }))

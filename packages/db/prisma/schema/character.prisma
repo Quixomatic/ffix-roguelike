@@ -22,6 +22,11 @@ model PlayerCharacter {
   unlockedSlots String[] @default([])
   /// Training ranks bought with CP, per stat (game-core TRAIN_STATS → 0–20), e.g. {"strength": 3, "hp": 1}.
   training Json @default("{}")
+  /// Starting-gear upgrade tiers bought per slot (starter_upgrade table), e.g. {"weapon": 2, "head": 1}.
+  starterTiers Json @default("{}")
+  /// Which owned tier each slot starts with (0 = the FF9 piece); unset = the highest owned. Lets a player go back to
+  /// an earlier piece to learn its abilities.
+  starterPicks Json @default("{}")
 
   weaponId    Int?
   headId      Int?

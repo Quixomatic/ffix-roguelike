@@ -7,7 +7,7 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, MAIN_CAST, rewardTables, type AbilityRef, type EquipSlot } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, MAIN_CAST, rewardTables, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
 
 import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
 import { effectivePrice } from "../run/loot";
@@ -266,6 +266,98 @@ export function unlockSlot(profile: Profile, key: string, slot: EquipSlot): Prof
   if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
   b.points = (b.points ?? 0) - cost;
   b.unlockedSlots = [...(b.unlockedSlots ?? []), slot];
+  b.equipment = starterGear(b);
+  return p;
+}
+
+// ── starting-gear upgrades (gil + CP) ────────────────────────────────────────
+/** Why a starting-gear upgrade tier can't be bought yet. */
+export type StarterTierBlock =
+  | { kind: "slot"; slot: EquipSlot }
+  | { kind: "previous" }
+  | { kind: "item"; itemId: number }
+  | { kind: "level"; level: number }
+  | { kind: "journey"; journey: string }
+  | { kind: "achievement"; achievement: string }
+  | { kind: "gil"; gil: number }
+  | { kind: "cp"; cp: number };
+
+export interface StarterTierState {
+  upgrade: StarterUpgrade;
+  owned: boolean;
+  /** Empty for the next tier when it can be bought now; always empty for owned tiers. */
+  blocks: StarterTierBlock[];
+}
+
+const SLOT_NAME: Record<EquipSlot, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" };
+
+/**
+ * Every upgrade tier of one character's slot, with what stands in the way of each (`.plans/starter-upgrades.md`): the
+ * slot must be unlocked, tiers go in order, the item must be unlocked for good (catalog, won run, synthesis,
+ * achievement), the start level high enough, any journey / achievement requirement met, and the gil and CP there.
+ */
+export function starterUpgradeState(profile: Profile, key: string, slot: EquipSlot): StarterTierState[] {
+  const b = profile.builds[key];
+  if (!b) return [];
+  const owned = b.starterTiers?.[slot] ?? 0;
+  const unlockedGear = new Set(profile.gearUnlocked ?? []);
+  return starterUpgradesFor(key, slot).map((u) => {
+    if (u.tier <= owned) return { upgrade: u, owned: true, blocks: [] };
+    const blocks: StarterTierBlock[] = [];
+    if (!slotUnlocked(b, slot)) blocks.push({ kind: "slot", slot });
+    if (u.tier > owned + 1) blocks.push({ kind: "previous" });
+    if (!unlockedGear.has(u.itemId)) blocks.push({ kind: "item", itemId: u.itemId });
+    if (b.level < u.minStartLevel) blocks.push({ kind: "level", level: u.minStartLevel });
+    if (u.requires?.journey && !(profile.journeysCleared ?? []).includes(u.requires.journey)) blocks.push({ kind: "journey", journey: u.requires.journey });
+    if (u.requires?.achievement && !(profile.achievements ?? []).includes(u.requires.achievement)) blocks.push({ kind: "achievement", achievement: u.requires.achievement });
+    if (profile.gil < u.gil) blocks.push({ kind: "gil", gil: u.gil });
+    if ((b.points ?? 0) < u.cp) blocks.push({ kind: "cp", cp: u.cp });
+    return { upgrade: u, owned: false, blocks };
+  });
+}
+
+/** One line per reason a tier is blocked (shown on the character page; the first is the server's error). */
+export function starterBlockText(block: StarterTierBlock): string {
+  switch (block.kind) {
+    case "slot":
+      return `Unlock the ${SLOT_NAME[block.slot]} slot first`;
+    case "previous":
+      return "Buy the tier before it first";
+    case "item":
+      return `Unlock ${getItem(block.itemId).name} first`;
+    case "level":
+      return `Needs start Lv ${block.level}`;
+    case "journey":
+      return `Clear "${getJourney(block.journey).name}" first`;
+    case "achievement":
+      return `Earn "${ACHIEVEMENTS.find((a) => a.id === block.achievement)?.name ?? block.achievement}" first`;
+    case "gil":
+      return `Needs ${block.gil.toLocaleString()} gil`;
+    case "cp":
+      return `Needs ${block.cp} CP`;
+  }
+}
+
+/** Buy a character's next starting-gear upgrade tier for a slot (banked gil + their CP). Applies from the next run. */
+export function buyStarterUpgrade(profile: Profile, key: string, slot: EquipSlot): Profile {
+  const { p, b } = editable(profile, key);
+  const next = starterUpgradeState(profile, key, slot).find((s) => !s.owned);
+  if (!next) throw new ProfileError("Fully upgraded");
+  if (next.blocks.length) throw new ProfileError(starterBlockText(next.blocks[0]!));
+  p.gil -= next.upgrade.gil;
+  b.points = (b.points ?? 0) - next.upgrade.cp;
+  b.starterTiers = { ...b.starterTiers, [slot]: next.upgrade.tier };
+  // A new tier is worn straight away (pick an earlier one to keep learning its abilities).
+  b.starterPicks = { ...b.starterPicks, [slot]: next.upgrade.tier };
+  b.equipment = starterGear(b);
+  return p;
+}
+
+/** Choose which owned tier a slot starts runs with (0 = the FF9 piece) — e.g. to keep learning an earlier piece's abilities. Free. */
+export function pickStarterTier(profile: Profile, key: string, slot: EquipSlot, tier: number): Profile {
+  const { p, b } = editable(profile, key);
+  if (!Number.isInteger(tier) || tier < 0 || tier > (b.starterTiers?.[slot] ?? 0)) throw new ProfileError("You don't own that tier");
+  b.starterPicks = { ...b.starterPicks, [slot]: tier };
   b.equipment = starterGear(b);
   return p;
 }

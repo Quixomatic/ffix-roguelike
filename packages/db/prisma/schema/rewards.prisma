@@ -52,3 +52,18 @@ model GearAvailability {
 
   @@map("gear_availability")
 }
+
+/// One tier of a character's starting-gear upgrade chain (.plans/starter-upgrades.md): item, gil + CP cost, minimum
+/// start level, optional journey / achievement requirement. `data` is game-data's StarterUpgrade.
+model StarterUpgrade {
+  id        String   @id
+  character String
+  slot      String
+  tier      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@index([character])
+  @@map("starter_upgrade")
+}

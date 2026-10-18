@@ -9,6 +9,7 @@ import {
   registerGameData,
   registerRewardTables,
   type GearAvailability,
+  type StarterUpgrade,
   type RewardBoon,
   type RewardRarity,
   type RewardRole,
@@ -91,12 +92,13 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.rewardBoon.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.gearAvailability.findMany({ orderBy: { itemId: "asc" }, select: { data: true } }),
+      db.starterUpgrade.findMany({ orderBy: [{ character: "asc" }, { slot: "asc" }, { tier: "asc" }], select: { data: true } }),
     ]);
     if (!gear.length || !rarities.length) throw new Error("Reward tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
@@ -105,6 +107,7 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       sources: rows<RewardSource>(sources),
       boons: rows<RewardBoon>(boons),
       gear: rows<GearAvailability>(gear),
+      starter: rows<StarterUpgrade>(starter),
     };
     registerRewardTables(tables);
     return tables;
