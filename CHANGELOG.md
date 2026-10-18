@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.83] - 2026-10-18
+
+### Changed
+- Title screen tagline: "**Two** worlds. One road. Start again — stronger." FF9 has two worlds, Gaia and Terra; "three worlds" was left over from the early three-world runs.
+
 ## [0.2.82] - 2026-10-18
 
 ### Fixed

@@ -18,7 +18,7 @@ export function TitleScreen() {
         <h1 className="ff-pop text-5xl sm:text-7xl">
           FINAL FANTASY <span className="text-yellow-200">IX</span>
         </h1>
-        <div className="mt-2 text-lg opacity-80">Three worlds. One road. Start again — stronger.</div>
+        <div className="mt-2 text-lg opacity-80">Two worlds. One road. Start again — stronger.</div>
       </div>
 
       <div className="relative flex items-end gap-2 sm:gap-4">
