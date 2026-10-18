@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.90] - 2026-10-18
+
+### Changed
+- **The battle menu opens right beside the party window**, at the bottom right, as in FF9 (and FF6 / FF7). The active character's commands now sit next to their name instead of across the screen, and the enemy list stays at the bottom left. The party window keeps its 34rem width and shrinks on narrow screens.
+
 ## [0.2.89] - 2026-10-18
 
 ### Changed

@@ -106,30 +106,33 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
 
       <div className="absolute inset-x-2 bottom-2 flex items-end gap-2">
         <EnemyList enemies={enemies} incoming={incoming} />
-        {actor && !battle.auto && !state.outcome ? (
-          <CommandMenu
-            engine={engine}
-            actor={actor}
-            onSubmit={(cmd) => {
-              battle.submit(cmd);
-              setSelectedId(null);
-            }}
-            onTargeting={(ids, pick, aimed, aim) => {
-              bridgeRef.current!.highlighted = new Set(ids);
-              bridgeRef.current!.aimed = new Set(aimed);
-              pickRef.current = pick;
-              aimRef.current = aim;
-            }}
-            onNextActor={ready.length > 1 ? () => setSelectedId(ready[(ready.indexOf(activeId!) + 1) % ready.length]!) : undefined}
-            subscribe={(fn) => {
-              listeners.current.add(fn);
-              return () => listeners.current.delete(fn);
-            }}
-          />
-        ) : null}
-        {/* Capped so names stay near their HP / MP / ATB on wide screens; it sits at the right, like FF9's. */}
-        <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="ml-auto flex w-full min-w-0 max-w-[34rem]">
-          <PartyStatus party={party} activeId={activeId} readyIds={ready} incoming={incoming} />
+        {/* FF9's layout: the command window opens just left of the party window, at the bottom right. */}
+        <div className="ml-auto flex min-w-0 items-end gap-2">
+          {actor && !battle.auto && !state.outcome ? (
+            <CommandMenu
+              engine={engine}
+              actor={actor}
+              onSubmit={(cmd) => {
+                battle.submit(cmd);
+                setSelectedId(null);
+              }}
+              onTargeting={(ids, pick, aimed, aim) => {
+                bridgeRef.current!.highlighted = new Set(ids);
+                bridgeRef.current!.aimed = new Set(aimed);
+                pickRef.current = pick;
+                aimRef.current = aim;
+              }}
+              onNextActor={ready.length > 1 ? () => setSelectedId(ready[(ready.indexOf(activeId!) + 1) % ready.length]!) : undefined}
+              subscribe={(fn) => {
+                listeners.current.add(fn);
+                return () => listeners.current.delete(fn);
+              }}
+            />
+          ) : null}
+          {/* Capped so names stay near their HP / MP / ATB on wide screens. */}
+          <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="flex w-[34rem] min-w-0 shrink">
+            <PartyStatus party={party} activeId={activeId} readyIds={ready} incoming={incoming} />
+          </div>
         </div>
       </div>
 
