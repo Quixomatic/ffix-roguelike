@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.94] - 2026-10-18
+
+### Changed
+- **Journey cards show the hero they recruit much larger**: 72 px, up from 40.
+  - Once the journey is cleared and the hero has joined, the **green check** sits over their sprite's corner.
+  - Until then they're a silhouette, as before.
+  - The "Clear to recruit" / "Joined: …" line beside them is a size larger too.
+
 ## [0.2.93] - 2026-10-18
 
 ### Fixed

@@ -77,11 +77,15 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
         {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
       </div>
       {!!j.unlocks?.length && (
-        <div className="flex items-end gap-2">
+        <div className="flex items-end gap-3">
           {j.unlocks.map((k) => (
-            <HeroSprite key={k} heroKey={k} size={40} silhouette={!cleared} />
+            // The hero this journey recruits, large; a silhouette until they've joined, then the green check over them.
+            <span key={k} className="relative inline-flex">
+              <HeroSprite heroKey={k} size={72} silhouette={!cleared} />
+              {cleared && <PixelIcon name="check" size={32} label={`${getCharacter(k).name} joined`} className="absolute -bottom-1 -right-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]" />}
+            </span>
           ))}
-          <span className="pb-1 text-xs text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
+          <span className="pb-1 text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
         </div>
       )}
       <div className="mt-auto flex items-center gap-2">
