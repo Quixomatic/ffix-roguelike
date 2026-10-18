@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.109] - 2026-10-18
+
+### Changed
+- **Keyboard / controller: the embark page lands on Begin run** ("New run" when this journey's run is in progress) instead of the breadcrumbs' first neighbour. The last party is already picked, so one press sets off; the party slots and roster are a move away.
+
 ## [0.2.108] - 2026-10-18
 
 ### Added

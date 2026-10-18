@@ -265,7 +265,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
               </Link>
             </FocusItem>
           )}
-          <FocusItem>
+          {/* Arriving on the page lands here: pick a party with the cursor afterwards, or just go. */}
+          <FocusItem defaultFocus>
             <button
               onClick={startClicked}
               disabled={!party.length || start.isPending}
