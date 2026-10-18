@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.89] - 2026-10-18
+
+### Changed
+- **The battle's party window is at most 34rem wide**, at the bottom right like FF9's. On wide screens it used to stretch across the whole space beside the enemy list and battle menu, which put names far from their HP, MP and ATB gauges. The spare room now sits between the menus and the party window. On narrower screens it still shrinks to fit.
+
 ## [0.2.88] - 2026-10-18
 
 Starting-gear upgrades, step 3: the chains are managed on the admin page.

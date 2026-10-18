@@ -127,7 +127,8 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
             }}
           />
         ) : null}
-        <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="flex-1">
+        {/* Capped so names stay near their HP / MP / ATB on wide screens; it sits at the right, like FF9's. */}
+        <div onClick={() => setSelectedId(ready.find((id) => id !== activeId) ?? activeId)} className="ml-auto flex w-full min-w-0 max-w-[34rem]">
           <PartyStatus party={party} activeId={activeId} readyIds={ready} incoming={incoming} />
         </div>
       </div>
