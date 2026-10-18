@@ -33,6 +33,7 @@ import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { ACTIONS, isDirection, KEY_BINDINGS, padActions, REPEAT_DELAY, REPEAT_EVERY, type Action } from "./actions";
+import { LANDING } from "./focus";
 import { inputOwner, onInputChange, ownerCancel, setInputDevice } from "./owner";
 
 /** Focus keys of the shell's two sections: the page's content and the sidebar. */
@@ -122,8 +123,9 @@ export function startNav() {
       const cur = getCurrentFocusKey();
       if (!cur || !doesFocusableExist(cur)) {
         e.stopImmediatePropagation();
-        // A key press placed it: pass the event, so it ticks like any move the player makes.
-        void setFocus(doesFocusableExist(PAGE_FOCUS) ? PAGE_FOCUS : SIDEBAR_FOCUS, { event: e });
+        // A key press placed it: pass the event, so it ticks like any move the player makes — marked as a landing, so
+        // items that are never landed on (breadcrumbs) pass it on.
+        void setFocus(doesFocusableExist(PAGE_FOCUS) ? PAGE_FOCUS : SIDEBAR_FOCUS, { event: e, ...LANDING });
       }
     },
     true,

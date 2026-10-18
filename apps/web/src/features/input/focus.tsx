@@ -1,5 +1,5 @@
-import { FocusContext, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
-import { cloneElement, createContext, useContext, useEffect, useSyncExternalStore, type ReactElement, type Ref, type RefObject } from "react";
+import { FocusContext, navigateByDirection, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
+import { cloneElement, createContext, useContext, useEffect, type ReactElement, type Ref, type RefObject } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
 
@@ -32,29 +32,10 @@ const keysMode = () => document.documentElement.dataset.input === "keys";
 const DisabledContext = createContext(false);
 
 /**
- * Landing: whether the cursor has landed on the current page yet. Until it has, `skipOnLanding` items (breadcrumbs) are
- * off the cursor's map, so arriving on a page — or the first key press that places the cursor — never starts there.
- * Once the cursor is on any other item they're ordinary stops (↑ reaches them).
+ * Focus details for a cursor placed by the first key press on a page (nav.ts): it carries the key's event (so it
+ * ticks), but it's a landing, not a move — `skipOnLanding` items pass it on.
  */
-let landed = false;
-const landingListeners = new Set<() => void>();
-const setLanded = (v: boolean) => {
-  if (landed === v) return;
-  landed = v;
-  for (const fn of landingListeners) fn();
-};
-/**
- * A new page is rendering: its cursor hasn't landed yet. Called during the hub's render when the path changes, before
- * the page's items mount (so it sets the flag without notifying anyone; the old page is going away).
- */
-export const resetLanding = () => {
-  landed = false;
-};
-const useLanded = () =>
-  useSyncExternalStore(
-    (fn) => (landingListeners.add(fn), () => void landingListeners.delete(fn)),
-    () => landed,
-  );
+export const LANDING = { landing: true } as const;
 
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
 export function FocusItem({
@@ -69,17 +50,24 @@ export function FocusItem({
   onFocus?(): void;
   /** Return false to keep a direction for the control itself (a slider's ←/→); the cursor doesn't move. */
   onArrow?(direction: string): boolean;
-  /** Never where the cursor first lands on a page (breadcrumbs); reachable once it's on the page. */
+  /**
+   * Never where the cursor lands on its own (breadcrumbs): when it's placed here by code — arriving on a page, focus
+   * coming back after the focused item went away, the first key press on a page — it moves straight on down to the
+   * content. An arrow press from the content or the mouse still reaches it.
+   */
   skipOnLanding?: boolean;
 }) {
   const disabled = useContext(DisabledContext);
-  const isLanded = useLanded();
   const { ref, focusSelf, focused } = useFocusable<object, HTMLElement>({
     focusKey,
-    focusable: !disabled && (!skipOnLanding || isLanded),
+    focusable: !disabled,
     onArrowPress: onArrow ? (direction) => onArrow(direction) : undefined,
     onFocus: (layout, _props, details) => {
-      if (!skipOnLanding) setLanded(true);
+      if (skipOnLanding && !details?.hover && (!details?.event || details.landing)) {
+        // Landed here by code, not moved here: pass the cursor on to what's below (keeping the key's tick, if any).
+        void navigateByDirection("down", details?.event ? { event: details.event } : {});
+        return;
+      }
       // Keyboard / controller: bring it into view (the mouse already shows where it is).
       if (keysMode()) (layout.node as HTMLElement | undefined)?.scrollIntoView({ block: "nearest", inline: "nearest" });
       // Tick only for a move the player made: Norigin passes the key event that moved the cursor. Placing it by code
@@ -95,7 +83,7 @@ export function FocusItem({
       child.props.onMouseEnter?.(e);
       // Not while typing: hovering shouldn't pull the focus out of a text field.
       const typing = document.activeElement?.matches("input, textarea, select, [contenteditable='true']");
-      if (!focused && !typing) focusSelf();
+      if (!focused && !typing) focusSelf({ hover: true });
     },
   });
 }

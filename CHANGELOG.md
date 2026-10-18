@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.107] - 2026-10-18
+
+### Fixed
+- **Keyboard / controller still started on the breadcrumbs' "Home"** (v0.2.106 didn't fix it).
+  - **Cause:** the address changes as soon as you navigate, but the new page arrives a moment later. The cursor landed on the old page meanwhile, which marked the page as "landed" and made the breadcrumbs ordinary stops. When the old item disappeared, the cursor fell back to the page's first item: "Home".
+  - **Fix:** a rule that doesn't depend on timing. A `skipOnLanding` item that gets the cursor *by code* passes it straight down to the content below. That covers arriving on a page, the cursor falling back after its item went away, and the first key press that places the cursor (nav.ts marks that one as a landing, so it still ticks). An arrow press from the content, or hovering it with the mouse, still reaches the breadcrumbs.
+  - The page-change timing flag (`resetLanding`) is gone.
+
 ## [0.2.106] - 2026-10-18
 
 ### Fixed
