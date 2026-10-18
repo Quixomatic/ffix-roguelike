@@ -135,6 +135,63 @@ export interface StarterUpgrade {
   notes?: string;
 }
 
+export const ACHIEVEMENT_CATEGORIES = ["story", "milestone", "boss", "challenge", "legend"] as const;
+export type AchievementCategory = (typeof ACHIEVEMENT_CATEGORIES)[number];
+
+/** Profile stats an achievement can count (game-core `ProfileStats`). */
+export const ACHIEVEMENT_STATS = ["battles", "runs", "wins", "steals", "eaten", "highestTierWon"] as const;
+export type AchievementStat = (typeof ACHIEVEMENT_STATS)[number];
+
+/**
+ * What earns an achievement, as data (checked by game-core `achievementMet` when a run ends; counting kinds also give a
+ * progress bar, `achievementProgress`).
+ */
+export type AchievementCondition =
+  /** A lifetime stat reaches `min` (battles won, runs, wins, steals, monsters eaten, highest tier won). */
+  | { kind: "stat"; stat: AchievementStat; min: number }
+  /** A journey cleared. */
+  | { kind: "journey"; journey: string }
+  /** Every one of these bosses defeated (bestiary / boss ids, as recorded in the profile's boss kills). */
+  | { kind: "bosses"; bosses: string[] }
+  /** At least `min` characters on the roster. */
+  | { kind: "roster"; min: number }
+  /** Every one of these characters recruited. */
+  | { kind: "heroes"; heroes: string[] }
+  /** At least `min` abilities learned across the roster. */
+  | { kind: "mastered"; min: number }
+  /** A late-game journey cleared with this character alone. */
+  | { kind: "solo"; hero: string }
+  /** Terra & Memoria cleared with this character in the party. */
+  | { kind: "legendClear"; hero: string };
+export const ACHIEVEMENT_CONDITIONS = ["stat", "journey", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
+
+/** An achievement (the `achievement` table): its condition, its one-time reward, and how it's shown. */
+export interface AchievementData {
+  id: string;
+  name: string;
+  description: string;
+  category: AchievementCategory;
+  /** Order within its category. */
+  sort: number;
+  enabled: boolean;
+  /** Hidden until earned (shown as ???). */
+  secret?: boolean;
+  condition: AchievementCondition;
+  reward: {
+    gil?: number;
+    /** Completion Points for every unlocked character (or only `cpFor`). */
+    cp?: number;
+    cpFor?: string;
+    /** Gear (item names) unlocked into run drop pools: legendary gear only drops this way. */
+    items?: string[];
+    /** A hero's best-in-slot armour, computed from FF9's item table. */
+    bestInSlotFor?: string;
+    /** Camp supplies this unlocks (item names). */
+    supplies?: string[];
+  };
+  notes?: string;
+}
+
 export interface RewardTables {
   rarities: RewardRarity[];
   roles: RewardRole[];
@@ -143,6 +200,8 @@ export interface RewardTables {
   gear: GearAvailability[];
   /** Starting-gear upgrade tiers. */
   starter: StarterUpgrade[];
+  /** Achievement definitions. */
+  achievements: AchievementData[];
 }
 
 let tables: RewardTables | null = null;
@@ -167,6 +226,14 @@ let gearIndex: Map<number, GearAvailability> | null = null;
 export function gearAvailability(itemId: number): GearAvailability | undefined {
   gearIndex ??= new Map(rewardTables().gear.map((g) => [g.itemId, g]));
   return gearIndex.get(itemId);
+}
+
+/** Enabled achievements, by category then `sort` (empty until the tables are loaded). */
+export function achievementTable(): AchievementData[] {
+  if (!tables) return [];
+  return (tables.achievements ?? [])
+    .filter((a) => a.enabled)
+    .sort((a, b) => ACHIEVEMENT_CATEGORIES.indexOf(a.category) - ACHIEVEMENT_CATEGORIES.indexOf(b.category) || a.sort - b.sort);
 }
 
 /** A character's enabled upgrade tiers for one slot, in order. */

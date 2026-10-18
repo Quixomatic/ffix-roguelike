@@ -1,4 +1,4 @@
-import { ACHIEVEMENTS, availableJourneys, getJourney, JOURNEYS, rewardItemIds, WORLDS, type Profile } from "@ffix-roguelike/game-core";
+import { achievements, availableJourneys, getJourney, JOURNEYS, rewardItemIds, WORLDS, type Profile } from "@ffix-roguelike/game-core";
 import { characters, gearAvailability, synthesis, type ItemData } from "@ffix-roguelike/game-data";
 
 /**
@@ -34,7 +34,7 @@ export function itemStatus(item: ItemData, profile: Profile | null, playable: Se
     return { open: false, kind: "journey", label: `Drops in ${short(names(a.mapPools))}${journey ? `: unlock the journey "${journey.name}" first` : ""}` };
   }
   if (a?.legendary) {
-    const ach = ACHIEVEMENTS.find((x) => rewardItemIds(x).includes(item.id));
+    const ach = achievements().find((x) => rewardItemIds(x).includes(item.id));
     return { open: false, kind: "legendary", label: ach ? `Achievement: ${ach.name} (${ach.description})` : "An achievement" };
   }
   const synth = synthesis.some((r) => r.result === item.id) ? " · or synthesize it" : "";

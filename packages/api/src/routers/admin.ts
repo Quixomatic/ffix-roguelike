@@ -5,8 +5,19 @@
  * files (development servers only) so tuning can be committed.
  */
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
-import { ACHIEVEMENTS, JOURNEYS, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
-import { BOON_STATS, CARD_TYPES, characters, items, RARITIES, rewardTables, REWARD_SOURCES, ROLE_STATS } from "@ffix-roguelike/game-data";
+import { JOURNEYS, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
+import {
+  ACHIEVEMENT_CATEGORIES,
+  ACHIEVEMENT_STATS,
+  BOON_STATS,
+  CARD_TYPES,
+  characters,
+  items,
+  RARITIES,
+  rewardTables,
+  REWARD_SOURCES,
+  ROLE_STATS,
+} from "@ffix-roguelike/game-data";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -89,6 +100,36 @@ export const starterInput = z.object({
 
 const bad = (message: string) => new TRPCError({ code: "BAD_REQUEST", message });
 
+const key = z.string().min(1).max(40);
+export const achievementInput = z.object({
+  id: z.string().regex(/^[a-z0-9-]{1,60}$/),
+  name: z.string().min(1).max(60),
+  description: z.string().max(300),
+  category: z.enum(ACHIEVEMENT_CATEGORIES),
+  sort: z.number().int().min(0).max(9999),
+  enabled: z.boolean(),
+  secret: z.boolean().optional(),
+  condition: z.discriminatedUnion("kind", [
+    z.object({ kind: z.literal("stat"), stat: z.enum(ACHIEVEMENT_STATS), min: z.number().int().min(1).max(10_000_000) }),
+    z.object({ kind: z.literal("journey"), journey: key }),
+    z.object({ kind: z.literal("bosses"), bosses: z.array(key).min(1).max(30) }),
+    z.object({ kind: z.literal("roster"), min: z.number().int().min(1).max(20) }),
+    z.object({ kind: z.literal("heroes"), heroes: z.array(key).min(1).max(20) }),
+    z.object({ kind: z.literal("mastered"), min: z.number().int().min(1).max(10_000) }),
+    z.object({ kind: z.literal("solo"), hero: key }),
+    z.object({ kind: z.literal("legendClear"), hero: key }),
+  ]),
+  reward: z.object({
+    gil: z.number().int().min(0).max(10_000_000).optional(),
+    cp: z.number().int().min(0).max(9999).optional(),
+    cpFor: key.optional(),
+    items: z.array(z.string().max(60)).max(20).optional(),
+    bestInSlotFor: key.optional(),
+    supplies: z.array(z.string().max(60)).max(20).optional(),
+  }),
+  notes: z.string().max(500).optional(),
+});
+
 export const adminRouter = router({
   /** All the reward tables as they are in the database. */
   rewardTables: adminProcedure.query(({ ctx }) => ensureRewardContent(ctx.db)),
@@ -142,7 +183,7 @@ export const adminRouter = router({
     const chain = (rewardTables().starter ?? []).filter((u) => u.character === input.character && u.slot === input.slot);
     if (input.tier > chain.length + 1 && !chain.some((u) => u.tier === input.tier)) throw bad(`Tier ${input.tier} would leave a gap (the chain has ${chain.length})`);
     if (input.requires?.journey && !JOURNEYS.some((j) => j.id === input.requires!.journey)) throw bad("Unknown journey");
-    if (input.requires?.achievement && !ACHIEVEMENTS.some((a) => a.id === input.requires!.achievement)) throw bad("Unknown achievement");
+    if (input.requires?.achievement && !(rewardTables().achievements ?? []).some((a) => a.id === input.requires!.achievement)) throw bad("Unknown achievement");
     const id = `${input.character}:${input.slot}:${input.tier}`;
     const requires = input.requires?.journey || input.requires?.achievement ? input.requires : null;
     const data = { ...input, id, name: item.name, requires };
@@ -160,6 +201,36 @@ export const adminRouter = router({
     const last = Math.max(...rewardTables().starter.filter((u) => u.character === row.character && u.slot === row.slot).map((u) => u.tier));
     if (row.tier !== last) throw bad("Only the last tier of a chain can be removed");
     await ctx.db.starterUpgrade.delete({ where: { id: input.id } });
+    return reloadRewardContent(ctx.db);
+  }),
+
+  /**
+   * Save an achievement (new or edited). Checks that what it names exists: a journey, characters, reward items and
+   * supplies. Boss ids are free text (the bestiary ids recorded as boss kills, e.g. "garland").
+   */
+  saveAchievement: adminProcedure.input(achievementInput).mutation(async ({ ctx, input }) => {
+    const c = input.condition;
+    const hero = (k: string) => characters.some((ch) => ch.key === k);
+    if (c.kind === "journey" && !JOURNEYS.some((j) => j.id === c.journey)) throw bad(`Unknown journey ${c.journey}`);
+    if (c.kind === "heroes" && !c.heroes.every(hero)) throw bad("Unknown character in the condition");
+    if ((c.kind === "solo" || c.kind === "legendClear") && !hero(c.hero)) throw bad(`Unknown character ${c.hero}`);
+    const r = input.reward;
+    if ((r.cpFor && !hero(r.cpFor)) || (r.bestInSlotFor && !hero(r.bestInSlotFor))) throw bad("Unknown character in the reward");
+    const missing = [...(r.items ?? []), ...(r.supplies ?? [])].find((name) => !items.some((i) => i.name === name));
+    if (missing) throw bad(`Unknown item ${missing}`);
+    // Drop empty reward fields, so the record stays tidy.
+    const reward = Object.fromEntries(Object.entries(r).filter(([, v]) => v !== undefined && v !== 0 && !(Array.isArray(v) && !v.length) && v !== ""));
+    const data = { ...input, reward };
+    await ctx.db.achievement.upsert({
+      where: { id: input.id },
+      create: { id: input.id, category: input.category, sort: input.sort, enabled: input.enabled, data },
+      update: { category: input.category, sort: input.sort, enabled: input.enabled, data },
+    });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Delete an achievement. Players who earned it keep the id in their profile (it simply isn't listed any more). */
+  deleteAchievement: adminProcedure.input(z.object({ id: z.string().max(60) })).mutation(async ({ ctx, input }) => {
+    await ctx.db.achievement.delete({ where: { id: input.id } });
     return reloadRewardContent(ctx.db);
   }),
 

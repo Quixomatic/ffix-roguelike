@@ -53,6 +53,19 @@ model GearAvailability {
   @@map("gear_availability")
 }
 
+/// An achievement: its condition (as data), its one-time reward, category, order. `data` is game-data's AchievementData.
+/// Which ones a player has earned is player_profile.achievements (ids).
+model Achievement {
+  id        String   @id
+  category  String
+  sort      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("achievement")
+}
+
 /// One tier of a character's starting-gear upgrade chain (.plans/starter-upgrades.md): item, gil + CP cost, minimum
 /// start level, optional journey / achievement requirement. `data` is game-data's StarterUpgrade.
 model StarterUpgrade {

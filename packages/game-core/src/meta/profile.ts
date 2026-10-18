@@ -28,7 +28,7 @@ import {
   type CharacterBuild,
   type TrainStat,
 } from "../stats";
-import { ACHIEVEMENTS, awardAchievements } from "./achievements";
+import { achievements, awardAchievements } from "./achievements";
 
 export interface ProfileStats {
   runs: number;
@@ -330,7 +330,7 @@ export function starterBlockText(block: StarterTierBlock): string {
     case "journey":
       return `Clear "${getJourney(block.journey).name}" first`;
     case "achievement":
-      return `Earn "${ACHIEVEMENTS.find((a) => a.id === block.achievement)?.name ?? block.achievement}" first`;
+      return `Earn "${achievements().find((a) => a.id === block.achievement)?.name ?? block.achievement}" first`;
     case "gil":
       return `Needs ${block.gil.toLocaleString()} gil`;
     case "cp":
@@ -425,7 +425,7 @@ export function campSupplyCatalog(profile: Profile): SupplyEntry[] {
   const earned = new Set(profile.achievements ?? []);
   return ALL_SUPPLIES.map((name) => {
     const item = getItem(itemByName(name).id);
-    const by = ACHIEVEMENTS.find((a) => a.reward.supplies?.includes(name));
+    const by = achievements().find((a) => a.reward.supplies?.includes(name));
     return {
       itemId: item.id,
       price: effectivePrice(item),

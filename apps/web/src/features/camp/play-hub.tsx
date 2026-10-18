@@ -1,4 +1,4 @@
-import { availableJourneys, ACHIEVEMENTS, gearCatalog, JOURNEYS } from "@ffix-roguelike/game-core";
+import { achievements, availableJourneys, gearCatalog, JOURNEYS } from "@ffix-roguelike/game-core";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
@@ -29,7 +29,7 @@ export function PlayHub() {
   const cleared = p.journeysCleared ?? [];
   const next = JOURNEYS.find((j) => open.includes(j.id) && !cleared.includes(j.id)) ?? JOURNEYS.find((j) => j.id === open[open.length - 1]);
   const spenders = p.unlocked.filter((k) => canSpend(p.builds[k]!));
-  const challengeDefs = ACHIEVEMENTS.filter((a) => a.category === "challenge");
+  const challengeDefs = achievements().filter((a) => a.category === "challenge");
   const challengesDone = challengeDefs.filter((a) => (p.achievements ?? []).includes(a.id)).length;
 
   return (

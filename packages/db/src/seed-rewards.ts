@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import type { Database } from "./index";
 
 export const REWARD_SEED_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "seed", "rewards");
-const FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json", starter: "starter-upgrades.json" } as const;
+const FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json", starter: "starter-upgrades.json", achievements: "achievements.json" } as const;
 
 type Row = Record<string, unknown>;
 const read = (f: string) => JSON.parse(readFileSync(join(REWARD_SEED_DIR, f), "utf8")) as Row[];
@@ -22,7 +22,15 @@ const data = (r: Row) => r as object;
 
 /** Returns how many rows were inserted per table. */
 export async function seedRewards(db: Database): Promise<Record<keyof typeof FILES, number>> {
-  const [rarities, roles, sources, boons, gear, starter] = [read(FILES.rarities), read(FILES.roles), read(FILES.sources), read(FILES.boons), read(FILES.gear), read(FILES.starter)];
+  const [rarities, roles, sources, boons, gear, starter, achievements] = [
+    read(FILES.rarities),
+    read(FILES.roles),
+    read(FILES.sources),
+    read(FILES.boons),
+    read(FILES.gear),
+    read(FILES.starter),
+    read(FILES.achievements),
+  ];
   const results = await db.$transaction([
     db.rewardRarity.createMany({ data: rarities.map((r) => ({ id: String(r.id), sort: Number(r.sort), data: data(r) })), skipDuplicates: true }),
     db.rewardRole.createMany({ data: roles.map((r) => ({ key: String(r.key), data: data(r) })), skipDuplicates: true }),
@@ -36,8 +44,20 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
       data: starter.map((r) => ({ id: String(r.id), character: String(r.character), slot: String(r.slot), tier: Number(r.tier), enabled: r.enabled !== false, data: data(r) })),
       skipDuplicates: true,
     }),
+    db.achievement.createMany({
+      data: achievements.map((r) => ({ id: String(r.id), category: String(r.category), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) })),
+      skipDuplicates: true,
+    }),
   ]);
-  return { rarities: results[0].count, roles: results[1].count, sources: results[2].count, boons: results[3].count, gear: results[4].count, starter: results[5].count };
+  return {
+    rarities: results[0].count,
+    roles: results[1].count,
+    sources: results[2].count,
+    boons: results[3].count,
+    gear: results[4].count,
+    starter: results[5].count,
+    achievements: results[6].count,
+  };
 }
 
 export const REWARD_TABLES = Object.keys(FILES) as (keyof typeof FILES)[];
@@ -51,6 +71,7 @@ export async function resetRewardTable(db: Database, table: keyof typeof FILES):
     boons: () => db.rewardBoon.deleteMany(),
     gear: () => db.gearAvailability.deleteMany(),
     starter: () => db.starterUpgrade.deleteMany(),
+    achievements: () => db.achievement.deleteMany(),
   }[table];
   await del();
   return (await seedRewards(db))[table];
@@ -58,13 +79,14 @@ export async function resetRewardTable(db: Database, table: keyof typeof FILES):
 
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
-  const [rarities, roles, sources, boons, gear, starter] = await Promise.all([
+  const [rarities, roles, sources, boons, gear, starter, achievements] = await Promise.all([
     db.rewardRarity.findMany({ orderBy: { sort: "asc" } }),
     db.rewardRole.findMany({ orderBy: { key: "asc" } }),
     db.rewardSource.findMany({ orderBy: { id: "asc" } }),
     db.rewardBoon.findMany({ orderBy: { id: "asc" } }),
     db.gearAvailability.findMany({ orderBy: { itemId: "asc" } }),
     db.starterUpgrade.findMany({ orderBy: [{ character: "asc" }, { slot: "asc" }, { tier: "asc" }] }),
+    db.achievement.findMany({ orderBy: [{ category: "asc" }, { sort: "asc" }] }),
   ]);
   const write = (f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
   write(FILES.rarities, rarities);
@@ -73,4 +95,5 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
   write(FILES.boons, boons);
   write(FILES.gear, gear);
   write(FILES.starter, starter);
+  write(FILES.achievements, achievements);
 }

@@ -1,4 +1,4 @@
-import { ACHIEVEMENTS, rewardItemIds, type AchievementCategory, type AchievementDef, type Profile } from "@ffix-roguelike/game-core";
+import { achievementProgress, achievements, rewardItemIds, type AchievementCategory, type AchievementDef, type Profile } from "@ffix-roguelike/game-core";
 import { useQuery } from "@tanstack/react-query";
 
 import { PixelIcon } from "@/components/pixel-icon";
@@ -32,8 +32,10 @@ export function AchievementsPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (profile.isPending) return <div className="p-6">Loading…</div>;
   const p = (profile.data ?? null) as Profile | null;
-  const earned = new Set(p?.achievements ?? []);
-  const total = ACHIEVEMENTS.length;
+  const all = achievements();
+  // Earned ones that are still defined (a deleted achievement stays in old profiles, but isn't listed or counted).
+  const earned = new Set((p?.achievements ?? []).filter((id) => all.some((a) => a.id === id)));
+  const total = all.length;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-24 pt-6">
@@ -47,7 +49,8 @@ export function AchievementsPage() {
         <Gauge have={earned.size} need={total} className="h-2.5" />
       </div>
       {(Object.keys(CATEGORY_LABEL) as AchievementCategory[]).map((cat) => {
-        const list = ACHIEVEMENTS.filter((a) => a.category === cat);
+        const list = all.filter((a) => a.category === cat);
+        if (!list.length) return null;
         const done = list.filter((a) => earned.has(a.id)).length;
         return (
           <section key={cat} className="flex flex-col gap-2">
@@ -75,7 +78,7 @@ function AchievementCard({ a, done, profile }: { a: AchievementDef; done: boolea
   const hidden = a.secret && !done;
   const items = rewardItemIds(a);
   // How far along (only for ones that count toward a number, not yet earned, and not a hidden secret).
-  const progress = !done && !hidden && profile && a.progress ? a.progress(profile) : null;
+  const progress = !done && !hidden && profile ? achievementProgress(a, profile) : null;
   const reward = [
     a.reward.gil ? `${a.reward.gil.toLocaleString()} gil` : "",
     a.reward.cp ? `+${a.reward.cp} CP${a.reward.cpFor ? "" : " each"}` : "",

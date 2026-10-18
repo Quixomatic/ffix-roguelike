@@ -1,4 +1,4 @@
-import { ACHIEVEMENTS, effectivePrice, JOURNEYS, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
+import { achievements, effectivePrice, JOURNEYS, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
   bandStepsOf,
   BOON_STATS,
@@ -809,7 +809,7 @@ function StarterEditor({ upgrade, isNew, isLast, onRemoved }: { upgrade: Starter
         <Field label="Requires achievement">
           <Select
             value={d.requires?.achievement ?? "none"}
-            options={["none", ...ACHIEVEMENTS.map((a) => a.id)]}
+            options={["none", ...achievements().map((a) => a.id)]}
             onChange={(v) => setD({ ...d, requires: { ...d.requires, achievement: v === "none" ? undefined : v } })}
           />
         </Field>

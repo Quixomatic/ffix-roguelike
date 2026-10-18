@@ -5,16 +5,28 @@
  * nothing in game. Rarities, roles, sources and boons are first guesses (see .plans/rewards.md).
  *
  * Refuses to overwrite an existing file unless --force (the files may hold tuning exported from the admin page).
- * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]   (files: rarities roles sources boons gear starter)
+ * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]
+ *   (files: rarities roles sources boons gear starter achievements)
  */
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REWARD_CACHE_DIR, REWARD_SEED_FILES, loadGameDataCache } from "@ffix-roguelike/game-data/cache";
-import type { GearAvailability, RarityId, RewardBoon, RewardRarity, RewardRole, RewardSource, StarterUpgrade } from "@ffix-roguelike/game-data";
-import { characters, items } from "@ffix-roguelike/game-data";
+import type {
+  AchievementCategory,
+  AchievementCondition,
+  AchievementData,
+  GearAvailability,
+  RarityId,
+  RewardBoon,
+  RewardRarity,
+  RewardRole,
+  RewardSource,
+  StarterUpgrade,
+} from "@ffix-roguelike/game-data";
+import { characters, items, MAIN_CAST } from "@ffix-roguelike/game-data";
 
-import { legendaryItems } from "../src/meta/achievements";
+import { rewardItemIds } from "../src/meta/achievements";
 import { WORLDS } from "../src/content/worlds";
 import { effectivePrice, isGear } from "../src/run/loot";
 import { shops } from "@ffix-roguelike/game-data";
@@ -93,7 +105,78 @@ const boons: RewardBoon[] = [
 ];
 
 // Gear availability: exactly the rules the game used before the table (so seeding changes nothing).
-const legendary = legendaryItems();
+// Achievements (the definitions that lived in game-core/meta/achievements.ts until they moved to the table), with
+// their conditions as data. Order within a category is the order here.
+type Ach = Omit<AchievementData, "sort" | "enabled">;
+const ach = (
+  id: string,
+  name: string,
+  description: string,
+  category: AchievementCategory,
+  condition: AchievementCondition,
+  reward: AchievementData["reward"],
+  secret?: boolean,
+): Ach => ({ id, name, description, category, condition, reward, ...(secret ? { secret } : {}) });
+const MAIN_HEROES = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant"];
+const SUPERBOSSES = ["soulcage", "deathguise", "kuja", "hades", "ozma", "necron"];
+const heroName = (key: string) => key[0]!.toUpperCase() + key.slice(1);
+const achievementList: Ach[] = [
+  // story: clearing FF9's journeys (they also open camp supplies, roughly when FF9's shops start selling them)
+  ach("story-evil-forest", "Out of the Forest", "Clear The Evil Forest", "story", { kind: "journey", journey: "evil-forest" }, { gil: 1000, supplies: ["Hi-Potion", "Soft"] }),
+  ach("story-ice-cavern", "Through the Ice", "Clear The Ice Cavern", "story", { kind: "journey", journey: "ice-cavern" }, { gil: 1500, supplies: ["Magic Tag", "Vaccine"] }),
+  ach("story-dali", "The Secret Under Dali", "Clear Dali", "story", { kind: "journey", journey: "dali" }, { gil: 2000, supplies: ["Tent", "Annoyntment"] }),
+  ach("story-lindblum", "Hunter's Chance", "Clear Lindblum", "story", { kind: "journey", journey: "lindblum" }, { gil: 3000, supplies: ["Ether"] }),
+  ach("story-gizamaluke", "The Bell Tolls", "Clear Gizamaluke's Grotto", "story", { kind: "journey", journey: "gizamaluke" }, { gil: 4000, cp: 3 }),
+  // milestones
+  ach("first-victory", "First Blood", "Win a battle", "milestone", { kind: "stat", stat: "battles", min: 1 }, { gil: 300 }),
+  ach("first-run", "The Journey Begins", "Finish a run", "milestone", { kind: "stat", stat: "runs", min: 1 }, { gil: 500, cp: 2 }),
+  ach("first-win", "Triumph", "Win a run", "milestone", { kind: "stat", stat: "wins", min: 1 }, { gil: 2000, cp: 3, supplies: ["Remedy"] }),
+  ach("veteran", "Veteran", "Win 100 battles", "milestone", { kind: "stat", stat: "battles", min: 100 }, { gil: 5000, cp: 5 }),
+  ach("fellowship", "Fellowship", "Have 4 characters on your roster", "milestone", { kind: "roster", min: 4 }, { gil: 2000, cp: 3 }),
+  ach("all-together", "All Together Now", "Unlock all eight heroes", "milestone", { kind: "heroes", heroes: MAIN_HEROES }, { gil: 10000, cp: 10 }),
+  ach("studious", "Studious", "Learn 10 abilities across your roster", "milestone", { kind: "mastered", min: 10 }, { gil: 2000, cp: 3 }),
+  ach("scholar", "Scholar", "Learn 50 abilities across your roster", "milestone", { kind: "mastered", min: 50 }, { gil: 8000, cp: 8 }),
+  ach("master-thief", "Master Thief", "Steal 25 items", "milestone", { kind: "stat", stat: "steals", min: 25 }, { gil: 4000 }),
+  ach("gourmand", "Gourmand", "Eat 10 monsters with Quina", "milestone", { kind: "stat", stat: "eaten", min: 10 }, { gil: 3000, cp: 3 }),
+  // bosses
+  ach("boss-garland", "Light of Cornelia", "Defeat Garland", "boss", { kind: "bosses", bosses: ["garland"] }, { gil: 1500, cp: 3 }),
+  ach("boss-golbez", "Red Wings Grounded", "Defeat Golbez", "boss", { kind: "bosses", bosses: ["golbez"] }, { gil: 4000, cp: 5 }),
+  ach("boss-kefka", "The Light Returns", "Defeat Kefka and win a run", "boss", { kind: "bosses", bosses: ["kefka"] }, { gil: 10000, cp: 10 }),
+  // challenges
+  ...MAIN_HEROES.map((key) =>
+    ach(`solo-${key}`, `${heroName(key)} Alone`, `Clear a late-game journey with ${heroName(key)} as your only party member (+25 CP for ${heroName(key)})`, "challenge", { kind: "solo", hero: key }, {
+      gil: 8000,
+      cp: 25,
+      cpFor: key,
+    }),
+  ),
+  ach("tier-1", "Tougher Stuff", "Win a run on Tier 1", "challenge", { kind: "stat", stat: "highestTierWon", min: 1 }, { gil: 6000, cp: 8 }),
+  ach("tier-3", "Iron Will", "Win a run on Tier 3", "challenge", { kind: "stat", stat: "highestTierWon", min: 3 }, { gil: 15000, cp: 15, supplies: ["Elixir"] }),
+  ach("tier-5", "Unbreakable", "Win a run on Tier 5", "challenge", { kind: "stat", stat: "highestTierWon", min: 5 }, { gil: 30000, cp: 25 }),
+  // legends (Terra & Memoria superbosses: the ultimate weapons)
+  ach("legend-soulcage", "Roots of the Tree", "Defeat Soulcage at the Iifa Tree", "legend", { kind: "bosses", bosses: ["soulcage"] }, { items: ["Gastro Fork"] }, true),
+  ach("legend-deathguise", "Death's Disguise", "Defeat Deathguise", "legend", { kind: "bosses", bosses: ["deathguise"] }, { items: ["Dragon's Hair"] }, true),
+  ach("legend-kuja", "Angel of Death", "Defeat Trance Kuja", "legend", { kind: "bosses", bosses: ["kuja"] }, { items: ["Rune Claws"] }, true),
+  ach("legend-hades", "The Underworld's Smith", "Defeat Hades", "legend", { kind: "bosses", bosses: ["hades"] }, { items: ["Mace of Zeus"] }, true),
+  ach("legend-ozma", "Beyond the Sphere", "Defeat Ozma", "legend", { kind: "bosses", bosses: ["ozma"] }, { items: ["Ultima Weapon"] }, true),
+  ach("legend-necron", "Eternal Darkness", "Defeat Necron and clear Terra & Memoria", "legend", { kind: "bosses", bosses: ["necron"] }, { items: ["Excalibur II"] }, true),
+  ...MAIN_CAST.map((key) =>
+    ach(
+      `legend-set-${key}`,
+      `Legend of ${heroName(key)}`,
+      `Clear Terra & Memoria with ${heroName(key)} in the party — awards their best-in-slot armour`,
+      "legend",
+      { kind: "legendClear", hero: key },
+      { bestInSlotFor: key },
+      true,
+    ),
+  ),
+  ach("legend-all", "Final Fantasy", "Defeat every superboss", "legend", { kind: "bosses", bosses: SUPERBOSSES }, { items: ["Whale Whisker", "Tiger Racket"] }, true),
+];
+const achievements: AchievementData[] = achievementList.map((a, i) => ({ ...a, sort: i, enabled: true }));
+
+// Legendary gear = what achievements award (the tables aren't loaded here, so from the list above).
+const legendary = new Set(achievements.flatMap(rewardItemIds));
 const shopIds = (worldShops: number[]) => new Set(worldShops.flatMap((id) => shops.find((s) => s.id === id)?.items ?? []));
 const poolsOf = new Map<number, string[]>();
 for (const w of WORLDS) for (const id of shopIds(w.shops)) if (!legendary.has(id)) poolsOf.set(id, [...(poolsOf.get(id) ?? []), w.id]);
@@ -218,7 +301,7 @@ for (const [key, slots] of Object.entries(CHAINS)) {
   }
 }
 
-const files: Record<keyof typeof REWARD_SEED_FILES, unknown> = { rarities, roles, sources, boons, gear, starter };
+const files: Record<keyof typeof REWARD_SEED_FILES, unknown> = { rarities, roles, sources, boons, gear, starter, achievements };
 mkdirSync(REWARD_CACHE_DIR, { recursive: true });
 for (const [k, data] of Object.entries(files) as [keyof typeof REWARD_SEED_FILES, unknown][]) {
   if (only.length && !only.includes(k)) continue;

@@ -1,4 +1,4 @@
-import { ACHIEVEMENTS } from "@ffix-roguelike/game-core";
+import { achievements } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -109,7 +109,7 @@ export function ChallengesPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
   const done = new Set(profile.data.achievements ?? []);
-  const challenges = ACHIEVEMENTS.filter((a) => a.category === "challenge");
+  const challenges = achievements().filter((a) => a.category === "challenge");
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Challenges" }]} title="Challenges" sub="Harder ways to play, and what they pay." />
