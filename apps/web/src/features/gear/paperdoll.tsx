@@ -1,7 +1,7 @@
 import { gearChange, type CharacterBuild } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, type EquipSlot } from "@ffix-roguelike/game-data";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { HoverTip } from "@/components/hover-tip";
 import { PixelIcon } from "@/components/pixel-icon";
@@ -56,6 +56,7 @@ export function DollFigure({
   onSelect,
   variant,
   unlock,
+  cheer = 0,
 }: {
   heroKey: string;
   slots: PaperdollSlot[];
@@ -64,14 +65,28 @@ export function DollFigure({
   variant?: "blind" | "mini" | null;
   /** Locked slots become "Unlock · cost" buttons (camp): the next slot's CP cost, whether it's affordable, and the action. */
   unlock?: { cost: number | null; affordable: boolean; busy?: boolean; onUnlock(slot: EquipSlot): void };
+  /** Bump it to celebrate (something was just unlocked or bought): the victory pose and a hop, for a moment. */
+  cheer?: number;
 }) {
   const get = slotMap(slots);
+  const [celebrating, setCelebrating] = useState(false);
+  useEffect(() => {
+    if (!cheer) return;
+    setCelebrating(true);
+    const t = setTimeout(() => setCelebrating(false), 1800);
+    return () => clearTimeout(t);
+  }, [cheer]);
   return (
     <div className="mx-auto grid w-full max-w-[22rem] grid-cols-[4.5rem_1fr_4.5rem] grid-rows-[auto_6.75rem_6.75rem_auto] place-items-center gap-x-2 gap-y-2 px-1">
       <div className="col-start-2 row-span-2 row-start-2 flex h-full w-full items-end justify-center rounded-lg bg-[radial-gradient(ellipse_at_bottom,rgba(255,255,255,0.18),transparent_70%)]">
         <div className="relative flex flex-col items-center">
-          <HeroSprite heroKey={heroKey} size={168} variant={variant} className="relative drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-          <div className="-mt-3 h-3 w-24 rounded-[50%] bg-black/40" />
+          {/* Floats gently; a celebration hops (keyed, so each one restarts it). */}
+          <div className="ff-float">
+            <div key={celebrating ? `cheer-${cheer}` : "idle"} className={celebrating ? "ff-hop" : ""}>
+              <HeroSprite heroKey={heroKey} size={168} variant={variant} anim={celebrating ? "victory" : "idle"} className="relative drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
+            </div>
+          </div>
+          <div className="ff-float-shadow -mt-3 h-3 w-24 rounded-[50%] bg-black/40" />
         </div>
       </div>
       {SLOT_ORDER.map((slot) => (

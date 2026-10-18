@@ -131,6 +131,34 @@
   }
 }
 
+/* A gentle float (the character sheet's paperdoll figure), and its ground shadow shrinking as it rises. */
+.ff-float {
+  animation: ff-float 2.6s ease-in-out infinite;
+}
+@keyframes ff-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+.ff-float-shadow {
+  animation: ff-float-shadow 2.6s ease-in-out infinite;
+}
+@keyframes ff-float-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.82);
+    opacity: 0.7;
+  }
+}
+
 /* ── FF theme for shadcn components (the /mock layout; the plan is to grow the whole UI onto it) ─────────────────
    shadcn reads these tokens, so Popover, Dialog, Tabs, Button, HoverCard… come out in FF9's menu colours inside any
    `.theme-ff` element. Windows keep FF9's gradient + double border through `.ff-window` / `.ff-panel`. */

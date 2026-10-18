@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.110] - 2026-10-18
+
+### Added
+- **The paperdoll figure floats**: a gentle up-and-down drift, with its ground shadow narrowing and fading as it rises (`.ff-float`, `.ff-float-shadow`). On the camp character page and the in-run sheet.
+- **The figure celebrates when you unlock or buy something** on the camp character page: a gear slot, a starting-gear tier, a start level or a training rank. It plays the hero's FFRK victory pose and hops, then goes back to idle after about two seconds. Each purchase restarts it.
+
 ## [0.2.109] - 2026-10-18
 
 ### Changed

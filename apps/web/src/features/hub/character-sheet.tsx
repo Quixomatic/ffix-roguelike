@@ -50,11 +50,20 @@ export function CharacterSheet({
     onSuccess: () => qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() }),
     onError: (e: { message: string }) => toast.error(e.message),
   };
-  const raise = useMutation(trpc.profile.raiseStartLevel.mutationOptions(opts));
-  const unlock = useMutation(trpc.profile.unlockSlot.mutationOptions(opts));
+  // Unlocking or buying something makes the figure celebrate (victory pose + a hop).
+  const [cheer, setCheer] = useState(0);
+  const cheering = {
+    ...opts,
+    onSuccess: () => {
+      setCheer((n) => n + 1);
+      return opts.onSuccess();
+    },
+  };
+  const raise = useMutation(trpc.profile.raiseStartLevel.mutationOptions(cheering));
+  const unlock = useMutation(trpc.profile.unlockSlot.mutationOptions(cheering));
   const supportsM = useMutation(trpc.profile.setSupports.mutationOptions(opts));
-  const train = useMutation(trpc.profile.trainStat.mutationOptions(opts));
-  const buyTier = useMutation(trpc.profile.buyStarterUpgrade.mutationOptions(opts));
+  const train = useMutation(trpc.profile.trainStat.mutationOptions(cheering));
+  const buyTier = useMutation(trpc.profile.buyStarterUpgrade.mutationOptions(cheering));
   const pickTier = useMutation(trpc.profile.pickStarterTier.mutationOptions(opts));
   // Gil, unlocked gear, journeys and achievements decide which upgrade tiers can be bought.
   const profile = (useQuery(trpc.profile.get.queryOptions()).data ?? null) as Profile | null;
@@ -121,6 +130,7 @@ export function CharacterSheet({
             slots={slots}
             selected={slot}
             onSelect={pickSlot}
+            cheer={cheer}
             unlock={{
               cost: slotCost,
               affordable: slotCost != null && points >= slotCost,
