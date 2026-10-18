@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.91] - 2026-10-18
+
+### Changed
+- **Battle lists are FF9's two-column grids**: Item, Throw, and every ability list (Magic, Skill, Sword Art…). **Items and thrown weapons show their icon** beside the name, with the count on the right; abilities keep their MP cost there.
+  - Keyboard / controller: ↑↓ move a row and ←→ a column, wrapping at the ends.
+  - The highlighted entry scrolls into view in long lists.
+  - The window widens to 30rem for a list (at most 45% of the screen) and goes back to its narrow width for the command list and targets.
+- **A fixed-height help footer** under every list: one line of what the item does (e.g. "Restores 150 HP · one target") and FF9's description, cut off past two lines (three without an effect line). The menu no longer jumps in height as the cursor moves between long and short descriptions. Hover the footer for the whole text.
+
 ## [0.2.90] - 2026-10-18
 
 ### Changed

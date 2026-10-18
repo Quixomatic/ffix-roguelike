@@ -1,10 +1,11 @@
 import { getBattleAction, isThrowable, type BattleCommand, type BattleEngine, type BattleUnit } from "@ffix-roguelike/game-core";
 import { findItem, type TargetType } from "@ffix-roguelike/game-data";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
 import { ButtonHint } from "@/features/input/button-hint";
 import type { Action } from "@/features/input/actions";
+import { ItemIcon } from "@/features/items/item-icon";
 import { HelpText, itemEffectText } from "@/features/run/item-info";
 
 type Pending = Omit<BattleCommand, "targetIds"> & {
@@ -15,8 +16,14 @@ type Pending = Omit<BattleCommand, "targetIds"> & {
   /** Double Black / Double White: pick a second spell after this one. */
   double?: { title: string; options: ListOption[] };
 };
-/** `help`: FF9's help line; `effect`: what an item does exactly (shown under the list for the highlighted option). */
-type ListOption = { label: string; sub?: string; disabled?: boolean; pending: Pending; help?: string; effect?: string };
+/**
+ * `help`: FF9's help line; `effect`: what an item does exactly (both in the footer under the list, for the highlighted
+ * option). `itemId`: an item's icon beside its name.
+ */
+type ListOption = { label: string; sub?: string; disabled?: boolean; pending: Pending; help?: string; effect?: string; itemId?: number };
+
+/** Lists are FF9's two-column grids: ↑↓ move a row, ←→ a column. */
+const LIST_COLUMNS = 2;
 
 type Menu =
   | { level: "root" }
@@ -136,6 +143,8 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
                 return {
                   label: item.name,
                   sub: `×${s.count}`,
+                  itemId: item.id,
+                  help: item.help,
                   pending: { kind: "throw", itemId: item.id, label: `Throw ${item.name}`, targets: "singleEnemy", forDead: false, defaultAlly: false, actorId: actor.id },
                 };
               }),
@@ -196,6 +205,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
               sub: `×${s.count}`,
               help: item.help,
               effect: itemEffectText(item),
+              itemId: item.id,
               pending: { kind: "item", itemId: item.id, label: item.name, targets: fx.targets, forDead: fx.forDead, defaultAlly: true, actorId: actor.id },
             };
           }),
@@ -218,12 +228,16 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
   useEffect(() => {
     const onAction = (a: Action) => {
       const len = menu.level === "root" ? rootOptions.length : menu.level === "list" ? menu.options.length : candidates.length + (canAll ? 1 : 0);
-      const move = (d: 1 | -1) => {
-        setCursor((c) => (c + d + len) % Math.max(1, len));
+      const move = (d: number) => {
+        setCursor((c) => (((c + d) % Math.max(1, len)) + len) % Math.max(1, len));
         uiSound("cursor");
       };
-      if (a === "down" || a === "right") move(1);
-      else if (a === "up" || a === "left") move(-1);
+      // In a list's grid ↑↓ move a whole row; elsewhere every direction steps one.
+      const row = menu.level === "list" ? LIST_COLUMNS : 1;
+      if (a === "down") move(row);
+      else if (a === "up") move(-row);
+      else if (a === "right") move(1);
+      else if (a === "left") move(-1);
       else if (a === "cancel") {
         if (menu.level !== "root") uiSound("cancel");
         reset();
@@ -259,8 +273,15 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
     return subscribe(onAction);
   });
 
+  // Keep the highlighted option in view when the cursor moves through a long list.
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    listRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
+  }, [cursor, menu]);
+
+  const highlighted = menu.level === "list" ? menu.options[cursor] : undefined;
   return (
-    <div className="ff-window flex min-h-40 w-56 flex-col gap-0.5 p-2 text-lg">
+    <div className={`ff-window flex min-h-40 flex-col gap-0.5 p-2 text-lg ${menu.level === "list" ? "w-[30rem] max-w-[45vw]" : "w-56"}`}>
       {menu.level === "root" && (
         <>
           <div className="ff-title">{actor.name}</div>
@@ -279,28 +300,34 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
               ✕
             </button>
           </div>
-          <div className="max-h-48 overflow-y-auto pr-1">
+          <div ref={listRef} className="grid max-h-48 grid-cols-2 gap-x-3 overflow-y-auto pr-1">
             {menu.options.map((o, i) => (
               <button
                 key={`${o.label}-${i}`}
-                className="ff-option flex w-full justify-between"
+                className="ff-option flex min-w-0 items-center gap-1.5"
                 data-active={i === cursor}
                 disabled={o.disabled}
                 onMouseEnter={() => setCursor(i)}
                 onClick={() => choose(o.pending)}
               >
-                <span>{o.label}</span>
-                <span className="text-sm opacity-80">{o.sub}</span>
+                {o.itemId != null && <ItemIcon itemId={o.itemId} size={24} className="shrink-0" />}
+                <span className="min-w-0 flex-1 truncate text-left">{o.label}</span>
+                <span className="shrink-0 text-sm opacity-80">{o.sub}</span>
               </button>
             ))}
-            {!menu.options.length && <div className="opacity-60">Nothing learned yet</div>}
+            {!menu.options.length && <div className="col-span-2 opacity-60">Nothing learned yet</div>}
           </div>
-          {(menu.options[cursor]?.effect || menu.options[cursor]?.help) && (
-            <div className="mt-1 border-t border-white/15 pt-1 text-xs">
-              {menu.options[cursor]!.effect && <div className="text-[#c8d0ff]">{menu.options[cursor]!.effect}</div>}
-              <HelpText text={menu.options[cursor]!.help} className="opacity-80" />
+          {/* A fixed-height footer (FF9's help bar): one line of what it does, two of FF9's description, cut off past that,
+              so the menu never changes height as the cursor moves. Hover for the whole text. */}
+          <div
+            className="mt-1 h-[3.6rem] overflow-hidden border-t border-white/15 pt-1 text-xs leading-[1.1rem]"
+            title={[highlighted?.effect, highlighted?.help?.replace(/[{}]/g, "")].filter(Boolean).join("\n")}
+          >
+            {highlighted?.effect && <div className="truncate text-[#c8d0ff]">{highlighted.effect}</div>}
+            <div className={highlighted?.effect ? "line-clamp-2" : "line-clamp-3"}>
+              <HelpText text={highlighted?.help} className="opacity-80" />
             </div>
-          )}
+          </div>
         </>
       )}
       {menu.level === "target" && (
