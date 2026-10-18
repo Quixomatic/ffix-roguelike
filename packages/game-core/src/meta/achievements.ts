@@ -29,7 +29,13 @@ export interface AchievementDef {
   /** Hidden until earned (shown as ???). */
   secret?: boolean;
   check(p: Profile): boolean;
+  /** For achievements that count toward a number: how far along the profile is (`have` of `need`). */
+  progress?(p: Profile): { have: number; need: number };
 }
+
+const count = (have: number, need: number) => ({ have: Math.min(have, need), need });
+const MAIN_HEROES = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant"];
+const SUPERBOSSES = ["soulcage", "deathguise", "kuja", "hades", "ozma", "necron"];
 
 const kills = (p: Profile, id: string) => (p.stats.bossKills[id] ?? 0) > 0;
 const cleared = (p: Profile, journey: string) => p.journeysCleared?.includes(journey) ?? false;
@@ -76,20 +82,69 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: "first-victory", name: "First Blood", description: "Win a battle", category: "milestone", reward: { gil: 300 }, check: (p) => p.stats.battles >= 1 },
   { id: "first-run", name: "The Journey Begins", description: "Finish a run", category: "milestone", reward: { gil: 500, cp: 2 }, check: (p) => p.stats.runs >= 1 },
   { id: "first-win", name: "Triumph", description: "Win a run", category: "milestone", reward: { gil: 2000, cp: 3, supplies: ["Remedy"] }, check: (p) => p.stats.wins >= 1 },
-  { id: "veteran", name: "Veteran", description: "Win 100 battles", category: "milestone", reward: { gil: 5000, cp: 5 }, check: (p) => p.stats.battles >= 100 },
-  { id: "fellowship", name: "Fellowship", description: "Have 4 characters on your roster", category: "milestone", reward: { gil: 2000, cp: 3 }, check: (p) => p.unlocked.length >= 4 },
+  {
+    id: "veteran",
+    name: "Veteran",
+    description: "Win 100 battles",
+    category: "milestone",
+    reward: { gil: 5000, cp: 5 },
+    check: (p) => p.stats.battles >= 100,
+    progress: (p) => count(p.stats.battles, 100),
+  },
+  {
+    id: "fellowship",
+    name: "Fellowship",
+    description: "Have 4 characters on your roster",
+    category: "milestone",
+    reward: { gil: 2000, cp: 3 },
+    check: (p) => p.unlocked.length >= 4,
+    progress: (p) => count(p.unlocked.length, 4),
+  },
   {
     id: "all-together",
     name: "All Together Now",
     description: "Unlock all eight heroes",
     category: "milestone",
     reward: { gil: 10000, cp: 10 },
-    check: (p) => ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant"].every((k) => p.unlocked.includes(k)),
+    check: (p) => MAIN_HEROES.every((k) => p.unlocked.includes(k)),
+    progress: (p) => count(MAIN_HEROES.filter((k) => p.unlocked.includes(k)).length, MAIN_HEROES.length),
   },
-  { id: "studious", name: "Studious", description: "Learn 10 abilities across your roster", category: "milestone", reward: { gil: 2000, cp: 3 }, check: (p) => masteredCount(p) >= 10 },
-  { id: "scholar", name: "Scholar", description: "Learn 50 abilities across your roster", category: "milestone", reward: { gil: 8000, cp: 8 }, check: (p) => masteredCount(p) >= 50 },
-  { id: "master-thief", name: "Master Thief", description: "Steal 25 items", category: "milestone", reward: { gil: 4000 }, check: (p) => p.stats.steals >= 25 },
-  { id: "gourmand", name: "Gourmand", description: "Eat 10 monsters with Quina", category: "milestone", reward: { gil: 3000, cp: 3 }, check: (p) => p.stats.eaten >= 10 },
+  {
+    id: "studious",
+    name: "Studious",
+    description: "Learn 10 abilities across your roster",
+    category: "milestone",
+    reward: { gil: 2000, cp: 3 },
+    check: (p) => masteredCount(p) >= 10,
+    progress: (p) => count(masteredCount(p), 10),
+  },
+  {
+    id: "scholar",
+    name: "Scholar",
+    description: "Learn 50 abilities across your roster",
+    category: "milestone",
+    reward: { gil: 8000, cp: 8 },
+    check: (p) => masteredCount(p) >= 50,
+    progress: (p) => count(masteredCount(p), 50),
+  },
+  {
+    id: "master-thief",
+    name: "Master Thief",
+    description: "Steal 25 items",
+    category: "milestone",
+    reward: { gil: 4000 },
+    check: (p) => p.stats.steals >= 25,
+    progress: (p) => count(p.stats.steals, 25),
+  },
+  {
+    id: "gourmand",
+    name: "Gourmand",
+    description: "Eat 10 monsters with Quina",
+    category: "milestone",
+    reward: { gil: 3000, cp: 3 },
+    check: (p) => p.stats.eaten >= 10,
+    progress: (p) => count(p.stats.eaten, 10),
+  },
 
   // ── bosses ──
   { id: "boss-garland", name: "Light of Cornelia", description: "Defeat Garland", category: "boss", reward: { gil: 1500, cp: 3 }, check: (p) => kills(p, "garland") },
@@ -108,8 +163,24 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     }),
   ),
   { id: "tier-1", name: "Tougher Stuff", description: "Win a run on Tier 1", category: "challenge", reward: { gil: 6000, cp: 8 }, check: (p) => p.stats.highestTierWon >= 1 },
-  { id: "tier-3", name: "Iron Will", description: "Win a run on Tier 3", category: "challenge", reward: { gil: 15000, cp: 15, supplies: ["Elixir"] }, check: (p) => p.stats.highestTierWon >= 3 },
-  { id: "tier-5", name: "Unbreakable", description: "Win a run on Tier 5", category: "challenge", reward: { gil: 30000, cp: 25 }, check: (p) => p.stats.highestTierWon >= 5 },
+  {
+    id: "tier-3",
+    name: "Iron Will",
+    description: "Win a run on Tier 3",
+    category: "challenge",
+    reward: { gil: 15000, cp: 15, supplies: ["Elixir"] },
+    check: (p) => p.stats.highestTierWon >= 3,
+    progress: (p) => count(p.stats.highestTierWon, 3),
+  },
+  {
+    id: "tier-5",
+    name: "Unbreakable",
+    description: "Win a run on Tier 5",
+    category: "challenge",
+    reward: { gil: 30000, cp: 25 },
+    check: (p) => p.stats.highestTierWon >= 5,
+    progress: (p) => count(p.stats.highestTierWon, 5),
+  },
 
   // ── legends (Terra & Memoria superbosses — the ultimate weapons) ──
   { id: "legend-soulcage", name: "Roots of the Tree", description: "Defeat Soulcage at the Iifa Tree", category: "legend", reward: { items: ["Gastro Fork"] }, secret: true, check: (p) => kills(p, "soulcage") },
@@ -136,7 +207,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     category: "legend",
     reward: { items: ["Whale Whisker", "Tiger Racket"] },
     secret: true,
-    check: (p) => ["soulcage", "deathguise", "kuja", "hades", "ozma", "necron"].every((b) => kills(p, b)),
+    check: (p) => SUPERBOSSES.every((b) => kills(p, b)),
+    progress: (p) => count(SUPERBOSSES.filter((b) => kills(p, b)).length, SUPERBOSSES.length),
   },
 ];
 

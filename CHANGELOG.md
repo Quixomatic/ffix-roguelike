@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.112] - 2026-10-18
+
+### Changed
+- **The Achievements page shows progress.**
+  - A bar for everything earned at the top.
+  - **Each category** (Story, Milestones, Bosses, Challenges, Legends) has a header with how many are earned ("3 / 5") and its own bar.
+  - **Achievements that count toward a number** show a progress bar with "have / need": Veteran (battles won), Fellowship (roster), All Together Now (heroes unlocked), Studious and Scholar (abilities learned), Master Thief (steals), Gourmand (monsters eaten), Iron Will and Unbreakable (highest tier won), and Final Fantasy (superbosses, once it's no longer secret).
+  - Earned ones show the pixel check; hidden secrets a padlock. The 🏆 / "·" glyphs are gone.
+  - The page uses the hub's wider column, with room at the bottom.
+- game-core: `AchievementDef.progress(profile)` → `{ have, need }`, for achievements with a metric.
+
 ## [0.2.111] - 2026-10-18
 
 ### Fixed
