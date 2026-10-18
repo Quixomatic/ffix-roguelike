@@ -1,5 +1,8 @@
 import { achievements, effectivePrice, JOURNEYS, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
+  ACHIEVEMENT_CATEGORIES,
+  ACHIEVEMENT_CONDITIONS,
+  ACHIEVEMENT_STATS,
   bandStepsOf,
   BOON_STATS,
   CARD_TYPES,
@@ -10,6 +13,10 @@ import {
   RARITIES,
   REWARD_SOURCES,
   ROLE_STATS,
+  type AchievementCategory,
+  type AchievementCondition,
+  type AchievementData,
+  type AchievementStat,
   type GearAvailability,
   type RarityId,
   type RewardBoon,
@@ -35,10 +42,11 @@ import { trpc } from "@/utils/trpc";
  * reward cards' rules, the boons, the rarities, and what each character values. Every save goes live at once (the
  * next offer, drop pool and catalog use it). Export writes the tables into the repo's seed files to commit them.
  */
-type Tab = "gear" | "starter" | "boons" | "sources" | "rarities" | "roles" | "preview";
+type Tab = "gear" | "starter" | "achievements" | "boons" | "sources" | "rarities" | "roles" | "preview";
 const TABS: { id: Tab; label: string }[] = [
   { id: "gear", label: "Gear availability" },
   { id: "starter", label: "Starter gear" },
+  { id: "achievements", label: "Achievements" },
   { id: "boons", label: "Boons" },
   { id: "sources", label: "Sources" },
   { id: "rarities", label: "Rarities" },
@@ -87,6 +95,8 @@ export function RewardsAdminPage() {
         <GearTab tables={tables.data} />
       ) : tab === "starter" ? (
         <StarterTab tables={tables.data} />
+      ) : tab === "achievements" ? (
+        <AchievementsTab tables={tables.data} />
       ) : tab === "boons" ? (
         <BoonsTab tables={tables.data} />
       ) : tab === "sources" ? (
@@ -841,6 +851,289 @@ function StarterEditor({ upgrade, isNew, isLast, onRemoved }: { upgrade: Starter
           <FocusItem>
             <button className="rounded px-3 py-1 text-sm text-red-300 hover:bg-red-900/30" disabled={remove.isPending} onClick={() => remove.mutate({ id: upgrade.id })}>
               Remove tier
+            </button>
+          </FocusItem>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── achievements ───────────────────────────────────────────────────────────────────────────────────────────────────
+
+const CONDITION_LABEL: Record<AchievementCondition["kind"], string> = {
+  stat: "A lifetime stat reaches…",
+  journey: "Clear a journey",
+  bosses: "Defeat bosses (all of them)",
+  roster: "Roster size",
+  heroes: "Recruit characters (all of them)",
+  mastered: "Abilities learned",
+  solo: "Solo late-game clear",
+  legendClear: "Clear Terra & Memoria with…",
+};
+const STAT_LABEL: Record<AchievementStat, string> = {
+  battles: "Battles won",
+  runs: "Runs finished",
+  wins: "Runs won",
+  steals: "Items stolen",
+  eaten: "Monsters eaten",
+  highestTierWon: "Highest tier won",
+};
+/** A fresh condition of a kind (switching kinds in the editor). */
+const blankCondition = (kind: AchievementCondition["kind"]): AchievementCondition =>
+  kind === "stat"
+    ? { kind, stat: "battles", min: 10 }
+    : kind === "journey"
+      ? { kind, journey: JOURNEYS[0]!.id }
+      : kind === "bosses"
+        ? { kind, bosses: [] }
+        : kind === "heroes"
+          ? { kind, heroes: [] }
+          : kind === "roster" || kind === "mastered"
+            ? { kind, min: 4 }
+            : { kind, hero: "zidane" };
+/** What a condition asks, in a line (the list). */
+function conditionText(c: AchievementCondition): string {
+  switch (c.kind) {
+    case "stat":
+      return `${STAT_LABEL[c.stat]} ≥ ${c.min}`;
+    case "journey":
+      return `Clear ${JOURNEYS.find((j) => j.id === c.journey)?.name ?? c.journey}`;
+    case "bosses":
+      return `Defeat ${c.bosses.join(", ") || "—"}`;
+    case "roster":
+      return `Roster ≥ ${c.min}`;
+    case "heroes":
+      return `Recruit ${c.heroes.map((k) => getCharacter(k).name).join(", ") || "—"}`;
+    case "mastered":
+      return `Learn ${c.min} abilities`;
+    case "solo":
+      return `Solo clear: ${getCharacter(c.hero).name}`;
+    case "legendClear":
+      return `Terra & Memoria with ${getCharacter(c.hero).name}`;
+  }
+}
+const list = (s: string) =>
+  s
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+
+const NEW_ACHIEVEMENT: AchievementData = {
+  id: "",
+  name: "",
+  description: "",
+  category: "milestone",
+  sort: 0,
+  enabled: true,
+  condition: { kind: "stat", stat: "battles", min: 10 },
+  reward: { gil: 1000 },
+};
+
+/** Every achievement (the `achievement` table): its condition, reward, category and order. Saves go live at once. */
+function AchievementsTab({ tables }: { tables: RewardTables }) {
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<"all" | AchievementCategory>("all");
+  const [selected, setSelected] = useState<string | null>(null);
+  const all = useMemo(
+    () =>
+      [...(tables.achievements ?? [])].sort(
+        (a, b) => ACHIEVEMENT_CATEGORIES.indexOf(a.category) - ACHIEVEMENT_CATEGORIES.indexOf(b.category) || a.sort - b.sort,
+      ),
+    [tables.achievements],
+  );
+  const rows = all.filter((a) => (cat === "all" || a.category === cat) && (!q || `${a.name} ${a.id} ${a.description}`.toLowerCase().includes(q.toLowerCase())));
+  const current = selected === "" ? null : all.find((a) => a.id === selected);
+  const editing = selected === "" ? { ...NEW_ACHIEVEMENT, sort: all.length } : current;
+  return (
+    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_30rem]">
+      <div className="ff-window flex min-h-0 flex-col gap-2 p-3">
+        <div className="grid gap-2 sm:grid-cols-[1fr_12rem_auto] sm:items-end">
+          <Field label="Search">
+            <Text value={q} onChange={setQ} />
+          </Field>
+          <Field label="Category">
+            <Select<"all" | AchievementCategory> value={cat} options={["all", ...ACHIEVEMENT_CATEGORIES] as const} onChange={setCat} />
+          </Field>
+          <SaveButton pending={false} label="New achievement" onClick={() => setSelected("")} />
+        </div>
+        <div className="text-xs opacity-70">
+          {rows.length} of {all.length} achievements
+        </div>
+        <div className="flex max-h-[65vh] flex-col gap-1 overflow-y-auto pr-1">
+          {rows.map((a) => (
+            <FocusItem key={a.id}>
+              <button
+                className={`flex items-center gap-2 rounded px-2 py-1 text-left text-sm hover:bg-white/10 ${selected === a.id ? "bg-white/15" : "bg-black/20"} ${a.enabled ? "" : "opacity-50"}`}
+                onClick={() => setSelected(a.id)}
+              >
+                <span className="w-20 shrink-0 text-xs opacity-60">{a.category}</span>
+                <span className="min-w-0 flex-1 truncate">
+                  {a.name}
+                  {a.secret && <span className="ml-1 text-xs text-yellow-200">secret</span>}
+                </span>
+                <span className="w-56 truncate text-right text-xs text-[#c8d0ff]">{conditionText(a.condition)}</span>
+              </button>
+            </FocusItem>
+          ))}
+        </div>
+      </div>
+      {editing ? (
+        <AchievementEditor key={selected || "new"} achievement={editing} isNew={selected === ""} onSaved={setSelected} onDeleted={() => setSelected(null)} />
+      ) : (
+        <div className="ff-window p-4 text-sm opacity-70">Pick an achievement to edit, or add a new one.</div>
+      )}
+    </div>
+  );
+}
+
+function AchievementEditor({
+  achievement: a,
+  isNew,
+  onSaved,
+  onDeleted,
+}: {
+  achievement: AchievementData;
+  isNew: boolean;
+  onSaved(id: string): void;
+  onDeleted(): void;
+}) {
+  const [d, setD] = useState<AchievementData>(a);
+  // Comma lists are edited as text and parsed on save.
+  const [itemsText, setItemsText] = useState((a.reward.items ?? []).join(", "));
+  const [suppliesText, setSuppliesText] = useState((a.reward.supplies ?? []).join(", "));
+  const [bossesText, setBossesText] = useState(a.condition.kind === "bosses" ? a.condition.bosses.join(", ") : "");
+  const saved = useSaved(d.name || "Achievement");
+  const save = useMutation(trpc.admin.saveAchievement.mutationOptions({ ...saved, onSuccess: () => (saved.onSuccess(), onSaved(d.id)) }));
+  const remove = useMutation(trpc.admin.deleteAchievement.mutationOptions({ ...saved, onSuccess: () => (saved.onSuccess(), onDeleted()) }));
+  const c = d.condition;
+  const setC = (condition: AchievementCondition) => setD({ ...d, condition });
+  const setReward = (reward: Partial<AchievementData["reward"]>) => setD({ ...d, reward: { ...d.reward, ...reward } });
+  const heroOptions = CHARACTERS;
+  const toggleHero = (k: string) => c.kind === "heroes" && setC({ ...c, heroes: c.heroes.includes(k) ? c.heroes.filter((x) => x !== k) : [...c.heroes, k] });
+  const submit = () => {
+    const condition: AchievementCondition = c.kind === "bosses" ? { kind: "bosses", bosses: list(bossesText) } : c;
+    save.mutate({ ...d, condition, reward: { ...d.reward, items: list(itemsText), supplies: list(suppliesText) } } as never);
+  };
+  return (
+    <div className="ff-window flex flex-col gap-3 p-3">
+      <div className="ff-display text-lg">
+        {isNew ? "New achievement" : d.name}
+        {!isNew && <span className="ml-2 text-xs opacity-60">{d.id}</span>}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {isNew && (
+          <Field label="Id (a-z, 0-9, -)" wide>
+            <Text value={d.id} onChange={(id) => setD({ ...d, id })} />
+          </Field>
+        )}
+        <Field label="Name">
+          <Text value={d.name} onChange={(name) => setD({ ...d, name })} />
+        </Field>
+        <Field label="Category">
+          <Select<AchievementCategory> value={d.category} options={ACHIEVEMENT_CATEGORIES} onChange={(category) => setD({ ...d, category })} />
+        </Field>
+        <Field label="Description" wide>
+          <Text value={d.description} onChange={(description) => setD({ ...d, description })} />
+        </Field>
+        <Field label="Order in category">
+          <Num value={d.sort} onChange={(v) => setD({ ...d, sort: v ?? 0 })} />
+        </Field>
+        <div className="flex items-end gap-3 pb-1">
+          <Check label="Enabled" checked={d.enabled} onChange={(enabled) => setD({ ...d, enabled })} />
+          <Check label="Secret (???)" checked={!!d.secret} onChange={(secret) => setD({ ...d, secret: secret || undefined })} />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 rounded border border-white/10 p-2">
+        <div className="ff-title text-sm">Condition</div>
+        <Select<AchievementCondition["kind"]>
+          value={c.kind}
+          options={ACHIEVEMENT_CONDITIONS}
+          onChange={(kind) => {
+            setC(blankCondition(kind));
+            setBossesText("");
+          }}
+        />
+        <div className="text-xs opacity-70">{CONDITION_LABEL[c.kind]}</div>
+        {c.kind === "stat" && (
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Stat">
+              <Select<AchievementStat> value={c.stat} options={ACHIEVEMENT_STATS} onChange={(stat) => setC({ ...c, stat })} />
+            </Field>
+            <Field label={`At least (${STAT_LABEL[c.stat].toLowerCase()})`}>
+              <Num value={c.min} onChange={(v) => setC({ ...c, min: v ?? 1 })} />
+            </Field>
+          </div>
+        )}
+        {(c.kind === "roster" || c.kind === "mastered") && (
+          <Field label="At least">
+            <Num value={c.min} onChange={(v) => setC({ ...c, min: v ?? 1 })} />
+          </Field>
+        )}
+        {c.kind === "journey" && (
+          <Field label="Journey">
+            <Select value={c.journey} options={JOURNEYS.map((j) => j.id)} onChange={(journey) => setC({ ...c, journey })} />
+          </Field>
+        )}
+        {c.kind === "bosses" && (
+          <Field label="Boss ids, comma separated (as recorded in boss kills: garland, ozma…)">
+            <Text value={bossesText} onChange={setBossesText} />
+          </Field>
+        )}
+        {c.kind === "heroes" && (
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {heroOptions.map((k) => (
+              <Check key={k} label={getCharacter(k).name} checked={c.heroes.includes(k)} onChange={() => toggleHero(k)} />
+            ))}
+          </div>
+        )}
+        {(c.kind === "solo" || c.kind === "legendClear") && (
+          <Field label="Character">
+            <Select value={c.hero} options={heroOptions} onChange={(hero) => setC({ ...c, hero })} />
+          </Field>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2 rounded border border-white/10 p-2">
+        <div className="ff-title text-sm">Reward (once)</div>
+        <div className="grid grid-cols-3 gap-2">
+          <Field label="Gil (banked)">
+            <Num value={d.reward.gil} onChange={(v) => setReward({ gil: v ?? undefined })} />
+          </Field>
+          <Field label="CP">
+            <Num value={d.reward.cp} onChange={(v) => setReward({ cp: v ?? undefined })} />
+          </Field>
+          <Field label="CP for">
+            <Select value={d.reward.cpFor ?? "everyone"} options={["everyone", ...heroOptions]} onChange={(v) => setReward({ cpFor: v === "everyone" ? undefined : v })} />
+          </Field>
+        </div>
+        <Field label="Gear unlocked (item names, comma separated: legendary gear only drops this way)" wide>
+          <Text value={itemsText} onChange={setItemsText} />
+        </Field>
+        <Field label="Best-in-slot armour for">
+          <Select value={d.reward.bestInSlotFor ?? "none"} options={["none", ...heroOptions]} onChange={(v) => setReward({ bestInSlotFor: v === "none" ? undefined : v })} />
+        </Field>
+        <Field label="Camp supplies unlocked (item names, comma separated)" wide>
+          <Text value={suppliesText} onChange={setSuppliesText} />
+        </Field>
+      </div>
+
+      <Field label="Notes" wide>
+        <Text value={d.notes} onChange={(notes) => setD({ ...d, notes: notes || undefined })} />
+      </Field>
+      <div className="flex gap-2">
+        <SaveButton pending={save.isPending} label={isNew ? "Add achievement" : "Save"} onClick={submit} />
+        {!isNew && (
+          <FocusItem>
+            <button
+              className="rounded px-3 py-1 text-sm text-red-300 hover:bg-red-900/30"
+              disabled={remove.isPending}
+              onClick={() => {
+                if (confirm(`Delete "${d.name}"? Players who earned it keep it in their profile, but it won't be listed.`)) remove.mutate({ id: d.id });
+              }}
+            >
+              Delete
             </button>
           </FocusItem>
         )}

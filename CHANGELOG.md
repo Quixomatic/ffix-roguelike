@@ -2,6 +2,34 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.0] - 2026-10-18
+
+Version 0.3: the game's own design (reward tables, gear availability, starting-gear upgrades, and now achievements) is data in Postgres, managed on the admin page.
+
+### Added
+- **Admin → Rewards & gear → Achievements** tab:
+  - **The list**: every achievement grouped by category, each showing its condition in a line ("Battles won ≥ 100", "Clear The Ice Cavern", "Recruit Zidane, Vivi…"). Disabled ones are dimmed; secret ones are marked. Search and a category filter.
+  - **The editor**:
+    - id (new achievements only), name, description, category, order within the category, enabled, secret (shown as ??? until earned)
+    - **the condition**: pick its kind and fill in its fields
+      - a lifetime stat ≥ n (battles won, runs finished, runs won, items stolen, monsters eaten, highest tier won)
+      - a journey cleared
+      - bosses defeated (ids, as recorded in boss kills)
+      - roster size ≥ n
+      - characters recruited (checkboxes)
+      - abilities learned ≥ n
+      - a solo late-game clear
+      - Terra & Memoria with a character
+    - **the reward**: gil, CP (for everyone or one character), gear unlocked (legendary gear only drops this way), best-in-slot armour for a character, camp supplies unlocked
+    - notes
+  - **New achievement** and **Delete**. Players who earned a deleted one keep it in their profile, but it isn't listed.
+  - Saves are checked on the server: the journey, characters, items and supplies must exist, and empty reward fields are dropped. They go live at once.
+  - **Export to seed files** includes `achievements.json`.
+- API: `admin.saveAchievement`, `admin.deleteAchievement` (zod, with the condition as a discriminated union).
+
+### Changed
+- Version 0.3.0 (minor bump).
+
 ## [0.2.113] - 2026-10-18
 
 Achievements move into the database, step 1: the definitions are data in an `achievement` table. The admin page comes next.
