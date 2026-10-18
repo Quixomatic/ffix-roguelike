@@ -334,7 +334,7 @@ export class BattleScene extends Phaser.Scene {
       this.drawGauge(v, u, time, down || stone || !shown);
       // Status looks follow the unit (stepping forward too); a status an effect is still bringing waits for the hit.
       if (this.time.now >= (v.impactAt ?? 0))
-        v.status.update(u.statuses, { x: v.sprite.x, y: v.home.y, top: v.top, scale: this.heroScale }, time, down || !shown || !!u.removed || u.statuses.jump !== undefined);
+        v.status.update(u.statuses, { x: v.sprite.x, y: v.home.y, top: v.top, scale: this.heroScale, facing: u.side === "party" ? 1 : -1 }, time, down || !shown || !!u.removed || u.statuses.jump !== undefined);
     }
   }
 

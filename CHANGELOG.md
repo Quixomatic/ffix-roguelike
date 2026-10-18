@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.6] - 2026-10-18
+
+### Fixed
+- **Status bubbles in battle were far too big and floated off the unit.** They were scaled at half the unit's pixel scale regardless of the icon's 64 px size, so at the heroes' 4–5× scale a bubble drew 128–160 px tall.
+  - **Size:** now about 13 of the hero art's pixels tall, sized from the unit's scale, so it keeps the same proportion at any window size.
+  - **Position:** just above the head and a little behind it, since the bubble's tail points down toward the head. Behind means to the right for the party (they face left) and to the left for monsters.
+  - **Bob:** a gentle bob that scales with the unit.
+- Doom's / Gradual Petrify's countdown number sits just above the bubble (or the head) at the same scale.
+
 ## [0.3.5] - 2026-10-18
 
 Metrics: leaderboards and an admin view of every player's stats, plus 15 more metrics.

@@ -20,13 +20,23 @@ export function preloadStatusLooks(scene: Phaser.Scene) {
   for (const n of new Set(Object.values(BALLOON))) scene.load.image(balloonKey(n!), assetUrl(`effects/${balloonPath(n!)}`));
 }
 
-/** Where a unit is: its centre, how far up its head is, and its pixel scale. */
+/** Where a unit is: its centre, how far up its head is, its pixel scale, and which way its back is (+1 = right). */
 export interface UnitAnchor {
   x: number;
   y: number;
   top: number;
   scale: number;
+  /** The side behind the unit: +1 for the party (they face left, toward the enemies), -1 for enemies. */
+  facing?: 1 | -1;
 }
+
+/** The balloon's height in the units' art pixels (the icons are 64 px; heroes are drawn on 32-px cells). */
+const BALLOON_ART = 13;
+/** How far behind the head it sits, and how far above it, in art pixels. */
+const BALLOON_BEHIND = 7;
+const BALLOON_GAP = 1;
+/** Scale for a balloon icon so it's BALLOON_ART art pixels tall at this unit's pixel scale. */
+const balloonScale = (at: UnitAnchor) => (BALLOON_ART * at.scale) / 64;
 
 export class StatusView {
   private balloon: Phaser.GameObjects.Image;
@@ -69,7 +79,7 @@ export class StatusView {
         .setText(String(statuses[count]!.counter))
         .setColor(COUNTDOWN[count]!)
         .setScale(Math.max(0.6, at.scale / 3))
-        .setPosition(at.x, at.y - at.top - (this.balloon.visible ? 30 : 8) * Math.max(1, at.scale / 3))
+        .setPosition(at.x, at.y - at.top - (this.balloon.visible ? BALLOON_ART + BALLOON_GAP + 3 : 3) * at.scale)
         .setVisible(true);
     } else this.countdown.setVisible(false);
   }
@@ -88,8 +98,9 @@ export class StatusView {
       this.balloonAt = time;
     }
     const n = BALLOON[active[this.balloonIdx % active.length]!]!;
-    const size = Math.max(1, at.scale / 2);
-    this.balloon.setPosition(at.x + 6 * size, at.y - at.top - 4 * size + Math.sin(time / 250) * 1.5);
+    const size = balloonScale(at);
+    // Just above the head and a little behind it (the bubble's tail points down toward the head), bobbing gently.
+    this.balloon.setPosition(at.x + (at.facing ?? 1) * BALLOON_BEHIND * at.scale, at.y - at.top - BALLOON_GAP * at.scale + Math.sin(time / 250) * at.scale * 0.4);
     if (n !== this.balloonNo) {
       const opening = this.balloonNo == null;
       this.balloonNo = n;
