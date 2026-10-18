@@ -306,9 +306,12 @@ export interface SheetTab {
   content: ReactNode;
 }
 
-/** The sheet's header height: the right-hand window starts this far down, level with the header's bottom edge. */
+/**
+ * The sheet's header height. The right-hand window is inset this much top and bottom, so it starts level with the
+ * header's bottom edge and sits vertically centred against the left window.
+ */
 const SHEET_HEADER = "h-16";
-const SHEET_OFFSET = "md:mt-16";
+const SHEET_OFFSET = "md:my-16";
 
 /**
  * The character sheet as two framed windows side by side: on the left the header (name — with ◂ ▸ to the previous /
@@ -370,8 +373,9 @@ export function CharacterModal({
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">{doll}</div>
       </div>
-      {/* Right: its own window, from the header's bottom edge down, joined to the left one (no rounding there). */}
-      <div className={`ff-window flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-md:mt-2 md:-ml-[2px] md:rounded-l-none ${SHEET_OFFSET}`}>
+      {/* Right: its own window, centred against the left one and joined to it (square on that side — `!`, since
+          .ff-window's own rounding would otherwise win). */}
+      <div className={`ff-window flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-md:mt-2 md:-ml-[2px] md:!rounded-l-none ${SHEET_OFFSET}`}>
         <div className="flex shrink-0 gap-1 border-b border-white/15 px-3 pt-2">
           {tabs.map((t) => (
             <FocusItem key={t.id}>

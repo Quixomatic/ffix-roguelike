@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.103] - 2026-10-18
+
+### Fixed
+- **The character sheet's right-hand window still had rounded left corners**: `.ff-window`'s own rounding won over the utility class. Its left corners are now forced square where it joins the left window.
+
+### Changed
+- **The right-hand window is centred vertically** against the left one: it's inset by the header's height at the bottom as well as the top.
+
 ## [0.2.102] - 2026-10-18
 
 ### Changed
