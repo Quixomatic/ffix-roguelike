@@ -2,6 +2,26 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.3] - 2026-10-18
+
+Metrics, step 4: achievements can be built on any tracked metric.
+
+### Added
+- **Achievement condition `metric`**: a lifetime metric reaches a number, counted for one of:
+  - **the player's total**;
+  - **any one character** (the best of them);
+  - **a given character**.
+
+  It's overall, or for one **subject**, e.g. "Vivi defeats 100 enemies", "any character lands a 9,999 hit", "defeat 50 Goblins", "use 30 Potions". Its progress bar comes from the metric.
+- **Admin → Achievements → condition editor:**
+  - **Metric** lists every tracked metric (label, key, and "highest / lowest ever" for records), with its description.
+  - **Subject** appears with a hint for what it takes (an enemy's bestiary id, an item id, a status, a journey, a stage kind), or stays empty for all.
+  - **Counted for** offers player / any / each character, for per-character metrics.
+  - **At least** sets the number.
+  - The server checks that the metric exists and is kept per subject / per character as asked.
+- **The profile carries its lifetime metrics** (`Profile.metrics`, loaded with it), so conditions and the Achievements page's progress bars read them. A run's end checks achievements after its metrics are added, in the same transaction.
+- Tests: a metric condition for the player, any character, a given one and a subject, and its progress (316 pass).
+
 ## [0.3.2] - 2026-10-18
 
 Metrics, step 3: lifetime metrics backfilled from the history recorded before metrics existed.

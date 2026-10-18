@@ -16,6 +16,7 @@ import {
   type AchievementData,
 } from "@ffix-roguelike/game-data";
 
+import { bagValue, parseBagKey } from "../metrics/collect";
 import { canEquip, gearScore, isMastered } from "../stats";
 import type { Profile } from "./profile";
 
@@ -31,6 +32,21 @@ export function achievement(id: string): AchievementDef | undefined {
 }
 
 const kills = (p: Profile, id: string) => (p.stats.bossKills[id] ?? 0) > 0;
+
+/**
+ * A `metric` condition's current value: the player's total, the best of any one character (`"any"`), or one
+ * character's — overall or for one subject.
+ */
+function metricValue(p: Profile, c: Extract<AchievementCondition, { kind: "metric" }>): number {
+  const bag = p.metrics ?? {};
+  if (c.character !== "any") return bagValue(bag, c.metric, { subject: c.subject, character: c.character });
+  let best = 0;
+  for (const [k, v] of Object.entries(bag)) {
+    const e = parseBagKey(k);
+    if (e.key === c.metric && e.subject === (c.subject ?? "") && e.character) best = Math.max(best, v);
+  }
+  return best;
+}
 const masteredCount = (p: Profile) =>
   Object.values(p.builds).reduce((n, b) => n + Object.keys(b.ap).filter((ref) => isMastered(b, ref as never)).length, 0);
 
@@ -54,6 +70,8 @@ export function achievementMet(a: AchievementDef, p: Profile): boolean {
       return p.stats.soloWins?.includes(c.hero) ?? false;
     case "legendClear":
       return p.stats.legendClears?.includes(c.hero) ?? false;
+    case "metric":
+      return metricValue(p, c) >= c.min;
   }
 }
 
@@ -75,6 +93,8 @@ export function achievementProgress(a: AchievementDef, p: Profile): { have: numb
       return count(c.bosses.filter((b) => kills(p, b)).length, c.bosses.length);
     case "heroes":
       return count(c.heroes.filter((k) => p.unlocked.includes(k)).length, c.heroes.length);
+    case "metric":
+      return count(metricValue(p, c), c.min);
     default:
       return null;
   }

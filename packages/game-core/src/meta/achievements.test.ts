@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 
 import { itemByName } from "@ffix-roguelike/game-data";
 
-import { achievement, achievementMet, achievementProgress, achievements, awardAchievements, legendaryItems } from "./achievements";
+import { record } from "../metrics/collect";
+import { achievement, achievementMet, achievementProgress, achievements, awardAchievements, legendaryItems, type AchievementDef } from "./achievements";
 import { newProfile } from "./profile";
 
 describe("achievements (from the achievement table)", () => {
@@ -38,6 +39,20 @@ describe("achievements (from the achievement table)", () => {
     expect(achievementProgress(achievement("all-together")!, p)).toEqual({ have: 2, need: 8 });
     expect(achievementProgress(achievement("story-dali")!, p)).toBeNull();
     expect(achievementProgress(achievement("first-victory")!, p)).toBeNull();
+  });
+
+  test("metric conditions: the player, any one character, a given one, a subject", () => {
+    const p = newProfile();
+    p.metrics = {};
+    record(p.metrics, "enemies.killed", 60, { character: "zidane", subject: "goblin" });
+    record(p.metrics, "enemies.killed", 50, { character: "vivi" });
+    const a = (condition: AchievementDef["condition"]): AchievementDef => ({ id: "t", name: "t", description: "", category: "milestone", sort: 0, enabled: true, condition, reward: {} });
+    expect(achievementMet(a({ kind: "metric", metric: "enemies.killed", min: 100 }), p)).toBe(true); // 110 total
+    expect(achievementMet(a({ kind: "metric", metric: "enemies.killed", character: "any", min: 100 }), p)).toBe(false); // best is 60
+    expect(achievementProgress(a({ kind: "metric", metric: "enemies.killed", character: "any", min: 100 }), p)).toEqual({ have: 60, need: 100 });
+    expect(achievementMet(a({ kind: "metric", metric: "enemies.killed", character: "vivi", min: 50 }), p)).toBe(true);
+    expect(achievementMet(a({ kind: "metric", metric: "enemies.killed", subject: "goblin", min: 60 }), p)).toBe(true);
+    expect(achievementMet(a({ kind: "metric", metric: "enemies.killed", subject: "goblin", character: "vivi", min: 1 }), p)).toBe(false);
   });
 
   test("awarding pays once and unlocks legendary gear", () => {

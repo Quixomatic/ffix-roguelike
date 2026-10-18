@@ -5,7 +5,7 @@
  * files (development servers only) so tuning can be committed.
  */
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
-import { JOURNEYS, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
+import { JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
 import {
   ACHIEVEMENT_CATEGORIES,
   ACHIEVEMENT_STATS,
@@ -118,6 +118,7 @@ export const achievementInput = z.object({
     z.object({ kind: z.literal("mastered"), min: z.number().int().min(1).max(10_000) }),
     z.object({ kind: z.literal("solo"), hero: key }),
     z.object({ kind: z.literal("legendClear"), hero: key }),
+    z.object({ kind: z.literal("metric"), metric: key, subject: z.string().max(60).optional(), character: key.optional(), min: z.number().min(1).max(1e12) }),
   ]),
   reward: z.object({
     gil: z.number().int().min(0).max(10_000_000).optional(),
@@ -214,6 +215,12 @@ export const adminRouter = router({
     if (c.kind === "journey" && !JOURNEYS.some((j) => j.id === c.journey)) throw bad(`Unknown journey ${c.journey}`);
     if (c.kind === "heroes" && !c.heroes.every(hero)) throw bad("Unknown character in the condition");
     if ((c.kind === "solo" || c.kind === "legendClear") && !hero(c.hero)) throw bad(`Unknown character ${c.hero}`);
+    if (c.kind === "metric") {
+      const def = metricDef(c.metric);
+      if (!def) throw bad(`Unknown metric ${c.metric}`);
+      if (c.subject && !def.subject) throw bad(`${def.label} isn't kept per subject`);
+      if (c.character && (!def.perCharacter || (c.character !== "any" && !hero(c.character)))) throw bad(`${def.label} can't be counted for that character`);
+    }
     const r = input.reward;
     if ((r.cpFor && !hero(r.cpFor)) || (r.bestInSlotFor && !hero(r.bestInSlotFor))) throw bad("Unknown character in the reward");
     const missing = [...(r.items ?? []), ...(r.supplies ?? [])].find((name) => !items.some((i) => i.name === name));

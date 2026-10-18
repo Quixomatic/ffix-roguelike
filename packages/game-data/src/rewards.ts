@@ -162,8 +162,13 @@ export type AchievementCondition =
   /** A late-game journey cleared with this character alone. */
   | { kind: "solo"; hero: string }
   /** Terra & Memoria cleared with this character in the party. */
-  | { kind: "legendClear"; hero: string };
-export const ACHIEVEMENT_CONDITIONS = ["stat", "journey", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
+  | { kind: "legendClear"; hero: string }
+  /**
+   * A lifetime metric (game-core metrics/registry.ts) reaches `min` — for the player (`character` unset), any one
+   * character (`"any"`), or a given one; overall, or for one `subject` (an enemy id, item id…).
+   */
+  | { kind: "metric"; metric: string; subject?: string; character?: string; min: number };
+export const ACHIEVEMENT_CONDITIONS = ["metric", "stat", "journey", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
 
 /** An achievement (the `achievement` table): its condition, its one-time reward, and how it's shown. */
 export interface AchievementData {

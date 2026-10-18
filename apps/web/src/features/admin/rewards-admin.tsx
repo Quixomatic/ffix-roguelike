@@ -1,4 +1,4 @@
-import { achievements, effectivePrice, JOURNEYS, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
+import { achievements, effectivePrice, JOURNEYS, METRICS, metricDef, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
   ACHIEVEMENT_CATEGORIES,
   ACHIEVEMENT_CONDITIONS,
@@ -862,6 +862,7 @@ function StarterEditor({ upgrade, isNew, isLast, onRemoved }: { upgrade: Starter
 // ── achievements ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 const CONDITION_LABEL: Record<AchievementCondition["kind"], string> = {
+  metric: "A lifetime metric reaches… (any of the tracked metrics)",
   stat: "A lifetime stat reaches…",
   journey: "Clear a journey",
   bosses: "Defeat bosses (all of them)",
@@ -881,7 +882,9 @@ const STAT_LABEL: Record<AchievementStat, string> = {
 };
 /** A fresh condition of a kind (switching kinds in the editor). */
 const blankCondition = (kind: AchievementCondition["kind"]): AchievementCondition =>
-  kind === "stat"
+  kind === "metric"
+    ? { kind, metric: "enemies.killed", min: 100 }
+    : kind === "stat"
     ? { kind, stat: "battles", min: 10 }
     : kind === "journey"
       ? { kind, journey: JOURNEYS[0]!.id }
@@ -891,10 +894,14 @@ const blankCondition = (kind: AchievementCondition["kind"]): AchievementConditio
           ? { kind, heroes: [] }
           : kind === "roster" || kind === "mastered"
             ? { kind, min: 4 }
-            : { kind, hero: "zidane" };
+            : { kind: kind as "solo" | "legendClear", hero: "zidane" };
 /** What a condition asks, in a line (the list). */
 function conditionText(c: AchievementCondition): string {
   switch (c.kind) {
+    case "metric": {
+      const who = !c.character ? "" : c.character === "any" ? " (any character)" : ` (${getCharacter(c.character).name})`;
+      return `${metricDef(c.metric)?.label ?? c.metric}${c.subject ? ` · ${c.subject}` : ""}${who} ≥ ${c.min}`;
+    }
     case "stat":
       return `${STAT_LABEL[c.stat]} ≥ ${c.min}`;
     case "journey":
@@ -913,6 +920,66 @@ function conditionText(c: AchievementCondition): string {
       return `Terra & Memoria with ${getCharacter(c.hero).name}`;
   }
 }
+/** A `metric` condition's fields: which metric (every registered one), its subject, for whom, and how many. */
+function MetricConditionFields({
+  c,
+  onChange,
+  heroes,
+}: {
+  c: Extract<AchievementCondition, { kind: "metric" }>;
+  onChange(c: Extract<AchievementCondition, { kind: "metric" }>): void;
+  heroes: string[];
+}) {
+  const def = metricDef(c.metric);
+  const SUBJECT_HINT: Record<string, string> = {
+    enemy: "an enemy's bestiary id (e.g. goblin, ff9-12), or empty for all",
+    item: "an item id (e.g. 236 = Potion), or empty for all",
+    ability: "an ability id (FF9 action id), or empty for all",
+    status: "a status (e.g. poison, sleep), or empty for all",
+    journey: "a journey id (e.g. evil-forest), or empty for all",
+    stage: "a stage kind (battle, elite, semiboss, boss), or empty for all",
+  };
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <Field label="Metric" wide>
+        <FocusItem>
+          <select
+            className={`${inputCls} w-full`}
+            value={c.metric}
+            onChange={(e) => {
+              const next = metricDef(e.target.value);
+              onChange({ ...c, metric: e.target.value, subject: next?.subject ? c.subject : undefined, character: next?.perCharacter ? c.character : undefined });
+            }}
+          >
+            {METRICS.map((m) => (
+              <option key={m.key} value={m.key}>
+                {m.label} ({m.key}){m.agg !== "sum" ? ` · ${m.agg === "max" ? "highest" : "lowest"} ever` : ""}
+              </option>
+            ))}
+          </select>
+        </FocusItem>
+      </Field>
+      {def && <div className="col-span-full -mt-1 text-xs opacity-70">{def.description}</div>}
+      {def?.subject && (
+        <Field label={`Subject: ${SUBJECT_HINT[def.subject] ?? def.subject}`} wide>
+          <Text value={c.subject} onChange={(subject) => onChange({ ...c, subject: subject.trim() || undefined })} />
+        </Field>
+      )}
+      <Field label="Counted for">
+        <Select
+          value={c.character ?? "player"}
+          options={def?.perCharacter ? ["player", "any", ...heroes] : ["player"]}
+          onChange={(v) => onChange({ ...c, character: v === "player" ? undefined : v })}
+        />
+      </Field>
+      <Field label="At least">
+        <Num value={c.min} onChange={(v) => onChange({ ...c, min: v ?? 1 })} />
+      </Field>
+      <div className="col-span-full text-xs opacity-60">"player" = the player's total; "any" = the best of any one character.</div>
+    </div>
+  );
+}
+
 const list = (s: string) =>
   s
     .split(",")
@@ -1056,6 +1123,13 @@ function AchievementEditor({
           }}
         />
         <div className="text-xs opacity-70">{CONDITION_LABEL[c.kind]}</div>
+        {c.kind === "metric" && (
+          <MetricConditionFields
+            c={c}
+            onChange={(next) => setC(next)}
+            heroes={heroOptions}
+          />
+        )}
         {c.kind === "stat" && (
           <div className="grid grid-cols-2 gap-2">
             <Field label="Stat">

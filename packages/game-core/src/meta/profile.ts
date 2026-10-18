@@ -28,6 +28,7 @@ import {
   type CharacterBuild,
   type TrainStat,
 } from "../stats";
+import type { MetricBag } from "../metrics/collect";
 import { achievements, awardAchievements } from "./achievements";
 
 export interface ProfileStats {
@@ -63,6 +64,11 @@ export interface Profile {
   maxTier: number;
   /** Earned achievement ids (meta/achievements.ts). */
   achievements?: string[];
+  /**
+   * Lifetime metrics (the `player_metric` table, read-only here: the server adds to them as runs and camp actions are
+   * saved). Achievements with a `metric` condition read them.
+   */
+  metrics?: MetricBag;
 }
 
 export const STARTING_CAST = ["zidane"];

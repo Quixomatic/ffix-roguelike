@@ -2,7 +2,7 @@
  * Maps the relational player tables to game-core's `Profile` and back. game-core owns the rules; this module
  * only loads, creates and persists.
  */
-import { newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
+import { bagKey, newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
 import type { AbilityRef, EquipSlot } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 
@@ -13,6 +13,8 @@ const include = {
   characters: { include: { abilities: true } },
   stash: true,
   bossKills: true,
+  // Lifetime metrics (read-only on the profile; `services/metrics.ts` adds to them).
+  metrics: { select: { character: true, key: true, subject: true, value: true } },
 } as const;
 
 export interface LoadedProfile {
@@ -86,6 +88,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
         legendClears: row.legendClears,
         bossKills: Object.fromEntries(row.bossKills.map((b) => [b.enemyId, b.count])),
       },
+      metrics: Object.fromEntries(row.metrics.map((m) => [bagKey(m.key, m.subject, m.character), m.value])),
     },
   };
 }
