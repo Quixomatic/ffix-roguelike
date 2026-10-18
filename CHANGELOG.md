@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.95] - 2026-10-18
+
+### Fixed
+- **The recruit sprite on journey cards spilled out of its box.** It draws on a 96 px cell (3× its 32 px art) inside a 72 px box. Its box is now the full 96 × 96 cell, with the hero standing at the bottom centre, and the green check sits in the cell's corner.
+- The "Clear to recruit" / "Joined: …" text beside it is centred vertically.
+
 ## [0.2.94] - 2026-10-18
 
 ### Changed
