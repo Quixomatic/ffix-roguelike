@@ -306,12 +306,9 @@ export interface SheetTab {
   content: ReactNode;
 }
 
-/**
- * The sheet's header height. The right-hand window is inset this much top and bottom, so it starts level with the
- * header's bottom edge and sits vertically centred against the left window.
- */
+/** The sheet's header height. The right-hand window is inset half that, top and bottom: vertically centred against the left one. */
 const SHEET_HEADER = "h-16";
-const SHEET_OFFSET = "md:my-16";
+const SHEET_OFFSET = "md:my-8";
 
 /**
  * The character sheet as two framed windows side by side: on the left the header (name — with ◂ ▸ to the previous /

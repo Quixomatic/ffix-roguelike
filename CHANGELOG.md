@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.104] - 2026-10-18
+
+### Changed
+- **The character sheet's right-hand window is inset half as much**: 2rem top and bottom (half the header's height) instead of the full header height. It's still centred vertically against the left window.
+
 ## [0.2.103] - 2026-10-18
 
 ### Fixed
