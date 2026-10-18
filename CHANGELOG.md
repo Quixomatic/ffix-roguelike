@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.77] - 2026-10-18
+
+All admin pages live under `/admin/…`, and Practice joins them. The sidebar gets a Home item.
+
+### Changed
+- **Admin URLs**: `/admin/rewards`, **`/admin/practice`** (was `/battle`), **`/admin/dev`** (was `/dev`), **`/admin/effects`** (was `/effects`).
+  - `/admin` itself goes to Rewards & gear.
+  - One `admin` route segment guards them all: no admin role → Play, and the server checks too.
+- **Practice is admin-only**, in the sidebar's Admin section (Rewards & gear, Practice, Dev tools, Effects). The title screen's and the header bar's practice links are gone.
+- **Home** at the top of the sidebar goes to the title screen. **Play** gets a gamepad icon (the house is Home's).
+
 ## [0.2.76] - 2026-10-18
 
 An **Admin** section in the hub's sidebar holds the admin pages, and the dev tools and effects gallery move into the hub layout.

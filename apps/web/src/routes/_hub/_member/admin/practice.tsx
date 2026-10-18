@@ -9,7 +9,7 @@ const searchSchema = z.object({
   encounter: z.number().int().min(0).catch(0),
 });
 
-export const Route = createFileRoute("/_hub/battle")({
+export const Route = createFileRoute("/_hub/_member/admin/practice")({
   validateSearch: searchSchema,
   // In the hub layout, like the run: it plays its own battle music, keeps the shortcut stack off the field and fills
   // the window (the menu button floats in the corner).

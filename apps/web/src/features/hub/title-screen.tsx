@@ -31,31 +31,17 @@ export function TitleScreen() {
 
       <div className="relative flex flex-col items-center gap-3">
         {isPending ? null : session ? (
-          <>
-            <FocusItem>
-              <Link to="/play" className="ff-window px-10 py-3 text-2xl hover:brightness-125">
-                Play ▶
-              </Link>
-            </FocusItem>
-            <FocusItem>
-              <Link to="/battle" search={{ world: 0, level: 5, encounter: 0 }} className="text-sm text-[#c8d0ff] hover:text-white">
-                Practice battle
-              </Link>
-            </FocusItem>
-          </>
+          <FocusItem>
+            <Link to="/play" className="ff-window px-10 py-3 text-2xl hover:brightness-125">
+              Play ▶
+            </Link>
+          </FocusItem>
         ) : (
-          <>
-            <FocusItem>
-              <Link to="/login" className="ff-window px-10 py-3 text-2xl hover:brightness-125">
-                Sign in to play ▶
-              </Link>
-            </FocusItem>
-            <FocusItem>
-              <Link to="/battle" search={{ world: 0, level: 5, encounter: 0 }} className="text-sm text-[#c8d0ff] hover:text-white">
-                Or try a practice battle
-              </Link>
-            </FocusItem>
-          </>
+          <FocusItem>
+            <Link to="/login" className="ff-window px-10 py-3 text-2xl hover:brightness-125">
+              Sign in to play ▶
+            </Link>
+          </FocusItem>
         )}
       </div>
     </div>

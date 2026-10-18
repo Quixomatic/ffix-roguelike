@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BookOpen, Home, Menu, Package, Settings, Shield, Sparkles, Store, Sword, Swords, Trophy, Undo2, Users, Wrench, FlaskConical } from "lucide-react";
+import { BookOpen, Gamepad2, Home, Menu, Package, Settings, Shield, Sparkles, Store, Sword, Swords, Trophy, Undo2, Users, Wrench, FlaskConical } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -21,9 +21,10 @@ import pkg from "../../../package.json";
 
 type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }>; exact?: boolean };
 
-/** The game's own destinations (the hub's four cards), then the account-wide pages. */
+/** Home (the title screen), the game's own destinations (the hub's cards), then the account-wide pages. */
 const GAME_NAV: NavItem[] = [
-  { to: "/play", label: "Play", icon: Home, exact: true },
+  { to: "/", label: "Home", icon: Home, exact: true },
+  { to: "/play", label: "Play", icon: Gamepad2, exact: true },
   { to: "/story", label: "Story", icon: BookOpen },
   { to: "/party", label: "Party", icon: Users },
   { to: "/shops/supplies", label: "Supplies", icon: Store },
@@ -31,7 +32,6 @@ const GAME_NAV: NavItem[] = [
   { to: "/challenges", label: "Challenges", icon: Swords },
 ];
 const MORE_NAV: NavItem[] = [
-  { to: "/battle", label: "Practice", icon: Sword },
   { to: "/items", label: "Items", icon: Package },
   { to: "/achievements", label: "Achievements", icon: Trophy },
   { to: "/settings", label: "Settings", icon: Settings },
@@ -39,8 +39,9 @@ const MORE_NAV: NavItem[] = [
 /** Admins only (better-auth's admin role). The effects gallery needs a development server (its FFRK library). */
 const ADMIN_NAV: NavItem[] = [
   { to: "/admin/rewards", label: "Rewards & gear", icon: Wrench },
-  { to: "/dev", label: "Dev tools", icon: FlaskConical },
-  ...(import.meta.env.DEV ? [{ to: "/effects", label: "Effects", icon: Sparkles }] : []),
+  { to: "/admin/practice", label: "Practice", icon: Sword },
+  { to: "/admin/dev", label: "Dev tools", icon: FlaskConical },
+  ...(import.meta.env.DEV ? [{ to: "/admin/effects", label: "Effects", icon: Sparkles }] : []),
 ];
 
 /**
