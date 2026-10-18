@@ -38,15 +38,16 @@ const BADGE: Record<ItemStatus["kind"], { text: string; className: string } | nu
   pool: null,
   starter: { text: "Start", className: "bg-sky-900/80 text-sky-100" },
   unlocked: { text: "✓", className: "bg-emerald-800/90 text-emerald-100" },
+  journey: { text: "Map", className: "bg-black/70 text-sky-200" },
   catalog: { text: "Catalog", className: "bg-black/70 text-yellow-200" },
   legendary: { text: "★", className: "bg-black/70 text-yellow-300" },
   nowhere: null,
 };
 
 /**
- * Every FF9 item with its icon, and — signed in — whether it can turn up in your runs: gear that drops in an area's map
- * pool, starting gear and gear you've unlocked show normally; catalog-only and legendary gear you haven't unlocked yet
- * are dark silhouettes with a padlock, saying how to get them. Hover (or move the cursor onto) one for its full card.
+ * Every FF9 item with its icon, and — signed in — whether it can turn up in your runs: gear that drops on a map you can
+ * play, starting gear and gear you've unlocked show normally; gear from maps on journeys you haven't opened, catalog-only
+ * and legendary gear you haven't unlocked yet are dark silhouettes with a padlock, saying how to get them. Hover (or move the cursor onto) one for its full card.
  */
 export function ItemGallery() {
   const [kind, setKind] = useState<(typeof KINDS)[number]["kind"]>("all");

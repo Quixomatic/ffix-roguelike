@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.80] - 2026-10-18
+
+### Fixed
+- **The Items page showed gear from maps you can't play yet as available**: dark and ninja gear, for example, only drop in the Echoes of the Past side journey's areas (Baron, World of Ruin), which open after Lindblum. A map-pool piece now counts only when one of its areas is on a journey you've unlocked; that's also the only way it can drop in a run.
+  - The rest are **locked**, with a blue "Map" badge: "Drops in Baron, World of Ruin: unlock the journey "Echoes of the Past" first".
+  - When some of a piece's areas are open, "Drops in …" lists just those.
+  - Starting gear always counts.
+
 ## [0.2.79] - 2026-10-18
 
 ### Changed
