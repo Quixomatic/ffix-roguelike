@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.1] - 2026-10-18
+
+Metrics, steps 1–2 (`.plans/metrics.md`): every battle, run and camp purchase now records metrics, lifetime per player and per character, and per run. The backfill, achievements on metrics and the Stats page come next.
+
+### Added
+- **Metrics registry** (game-core `metrics/registry.ts`): 37 metrics in six sections. Each has a label, a description, how it adds up (a running sum, or a record kept at its highest / lowest), whether it's kept per character, and an optional subject (an enemy, item, ability, status, journey, stage).
+  - **Battles**: fought, won (by stage kind), lost, fled, flawless wins, preemptive strikes, back attacks, time in battle, fastest win.
+  - **Combat, per character**: enemies defeated (and per enemy), damage dealt / taken, biggest hit, critical hits, actions, abilities used (per ability), statuses inflicted (per status), times KO'd, trances.
+  - **Support, per character**: healing done, revives, items used (per item), steals (per item) and missed steals, monsters eaten.
+  - **Runs**: finished / won / lost (per journey, per character), highest tier won, gil earned, levels gained.
+  - **Bosses**: defeated, per boss and per character.
+  - **Camp**: CP spent, gil spent, training ranks, gear slots, start levels, starting-gear tiers.
+- **Collection, server-authoritative** (game-core `metrics/collect.ts`, pure):
+  - **Battles count from the server's verified replay.** `replayBattle` now hands back its events. `battleMetrics` attributes damage, heals, KOs, steals and statuses to the actor of the action they belong to; enemies are counted by bestiary id, bosses by theirs.
+  - **Each run keeps its own metrics** (`RunState.metrics`): the run's summary.
+  - **A run's end** adds finished / won / lost by journey and levels gained.
+  - **Camp** spending is counted from the profile before and after each camp action.
+- **`player_metric` table** (migration `player_metrics`): one row per player, character, metric and subject.
+  - Each run action adds what it changed in the run's metrics, in the same transaction that saves the run, so nothing unverified is counted. Sums add up; records keep the higher / lower.
+  - Done as one bulk upsert per kind (`services/metrics.ts`: `addMetrics`, `loadMetrics`).
+- Tests: totals per subject and character, records, merge and delta, the registry, a real battle's kills / damage / actions per character from its replay, a run's end, and camp spending (315 pass).
+
+### Notes
+- Restart `pnpm dev` (schema changed).
+
 ## [0.3.0] - 2026-10-18
 
 Version 0.3: the game's own design (reward tables, gear availability, starting-gear upgrades, and now achievements) is data in Postgres, managed on the admin page.

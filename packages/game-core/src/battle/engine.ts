@@ -1469,7 +1469,7 @@ function commandTicks(action: BattleAction, kind: CalcCommand["kind"], shortSumm
  * Re-run a battle from its initial state and recorded inputs. Returns the final state, or throws if an input
  * is rejected (i.e. the log was tampered with or produced by different rules).
  */
-export function replayBattle(initial: BattleState, inputs: BattleState["inputs"], maxTicks = MAX_TICKS): BattleState {
+export function replayBattle(initial: BattleState, inputs: BattleState["inputs"], maxTicks = MAX_TICKS, onEvents?: (events: BattleEvent[]) => void): BattleState {
   const engine = new BattleEngine(structuredClone({ ...initial, inputs: [] }));
   const pending = [...inputs].sort((a, b) => a.tick - b.tick);
   let i = 0;
@@ -1485,7 +1485,9 @@ export function replayBattle(initial: BattleState, inputs: BattleState["inputs"]
       if (i < pending.length) throw new Error(`Replay stalled at tick ${engine.state.tick} waiting for input`);
       break;
     }
-    engine.step();
+    const events = engine.step();
+    // The replay's events, for whoever wants them (metrics count battles from the verified replay).
+    if (onEvents && events.length) onEvents(events);
   }
   return engine.state;
 }

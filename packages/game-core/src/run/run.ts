@@ -9,7 +9,8 @@
 import { findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
-import type { BattleState, BattleUnit, InputRecord } from "../battle/types";
+import type { BattleEvent, BattleState, BattleUnit, InputRecord } from "../battle/types";
+import { battleMetrics, mergeBags, type MetricBag } from "../metrics/collect";
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
 import { encounterEnemies, isSceneRef, killKey, sceneGroup } from "../content/ff9-scenes";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
@@ -121,6 +122,11 @@ export interface RunState {
   gil: number;
   phase: RunPhase;
   stats: RunStats;
+  /**
+   * This run's metrics (`metrics/registry.ts`): its battles' kills, damage, steals… per character, and how it ended —
+   * the run's own summary (MVP, run history). The server adds what's new to the player's lifetime metrics.
+   */
+  metrics?: MetricBag;
   /** Gear the player has unlocked into drop pools (snapshot at run start). */
   unlockedGear: number[];
   /** Gear synthesized this run (item ids): unlocked when the run ends, won or lost. */
@@ -378,13 +384,16 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   if (run.phase.kind !== "battle") throw new RunError("Not in a battle");
   const phase = run.phase;
   let final: BattleState;
+  const events: BattleEvent[] = [];
   try {
-    final = replayBattle(phase.battle, inputs);
+    final = replayBattle(phase.battle, inputs, undefined, (e) => events.push(...e));
   } catch (e) {
     throw new RunError(`Battle log rejected: ${(e as Error).message}`);
   }
   if (!final.outcome) throw new RunError("Battle isn't finished");
   const next = structuredClone(run);
+  // The verified replay's metrics join the run's (kills, damage, steals… per character).
+  next.metrics = mergeBags(next.metrics ?? {}, battleMetrics(phase.battle, events, final, phase.nodeKind));
   next.stats.steals += final.stolen.length;
   next.stats.eaten += final.learned.length;
   // Carry HP/MP and consumables out of the fight.

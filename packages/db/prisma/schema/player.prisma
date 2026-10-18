@@ -42,6 +42,7 @@ model PlayerProfile {
   stash      StashItem[]
   bossKills  BossKill[]
   runsList   Run[]
+  metrics    PlayerMetric[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -52,6 +53,23 @@ model PlayerProfile {
 enum BattleMode {
   WAIT
   ACTIVE
+}
+
+/// A lifetime metric (game-core metrics/registry.ts): the player's total (`character` "") or one character's, overall
+/// (`subject` "") or for one subject (an enemy, item, ability, journey…). Sums add up, records keep the best. Added to
+/// in the same transaction that saves a run (from the server's verified battle replays) or a camp action.
+model PlayerMetric {
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  character String        @default("")
+  key       String
+  subject   String        @default("")
+  value     Float
+  updatedAt DateTime      @updatedAt
+
+  @@id([profileId, character, key, subject])
+  @@index([key, subject, character])
+  @@map("player_metric")
 }
 
 /// How many times the player has beaten each boss (game-core enemy id, e.g. "garland").

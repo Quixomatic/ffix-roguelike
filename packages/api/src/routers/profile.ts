@@ -1,8 +1,9 @@
-import { buyStarterUpgrade, buySupplyRank, lockedCharacters, pickStarterTier, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { buyStarterUpgrade, buySupplyRank, campMetrics, lockedCharacters, pickStarterTier, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
+import { addMetrics } from "../services/metrics";
 import { loadProfile, saveProfile } from "../services/profile";
 import { act, getActiveRun, toTrpcError } from "../services/runs";
 
@@ -18,7 +19,12 @@ async function mutateProfile(db: Database, userId: string, change: (p: Profile) 
   } catch (e) {
     toTrpcError(e);
   }
-  await db.$transaction((tx) => saveProfile(tx, loaded.id, next));
+  // Camp metrics (CP and gil spent, ranks, slots, tiers bought) from what the action changed, saved with it.
+  const metrics = campMetrics(loaded.profile, next);
+  await db.$transaction(async (tx) => {
+    await saveProfile(tx, loaded.id, next);
+    await addMetrics(tx as never, loaded.id, metrics);
+  });
 }
 
 export const profileRouter = router({

@@ -6,6 +6,9 @@
 import {
   applyRunOutcome,
   availableJourneys,
+  bagDelta,
+  mergeBags,
+  runEndMetrics,
   upgradeRunState,
   campSupplies,
   startingSupplies,
@@ -19,6 +22,7 @@ import {
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 
+import { addMetrics } from "./metrics";
 import { loadProfile, saveProfile } from "./profile";
 
 export async function getActiveRun(db: Database, profileId: string) {
@@ -83,7 +87,7 @@ export async function act(
   transition: (run: RunState) => RunState,
   opts: { battleInputs?: InputRecord[] } = {},
 ) {
-  const { id: profileId } = await loadProfile(db, userId);
+  const { id: profileId, profile } = await loadProfile(db, userId);
   const row = await getActiveRun(db, profileId);
   if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "No active run" });
   const before = upgradeRunState(row.state as unknown as RunState);
@@ -95,6 +99,21 @@ export async function act(
   }
   const over = after.phase.kind === "over";
   const won = after.phase.kind === "over" && after.phase.won;
+  // Metrics: a battle's are already in the run's (counted from the verified replay); a run that ends adds how it ended.
+  if (over) {
+    const outcome = runOutcome(after);
+    const end = runEndMetrics({
+      journey: after.journey,
+      won,
+      tier: row.tier,
+      gilEarned: outcome.gilEarned,
+      builds: after.party.map((m) => m.build),
+      startLevels: Object.fromEntries(Object.entries(profile.builds).map(([k, b]) => [k, b.level])),
+    });
+    after = { ...after, metrics: mergeBags({ ...after.metrics }, end) };
+  }
+  // What this action added to the run's metrics joins the player's lifetime totals, in the same transaction.
+  const newMetrics = bagDelta(after.metrics, before.metrics);
 
   return db.$transaction(async (tx) => {
     const updated = await tx.run.updateMany({
@@ -107,6 +126,7 @@ export async function act(
       },
     });
     if (updated.count !== 1) throw new TRPCError({ code: "CONFLICT", message: "The run changed in another tab — reload" });
+    await addMetrics(tx as never, profileId, newMetrics);
 
     if (opts.battleInputs && before.phase.kind === "battle") {
       const b = before.phase;

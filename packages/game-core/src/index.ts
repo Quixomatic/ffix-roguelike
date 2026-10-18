@@ -19,5 +19,7 @@ export * from "./run/optimize";
 export * from "./meta/profile";
 export * from "./run/specials";
 export * from "./meta/achievements";
+export * from "./metrics/registry";
+export * from "./metrics/collect";
 export * from "./rewards/upgrade";
 export * from "./rewards/cards";
