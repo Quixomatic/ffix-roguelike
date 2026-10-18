@@ -9,6 +9,7 @@ import Phaser from "phaser";
 import { playActionEffect, preloadEffects } from "@/features/effects/battle-effects";
 import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
+import { preloadStatusLooks, StatusView } from "./status-view";
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
@@ -75,6 +76,8 @@ interface UnitView {
   gauge: Phaser.GameObjects.Graphics;
   /** Monster drawn from an FFRK sheet (idle/attack/damage/dead, white hit-flash cell). */
   ffrk?: EnemySpriteInfo;
+  /** FFRK's status looks on this unit: balloon, aura, special rigs, Doom's countdown. */
+  status: StatusView;
   /** FFRK-style weapon rig: the weapon drawn between the body and the arm piece during attack frames. */
   rig?: { frames: (HeroRigFrame | null)[]; weapon: Phaser.GameObjects.Image; grip: [number, number]; arm: Phaser.GameObjects.Sprite };
 }
@@ -120,6 +123,7 @@ export class BattleScene extends Phaser.Scene {
     const units = this.bridge.getState().units;
     loadHeroSheets(this, units.filter((u) => u.side === "party").map((u) => u.sprite));
     this.load.image(HAND, assetUrl("sprites/ui/hand-down.png"));
+    preloadStatusLooks(this);
     loadEnemySheets(this, units.filter((u) => u.side === "enemy").map((u) => u.sprite));
   }
 
@@ -216,7 +220,8 @@ export class BattleScene extends Phaser.Scene {
       .setVisible(false);
     const gauge = this.add.graphics().setDepth(20);
     const hand = this.add.image(x, y - top - 18, HAND).setOrigin(0.5, 0.5).setScale(this.handScale()).setDepth(40).setVisible(false);
-    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    const status = new StatusView(this, 30);
+    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, status, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
   }
 
   /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
@@ -306,7 +311,15 @@ export class BattleScene extends Phaser.Scene {
       if (stone && !(v.animated && heroSheetForSprite(u.sprite)?.info.poses.stone != null)) v.sprite.setTint(0x888888);
       else if (u.statuses.trance) v.sprite.setTint(0xff99cc);
       else if (u.statuses.poison || u.statuses.venom) v.sprite.setTint(0xaaddaa);
-      else v.sprite.clearTint();
+      else if (u.statuses.protect || u.statuses.shell) {
+        // FFRK shows Protect and Shell as a colour pulsing on the body (its status_eff colour-change node): gold for
+        // Protect, sea green for Shell, taking turns when both are up.
+        const shell = !!u.statuses.shell && (!u.statuses.protect || Math.floor(time / 1500) % 2 === 1);
+        const pulse = (Math.sin(time / 260) + 1) / 2;
+        const to = shell ? [0x7f, 0xf0, 0xc8] : [0xff, 0xd2, 0x7a];
+        const mix = (c: number) => Math.round(255 + (c - 255) * pulse * 0.7);
+        v.sprite.setTint(Phaser.Display.Color.GetColor(mix(to[0]!), mix(to[1]!), mix(to[2]!)));
+      } else v.sprite.clearTint();
       const targeted = this.bridge.highlighted.has(u.id);
       const aimed = this.bridge.aimed.has(u.id) && shown;
       // Yellow markers: every valid target; the glove points at the one(s) being aimed at.
@@ -319,6 +332,9 @@ export class BattleScene extends Phaser.Scene {
       if (!v.animated && !down && !stone && !u.statuses.stop && (v.ffrk?.anims.idle?.frames.length ?? 1) <= 1) v.sprite.y = v.home.y + Math.sin(time / 300 + v.home.x) * 2;
       this.syncRig(v);
       this.drawGauge(v, u, time, down || stone || !shown);
+      // Status looks follow the unit (stepping forward too); a status an effect is still bringing waits for the hit.
+      if (this.time.now >= (v.impactAt ?? 0))
+        v.status.update(u.statuses, { x: v.sprite.x, y: v.home.y, top: v.top, scale: this.heroScale }, time, down || !shown || !!u.removed || u.statuses.jump !== undefined);
     }
   }
 

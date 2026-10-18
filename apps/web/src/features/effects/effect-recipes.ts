@@ -6,6 +6,7 @@
 import { findItem, type FF9EnemyAction } from "@ffix-roguelike/game-data";
 
 import effectMap from "./ability-effects.json";
+import { statusLookPaths } from "./status-looks";
 
 export type Recipe = Record<string, string>;
 export const MAP = (effectMap as { abilities: Record<string, { phases: Recipe }> }).abilities;
@@ -128,8 +129,9 @@ export function itemDefault(itemId: number): Recipe | null {
   return ITEM_D.cure;
 }
 
-/** Every effect file the game can play: gallery assignments, weapon attacks and the monster and item defaults. */
+/** Every effect file the game can play: gallery assignments, weapon attacks, the monster and item defaults, and the status looks. */
 export function usedEffectPaths(): string[] {
   const recipes = [...Object.values(MAP).map((a) => a.phases), ...Object.values(WEAPON_EFFECTS), MONSTER_WEAPON, ...Object.values(D), ...Object.values(ITEM_D)];
-  return [...new Set(recipes.flatMap((r) => Object.values(r)))].sort();
+  // The status looks (auras, special rigs, balloon icons) ship with the effects.
+  return [...new Set([...recipes.flatMap((r) => Object.values(r)), ...statusLookPaths()])].sort();
 }

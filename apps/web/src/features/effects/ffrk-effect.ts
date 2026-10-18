@@ -434,6 +434,11 @@ export interface PlayOptions {
   onFrame?: { frame: number; fn: () => void }[];
   /** Don't play the effect's sounds (e.g. the gallery's loops). */
   mute?: boolean;
+  /**
+   * Play one tagged section of the rig instead of its main one (e.g. `eff_light_haste` in FFRK's status_eff.json).
+   * Looping a tag keeps its particle emitters running across the wrap (FFRK's looping status auras).
+   */
+  tag?: string;
 }
 
 export class FfrkEffectPlayer {
@@ -444,6 +449,8 @@ export class FfrkEffectPlayer {
   private emitters = new Map<string, Emitter[]>();
   private finished = false;
   private pending: { frame: number; fn: () => void }[];
+  /** The rig frames played: the tag's (`opts.tag`), else the effect's main range. */
+  private readonly range: [number, number];
 
   constructor(
     private scene: Phaser.Scene,
@@ -452,7 +459,9 @@ export class FfrkEffectPlayer {
   ) {
     const s = opts.scale ?? 1;
     this.container = scene.add.container(opts.x, opts.y).setScale(opts.flipX ? -s : s, s).setDepth(opts.depth ?? 50);
-    this.frame = asset.range[0];
+    const tagged = opts.tag ? asset.rig.tag?.[opts.tag] : undefined;
+    this.range = tagged ? [tagged[0]!, tagged[1]!] : asset.range;
+    this.frame = this.range[0];
     // FFRK's own sounds fire on their frames (action_sound → lang/se/se_ogg/<id>.ogg).
     const sounds = (asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string").map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
     this.pending = [...(opts.onFrame ?? []), ...(opts.mute ? [] : sounds)].sort((a, b) => a.frame - b.frame);
@@ -461,21 +470,26 @@ export class FfrkEffectPlayer {
 
   /** Total length in ms at speed 1 (rig frames only; trailing particles may run a little longer). */
   get durationMs() {
-    return ((this.asset.range[1] - this.asset.range[0]) / (this.asset.rig.fps || 60)) * 1000;
+    return ((this.range[1] - this.range[0]) / (this.asset.rig.fps || 60)) * 1000;
   }
 
   private tick(_time: number, delta: number) {
     if (this.finished) return;
     const dt = (delta / 1000) * (this.opts.speed ?? 1);
     this.frame += dt * (this.asset.rig.fps || 60);
-    const [start, end] = this.asset.range;
+    const [start, end] = this.range;
     while (this.pending.length && this.frame >= this.pending[0]!.frame) this.pending.shift()!.fn();
     if (this.frame > end) {
       if (this.opts.loop) {
         this.frame = start;
         this.pending = (this.asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && !this.opts.mute).map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
-        for (const list of this.emitters.values()) list.forEach((e) => e.destroy());
-        this.emitters.clear();
+        // A looping tag (a status aura) keeps its particles flowing; a looped effect starts them over.
+        for (const [node, list] of this.emitters) {
+          // Looping a tag: only emitters that have run their course start over (the rest keep flowing).
+          if (this.opts.tag && !list.every((e) => e.done)) continue;
+          list.forEach((e) => e.destroy());
+          this.emitters.delete(node);
+        }
       }
     }
     const f = Math.min(this.frame, end);
@@ -485,6 +499,9 @@ export class FfrkEffectPlayer {
     // Emitters start at their node's frame and keep their own clock.
     for (const node of ev.emitters) {
       if (f < node.start) continue;
+      // A tagged section only starts the emitters whose frame it plays through (FFRK starts an emitter when the
+      // playhead crosses its frame); rigs like status_eff.json hold every aura's emitters side by side.
+      if (this.opts.tag && (node.start < this.range[0] || node.start > this.range[1] || !node.file)) continue;
       let list = this.emitters.get(node.node);
       if (!list) {
         list = (this.asset.particles.get(serverPath(node.file)) ?? []).map((def) => new Emitter(this.scene, this.container, def, node));

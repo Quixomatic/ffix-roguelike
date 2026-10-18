@@ -2,6 +2,30 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.74] - 2026-10-18
+
+Statuses look the way FFRK draws them: the bubble icon over a unit's head (Confuse's dizzy stars, Poison's bubbles, Sleep, Silence…), looping auras (Haste, Slow, Reflect, Regen…), Freeze's ice, Trance, and Doom's countdown, all from FFRK's own battle assets.
+
+### Added
+- **`pnpm -F web ffrk:status`** (`scripts/fetch-ffrk-status.ts`) downloads FFRK's status assets from the Japanese server, in the same mirror as the ability effects:
+  - `ab/character/common/status_eff.json`: one animation rig whose tagged sections are FFRK's looping status auras.
+  - Every particle file, frame animation, image and sound those use.
+  - The special rigs: Freeze, Trance, curse.
+  - The balloon icons (`ab/battle/status_icon/<n>.png`).
+  - How FFRK draws statuses was read from its battle client's `StatusAilmentsView`, and the asset paths from captured battle data. Documented in `.docs/ffrk-assets.md`.
+- **Status looks in battle** (`features/battle/status-view.ts`, table in `features/effects/status-looks.ts`):
+  - **Balloons** over the head, popping open and closed like FFRK's and taking turns every 0.75 s when several are up:
+    - Confuse (dizzy stars), Berserk, Sleep, Stop, Silence, Blind, Poison / Venom.
+    - Statuses FFRK never had get the closest icon: Zombie (skull), Virus (dark orb), Trouble (wavy).
+  - **Auras** looping on the unit, taking turns every 1.5 s: Haste, Slow, Reflect, Regen, Auto-Life (Reraise's), Heat (soul fire).
+  - **Protect and Shell**: FFRK pulses the body's colour for these, and so does this (gold for Protect, sea green for Shell, alternating when both are up).
+  - **Freeze** plays FFRK's frozen rig, and **Trance** FFRK's trance aura, while they last.
+  - **Doom's countdown** (and Gradual Petrify's, in grey) over the head, ticking down with the status.
+  - A status an effect is still bringing appears when the effect hits, and the looks follow the unit when it steps forward. Units that are KO'd, jumping or hidden show none.
+  - Blind, Mini, Sleep and Stone keep their FFRK sprite poses, Vanish its fade, Poison its tint.
+- **Effect player**: `tag` plays (and loops) one tagged section of a rig. Only the emitters whose frame the section crosses start, and looping keeps them flowing (FFRK's semantics).
+- The effects asset pack includes the status assets (repacked and uploaded).
+
 ## [0.2.73] - 2026-10-18
 
 Battle items play FFRK effects, mapped the same way as spells and monster moves.
