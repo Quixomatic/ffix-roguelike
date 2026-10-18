@@ -8,17 +8,20 @@ import {
   starterGear,
   START_LEVEL_MAX,
   startLevelCost,
+  starterTierPicked,
   type CharacterBuild,
+  type Profile,
 } from "@ffix-roguelike/game-core";
 import { getCharacter, type EquipSlot } from "@ffix-roguelike/game-data";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, TrainingRows } from "@/features/gear/character-panels";
-import { ItemIcon } from "@/features/items/item-icon";
-import { DollFigure, EquipmentList, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
+import { DollFigure, EquipmentList, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
+
+import { StarterUpgrades } from "./starter-upgrades";
 
 /**
  * Before a run: the paperdoll (starter gear) on the left; Training (all CP spending), Equipment, Abilities, Support and Record tabs on
@@ -38,6 +41,10 @@ export function CharacterSheet({ build: saved, onClose, inline }: { build: Chara
   const unlock = useMutation(trpc.profile.unlockSlot.mutationOptions(opts));
   const supportsM = useMutation(trpc.profile.setSupports.mutationOptions(opts));
   const train = useMutation(trpc.profile.trainStat.mutationOptions(opts));
+  const buyTier = useMutation(trpc.profile.buyStarterUpgrade.mutationOptions(opts));
+  const pickTier = useMutation(trpc.profile.pickStarterTier.mutationOptions(opts));
+  // Gil, unlocked gear, journeys and achievements decide which upgrade tiers can be bought.
+  const profile = (useQuery(trpc.profile.get.queryOptions()).data ?? null) as Profile | null;
 
   const char = getCharacter(build.key);
   const st = deriveStats(build);
@@ -50,7 +57,15 @@ export function CharacterSheet({ build: saved, onClose, inline }: { build: Chara
     slot: s,
     itemId: build.equipment[s],
     locked: !slotUnlocked(build, s),
-    note: s === "weapon" ? "starting weapon" : !slotUnlocked(build, s) ? "locked — hover the slot to unlock" : build.equipment[s] == null ? "fill it in a run" : "starter gear",
+    note: !slotUnlocked(build, s)
+      ? "locked — hover the slot to unlock"
+      : starterTierPicked(build, s)
+        ? `starting gear · upgrade tier ${starterTierPicked(build, s)}`
+        : build.equipment[s] == null
+          ? "fill it in a run"
+          : s === "weapon"
+            ? "starting weapon"
+            : "starter gear",
   }));
   const pickSlot = (s: EquipSlot) => {
     setSlot(s);
@@ -116,32 +131,23 @@ export function CharacterSheet({ build: saved, onClose, inline }: { build: Chara
           id: "equipment",
           label: "Equipment",
           content: (
-            <Panel title="Starting gear upgrades" right={<span className="text-orange-300">coming soon</span>}>
-              <div className="text-sm opacity-80">
-                Upgrade {char.name}'s starter gear step by step so every run starts better equipped. It won't be cheap.
-              </div>
-              <div className="flex flex-col gap-2">
-                {slots
-                  .filter((s) => !s.locked)
-                  .map((s) => (
-                    <div key={s.slot} className={`flex items-center gap-2 rounded p-1.5 ${slot === s.slot ? "bg-white/10" : ""}`}>
-                      <span className="ff-title w-20 shrink-0">{SLOT_META[s.slot].label}</span>
-                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded border-2 border-yellow-200/60 bg-[#0c1238]" title="Current starter">
-                        {s.itemId != null ? <ItemIcon itemId={s.itemId} size={32} /> : <span className="opacity-40">—</span>}
-                      </span>
-                      {[1, 2, 3].map((step) => (
-                        <span key={step} className="flex items-center gap-2">
-                          <span className="text-xl opacity-50">→</span>
-                          <span className="flex h-14 w-14 flex-col items-center justify-center rounded border-2 border-dashed border-white/20 bg-black/30 text-xs opacity-60" title="Coming soon">
-                            <span className="text-lg">🔒</span>
-                            ??? CP
-                          </span>
-                        </span>
-                      ))}
-                    </div>
-                  ))}
-                {!slots.some((s) => !s.locked) && <div className="text-sm opacity-60">No gear slots open yet.</div>}
-              </div>
+            <Panel
+              title="Starting gear upgrades"
+              right={
+                <span className="opacity-80">
+                  <span className="text-yellow-200">{(profile?.gil ?? 0).toLocaleString()}</span> gil · <span className="text-yellow-200">{points}</span> CP
+                </span>
+              }
+            >
+              <StarterUpgrades
+                build={saved}
+                profile={profile}
+                selected={slot}
+                busy={buyTier.isPending || pickTier.isPending || unlock.isPending}
+                onBuy={(s) => buyTier.mutate({ key: build.key, slot: s })}
+                onPick={(s, tier) => pickTier.mutate({ key: build.key, slot: s, tier })}
+                onUnlockSlot={(s) => unlock.mutate({ key: build.key, slot: s as "head" | "wrist" | "armor" | "accessory" })}
+              />
             </Panel>
           ),
         },

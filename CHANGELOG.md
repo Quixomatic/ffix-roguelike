@@ -2,6 +2,27 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.87] - 2026-10-18
+
+Starting-gear upgrades, step 2: the character page's Equipment tab replaces the "coming soon" stub.
+
+### Changed
+- **Equipment tab → Starting gear upgrades**: a row of item tiles for **all five slots**, with banked gil and the character's CP in the header.
+  - Each row: the FF9 starting piece, then each tier, joined by arrows.
+  - **Hover a tile** for the usual item popover (stats, what it changes for this character, abilities taught), headed by its tier and state:
+    - "every run starts with this"
+    - owned: "click to start with it instead"
+    - the cost (gil · CP · start level)
+    - each thing still blocking it ("Unlock Mage Masher first: win a run with one (drops in Alexandria…)", "Needs start Lv 10", "Needs 5 CP")
+  - **Clicking**:
+    - the next tier **buys it**, with the purchase chime, and it's worn from the next run;
+    - an owned tier, or the FF9 piece, **starts runs with that one instead**, so you can go back to an earlier piece to keep learning its abilities;
+    - a blocked tile buzzes.
+  - **Borders**: yellow for the piece runs start with, green for owned, dashed for the next tier; a padlock marks tiers further on.
+  - **Locked slots** stay in the list, dimmed. Their first tile doubles as **the slot's unlock** (orange, padlock, "Click to unlock it · 10 CP"), the same as the paperdoll's locked slot.
+  - Every tile is a cursor stop (keyboard / controller).
+- The paperdoll's equipment list notes "starting gear · upgrade tier n" for upgraded slots.
+
 ## [0.2.86] - 2026-10-18
 
 Starting-gear upgrades, step 1 (`.plans/starter-upgrades.md`): the rules, the table and the seeded chains. The character page and the admin tab come next.
