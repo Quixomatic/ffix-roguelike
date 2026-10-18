@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.85] - 2026-10-18
+
+### Changed
+- **One list in the sidebar**: Home, Play, Items, Achievements, Settings, with no separator between Home / Play and the rest. The Admin section keeps its own divider.
+
 ## [0.2.84] - 2026-10-18
 
 ### Changed

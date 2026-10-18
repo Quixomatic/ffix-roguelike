@@ -209,13 +209,7 @@ function Sidebar({ open }: { open: boolean }) {
       </div>
 
       <nav className="flex flex-col gap-0.5">
-        {GAME_NAV.map((n) => (
-          <NavLink key={n.to} item={n} />
-        ))}
-      </nav>
-      <Separator className="bg-white/15" />
-      <nav className="flex flex-col gap-0.5">
-        {MORE_NAV.map((n) => (
+        {[...GAME_NAV, ...MORE_NAV].map((n) => (
           <NavLink key={n.to} item={n} />
         ))}
       </nav>
