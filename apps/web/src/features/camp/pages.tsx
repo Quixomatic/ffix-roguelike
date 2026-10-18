@@ -75,7 +75,13 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
     <div className="mx-auto flex h-[calc(100svh-2.5rem)] max-w-6xl flex-col gap-2 px-6 pb-6 pt-6">
       <Breadcrumbs crumbs={[CAMP, { label: "Party", to: "/party" }, { label: getCharacter(characterKey).name }]} />
       <div className="min-h-0 flex-1">
-        <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
+        <CharacterSheet
+          key={characterKey}
+          inline
+          build={build}
+          onClose={() => navigate({ to: "/party" })}
+          onSwitch={(k) => navigate({ to: "/party/$character", params: { character: k }, replace: true })}
+        />
       </div>
     </div>
   );

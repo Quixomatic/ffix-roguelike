@@ -15,6 +15,7 @@ import {
 import { abilityName, getAction, getCharacter, getSupportAbility, parseAbilityRef, type AbilityRef } from "@ffix-roguelike/game-data";
 import type { ReactNode } from "react";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { HelpText } from "@/features/run/item-info";
 import { FocusItem, FocusSection } from "@/features/input/focus";
 import { useInputOwner } from "@/features/input/owner";
@@ -305,14 +306,21 @@ export interface SheetTab {
   content: ReactNode;
 }
 
+/** The sheet's header height: the right-hand window starts this far down, level with the header's bottom edge. */
+const SHEET_HEADER = "h-16";
+const SHEET_OFFSET = "md:mt-16";
+
 /**
- * The character sheet window: a fixed header, then the paperdoll figure on the left and tabbed panels on the
- * right. Only the body scrolls (each side on its own), never the header. `inline` renders it as a page (filling its
- * container, no overlay; close = back) instead of a dialog.
+ * The character sheet as two framed windows side by side: on the left the header (name — with ◂ ▸ to the previous /
+ * next character when `cycle` is given — CP, close) over the paperdoll; on the right, starting level with the bottom
+ * of that header and joined to the left window (no rounding on its left), the tabs and their panels. Only the bodies
+ * scroll (each on its own), never the header. `inline` renders it as a page (filling its container, no overlay;
+ * close = back) instead of a dialog.
  */
 export function CharacterModal({
   title,
   headerRight,
+  cycle,
   doll,
   tabs,
   tab,
@@ -323,6 +331,8 @@ export function CharacterModal({
   inline?: boolean;
   title: ReactNode;
   headerRight?: ReactNode;
+  /** Step to the previous / next character (shown as arrows either side of the name). */
+  cycle?: { prev(): void; next(): void; prevName: string; nextName: string };
   doll: ReactNode;
   tabs: SheetTab[];
   tab: string;
@@ -332,38 +342,51 @@ export function CharacterModal({
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
   // As a dialog it has the controls (over the map too); Escape / Backspace / B close it.
   useInputOwner("menu", { active: !inline, onCancel: onClose });
+  const arrow = (dir: "left" | "right", go: () => void, name: string) => (
+    <FocusItem>
+      <button type="button" className="flex h-8 w-8 shrink-0 items-center justify-center rounded hover:bg-white/10" onClick={go} aria-label={name} title={name}>
+        <PixelIcon name={dir === "left" ? "arrow-left" : "arrow-right"} />
+      </button>
+    </FocusItem>
+  );
   const window = (
-      <div className={`ff-window flex flex-col overflow-hidden ${inline ? "h-full w-full" : "h-[90vh] w-[95vw] max-w-[1400px]"}`} onClick={(e) => e.stopPropagation()}>
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/15 px-4 py-3">
-          <div className="ff-display text-2xl">{title}</div>
-          <div className="flex items-center gap-4">
+    <div className={`flex flex-col md:flex-row ${inline ? "h-full w-full" : "h-[90vh] w-[95vw] max-w-[1400px]"}`} onClick={(e) => e.stopPropagation()}>
+      {/* Left: header + paperdoll. */}
+      <div className="ff-window relative z-10 flex min-h-0 shrink-0 flex-col overflow-hidden md:w-[25rem]">
+        <div className={`flex shrink-0 items-center justify-between gap-2 border-b border-white/15 px-3 ${SHEET_HEADER}`}>
+          <div className="flex min-w-0 items-center gap-1">
+            {cycle && arrow("left", cycle.prev, cycle.prevName)}
+            <div className="ff-display truncate text-2xl">{title}</div>
+            {cycle && arrow("right", cycle.next, cycle.nextName)}
+          </div>
+          <div className="flex shrink-0 items-center gap-3">
             {headerRight}
             <FocusItem>
-              <button className={inline ? "rounded border border-white/40 px-3 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
+              <button className={inline ? "rounded border border-white/40 px-2.5 py-0.5 text-base hover:bg-white/10" : "text-xl"} onClick={onClose} aria-label="Close">
                 {inline ? "← Back" : "✕"}
               </button>
             </FocusItem>
           </div>
         </div>
-        <div className="grid min-h-0 flex-1 md:grid-cols-[25rem_1fr]">
-          <div className="min-h-0 overflow-y-auto border-white/15 p-4 md:border-r">{doll}</div>
-          <div className="flex min-h-0 flex-col">
-            <div className="flex shrink-0 gap-1 border-b border-white/15 px-3 pt-2">
-              {tabs.map((t) => (
-                <FocusItem key={t.id}>
-                  <button
-                    className={`rounded-t px-3 py-1.5 transition ${t.id === current.id ? "bg-white/15 text-yellow-200" : "opacity-75 hover:bg-white/10 hover:opacity-100"}`}
-                    onClick={() => onTab(t.id)}
-                  >
-                    {t.label}
-                  </button>
-                </FocusItem>
-              ))}
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-4">{current.content}</div>
-          </div>
-        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">{doll}</div>
       </div>
+      {/* Right: its own window, from the header's bottom edge down, joined to the left one (no rounding there). */}
+      <div className={`ff-window flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden max-md:mt-2 md:-ml-[2px] md:rounded-l-none ${SHEET_OFFSET}`}>
+        <div className="flex shrink-0 gap-1 border-b border-white/15 px-3 pt-2">
+          {tabs.map((t) => (
+            <FocusItem key={t.id}>
+              <button
+                className={`rounded-t px-3 py-1.5 transition ${t.id === current.id ? "bg-white/15 text-yellow-200" : "opacity-75 hover:bg-white/10 hover:opacity-100"}`}
+                onClick={() => onTab(t.id)}
+              >
+                {t.label}
+              </button>
+            </FocusItem>
+          ))}
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">{current.content}</div>
+      </div>
+    </div>
   );
   if (inline) return window;
   // A dialog: the cursor starts inside and stays there until it closes.

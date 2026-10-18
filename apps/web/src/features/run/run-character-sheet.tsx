@@ -6,7 +6,6 @@ import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, 
 import { DollFigure, EquipmentList, GearPicker, SLOT_META, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { ItemIcon } from "@/features/items/item-icon";
 import { actionForKey } from "@/features/input/actions";
-import { ButtonHint } from "@/features/input/button-hint";
 import { FocusItem } from "@/features/input/focus";
 import { dialogOpen, isEditable } from "@/features/input/nav";
 
@@ -87,18 +86,16 @@ export function RunCharacterSheet({
         </>
       }
       onClose={onClose}
-      headerRight={
-        many && (
-          <div className="flex items-center gap-2 text-sm">
-            <button className="flex items-center gap-1.5 opacity-80 hover:opacity-100" onClick={() => onSwitch!(neighbour(-1))}>
-              <ButtonHint action="l1" /> {getCharacter(neighbour(-1)).name}
-            </button>
-            <span className="opacity-40">·</span>
-            <button className="flex items-center gap-1.5 opacity-80 hover:opacity-100" onClick={() => onSwitch!(neighbour(1))}>
-              {getCharacter(neighbour(1)).name} <ButtonHint action="r1" />
-            </button>
-          </div>
-        )
+      // ◂ ▸ beside the name (LB / RB, Q / E) step through the party.
+      cycle={
+        many
+          ? {
+              prev: () => (setSlot(null), onSwitch!(neighbour(-1))),
+              next: () => (setSlot(null), onSwitch!(neighbour(1))),
+              prevName: `${getCharacter(neighbour(-1)).name} (LB / Q)`,
+              nextName: `${getCharacter(neighbour(1)).name} (RB / E)`,
+            }
+          : undefined
       }
       tab={tab}
       onTab={setTab}

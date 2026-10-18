@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.102] - 2026-10-18
+
+### Changed
+- **The character sheet is two framed windows side by side** (camp's character page and the in-run sheet):
+  - **Left: the header over the paperdoll.** The header holds the name, CP and Back / ✕.
+  - **Right: the tabs and their panels**, in a window of its own. It starts level with the bottom of the left window's header and joins the left window's edge, with no rounded corners on its left side.
+  - On narrow screens the two stack.
+- **◂ ▸ beside the name** step to the previous / next recruited character, in roster order and wrapping, on the camp character page (`/party/:character`; the address changes and Back returns to the roster). In a run they step through the party, as LB / RB (Q / E) still do; this replaces the names-with-hints line in the header.
+- **Start level is no longer in the camp sheet's header** (it's on the Training tab). The in-run sheet keeps its current level beside the name.
+
 ## [0.2.101] - 2026-10-18
 
 ### Fixed

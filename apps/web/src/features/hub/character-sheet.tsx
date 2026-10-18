@@ -21,13 +21,26 @@ import { AbilityGrid, CharacterModal, Panel, StatBars, StoneMeter, SupportGrid, 
 import { DollFigure, EquipmentList, type PaperdollSlot } from "@/features/gear/paperdoll";
 import { trpc } from "@/utils/trpc";
 
+import { rosterEntries } from "@/features/camp/roster";
+
 import { StarterUpgrades } from "./starter-upgrades";
 
 /**
  * Before a run: the paperdoll (starter gear) on the left; Training (all CP spending), Equipment, Abilities, Support and Record tabs on
  * the right.
  */
-export function CharacterSheet({ build: saved, onClose, inline }: { build: CharacterBuild; onClose(): void; inline?: boolean }) {
+export function CharacterSheet({
+  build: saved,
+  onClose,
+  inline,
+  onSwitch,
+}: {
+  build: CharacterBuild;
+  onClose(): void;
+  inline?: boolean;
+  /** Go to another recruited character's sheet (the ◂ ▸ arrows beside the name). */
+  onSwitch?(key: string): void;
+}) {
   // Show the character as they'll start a run: starter gear in unlocked slots.
   const build = { ...saved, equipment: starterGear(saved) };
   const qc = useQueryClient();
@@ -71,16 +84,26 @@ export function CharacterSheet({ build: saved, onClose, inline }: { build: Chara
     setSlot(s);
     setTab("equipment");
   };
+  // ◂ ▸ beside the name: the previous / next recruited character, in roster order (wrapping).
+  const recruited = profile ? rosterEntries({ ...profile, locked: [] }).map((e) => e.key) : [];
+  const at = recruited.indexOf(build.key);
+  const neighbour = (d: 1 | -1) => recruited[(at + d + recruited.length) % recruited.length]!;
+  const cycle =
+    onSwitch && at >= 0 && recruited.length > 1
+      ? {
+          prev: () => onSwitch(neighbour(-1)),
+          next: () => onSwitch(neighbour(1)),
+          prevName: getCharacter(neighbour(-1)).name,
+          nextName: getCharacter(neighbour(1)).name,
+        }
+      : undefined;
 
   return (
     <CharacterModal
       inline={inline}
-      title={
-        <>
-          {char.name} <span className="ff-title text-base">Start Lv {build.level}</span>
-        </>
-      }
+      title={char.name}
       headerRight={<span className="rounded border border-yellow-200/50 bg-black/30 px-2 py-0.5 text-lg text-yellow-200">{points} CP</span>}
+      cycle={cycle}
       onClose={onClose}
       tab={tab}
       onTab={setTab}
