@@ -419,6 +419,8 @@ export class BattleScene extends Phaser.Scene {
     }
     const scene = state.scene ? bestiary.scenes.find((s) => s.id === state.scene) : undefined;
     for (const uid of scene?.attacks ?? []) if (uid >= 0) ids.add(2000 + uid);
+    // Items in the bag (an item's battle action id is minus its item id).
+    for (const c of state.inventory ?? []) if (c.count > 0) ids.add(-c.itemId);
     preloadEffects(
       this,
       ids,

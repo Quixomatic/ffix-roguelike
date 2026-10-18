@@ -3,7 +3,7 @@
 /**
  * seed-ability-effects — first pass of FF9 move → FFRK effect assignments (`src/features/effects/ability-effects.json`).
  *
- * Every FF9 move (party abilities "a:<id>", monster attacks "e:<index>") whose name is also an FFRK ability name in
+ * Every FF9 move (party abilities "a:<id>", monster attacks "e:<index>", battle items "i:<item id>") whose name is also an FFRK ability name in
  * `effects/catalog.json` gets that ability's recipe: the exact launch/shot/hit files FFRK played (captured game data),
  * or — for named effects without captured files — the hit file in the effect's own folder. Existing assignments
  * (made or corrected in the /effects gallery) are never overwritten. Run after `ffrk:effect-names` / `ffrk:effects`.
@@ -45,7 +45,13 @@ for (const [id, e] of Object.entries(catalog).sort((a, b) => Number(a[0]) - Numb
 
 const actions = JSON.parse(readFileSync(join(SEED, "actions.json"), "utf8")) as { id: number; name: string }[];
 const bestiary = JSON.parse(readFileSync(join(SEED, "bestiary.json"), "utf8")) as { actions: { uid: number; name: string }[] };
-const moves = [...actions.map((a) => ({ key: `a:${a.id}`, name: a.name })), ...bestiary.actions.map((a) => ({ key: `e:${a.uid}`, name: a.name }))];
+const items = JSON.parse(readFileSync(join(SEED, "items.json"), "utf8")) as { id: number; name: string; kind: string; effect?: unknown }[];
+const moves = [
+  ...actions.map((a) => ({ key: `a:${a.id}`, name: a.name })),
+  ...bestiary.actions.map((a) => ({ key: `e:${a.uid}`, name: a.name })),
+  // Battle items (consumables with an effect).
+  ...items.filter((i) => i.kind === "item" && i.effect).map((i) => ({ key: `i:${i.id}`, name: i.name })),
+];
 
 /** Names too generic to match by: plain attacks get their weapon's hit effect instead. */
 const SKIP = new Set(["attack"]);

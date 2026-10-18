@@ -1,10 +1,10 @@
-import { actions, bestiary, characters, type FF9EnemyAction } from "@ffix-roguelike/game-data";
+import { actions, bestiary, characters, items as allItems, type FF9EnemyAction } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import initialMap from "./ability-effects.json";
 import { EffectStage } from "./effect-stage";
-import { monsterDefault, PARTY_ATTACK } from "./effect-recipes";
+import { itemDefault, monsterDefault, PARTY_ATTACK } from "./effect-recipes";
 import { EFFECT_BASE } from "./ffrk-effect";
 import { ALL_CANDIDATES } from "./move-candidates";
 import { folderRecipe } from "./spell-candidates";
@@ -41,7 +41,7 @@ interface Item {
 interface Move {
   id: string;
   name: string;
-  kind: "Party" | "Enemy";
+  kind: "Party" | "Enemy" | "Item";
   keys: string[];
   /** Party: the command it's under ("Blue Magic", "Sword Art"…); enemies: "Monster". */
   group: string;
@@ -61,7 +61,7 @@ const STATUS: Record<Status, { label: string; className: string }> = {
   staging: { label: "staging (plays nothing)", className: "opacity-50" },
 };
 /** Monster defaults by their hit folder, to say what a move falls back to. */
-const DEFAULT_NAMES: Record<string, string> = { "30051": "claw swipe", "20302": "status sparkle", "50220": "bite" };
+const DEFAULT_NAMES: Record<string, string> = { "30051": "claw swipe", "20302": "status sparkle", "50220": "bite", "20000": "heal sparkle", "20003": "big heal burst", "20004": "light cure", "20010": "raise", "20303": "stone cure" };
 
 const PHASE_ORDER = ["launch", "shot", "hit"];
 const phaseSort = (a: string, b: string) => {
@@ -92,7 +92,11 @@ function useMoves(): Move[] {
       // Copies can differ (one staged, one real): show the one that plays something.
       enemy: list.find((a) => monsterDefault(a)) ?? list[0],
     }));
-    return [...party, ...enemy];
+    // Battle items: each its own move ("i:<item id>").
+    const items: Move[] = allItems
+      .filter((i) => i.kind === "item" && i.effect)
+      .map((i) => ({ id: `i:${i.id}`, name: i.name, kind: "Item", keys: [`i:${i.id}`], group: "Item", command: true, staging: false }));
+    return [...party, ...enemy, ...items];
   }, []);
 }
 
@@ -124,7 +128,7 @@ export function EffectsGallery() {
   const [tab, setTab] = useState<Tab>("todo");
   const [filter, setFilter] = useState("");
   const [onlyUnmapped, setOnlyUnmapped] = useState(true);
-  const [side, setSide] = useState<"both" | "Party" | "Enemy">("both");
+  const [side, setSide] = useState<"both" | "Party" | "Enemy" | "Item">("both");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [targetId, setTargetId] = useState<string | null>(null);
   const [phase, setPhase] = useState<string>("hit");
@@ -137,11 +141,12 @@ export function EffectsGallery() {
     if (n === m.keys.length) return "mapped";
     if (n > 0) return "partial";
     if (m.staging) return "staging";
-    return m.enemy && monsterDefault(m.enemy) ? "default" : "missing";
+    return defaultOf(m) ? "default" : "missing";
   };
-  /** What a move plays now: its assignment, else (monsters) the generic default. */
-  const currentRecipe = (m: Move): Record<string, string> | null =>
-    m.keys.map((k) => map.abilities[k]?.phases).find(Boolean) ?? (m.enemy ? monsterDefault(m.enemy) : null);
+  /** A move's generic default: monsters' by what the move is, items' by what the item does. */
+  const defaultOf = (m: Move) => (m.enemy ? monsterDefault(m.enemy) : m.kind === "Item" ? itemDefault(Number(m.id.slice(2))) : null);
+  /** What a move plays now: its assignment, else the generic default (monsters, items). */
+  const currentRecipe = (m: Move): Record<string, string> | null => m.keys.map((k) => map.abilities[k]?.phases).find(Boolean) ?? defaultOf(m);
   const describe = (m: Move): string => {
     const s = statusOf(m);
     if (s === "default") {
@@ -301,7 +306,7 @@ export function EffectsGallery() {
                 All
               </button>
               <span className="mx-1 opacity-30">|</span>
-              {(["both", "Party", "Enemy"] as const).map((s) => (
+              {(["both", "Party", "Enemy", "Item"] as const).map((s) => (
                 <button key={s} className="ff-option px-1.5 data-[on=true]:text-yellow-200" data-on={side === s} onClick={() => setSide(s)}>
                   {s === "both" ? "Both" : s}
                 </button>
@@ -315,7 +320,7 @@ export function EffectsGallery() {
               {todo.map((m) => (
                 <button key={m.id} className="flex w-full flex-col rounded px-1.5 py-0.5 text-left hover:bg-white/10 data-[on=true]:bg-yellow-300/20" data-on={targetId === m.id} onClick={() => pickTarget(m)}>
                   <span className="truncate text-sm">
-                    {m.name} <span className="text-xs opacity-50">{m.kind === "Party" ? m.group : `Monster${m.keys.length > 1 ? ` ×${m.keys.length}` : ""}`}</span>
+                    {m.name} <span className="text-xs opacity-50">{m.kind !== "Enemy" ? m.group : `Monster${m.keys.length > 1 ? ` ×${m.keys.length}` : ""}`}</span>
                   </span>
                   <span className={`truncate text-xs ${STATUS[statusOf(m)].className}`}>{describe(m)}</span>
                 </button>
@@ -369,7 +374,7 @@ export function EffectsGallery() {
               </button>
             </div>
             <span className="text-xs opacity-70">
-              {target.kind === "Party" ? target.group : `Monster move${target.keys.length > 1 ? ` (${target.keys.length} copies)` : ""}`}
+              {target.kind !== "Enemy" ? target.group : `Monster move${target.keys.length > 1 ? ` (${target.keys.length} copies)` : ""}`}
               {keysNamed(target.name).length > target.keys.length ? " · also used by the other side — assigning covers both" : ""}
             </span>
             <span className={`text-xs ${STATUS[statusOf(target)].className}`}>{describe(target)}</span>

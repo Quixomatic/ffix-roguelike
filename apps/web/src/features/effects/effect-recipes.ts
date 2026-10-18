@@ -3,7 +3,7 @@
  * monster moves nobody has assigned. Pure data (no Phaser) so build scripts can list the files the game uses
  * (`usedEffectPaths` → e.g. which sounds to download).
  */
-import type { FF9EnemyAction } from "@ffix-roguelike/game-data";
+import { findItem, type FF9EnemyAction } from "@ffix-roguelike/game-data";
 
 import effectMap from "./ability-effects.json";
 
@@ -98,8 +98,38 @@ export function monsterDefault(a: FF9EnemyAction | undefined): Recipe | null {
   return D.claw;
 }
 
-/** Every effect file the game can play: gallery assignments, weapon attacks and the monster defaults. */
+// ---------- defaults for items without an assignment ----------
+
+/** FFRK's item / white-magic family (20xxx) by what an FF9 item does. */
+const ITEM_D = {
+  potion: fx("ab/ability/20000/20000_hit.json"), // carele heal sprite
+  ether: fx("ab/ability/20004/20004_hit.json", "ab/ability/20004/20004_launch.json", "ab/ability/20004/20004_shot.json"), // light cure
+  elixir: fx("ab/ability/20003/20003_hit.json"), // carelega burst
+  revive: fx("ab/ability/20010/20010_hit.json", LAUNCH.none, "ab/ability/20010/20010_shot.json"), // raise-type with a shot
+  cure: fx("ab/ability/20302/20302_hit.json"), // FFRK's Eye Drops sparkle
+  stone: fx("ab/ability/20303/20303_hit.json"), // stone-cure art
+};
+
+/**
+ * A default effect for an FF9 item nobody has assigned (keyed "i:<item id>" when assigned), from its FF9 item script:
+ * heals sparkle, Ether glows, Elixir bursts, Phoenix Down raises, status cures sparkle, Soft breaks stone, attack items
+ * (Dead Pepper, Ore) play fire / a falling rock.
+ */
+export function itemDefault(itemId: number): Recipe | null {
+  const s = findItem(itemId)?.effect?.scriptId;
+  if (s == null) return null;
+  if (s === 69) return ITEM_D.potion;
+  if (s === 70) return ITEM_D.ether;
+  if (s === 71) return ITEM_D.elixir;
+  if (s === 72) return ITEM_D.revive;
+  if (s === 62) return ITEM_D.stone;
+  if (s === 75) return D.fire;
+  if (s === 74) return D.meteor;
+  return ITEM_D.cure;
+}
+
+/** Every effect file the game can play: gallery assignments, weapon attacks and the monster and item defaults. */
 export function usedEffectPaths(): string[] {
-  const recipes = [...Object.values(MAP).map((a) => a.phases), ...Object.values(WEAPON_EFFECTS), MONSTER_WEAPON, ...Object.values(D)];
+  const recipes = [...Object.values(MAP).map((a) => a.phases), ...Object.values(WEAPON_EFFECTS), MONSTER_WEAPON, ...Object.values(D), ...Object.values(ITEM_D)];
   return [...new Set(recipes.flatMap((r) => Object.values(r)))].sort();
 }

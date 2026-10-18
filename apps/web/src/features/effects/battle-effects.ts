@@ -7,15 +7,17 @@
 import { bestiary } from "@ffix-roguelike/game-data";
 import type Phaser from "phaser";
 
-import { FF9_ACTION_BASE, MAP, monsterDefault, MONSTER_ATTACK, MONSTER_WEAPON, PARTY_ATTACK, weapon, WEAPON_EFFECTS, type Recipe } from "./effect-recipes";
+import { FF9_ACTION_BASE, itemDefault, MAP, monsterDefault, MONSTER_ATTACK, MONSTER_WEAPON, PARTY_ATTACK, weapon, WEAPON_EFFECTS, type Recipe } from "./effect-recipes";
 import { FfrkEffectPlayer, loadEffect, type EffectAsset } from "./ffrk-effect";
 
 /**
- * The effect recipe for a battle action (party abilities "a:<id>", FF9 monster attacks "e:<index>"); plain attacks
- * use the attacker's weapon effect (`actorSprite` = the unit's sprite key, e.g. "hero/vivi").
+ * The effect recipe for a battle action (party abilities "a:<id>", FF9 monster attacks "e:<index>", items "i:<item id>"
+ * — an item's battle action id is minus its item id); plain attacks use the attacker's weapon effect (`actorSprite` =
+ * the unit's sprite key, e.g. "hero/vivi").
  */
 export function recipeFor(actionId: number | undefined, actorSprite?: string): Recipe | null {
   if (actionId == null) return null;
+  if (actionId < 0) return MAP[`i:${-actionId}`]?.phases ?? itemDefault(-actionId);
   if (actionId === PARTY_ATTACK) return WEAPON_EFFECTS[actorSprite?.split("/")[1] ?? ""] ?? weapon(30003);
   if (actionId === MONSTER_ATTACK) return MONSTER_WEAPON;
   const key = actionId >= FF9_ACTION_BASE ? `e:${actionId - FF9_ACTION_BASE}` : `a:${actionId}`;

@@ -5351,6 +5351,142 @@
         "shot": "ab/ability/common/shot_empty.json"
       },
       "from": "Fira / Hellfire (FFRK 11001)"
+    },
+    "i:236": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20000/20000_hit.json"
+      },
+      "from": "Potion: FFRK 20000 — carele heal sprite (ケアル): FFRK's potion-tier heal"
+    },
+    "i:237": {
+      "phases": {
+        "hit": "ab/ability/20001/20001_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Hi-Potion (FFRK 20001)"
+    },
+    "i:238": {
+      "phases": {
+        "launch": "ab/ability/20004/20004_launch.json",
+        "shot": "ab/ability/20004/20004_shot.json",
+        "hit": "ab/ability/20004/20004_hit.json"
+      },
+      "from": "Ether: FFRK 20004 — light cure, own launch/shot"
+    },
+    "i:239": {
+      "phases": {
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20001/20001_hit.json"
+      },
+      "from": "Elixir: FFRK 20001 — carelela sparkle"
+    },
+    "i:240": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/20010/20010_shot.json",
+        "hit": "ab/ability/20010/20010_hit.json"
+      },
+      "from": "Phoenix Down: FFRK 20010 — raise-type heal with a shot"
+    },
+    "i:241": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20302/20302_hit.json"
+      },
+      "from": "Echo Screen: FFRK 20302 — FFRK's Eye Drops sparkle (status cure)"
+    },
+    "i:242": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20303/20303_hit.json"
+      },
+      "from": "Soft: FFRK 20303 — stone art in the status-cure range"
+    },
+    "i:243": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20301/20301_hit.json"
+      },
+      "from": "Antidote: FFRK 20301 — poisona hit (ポイゾナ = cure poison)"
+    },
+    "i:244": {
+      "phases": {
+        "hit": "ab/ability/20302/20302_hit.json",
+        "launch": "ab/ability/common/launch_white.json",
+        "shot": "ab/ability/common/shot_empty.json"
+      },
+      "from": "Eye Drops (FFRK 20302)"
+    },
+    "i:245": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20302/20302_hit.json"
+      },
+      "from": "Magic Tag: FFRK 20302 — status-cure sparkle"
+    },
+    "i:246": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20301/20301_hit.json"
+      },
+      "from": "Vaccine: FFRK 20301 — poisona-style cure"
+    },
+    "i:247": {
+      "phases": {
+        "launch": "ab/ability/20005/20005_launch.json",
+        "shot": "ab/ability/20005/20005_shot.json",
+        "hit": "ab/ability/20005/20005_hit.json"
+      },
+      "from": "Remedy: FFRK 20005 — water-drop cure (Esuna-like), own launch/shot"
+    },
+    "i:248": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20302/20302_hit.json"
+      },
+      "from": "Annoyntment: FFRK 20302 — status-cure sparkle"
+    },
+    "i:251": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/20302/20302_hit.json"
+      },
+      "from": "Gysahl Greens: FFRK 20302 — status-cure sparkle"
+    },
+    "i:252": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/11001/11001_hit.json"
+      },
+      "from": "Dead Pepper: FFRK 11001 — fire burst (it's a hot pepper)"
+    },
+    "i:253": {
+      "phases": {
+        "launch": "ab/ability/20006/20006_launch.json",
+        "shot": "ab/ability/20006/20006_shot.json",
+        "hit": "ab/ability/20006/20006_hit.json"
+      },
+      "from": "Tent: FFRK 20006 — water-drop cure"
+    },
+    "i:254": {
+      "phases": {
+        "launch": "ab/ability/common/launch_empty.json",
+        "shot": "ab/ability/common/shot_empty.json",
+        "hit": "ab/ability/19020/19020_hit.json"
+      },
+      "from": "Ore: FFRK 19020 — a falling rock (Comet)"
     }
   }
 }

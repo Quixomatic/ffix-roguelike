@@ -11,6 +11,7 @@
  * FFRK's own same-purpose abilities (Armor/Magic Break, Boost, Blade Bash, Intimidate, Bite, Body Slam); and the
  * spell families (skull = death, sludge = poison, wind/tornado, water/ice tiers).
  */
+import { ITEM_CANDIDATES } from "./item-candidates";
 import { c, SPELL_CANDIDATES, type SpellCandidates } from "./spell-candidates";
 
 export const MOVE_CANDIDATES: SpellCandidates[] = [
@@ -142,5 +143,5 @@ function monster(names: string[], candidates: ReturnType<typeof c>[], school: Sp
   return names.map((name) => ({ group: "Monster", name, school, candidates }));
 }
 
-/** Spells first, then the other commands — what `effects:seed` and the gallery's "FF9 moves" tab go through. */
-export const ALL_CANDIDATES: SpellCandidates[] = [...SPELL_CANDIDATES.map((s) => ({ group: "Magic", ...s })), ...MOVE_CANDIDATES];
+/** Spells first, then the other commands, then items — what `effects:seed` and the gallery's candidates go through. */
+export const ALL_CANDIDATES: SpellCandidates[] = [...SPELL_CANDIDATES.map((s) => ({ group: "Magic", ...s })), ...MOVE_CANDIDATES, ...ITEM_CANDIDATES];

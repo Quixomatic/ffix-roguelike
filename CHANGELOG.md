@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.73] - 2026-10-18
+
+Battle items play FFRK effects, mapped the same way as spells and monster moves.
+
+### Added
+- **Item effects** (keys `i:<item id>` in the effect map; an item's battle action is minus its item id):
+  - **Candidates** (`features/effects/item-candidates.ts`) for all 17 FF9 battle items, from FFRK's item / white-magic family (20xxx). For example, 20000 is the carele (ケアル) heal sprite; 20001 is FFRK's own Hi-Potion; 20004 is a light cure; 20005 / 20006 are water-drop cures; 20010 is a raise with a flying shot; 20301 is poisona (ポイゾナ); 20302 is FFRK's Eye Drops; and 20303 is stone art. Dead Pepper plays fire, and Ore a falling rock.
+  - **`pnpm -F web effects:seed`** now covers battle items too and assigned all 17. Two more moves also matched FFRK names (679 assignments in all). Assignments made in the gallery are never overwritten.
+  - **Defaults by what the item does** (`itemDefault`, from its FF9 item script) for anything unassigned: heals sparkle, Ether glows, Elixir bursts, Phoenix Down raises, status cures sparkle, Soft breaks stone.
+  - **In battle**: using an item plays its effect, with the numbers waiting for the hit like spells. A fight preloads the effects of the items in the bag.
+  - **Effects gallery**: "To map" lists the items under a new **Item** filter (beside Party / Enemy / Both), with what each plays now and its candidates.
+- The effects asset pack is rebuilt and uploaded to R2 with the item effects.
+
 ## [0.2.72] - 2026-10-17
 
 Targeted rewards, step 8 (first balance pass): rarer gear cards are actually better gear, and there's a sim report for tuning offers.
