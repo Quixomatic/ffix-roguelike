@@ -1,10 +1,11 @@
-import { WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
+import { ACHIEVEMENTS, effectivePrice, JOURNEYS, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
   bandStepsOf,
   BOON_STATS,
   CARD_TYPES,
   getCharacter,
   getItem,
+  items,
   MAIN_CAST,
   RARITIES,
   REWARD_SOURCES,
@@ -17,6 +18,7 @@ import {
   type RewardSource,
   type RewardSourceId,
   type RewardTables,
+  type StarterUpgrade,
 } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type ReactNode } from "react";
@@ -33,9 +35,10 @@ import { trpc } from "@/utils/trpc";
  * reward cards' rules, the boons, the rarities, and what each character values. Every save goes live at once (the
  * next offer, drop pool and catalog use it). Export writes the tables into the repo's seed files to commit them.
  */
-type Tab = "gear" | "boons" | "sources" | "rarities" | "roles" | "preview";
+type Tab = "gear" | "starter" | "boons" | "sources" | "rarities" | "roles" | "preview";
 const TABS: { id: Tab; label: string }[] = [
   { id: "gear", label: "Gear availability" },
+  { id: "starter", label: "Starter gear" },
   { id: "boons", label: "Boons" },
   { id: "sources", label: "Sources" },
   { id: "rarities", label: "Rarities" },
@@ -82,6 +85,8 @@ export function RewardsAdminPage() {
         <div className="ff-window p-4">{tables.error ? tables.error.message : "Loading…"}</div>
       ) : tab === "gear" ? (
         <GearTab tables={tables.data} />
+      ) : tab === "starter" ? (
+        <StarterTab tables={tables.data} />
       ) : tab === "boons" ? (
         <BoonsTab tables={tables.data} />
       ) : tab === "sources" ? (
@@ -620,4 +625,226 @@ function PreviewCard({ card }: { card: RewardCard }) {
     case "gil":
       return <span>+{card.amount} gil</span>;
   }
+}
+
+// ── starting-gear upgrades ─────────────────────────────────────────────────────────────────────────────────────────
+
+const SLOTS = ["weapon", "head", "wrist", "armor", "accessory"] as const;
+type UpgradeSlot = (typeof SLOTS)[number];
+const SLOT_LABEL: Record<UpgradeSlot, string> = { weapon: "Weapon", head: "Head", wrist: "Arm", armor: "Body", accessory: "Accessory" };
+const TIER_DEFAULTS = { cp: [5, 10, 20], level: [5, 10, 15] };
+type TierPick = { character: string; slot: UpgradeSlot; tier: number };
+
+/** Gear a character can wear in a slot, weakest (cheapest) first. */
+function wearable(character: string, slot: string) {
+  return items.filter((i) => i.kind === slot && i.equippableBy.includes(character)).sort((a, b) => effectivePrice(a) - effectivePrice(b));
+}
+
+/** Each character's upgrade chains (`.plans/starter-upgrades.md`): pick a tier to edit, or add the next one. */
+function StarterTab({ tables }: { tables: RewardTables }) {
+  const [who, setWho] = useState("zidane");
+  const [pick, setPick] = useState<TierPick | null>(null);
+  const chain = (slot: UpgradeSlot) => (tables.starter ?? []).filter((u) => u.character === who && u.slot === slot).sort((a, b) => a.tier - b.tier);
+  const ff9 = getCharacter(who).defaultEquipment;
+  const current = pick ? (tables.starter ?? []).find((u) => u.character === pick.character && u.slot === pick.slot && u.tier === pick.tier) : undefined;
+  const editing: StarterUpgrade | null = pick
+    ? (current ?? {
+        id: "",
+        character: pick.character,
+        slot: pick.slot,
+        tier: pick.tier,
+        itemId: wearable(pick.character, pick.slot)[0]?.id ?? 0,
+        name: "",
+        gil: 0,
+        cp: TIER_DEFAULTS.cp[pick.tier - 1] ?? 20,
+        minStartLevel: TIER_DEFAULTS.level[pick.tier - 1] ?? 15,
+        requires: null,
+        enabled: true,
+      })
+    : null;
+  return (
+    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_26rem]">
+      <div className="ff-window flex flex-col gap-3 p-3">
+        <div className="flex flex-wrap gap-1">
+          {CHARACTERS.map((k) => (
+            <FocusItem key={k}>
+              <button
+                className={`rounded px-2 py-0.5 text-sm ${who === k ? "bg-white/15 text-yellow-200" : "opacity-75 hover:bg-white/10"}`}
+                onClick={() => {
+                  setWho(k);
+                  setPick(null);
+                }}
+              >
+                {getCharacter(k).name}
+              </button>
+            </FocusItem>
+          ))}
+        </div>
+        <div className="text-xs opacity-70">
+          Tier I → II → III per slot, replacing the FF9 piece runs start with. A tier needs its item unlocked for good, the start level and any
+          requirement, and costs banked gil plus the character&apos;s CP. Pick a tier to edit it, or + to add the next one.
+        </div>
+        {SLOTS.map((slot) => {
+          const tiers = chain(slot);
+          const first = ff9[slot];
+          return (
+            <div key={slot} className="flex items-center gap-2">
+              <span className="ff-title w-20 shrink-0 text-sm">{SLOT_LABEL[slot]}</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded border border-white/15 bg-black/30" title="FF9 starting piece">
+                {first != null ? <ItemIcon itemId={first} size={32} /> : <span className="opacity-40">—</span>}
+              </span>
+              {tiers.map((u) => (
+                <span key={u.id} className="flex items-center gap-2">
+                  <span className="opacity-50">→</span>
+                  <FocusItem>
+                    <button
+                      title={`Tier ${u.tier}: ${u.name} · ${u.gil} gil · ${u.cp} CP · Lv ${u.minStartLevel}`}
+                      className={`flex h-11 w-11 items-center justify-center rounded border-2 bg-[#0c1238] ${
+                        pick?.character === who && pick.slot === slot && pick.tier === u.tier ? "border-yellow-200" : "border-white/20"
+                      } ${u.enabled ? "" : "opacity-40"}`}
+                      onClick={() => setPick({ character: who, slot, tier: u.tier })}
+                    >
+                      <ItemIcon itemId={u.itemId} size={32} />
+                    </button>
+                  </FocusItem>
+                </span>
+              ))}
+              <FocusItem>
+                <button
+                  className="flex h-11 w-11 items-center justify-center rounded border-2 border-dashed border-white/25 text-xl opacity-70 hover:opacity-100"
+                  title="Add the next tier"
+                  onClick={() => setPick({ character: who, slot, tier: tiers.length + 1 })}
+                >
+                  +
+                </button>
+              </FocusItem>
+            </div>
+          );
+        })}
+      </div>
+      {editing ? (
+        <StarterEditor
+          key={`${editing.character}:${editing.slot}:${editing.tier}`}
+          upgrade={editing}
+          isNew={!current}
+          isLast={editing.tier === chain(editing.slot).length}
+          onRemoved={() => setPick(null)}
+        />
+      ) : (
+        <div className="ff-window p-4 text-sm opacity-70">Pick a tier to edit, or + to add one.</div>
+      )}
+    </div>
+  );
+}
+
+function StarterEditor({ upgrade, isNew, isLast, onRemoved }: { upgrade: StarterUpgrade; isNew: boolean; isLast: boolean; onRemoved(): void }) {
+  const options = wearable(upgrade.character, upgrade.slot);
+  const [d, setD] = useState<StarterUpgrade>(() => (isNew && !upgrade.gil && upgrade.itemId ? { ...upgrade, gil: effectivePrice(getItem(upgrade.itemId)) * 3 } : upgrade));
+  const label = `${getCharacter(upgrade.character).name} ${SLOT_LABEL[upgrade.slot]} tier ${upgrade.tier}`;
+  const saved = useSaved(label);
+  const save = useMutation(trpc.admin.saveStarterUpgrade.mutationOptions(saved));
+  const remove = useMutation(
+    trpc.admin.deleteStarterUpgrade.mutationOptions({
+      ...saved,
+      onSuccess: () => {
+        saved.onSuccess();
+        onRemoved();
+      },
+    }),
+  );
+  const item = d.itemId ? getItem(d.itemId) : null;
+  return (
+    <div className="ff-window flex flex-col gap-3 p-3">
+      <div className="flex items-center gap-2">
+        {item && <ItemIcon itemId={item.id} size={40} />}
+        <div>
+          <div className="ff-display text-lg">
+            {label}
+            {isNew && <span className="ml-2 text-xs text-yellow-200">new</span>}
+          </div>
+          {item && (
+            <div className="text-xs opacity-70">
+              {item.name} · {item.price} gil in FF9
+            </div>
+          )}
+        </div>
+      </div>
+      <Field label="Item">
+        <FocusItem>
+          <select
+            className={`${inputCls} w-full`}
+            value={d.itemId}
+            onChange={(e) => {
+              const itemId = Number(e.target.value);
+              setD({ ...d, itemId, gil: isNew ? effectivePrice(getItem(itemId)) * 3 : d.gil });
+            }}
+          >
+            {options.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.name} · {effectivePrice(i)} gil
+              </option>
+            ))}
+          </select>
+        </FocusItem>
+      </Field>
+      <div className="grid grid-cols-3 gap-2">
+        <Field label="Gil (banked)">
+          <Num value={d.gil} onChange={(v) => setD({ ...d, gil: v ?? 0 })} />
+        </Field>
+        <Field label="CP">
+          <Num value={d.cp} onChange={(v) => setD({ ...d, cp: v ?? 0 })} />
+        </Field>
+        <Field label="Min start level">
+          <Num value={d.minStartLevel} onChange={(v) => setD({ ...d, minStartLevel: v ?? 1 })} />
+        </Field>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Requires journey cleared">
+          <Select
+            value={d.requires?.journey ?? "none"}
+            options={["none", ...JOURNEYS.map((j) => j.id)]}
+            onChange={(v) => setD({ ...d, requires: { ...d.requires, journey: v === "none" ? undefined : v } })}
+          />
+        </Field>
+        <Field label="Requires achievement">
+          <Select
+            value={d.requires?.achievement ?? "none"}
+            options={["none", ...ACHIEVEMENTS.map((a) => a.id)]}
+            onChange={(v) => setD({ ...d, requires: { ...d.requires, achievement: v === "none" ? undefined : v } })}
+          />
+        </Field>
+      </div>
+      <Check label="Enabled" checked={d.enabled} onChange={(enabled) => setD({ ...d, enabled })} />
+      <Field label="Notes" wide>
+        <Text value={d.notes} onChange={(notes) => setD({ ...d, notes: notes || undefined })} />
+      </Field>
+      <div className="flex gap-2">
+        <SaveButton
+          pending={save.isPending}
+          label={isNew ? "Add tier" : "Save"}
+          onClick={() =>
+            save.mutate({
+              character: d.character,
+              slot: d.slot,
+              tier: d.tier,
+              itemId: d.itemId,
+              gil: d.gil,
+              cp: d.cp,
+              minStartLevel: d.minStartLevel,
+              requires: d.requires ?? null,
+              enabled: d.enabled,
+              notes: d.notes,
+            })
+          }
+        />
+        {!isNew && isLast && (
+          <FocusItem>
+            <button className="rounded px-3 py-1 text-sm text-red-300 hover:bg-red-900/30" disabled={remove.isPending} onClick={() => remove.mutate({ id: upgrade.id })}>
+              Remove tier
+            </button>
+          </FocusItem>
+        )}
+      </div>
+    </div>
+  );
 }

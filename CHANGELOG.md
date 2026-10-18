@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.88] - 2026-10-18
+
+Starting-gear upgrades, step 3: the chains are managed on the admin page.
+
+### Added
+- **Admin → Rewards & gear → Starter gear** tab.
+  - Pick a character to see each slot's chain as icon tiles: the FF9 piece, then each tier.
+  - Pick a tier to edit it, or **+** to add the next one. The editor has:
+    - the item: only what that character can wear in that slot, cheapest first, with prices
+    - gil (defaults to 3× the FF9 price), CP and minimum start level (defaults 5 / 10 / 20 CP and Lv 5 / 10 / 15 by tier)
+    - a journey to have cleared and / or an achievement to have earned
+    - enabled, notes
+  - **Remove tier** works on a chain's last tier only, so tiers stay I, II, III with no gaps.
+  - Saves go live at once, like the other tables, and **Export to seed files** includes `starter-upgrades.json`.
+- API: `admin.saveStarterUpgrade` and `admin.deleteStarterUpgrade` (zod).
+  - The server checks the character exists, the piece is that slot's kind and the character can wear it, the tier leaves no gap, and the journey / achievement exists.
+
 ## [0.2.87] - 2026-10-18
 
 Starting-gear upgrades, step 2: the character page's Equipment tab replaces the "coming soon" stub.

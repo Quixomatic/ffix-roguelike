@@ -5,8 +5,8 @@
  * files (development servers only) so tuning can be committed.
  */
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
-import { newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
-import { BOON_STATS, CARD_TYPES, RARITIES, REWARD_SOURCES, ROLE_STATS } from "@ffix-roguelike/game-data";
+import { ACHIEVEMENTS, JOURNEYS, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
+import { BOON_STATS, CARD_TYPES, characters, items, RARITIES, rewardTables, REWARD_SOURCES, ROLE_STATS } from "@ffix-roguelike/game-data";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -74,6 +74,21 @@ export const gearInput = z.object({
   notes: z.string().max(500).optional(),
 });
 
+export const starterInput = z.object({
+  character: z.string().min(1).max(20),
+  slot: z.enum(["weapon", "head", "wrist", "armor", "accessory"]),
+  tier: z.number().int().min(1).max(9),
+  itemId: z.number().int(),
+  gil: z.number().int().min(0).max(10_000_000),
+  cp: z.number().int().min(0).max(9999),
+  minStartLevel: z.number().int().min(1).max(99),
+  requires: z.object({ journey: z.string().max(40).optional(), achievement: z.string().max(60).optional() }).nullable().optional(),
+  enabled: z.boolean(),
+  notes: z.string().max(500).optional(),
+});
+
+const bad = (message: string) => new TRPCError({ code: "BAD_REQUEST", message });
+
 export const adminRouter = router({
   /** All the reward tables as they are in the database. */
   rewardTables: adminProcedure.query(({ ctx }) => ensureRewardContent(ctx.db)),
@@ -111,6 +126,40 @@ export const adminRouter = router({
       create: { itemId: input.itemId, name: input.name, enabled: input.enabled, data: input },
       update: { name: input.name, enabled: input.enabled, data: input },
     });
+    return reloadRewardContent(ctx.db);
+  }),
+
+  /**
+   * Save one starting-gear upgrade tier (`.plans/starter-upgrades.md`). The item must be that slot's kind and wearable
+   * by the character; tiers stay 1..n with no gaps (a new tier is the next number).
+   */
+  saveStarterUpgrade: adminProcedure.input(starterInput).mutation(async ({ ctx, input }) => {
+    const ch = characters.find((c) => c.key === input.character);
+    if (!ch) throw bad(`Unknown character ${input.character}`);
+    const item = items.find((i) => i.id === input.itemId);
+    if (!item) throw bad("Unknown item");
+    if (item.kind !== input.slot || !item.equippableBy.includes(ch.key)) throw bad(`${ch.name} can't wear ${item.name} as their ${input.slot}`);
+    const chain = (rewardTables().starter ?? []).filter((u) => u.character === input.character && u.slot === input.slot);
+    if (input.tier > chain.length + 1 && !chain.some((u) => u.tier === input.tier)) throw bad(`Tier ${input.tier} would leave a gap (the chain has ${chain.length})`);
+    if (input.requires?.journey && !JOURNEYS.some((j) => j.id === input.requires!.journey)) throw bad("Unknown journey");
+    if (input.requires?.achievement && !ACHIEVEMENTS.some((a) => a.id === input.requires!.achievement)) throw bad("Unknown achievement");
+    const id = `${input.character}:${input.slot}:${input.tier}`;
+    const requires = input.requires?.journey || input.requires?.achievement ? input.requires : null;
+    const data = { ...input, id, name: item.name, requires };
+    await ctx.db.starterUpgrade.upsert({
+      where: { id },
+      create: { id, character: input.character, slot: input.slot, tier: input.tier, enabled: input.enabled, data },
+      update: { enabled: input.enabled, data },
+    });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Remove a chain's last tier (only the last, so tiers stay 1..n; players who owned it keep their tier count, capped by the chain). */
+  deleteStarterUpgrade: adminProcedure.input(z.object({ id: z.string().max(60) })).mutation(async ({ ctx, input }) => {
+    const row = (rewardTables().starter ?? []).find((u) => u.id === input.id);
+    if (!row) throw bad("No such tier");
+    const last = Math.max(...rewardTables().starter.filter((u) => u.character === row.character && u.slot === row.slot).map((u) => u.tier));
+    if (row.tier !== last) throw bad("Only the last tier of a chain can be removed");
+    await ctx.db.starterUpgrade.delete({ where: { id: input.id } });
     return reloadRewardContent(ctx.db);
   }),
 
