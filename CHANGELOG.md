@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.111] - 2026-10-18
+
+### Fixed
+- **The Achievements page couldn't be navigated by keyboard / controller**: its cards weren't cursor stops, so there was nothing to move between and the page couldn't be scrolled that way. Every achievement card is now a cursor stop: the arrows and D-pad walk the grid category by category, and the page scrolls to keep the cursor in view.
+
 ## [0.2.110] - 2026-10-18
 
 ### Added

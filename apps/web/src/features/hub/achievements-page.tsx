@@ -1,6 +1,7 @@
 import { ACHIEVEMENTS, rewardItemIds, type AchievementCategory } from "@ffix-roguelike/game-core";
 import { useQuery } from "@tanstack/react-query";
 
+import { FocusItem } from "@/features/input/focus";
 import { itemName } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
@@ -36,7 +37,9 @@ export function AchievementsPage() {
               const hidden = a.secret && !done;
               const items = rewardItemIds(a);
               return (
-                <div key={a.id} className={`ff-window flex flex-col gap-1 p-3 ${done ? "" : "opacity-60"}`}>
+                // A cursor stop (keyboard / controller), so the cursor can walk the grid and scroll the page with it.
+                <FocusItem key={a.id}>
+                <button type="button" data-sound="none" className={`ff-window flex cursor-default flex-col gap-1 p-3 text-left ${done ? "" : "opacity-60"}`}>
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-lg">{hidden ? "???" : a.name}</span>
                     <span className="text-xl">{done ? "🏆" : "·"}</span>
@@ -52,7 +55,8 @@ export function AchievementsPage() {
                       .filter(Boolean)
                       .join(" · ")}
                   </div>
-                </div>
+                </button>
+                </FocusItem>
               );
             })}
           </div>
