@@ -320,7 +320,7 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
           {/* A fixed-height footer (FF9's help bar): one line of what it does, two of FF9's description, cut off past that,
               so the menu never changes height as the cursor moves. Hover for the whole text. */}
           <div
-            className="mt-1 h-[3.6rem] overflow-hidden border-t border-white/15 pt-1 text-xs leading-[1.1rem]"
+            className="mt-1 flex h-[3.6rem] shrink-0 flex-col justify-center overflow-hidden border-t border-white/15 pt-1 text-xs leading-[1.1rem]"
             title={[highlighted?.effect, highlighted?.help?.replace(/[{}]/g, "")].filter(Boolean).join("\n")}
           >
             {highlighted?.effect && <div className="truncate text-[#c8d0ff]">{highlighted.effect}</div>}

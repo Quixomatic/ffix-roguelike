@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.92] - 2026-10-18
+
+### Changed
+- **The battle list's help footer is vertically centred**: a one-line description sits in the middle of the fixed-height footer instead of at its top. Long ones still fill it and are cut off as before.
+
 ## [0.2.91] - 2026-10-18
 
 ### Changed
