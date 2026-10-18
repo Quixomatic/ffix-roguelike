@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.101] - 2026-10-18
+
+### Fixed
+- **The breadcrumbs looked bad**: tiny (the small-label style on top of small text), all capitals with wide letter-spacing, one washed-out colour, and faint "›" separators. They're restyled to match the game:
+  - the menu's display font at a normal size, with the usual drop shadow, in normal case
+  - FF9's pixel arrow between steps
+  - links in pale blue that turn white on hover; the current page in yellow
+
 ## [0.2.100] - 2026-10-18
 
 ### Changed
