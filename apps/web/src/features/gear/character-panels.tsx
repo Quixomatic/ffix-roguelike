@@ -342,8 +342,9 @@ export function CharacterModal({
   const current = tabs.find((t) => t.id === tab) ?? tabs[0]!;
   // As a dialog it has the controls (over the map too); Escape / Backspace / B close it.
   useInputOwner("menu", { active: !inline, onCancel: onClose });
+  // Stable focus keys, so stepping to the next character keeps the cursor on the same chevron (`?focus=`).
   const arrow = (dir: "left" | "right", go: () => void, name: string) => (
-    <FocusItem>
+    <FocusItem focusKey={dir === "left" ? "sheet-prev" : "sheet-next"}>
       <button type="button" className="flex h-8 w-8 shrink-0 items-center justify-center rounded opacity-80 hover:bg-white/10 hover:opacity-100" onClick={go} aria-label={name} title={name}>
         {dir === "left" ? <ChevronLeft className="size-6" /> : <ChevronRight className="size-6" />}
       </button>

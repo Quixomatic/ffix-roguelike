@@ -7,7 +7,7 @@ import { PixelIcon } from "@/components/pixel-icon";
 import { ShopContents } from "@/features/hub/camp-shop";
 import { CharacterSheet } from "@/features/hub/character-sheet";
 import { trpc } from "@/utils/trpc";
-import { FocusItem } from "@/features/input/focus";
+import { FocusItem, stableFocusKey } from "@/features/input/focus";
 
 import { GearCatalogGrid } from "./gear-catalog";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
@@ -80,7 +80,8 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
           inline
           build={build}
           onClose={() => navigate({ to: "/party" })}
-          onSwitch={(k) => navigate({ to: "/party/$character", params: { character: k }, replace: true })}
+          // Keep the cursor where it was (the chevron) on the next character's page.
+          onSwitch={(k) => navigate({ to: "/party/$character", params: { character: k }, search: { focus: stableFocusKey() } as never, replace: true })}
         />
       </div>
     </div>

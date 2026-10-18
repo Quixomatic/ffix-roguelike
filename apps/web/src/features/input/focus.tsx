@@ -1,4 +1,4 @@
-import { FocusContext, navigateByDirection, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
+import { FocusContext, getCurrentFocusKey, navigateByDirection, useFocusable, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { cloneElement, createContext, useContext, useEffect, type ReactElement, type Ref, type RefObject } from "react";
 
 import { uiSound } from "@/features/audio/ui-sounds";
@@ -37,6 +37,22 @@ const DisabledContext = createContext(false);
  */
 export const LANDING = { landing: true } as const;
 
+/**
+ * The focus key of a page's `defaultFocus` item: where the cursor lands on arriving, when the address doesn't name
+ * one (`?focus=`). One per page.
+ */
+export const DEFAULT_FOCUS = "page-default";
+
+/**
+ * The cursor's focus key if it's one of ours (an item given a `focusKey`), else undefined — Norigin's generated keys
+ * differ from page to page. Pass it as `search: { focus }` when navigating, so the next page lands on the same control
+ * (e.g. the character sheet's chevrons, stepping from Zidane to Vivi).
+ */
+export function stableFocusKey(): string | undefined {
+  const key = getCurrentFocusKey();
+  return key && !key.startsWith("sn:") ? key : undefined;
+}
+
 /** Something the cursor can land on. Hovering it with the mouse moves the cursor there too, so keys carry on from it. */
 export function FocusItem({
   children,
@@ -44,6 +60,7 @@ export function FocusItem({
   onFocus,
   onArrow,
   skipOnLanding,
+  defaultFocus,
 }: {
   children: ReactElement<ChildProps>;
   focusKey?: string;
@@ -56,10 +73,12 @@ export function FocusItem({
    * content. An arrow press from the content or the mouse still reaches it.
    */
   skipOnLanding?: boolean;
+  /** Where the cursor lands on arriving on the page (unless the address names another with `?focus=`). One per page. */
+  defaultFocus?: boolean;
 }) {
   const disabled = useContext(DisabledContext);
   const { ref, focusSelf, focused } = useFocusable<object, HTMLElement>({
-    focusKey,
+    focusKey: focusKey ?? (defaultFocus ? DEFAULT_FOCUS : undefined),
     focusable: !disabled,
     onArrowPress: onArrow ? (direction) => onArrow(direction) : undefined,
     onFocus: (layout, _props, details) => {

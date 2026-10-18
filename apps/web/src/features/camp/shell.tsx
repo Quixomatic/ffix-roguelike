@@ -10,7 +10,7 @@ import type { ComponentType } from "react";
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { PixelIcon } from "@/components/pixel-icon";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
-import { FocusItem, FocusSection } from "@/features/input/focus";
+import { DEFAULT_FOCUS, FocusItem, FocusSection } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
@@ -122,6 +122,10 @@ export function HubShell() {
   const [open, toggle] = useSidebarOpen();
   // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
   const path = useRouterState({ select: (s) => s.location.pathname });
+  // Where the cursor lands on arriving: the control the address names (`?focus=`, carried over from the last page — e.g.
+  // the character sheet's chevrons), else the page's `defaultFocus` item, else its first item.
+  const urlFocus = useRouterState({ select: (s) => (s.location.search as Record<string, unknown>).focus });
+  const landOn = typeof urlFocus === "string" && urlFocus ? urlFocus : DEFAULT_FOCUS;
   // M / the controller's Start: open or close the menu, and take the cursor (and the controls — over a game too) with
   // it. Cancel (Escape / B) closes it again; a menu that was already out stays out and just gives the controls back.
   const menuClaim = useRef<{ release(): void; opened: boolean } | null>(null);
@@ -175,7 +179,7 @@ export function HubShell() {
         </FocusItem>
         {quickLinks && <QuickLinks />}
         {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
-        <FocusSection focusKey={CONTENT_FOCUS}>
+        <FocusSection focusKey={CONTENT_FOCUS} preferredChild={landOn}>
           <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">
             {/* Room at the top for the menu button (unless the page clears it sideways, like the run). */}
             <MemoriaBackdrop dim={dim} className={topInset ? "pt-10" : ""}>

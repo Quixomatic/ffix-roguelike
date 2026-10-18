@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.108] - 2026-10-18
+
+### Added
+- **The cursor can stay on the same control across a page change** (`?focus=` in the address). Navigating can pass the focused control's key (`stableFocusKey()` in `features/input/focus.tsx`, for controls given a `focusKey`), and the next page lands on that control if it has one.
+  - **The character sheet's chevrons use it:** stepping Zidane → Vivi with ◂ / ▸ keeps the cursor on the chevron, so you can keep stepping instead of starting over on the first item.
+- **`FocusItem defaultFocus`**: marks the control a page lands on when the address doesn't name one. One per page; pages without one start on their first item as before.
+- The hub prefers, in order: the address's `focus`, the page's `defaultFocus` item, its first item.
+
 ## [0.2.107] - 2026-10-18
 
 ### Fixed
