@@ -88,7 +88,7 @@ export function ItemGallery() {
   const tile = (i: ItemData) => <ItemTile key={i.id} item={i} size={size} status={statuses.get(i.id)!} signedIn={!!session} roster={roster} />;
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-3 p-4">
+    <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 pb-24 pt-4">
       <div className="ff-window flex flex-col gap-2 p-3">
         <div className="flex flex-wrap items-center gap-3">
           <span className="ff-display text-2xl">Items</span>

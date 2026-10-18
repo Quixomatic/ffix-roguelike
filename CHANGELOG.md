@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.82] - 2026-10-18
+
+### Fixed
+- **The Items page ended flush with the bottom of the window**: scrolled all the way down, the last row of tiles sat against the edge. It now has 6rem of room below the last section.
+
 ## [0.2.81] - 2026-10-18
 
 ### Changed
