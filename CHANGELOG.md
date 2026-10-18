@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.98] - 2026-10-18
+
+### Fixed
+- **Locked journeys showed an empty footer section.** Only journeys you can play have the footer ("Highest tier cleared" / "Not cleared yet", Choose). A locked card's last row stays empty, so the cards still line up.
+
 ## [0.2.97] - 2026-10-18
 
 ### Changed

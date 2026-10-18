@@ -99,23 +99,26 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
           <span className="text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
         </div>
       )}
-      {/* The footer is its own section of the card: the window's border across it, its gradient starting over. */}
-      <div className="ff-panel-footer -mx-[14px] -mb-[14px] mt-1 flex items-center gap-2 px-4 py-2.5">
-        <span className="flex-1 text-sm">
-          {cleared ? (
-            <>
-              Highest tier cleared: <span className="text-yellow-200">{tierLabel(best)}</span>
-            </>
-          ) : (
-            <span className="opacity-60">{unlocked ? "Not cleared yet" : ""}</span>
-          )}
-        </span>
-        {unlocked && (
+      {/* The footer is its own section of the card: the window's border across it, its gradient starting over. Locked
+          journeys have none (their last row stays empty, so the subgrid rows still line up). */}
+      {unlocked ? (
+        <div className="ff-panel-footer -mx-[14px] -mb-[14px] mt-1 flex items-center gap-2 px-4 py-2.5">
+          <span className="flex-1 text-sm">
+            {cleared ? (
+              <>
+                Highest tier cleared: <span className="text-yellow-200">{tierLabel(best)}</span>
+              </>
+            ) : (
+              <span className="opacity-60">Not cleared yet</span>
+            )}
+          </span>
           <span className="inline-flex items-center gap-1.5 text-lg text-yellow-200">
             Choose <PixelIcon name="arrow-right" />
           </span>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div />
+      )}
     </>
   );
   if (!unlocked) return <div className={`ff-panel opacity-75 ${JOURNEY_CELL}`}>{body}</div>;
