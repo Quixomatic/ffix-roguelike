@@ -44,7 +44,8 @@ export function StoryPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle kicker="STORY" title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {/* Cards line up row by row: each spans four rows of this grid (JOURNEY_CELL) and lays its lines into them (subgrid). */}
+      <div className="grid gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-3">
         {JOURNEYS.map((j) => (
           <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} best={bestTierCleared(p, j.id)} />
         ))}
@@ -52,6 +53,12 @@ export function StoryPage() {
     </div>
   );
 }
+
+/**
+ * A journey card's four rows — title + subtitle, maps + boss, the hero it recruits, footer — shared across a row of cards
+ * (CSS subgrid), so matching lines sit at the same height in every card however long each one's text is.
+ */
+const JOURNEY_CELL = "row-span-4 mb-1 grid grid-rows-subgrid gap-y-3 p-4";
 
 /** A journey as a card: the whole card opens the embark page (with the cards' lift); locked ones are plain. */
 function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlocked: boolean; best: number | null }) {
@@ -76,7 +83,10 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
       <div className="text-sm">
         {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
       </div>
-      {!!j.unlocks?.length && (
+      {/* Every card keeps the recruit row (empty when it recruits nobody), so the footers line up. */}
+      {!j.unlocks?.length ? (
+        <div />
+      ) : (
         <div className="flex items-center gap-3">
           {j.unlocks.map((k) => (
             // The hero this journey recruits, large; a silhouette until they've joined, then the green check over them.
@@ -89,7 +99,7 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
           <span className="text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
         </div>
       )}
-      <div className="mt-auto flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <span className="flex-1 text-sm">
           {cleared ? (
             <>
@@ -107,10 +117,10 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
       </div>
     </>
   );
-  if (!unlocked) return <div className="ff-panel flex flex-col gap-3 p-4 opacity-75">{body}</div>;
+  if (!unlocked) return <div className={`ff-panel opacity-75 ${JOURNEY_CELL}`}>{body}</div>;
   return (
     <FocusItem>
-      <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className="ff-panel ff-lift flex flex-col gap-3 p-4">
+      <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_CELL}`}>
         {body}
       </Link>
     </FocusItem>

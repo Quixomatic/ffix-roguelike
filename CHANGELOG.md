@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.96] - 2026-10-18
+
+### Changed
+- **Journey cards line up row by row** (CSS subgrid, like the character cards): each card spans four shared rows, so matching lines sit at the same height in every card of a row and the cards match in height, however long each one's subtitle or boss names are.
+  - The rows: title + subtitle, maps + final boss, the hero it recruits, the footer.
+  - A journey that recruits nobody keeps an empty recruit row, so the footers ("Highest tier cleared", Choose) still line up.
+
 ## [0.2.95] - 2026-10-18
 
 ### Fixed
