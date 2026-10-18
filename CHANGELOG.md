@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.84] - 2026-10-18
+
+### Changed
+- **The sidebar's game section is just Home and Play**: Story, Party, Supplies, Gear catalog and Challenges are reached from the Play hub's cards, the way a game's own menus work. **Play stays highlighted** on all of them, and during a run. The Practice / Items / Achievements / Settings group and the Admin section are unchanged.
+
 ## [0.2.83] - 2026-10-18
 
 ### Changed

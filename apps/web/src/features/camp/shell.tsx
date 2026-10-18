@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BookOpen, Gamepad2, Home, Menu, Package, Settings, Shield, Sparkles, Store, Sword, Swords, Trophy, Undo2, Users, Wrench, FlaskConical } from "lucide-react";
+import { FlaskConical, Gamepad2, Home, Menu, Package, Settings, Sparkles, Sword, Trophy, Undo2, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -19,17 +19,20 @@ import { trpc } from "@/utils/trpc";
 
 import pkg from "../../../package.json";
 
-type NavItem = { to: string; label: string; icon: ComponentType<{ className?: string }>; exact?: boolean };
+type NavItem = {
+  to: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  exact?: boolean;
+  /** Also highlighted on these paths (and below them). */
+  alsoOn?: string[];
+};
 
-/** Home (the title screen), the game's own destinations (the hub's cards), then the account-wide pages. */
+/** Home (the title screen) and Play (everything in the game is reached from there), then the account-wide pages. */
 const GAME_NAV: NavItem[] = [
   { to: "/", label: "Home", icon: Home, exact: true },
-  { to: "/play", label: "Play", icon: Gamepad2, exact: true },
-  { to: "/story", label: "Story", icon: BookOpen },
-  { to: "/party", label: "Party", icon: Users },
-  { to: "/shops/supplies", label: "Supplies", icon: Store },
-  { to: "/shops/gear", label: "Gear catalog", icon: Shield },
-  { to: "/challenges", label: "Challenges", icon: Swords },
+  // Story, Party, the shops and Challenges are reached from Play, like a game's own menus.
+  { to: "/play", label: "Play", icon: Gamepad2, alsoOn: ["/story", "/party", "/shops", "/challenges", "/run"] },
 ];
 const MORE_NAV: NavItem[] = [
   { to: "/items", label: "Items", icon: Package },
@@ -260,12 +263,15 @@ function Sidebar({ open }: { open: boolean }) {
 
 function NavLink({ item }: { item: NavItem }) {
   const Icon = item.icon;
+  // Play stays lit everywhere you go from it (Story, Party, the shops, Challenges, a run).
+  const also = useRouterState({ select: (st) => !!item.alsoOn?.some((p) => st.location.pathname === p || st.location.pathname.startsWith(`${p}/`)) });
   return (
     <FocusItem>
     <Link
       to={item.to}
       activeOptions={{ exact: !!item.exact }}
-      className="ff-option flex items-center gap-3 rounded py-1.5 text-base hover:bg-white/10"
+      className={`ff-option flex items-center gap-3 rounded py-1.5 text-base hover:bg-white/10 ${also ? "text-yellow-200" : ""}`}
+      data-active={also || undefined}
       activeProps={{ "data-active": "true", className: "text-yellow-200" }}
     >
       <Icon className="size-4 shrink-0" />
