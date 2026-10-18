@@ -2,6 +2,26 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.78] - 2026-10-18
+
+The Items page shows what you've unlocked: anything that can't turn up in your runs yet is a dark silhouette with a padlock and says how to get it. Icons default to 64 px.
+
+### Changed
+- **Unlock state per item** (signed in), from the gear-availability table read for your profile (`features/items/item-status.ts`):
+  - **Can turn up in your runs**, shown normally:
+    - gear in an area's map pool ("Drops in Alexandria, Evil Forest +3")
+    - starting gear ("Start" badge)
+    - gear you've unlocked: catalog, won runs, synthesis, achievements (green ✓)
+    - consumables
+  - **Locked**: a black silhouette of the icon with a padlock and the name dimmed.
+    - Catalog gear ("Catalog" badge) gives its price and whether you've reached far enough for it, and "or synthesize it" when a recipe makes it.
+    - Legendary gear (★) names the achievement and what it takes.
+    - Gear in no map pool and not in the catalog says so.
+  - **The popover** opens with that line (a padlock for locked items) above the item's details.
+- **Filters**: **Everything / In my runs / Locked**, beside the kind, character and search filters, with "N of M can turn up in your runs" in the header. Signed out, everything shows normally, and the header suggests signing in to see unlocks.
+- **Icon sizes**: 32 / 48 / **64 (default)** / 96 px, remembered in this browser; tiles widen to fit.
+- The page is wider (up to 80rem).
+
 ## [0.2.77] - 2026-10-18
 
 All admin pages live under `/admin/…`, and Practice joins them. The sidebar gets a Home item.

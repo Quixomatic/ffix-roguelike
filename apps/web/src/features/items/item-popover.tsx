@@ -1,6 +1,6 @@
 import type { CharacterBuild } from "@ffix-roguelike/game-core";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import { FocusItem } from "@/features/input/focus";
 import { ItemDetails } from "@/features/run/item-info";
@@ -14,11 +14,14 @@ export function ItemPopover({
   itemId,
   party,
   side = "right",
+  extra,
   children,
 }: {
   itemId: number;
   party?: CharacterBuild[];
   side?: "top" | "right" | "bottom" | "left";
+  /** Shown above the details (e.g. whether it's unlocked, and how to get it). */
+  extra?: ReactNode;
   children: ReactElement;
 }) {
   return (
@@ -28,6 +31,7 @@ export function ItemPopover({
         <HoverCardTrigger delay={250} closeDelay={50} render={children} />
       </FocusItem>
       <HoverCardContent side={side} align="start" sideOffset={8} className="theme-ff ff-panel flex w-80 flex-col gap-1 rounded-md p-3 text-sm">
+        {extra}
         <ItemDetails itemId={itemId} party={party} />
       </HoverCardContent>
     </HoverCard>

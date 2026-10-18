@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.2.77",
+  "version": "0.2.78",
   "type": "module",
   "main": "src/index.ts",
   "portless": {
