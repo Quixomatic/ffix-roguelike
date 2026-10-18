@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.100] - 2026-10-18
+
+### Changed
+- **Breadcrumbs start with "Home"** instead of "Camp" (Home › Story, Home › Party › Zidane…). It still goes to the Play hub.
+
 ## [0.2.99] - 2026-10-18
 
 ### Added

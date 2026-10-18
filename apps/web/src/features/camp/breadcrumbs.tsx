@@ -11,11 +11,11 @@ export interface Crumb {
   search?: Record<string, unknown>;
 }
 
-/** Camp's own crumb: the Play hub. */
-export const CAMP: Crumb = { label: "Camp", to: "/play" };
+/** The trail's first step, "Home": the Play hub, where every camp page is reached from. */
+export const CAMP: Crumb = { label: "Home", to: "/play" };
 
 /**
- * Where a camp page sits ("Camp › Story › 1 · The Evil Forest"): every step but the last goes back there, so each page
+ * Where a camp page sits ("Home › Story › 1 · The Evil Forest"): every step but the last goes back there, so each page
  * has an easy way back besides the browser's Back and Escape. Cursor stops, with the cancel sound like other back links.
  */
 export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
