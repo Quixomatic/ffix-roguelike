@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.2.99] - 2026-10-18
+
+### Added
+- **Breadcrumbs on the camp pages** (`features/camp/breadcrumbs.tsx`), in place of the small label above each title. Every step but the current page is a link back, with the back sound, and a cursor stop for keyboard / controller. "Camp" is the Play hub.
+  - Story: **Camp › Story**
+  - Embark: **Camp › Story › *the journey***. This replaces the "◂ Journeys" link.
+  - Party: **Camp › Party**; a character's page: **Camp › Party › *their name***
+  - Shops: **Camp › Supplies**, **Camp › Gear catalog**
+  - Challenges: **Camp › Challenges**
+- `PageTitle` takes `crumbs` instead of a `kicker`.
+
 ## [0.2.98] - 2026-10-18
 
 ### Fixed

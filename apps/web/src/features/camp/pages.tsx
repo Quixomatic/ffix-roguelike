@@ -11,6 +11,7 @@ import { FocusItem } from "@/features/input/focus";
 
 import { GearCatalogGrid } from "./gear-catalog";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
+import { Breadcrumbs, CAMP } from "./breadcrumbs";
 import { PageTitle } from "./story";
 
 /** The Party page: the whole roster as cards; recruited ones open their own page. */
@@ -20,7 +21,7 @@ export function PartyPage() {
   const p = profile.data;
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <PageTitle kicker="PARTY" title="Roster" sub="Spend Completion Points on start levels, training and gear slots; equip support abilities; see what each character has mastered." />
+      <PageTitle crumbs={[CAMP, { label: "Party" }]} title="Roster" sub="Spend Completion Points on start levels, training and gear slots; equip support abilities; see what each character has mastered." />
       {/* Cards share row tracks (subgrid), so names, stats, gear and footers line up across a row. */}
       <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-4`}>
         {rosterEntries(p).map((e) =>
@@ -71,7 +72,8 @@ export function CharacterPage({ characterKey }: { characterKey: string }) {
   return (
     // The same centred column as the other hub pages, the window filling the height between (the backdrop shows around it).
     // (The shell's menu button takes 2.5rem above every page.)
-    <div className="mx-auto flex h-[calc(100svh-2.5rem)] max-w-6xl flex-col px-6 pb-6 pt-6">
+    <div className="mx-auto flex h-[calc(100svh-2.5rem)] max-w-6xl flex-col gap-2 px-6 pb-6 pt-6">
+      <Breadcrumbs crumbs={[CAMP, { label: "Party", to: "/party" }, { label: getCharacter(characterKey).name }]} />
       <div className="min-h-0 flex-1">
         <CharacterSheet inline build={build} onClose={() => navigate({ to: "/party" })} />
       </div>
@@ -87,7 +89,7 @@ export function ShopPage({ shop }: { shop: "supplies" | "gear" }) {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <div className="flex items-end justify-between gap-4">
-        <PageTitle kicker="SHOPS" title={shop === "supplies" ? "Supplies" : "Gear catalog"} />
+        <PageTitle crumbs={[CAMP, { label: shop === "supplies" ? "Supplies" : "Gear catalog" }]} title={shop === "supplies" ? "Supplies" : "Gear catalog"} />
         <span className="ff-chip text-lg">{p.gil.toLocaleString()} gil</span>
       </div>
       <div className="ff-panel p-4 text-sm">{shop === "supplies" ? <ShopContents shop="supplies" profile={p} /> : <GearCatalogGrid profile={p} />}</div>
@@ -103,7 +105,7 @@ export function ChallengesPage() {
   const challenges = ACHIEVEMENTS.filter((a) => a.category === "challenge");
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <PageTitle kicker="CHALLENGES" title="Challenges" sub="Harder ways to play, and what they pay." />
+      <PageTitle crumbs={[CAMP, { label: "Challenges" }]} title="Challenges" sub="Harder ways to play, and what they pay." />
       <div className="grid gap-3 md:grid-cols-3">
         {[
           { title: "Boss Gauntlet", text: "Every story boss back to back, no maps in between." },

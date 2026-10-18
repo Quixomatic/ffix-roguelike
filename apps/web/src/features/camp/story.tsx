@@ -11,6 +11,7 @@ import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 import { FocusItem } from "@/features/input/focus";
 
+import { Breadcrumbs, CAMP, type Crumb } from "./breadcrumbs";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 
 type StoryProfile = { maxTier: number; journeysCleared?: string[] } & Parameters<typeof availableJourneys>[0];
@@ -43,7 +44,7 @@ export function StoryPage() {
   const open = availableJourneys(p);
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <PageTitle kicker="STORY" title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
+      <PageTitle crumbs={[CAMP, { label: "Story" }]} title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
       {/* Cards line up row by row: each spans four rows of this grid (JOURNEY_CELL) and lays its lines into them (subgrid). */}
       <div className="grid gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-3">
         {JOURNEYS.map((j) => (
@@ -204,11 +205,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
-      <FocusItem>
-        <Link to="/story" data-sound="cancel" className="inline-flex items-center gap-1 self-start text-sm text-[#c8d0ff] hover:text-white">
-          <PixelIcon name="arrow-left" /> Journeys
-        </Link>
-      </FocusItem>
+      <Breadcrumbs crumbs={[CAMP, { label: "Story", to: "/story" }, { label: j.name }]} />
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
         <div>
           <div className="ff-title tracking-[0.25em]">EMBARK</div>
@@ -324,10 +321,11 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
   );
 }
 
-export function PageTitle({ kicker, title, sub }: { kicker: string; title: string; sub?: string }) {
+/** A camp page's heading: the breadcrumb trail back to Camp, the title, and a line about the page. */
+export function PageTitle({ crumbs, title, sub }: { crumbs: Crumb[]; title: string; sub?: string }) {
   return (
     <div>
-      <div className="ff-title tracking-[0.25em]">{kicker}</div>
+      <Breadcrumbs crumbs={crumbs} />
       <h1 className="ff-display text-4xl text-white [text-shadow:3px_3px_0_#000]">{title}</h1>
       {sub && <div className="max-w-3xl text-sm text-[#c8d0ff]">{sub}</div>}
     </div>
