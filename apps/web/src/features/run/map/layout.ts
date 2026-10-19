@@ -23,8 +23,13 @@ export const TILE = 16;
 export const COL_STEP = 8;
 /** Tiles between rows 0/1/2. */
 export const ROW_STEP = 5;
-/** Tiles left of the start / right of the castle. */
+/** Tiles of map left of the start. */
 const MARGIN_X = 5;
+/**
+ * Tiles of map right of the castle: wide enough that the castle can scroll out from under the floating party sidebar
+ * (~18rem) at the lowest zoom (1.5×: 14 tiles ≈ 336px) — real map, so the ground and scenery carry on under it.
+ */
+const MARGIN_END = 14;
 /** Tile row of row 0. */
 const TOP = 6;
 
@@ -192,7 +197,7 @@ function buildLatticeLayout(map: WorldMap): MapLayout {
   const last = Math.max(...map.nodes.map((n) => n.col));
   const maxLane = Math.max(1, ...map.nodes.map((n) => Math.abs(n.row)));
   const middle = TOP + maxLane * LANE_STEP;
-  const cols = MARGIN_X * 2 + last * COL_STEP + 1;
+  const cols = MARGIN_X + MARGIN_END + last * COL_STEP + 1;
   const rows = middle * 2 + 1;
   const nodes = new Map<string, TilePoint>();
   for (const n of map.nodes) nodes.set(n.id, { x: MARGIN_X + n.col * COL_STEP, y: middle + n.row * LANE_STEP });
@@ -212,7 +217,7 @@ function buildLatticeLayout(map: WorldMap): MapLayout {
 export function buildMapLayout(map: WorldMap): MapLayout {
   if (map.lattice) return buildLatticeLayout(map);
   const last = Math.max(...map.nodes.map((n) => n.col));
-  const cols = MARGIN_X * 2 + last * COL_STEP + 1;
+  const cols = MARGIN_X + MARGIN_END + last * COL_STEP + 1;
   const rows = TOP * 2 + ROW_STEP * 2 + 1;
   const idx = (x: number, y: number) => y * cols + x;
 

@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.37] - 2026-10-19
+
+### Changed
+- **The overworld map is wider instead of the camera running off its edge.** v0.3.36 let the camera scroll past the map into plain background.
+  - Now the map itself carries on 14 tiles past the castle (`MARGIN_END` in `map/layout.ts`; 5 before the start as before), so its ground, and the tileset scenery later, fills the space under the floating party sidebar.
+  - 14 tiles is enough for the castle to scroll clear of the sidebar even at the lowest zoom (1.5×).
+  - The camera stays within the map and still centres the party in the part of the view the sidebar doesn't cover.
+
 ## [0.3.36] - 2026-10-19
 
 ### Fixed

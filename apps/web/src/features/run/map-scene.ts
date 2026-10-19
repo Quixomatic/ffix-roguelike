@@ -29,8 +29,8 @@ export interface MapBridge {
   /** The camera left the party to look around (true), or came back to it (false). */
   onLook?(looking: boolean): void;
   /**
-   * Screen pixels on the map's right covered by something floating over it (the party sidebar): the camera may scroll
-   * that far past the map's right edge, so the castle can come out from under it, and centres the party in what shows.
+   * Screen pixels on the map's right covered by something floating over it (the party sidebar): the camera centres the
+   * party in what shows (the map itself runs on past the castle, so it can scroll clear of the sidebar).
    */
   insetRight?(): number;
 }
@@ -420,9 +420,9 @@ export class MapScene extends Phaser.Scene {
   }
 
   /**
-   * Zoom so ~VISIBLE_COLUMNS stage columns fit across, never so far out that the map stops filling the view. With the
-   * party sidebar floating over the right edge, the bounds reach that much further right (the castle can scroll out
-   * from under it) and the party is centred in the part of the view that shows.
+   * Zoom so ~VISIBLE_COLUMNS stage columns fit across, never so far out that the map stops filling the view. The map
+   * runs well past the castle (layout `MARGIN_END`), so with the party sidebar floating over the right edge the castle
+   * can still scroll clear of it; the party is centred in the part of the view that shows.
    */
   private fitCamera(w: number, h: number) {
     const L = this.layout;
@@ -431,7 +431,7 @@ export class MapScene extends Phaser.Scene {
     const zoom = Math.max(Phaser.Math.Clamp(byWidth, 1.5, 3.5), h / (L.rows * TILE), w / (L.cols * TILE));
     cam.setZoom(zoom);
     const inset = Math.max(0, Math.min(w * 0.6, this.bridge.insetRight?.() ?? 0));
-    cam.setBounds(0, 0, L.cols * TILE + inset / zoom, L.rows * TILE);
+    cam.setBounds(0, 0, L.cols * TILE, L.rows * TILE);
     cam.setFollowOffset(-inset / (2 * zoom), 0);
   }
 
