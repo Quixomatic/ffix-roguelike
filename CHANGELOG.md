@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.59] - 2026-10-19
+
+### Changed
+- **The Moogle, Stiltzkin and Chocobo characters float right on their marker** like the badges. Each is centred on the dot by what it actually draws, its longer side 16 px (`FIGURE_SIZE`), in front of the dot. It idles and bobs out of step with the others, and holds still once its stage is done or cut off.
+- **They face left now** (flipped; the FFRK sheets face right).
+- The two-monster stacking from the old battle-stage previews is gone; a stage has at most one character (`placeFigure`).
+
 ## [0.3.58] - 2026-10-19
 
 ### Changed

@@ -66,13 +66,10 @@ const NODE_COLOR: Record<NodeKind, number> = {
   boss: 0xb02020,
 };
 
-/** How tall (world px) the figures over a stage stand, whatever their sheet: a little over a tile. */
-const MONSTER_HEIGHT = 20;
+/** A stage character's size (world px, its longer side), floating on its marker like the badges. */
+const FIGURE_SIZE = 16;
 /** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
 const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
-
-/** How far (world px) above its marker's top edge a stage's badge or figure stands. */
-const FIGURE_GAP = 3;
 
 /** The achievement badge atlas (features/hub/badge.tsx: 48 px cells, badge n at frame n − 1; the `badges` pack). */
 const BADGES_KEY = "badges";
@@ -494,10 +491,9 @@ export class MapScene extends Phaser.Scene {
     const labelY = p.y + size.h / 2 + 1;
     const alpha = cut ? 0.35 : done ? 0.6 : 1;
     const badge = STAGE_BADGES[n.kind];
-    // Badges and figures stand clear of the marker, a few px above its top edge.
-    const standY = p.y - size.h / 2 - FIGURE_GAP;
+    const figure = this.bridge.previews?.[n.id]?.[0];
     if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, p.y, badge, alpha);
-    else if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(p.x, standY, this.bridge.previews[n.id]!, alpha);
+    else if (figure) this.placeFigure(p.x, p.y, figure, alpha);
     else this.placeStageSprite(n, alpha);
 
     const label = smooth(this.add
@@ -533,37 +529,34 @@ export class MapScene extends Phaser.Scene {
       .setScale(BADGE_SIZE / Math.max(box.w, box.h))
       .setDepth(3)
       .setAlpha(alpha);
-    // Done and cut-off stages hold still; the rest bob, out of step with each other.
-    if (alpha === 1) this.tweens.add({ targets: img, y: img.y - 1.5, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: (x * 7 + y * 3) % 900 });
+    this.hover(img, x, y, alpha);
+  }
+
+  /** Done and cut-off stages hold still; the rest bob gently, out of step with each other. */
+  private hover(target: Phaser.GameObjects.Components.Transform, x: number, y: number, alpha: number) {
+    if (alpha === 1) this.tweens.add({ targets: target, y: target.y - 1.5, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: (x * 7 + y * 3) % 900 });
   }
 
   /**
-   * The figures a stage shows (`MapBridge.previews`; at most two), like the party on the Play page's Party card: the
-   * same height whatever their sheet (scaled by what they actually draw, `figureBounds`), side by side and overlapping
-   * on one baseline (`baseline`, above the marker) centred on `cx`, the first facing left and the second right.
+   * A stage's own character (`MapBridge.previews`: the Moogle, Stiltzkin and Chocobo stages' FFRK sheets) floating right
+   * on its marker like the badges: centred by what it actually draws (`figureBounds`), its longer side FIGURE_SIZE,
+   * idling and bobbing, and turned to face left (the sheets face right).
    */
-  private placeMonsters(cx: number, baseline: number, keys: string[], alpha: number) {
-    const figures = keys.flatMap((key) => {
-      const ffrk = ensureEnemyAnims(this, key);
-      const box = ffrk && this.figureBounds(ffrk.texture, 0);
-      if (!ffrk || !box) return [];
-      const scale = Math.min(1, MONSTER_HEIGHT / box.h);
-      return [{ ...ffrk, box, scale, width: box.w * scale }];
-    });
-    figures.forEach((f, i) => {
-      // Overlap by a third of each figure's width (one figure stands centred).
-      const x = figures.length > 1 ? (i === 0 ? cx - f.width * 0.33 : cx + f.width * 0.33) : cx;
-      // FFRK monsters face right: the first turns to face left.
-      const flip = figures.length > 1 && i === 0;
-      this.add
-        .sprite(Math.round(x), baseline, f.texture, 0)
-        .setOrigin(flip ? 1 - (f.box.x + f.box.w / 2) / f.info.w : (f.box.x + f.box.w / 2) / f.info.w, (f.box.y + f.box.h) / f.info.h)
-        .setFlipX(flip)
-        .setScale(f.scale)
-        .setDepth(1.4 + i * 0.05)
-        .setAlpha(alpha)
-        .play({ key: enemyAnimKey(f.info, "idle"), startFrame: i * 3 });
-    });
+  private placeFigure(x: number, y: number, key: string, alpha: number) {
+    const ffrk = ensureEnemyAnims(this, key);
+    const box = ffrk && this.figureBounds(ffrk.texture, 0);
+    if (!ffrk || !box) return;
+    const { info } = ffrk;
+    const sprite = this.add
+      .sprite(x, y - BADGE_LIFT, ffrk.texture, 0)
+      // Flipped, so the figure's centre is mirrored in the frame.
+      .setOrigin(1 - (box.x + box.w / 2) / info.w, (box.y + box.h / 2) / info.h)
+      .setFlipX(true)
+      .setScale(FIGURE_SIZE / Math.max(box.w, box.h))
+      .setDepth(3)
+      .setAlpha(alpha)
+      .play(enemyAnimKey(info, "idle"));
+    this.hover(sprite, x, y, alpha);
   }
 
   /** What a sheet's frame actually draws (its opaque pixels' box, in frame px), measured once per frame. */
