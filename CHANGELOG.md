@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.7] - 2026-10-18
+
+### Added
+- **`apps/web/scripts/probe-rig-trim.ts [bossId…] [--all]`**, a permanent read-only inspector. For each FFRK boss rig it checks whether image nodes are sized by their atlas piece's trimmed crop, which is what the sprite builder's renderer assumes, or by the untrimmed source box, which would stretch and shift pieces (the summon bug fixed in v0.2.3). It lists any rig that does the latter and exits 1.
+  - Run on Plant Brain: all 32 pieces are sized by their crop, so its slightly gapped right arm isn't a trim problem. It's how its idle animation rotates that arm (and FFRK's rotation convention can't be confirmed from the assets we have).
+
 ## [0.3.6] - 2026-10-18
 
 ### Fixed
