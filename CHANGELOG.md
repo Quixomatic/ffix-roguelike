@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.56] - 2026-10-19
+
+### Changed
+- **Bigger stage markers:** 16×14 px (was 12×10), and 20×16 px for the fortress and boss (was 16×12). They're still pixel-drawn and centred on their tile. The label below, the badge or figure above, and the pulsing ring all follow the new size.
+
 ## [0.3.55] - 2026-10-19
 
 ### Fixed

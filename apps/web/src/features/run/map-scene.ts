@@ -79,7 +79,7 @@ const BADGES_KEY = "badges";
 const BADGE_CELL = 48;
 /**
  * A stage's badge's size (world px, its longer side): a little under a tile. The badges draw 15–20 px at 1× (measured:
- * #997 20×20, #989 17×20, #442 18×10…), which stood far too big over the 12 px markers; ½ was too small.
+ * #997 20×20, #989 17×20, #442 18×10…), which stood far too big over the markers; ½ was too small.
  */
 const BADGE_SIZE = 14;
 /**
@@ -95,8 +95,8 @@ const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
 };
 
 /** Marker sizes (px, even so they centre exactly on a tile's centre): the usual dot, and the bosses'. */
-const MARKER = { w: 12, h: 10 };
-const MARKER_BIG = { w: 16, h: 12 };
+const MARKER = { w: 16, h: 14 };
+const MARKER_BIG = { w: 20, h: 16 };
 
 /**
  * An SMW-style level dot, pixel by pixel (no anti-aliased circles, so it stays crisp at every zoom), centred on (cx,
