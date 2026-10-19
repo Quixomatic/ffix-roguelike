@@ -8,6 +8,7 @@
  *   items    public/sprites/items.png      (sprites:items)
  *   ui       public/sprites/ui/            (sprites:ui)
  *   badges   public/sprites/badges/        (sprites:badges: achievement badge atlas + catalog)
+ *   overworld public/sprites/overworld/    (tiles:overworld: the overworld map's terrain + object tilesets)
  *   sfx      public/sfx/                   (FF9's menu sounds: python scripts/extract-ff9-sfx.py)
  *   enemies  public/sprites/enemies/       (sprites:enemies)
  *   effects  the FFRK effect files the game can play — `usedEffectPaths()` and everything they reference
@@ -123,6 +124,7 @@ const CLASSES: Record<string, () => Record<string, Source[]>> = {
   items: () => ({ items: file(join(PUBLIC, "sprites", "items.png"), "sprites/items.png") }),
   ui: () => ({ ui: dir(join(PUBLIC, "sprites", "ui"), "sprites/ui") }),
   badges: () => ({ badges: dir(join(PUBLIC, "sprites", "badges"), "sprites/badges") }),
+  overworld: () => ({ overworld: dir(join(PUBLIC, "sprites", "overworld"), "sprites/overworld") }),
   sfx: () => ({ sfx: dir(join(PUBLIC, "sfx"), "sfx") }),
   enemies: () => ({ enemies: dir(join(PUBLIC, "sprites", "enemies"), "sprites/enemies") }),
   effects: () => {

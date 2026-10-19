@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.38] - 2026-10-19
+
+The overworld map is a real tilemap, from the Super Retro World — Overworld tileset (16×16; credit Gif @gif_not_jif, Noiracide @Noiracide, Romi @DessRomaric; its licence asks for that credit and forbids redistributing the raw tiles, so they ship only inside the R2 pack).
+
+### Added
+- **Tile build** (`pnpm -F web tiles:overworld`, `scripts/build-overworld-tiles.ts`). The pack's RPG Maker MZ sheets are exact 3× upscales of its 16px art (checked), so they're scaled back to native 16px and baked into:
+  - **terrain.png:** 31 autotiles (grass ×4, sand rocks, snow, ice, stone, lava, 16 forests and plants, 4 waters, flat dirt), each as its 47 RPG-Maker floor-autotile shapes;
+  - **objects.png:** the object sheet (buildings, castles, forts, towers, tents, stalls).
+  - Both are **extruded** (edge pixels repeated 1px; margin 1, spacing 2), the standard fix for tile bleeding and seams.
+  - Output goes to `public/sprites/overworld/` (git-ignored) and the new **`overworld` asset pack** (boot, 0.2 MB gz), uploaded to R2.
+- **Autotiles** (`map/autotile.ts`, pure TS, shared by the build and the game): RPG Maker's MV/MZ floor autotile rules. Each tile's four quarters come from its 2×3 source block by the neighbours on that corner. 47 shapes, baked once and indexed at runtime.
+- **The overworld tilemap** (map scene): a Phaser `Tilemap` the layout's size with blank `TilemapLayer`s per depth, all from the extruded tilesets:
+  - **base:** dirt;
+  - **ground:** the theme's ground everywhere except the roads, so **roads are real dirt paths** with natural edges, every turn, fork and merge handled by the autotile;
+  - **water** and **scenery** (forests, plants, ice, lava);
+  - **stage objects.**
+
+  The SMW beads still run along the roads.
+- **Scenery** (`map/terrain.ts`): smooth seeded value noise over the free land (2 tiles clear of every stage, 1 of every road). Each area theme sets its ground, water and scenery and how much each covers, e.g. grassland grass + green forests + lakes, forest dense woods, ice snow + frozen pines, cave stone + dark pines + lava, marsh lots of water. The same map always gets the same scenery.
+- **Stages are circle markers on the road with a picture just above them** (`STAGE_SPRITES`): signpost (start), tent (battle), stone tower (elite), shops and a stall, tent (chocobo), house (Moogle), flag (event), grey fort (fortress), red castle (boss). Done stages fade; cut-off ones fade more. Treasure has no picture yet.
+
+### Changed
+- **Whole-number camera zoom (2–4×) with rounded pixels,** so the pixel-art tiles stay crisp.
+- The old drawn ground checker, castle, fortress and houses are gone. The plain ground remains as a fallback if the tileset can't load.
+
 ## [0.3.37] - 2026-10-19
 
 ### Changed

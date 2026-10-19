@@ -10,8 +10,16 @@ import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
+import { assetUrl } from "@/lib/assets";
+
 import { buildMapLayout, COL_STEP, TILE, type Dir, type MapLayout, type TilePoint } from "./map/layout";
 import { Walker } from "./map/navigation";
+import { buildTerrain } from "./map/terrain";
+import { OBJECT_COLUMNS, OVERWORLD_TILE, STAGE_SPRITES, TILESET_MARGIN, TILESET_SPACING } from "./map/tileset-catalog";
+
+/** Texture keys of the overworld tilesets (sprites/overworld/terrain.png, objects.png; the `overworld` asset pack). */
+const TERRAIN_KEY = "overworld-terrain";
+const OBJECTS_KEY = "overworld-objects";
 
 export interface MapBridge {
   map: WorldMap;
@@ -66,8 +74,6 @@ const NODE_LABEL: Record<NodeKind, string> = {
   boss: "BOSS",
 };
 
-/** Stages drawn as buildings (SMW's houses/switch palaces) rather than level dots. */
-const HOUSE_KINDS = new Set<NodeKind>(["shop", "synth", "stiltzkin", "chocobo", "moogle"]);
 
 const THEME_COLORS: Record<string, { ground: number; dark: number; path: number; accent: number }> = {
   grassland: { ground: 0x5aa83a, dark: 0x3d7a28, path: 0xe0c890, accent: 0x7ec0ee },
@@ -122,6 +128,8 @@ export class MapScene extends Phaser.Scene {
   private walkingNow = false;
   private lastHeading: Dir | null = null;
   private spriteKey = "";
+  /** Tilemap layers for stage pictures: on the grid (odd widths) and half a tile left (even widths). */
+  private objectLayers?: { odd: Phaser.Tilemaps.TilemapLayer; even: Phaser.Tilemaps.TilemapLayer };
 
   constructor() {
     super("map");
@@ -129,6 +137,7 @@ export class MapScene extends Phaser.Scene {
 
   init(data: { bridge: MapBridge }) {
     this.bridge = data.bridge;
+    this.objectLayers = undefined;
     this.hints = [];
     this.walkingNow = false;
     this.lastHeading = null;
@@ -141,6 +150,8 @@ export class MapScene extends Phaser.Scene {
 
   preload() {
     loadHeroSheets(this, [`hero/${this.bridge.leader}`]);
+    if (!this.textures.exists(TERRAIN_KEY)) this.load.image(TERRAIN_KEY, assetUrl("sprites/overworld/terrain.png"));
+    if (!this.textures.exists(OBJECTS_KEY)) this.load.image(OBJECTS_KEY, assetUrl("sprites/overworld/objects.png"));
   }
 
   create() {
@@ -167,7 +178,7 @@ export class MapScene extends Phaser.Scene {
     }
     this.cutOff = new Set(b.map.nodes.filter((n) => !ahead.has(n.id) && !visited.has(n.id) && n.id !== b.position).map((n) => n.id));
 
-    this.drawGround(theme, worldW, worldH);
+    if (!this.drawTerrain(b.theme)) this.drawGround(theme, worldW, worldH);
     this.drawRoads(theme, visited, reachableIds);
 
     for (const n of b.map.nodes) this.drawStage(n, visited, reachableIds);
@@ -273,6 +284,33 @@ export class MapScene extends Phaser.Scene {
   // ---------------------------------------------------------------------------------------------------------
   // Drawing
 
+  /**
+   * The terrain as a Phaser tilemap (the overworld tileset, map/tileset-catalog.ts): one blank map the layout's size,
+   * with a layer per depth (ground, water, scenery), all from the one extruded terrain tileset, filled from
+   * map/terrain.ts. Roads, stages and the party draw on top. False if the tileset isn't loaded (then the plain ground).
+   */
+  private drawTerrain(theme: string): boolean {
+    if (!this.textures.exists(TERRAIN_KEY)) return false;
+    const L = this.layout;
+    const layers = buildTerrain(L, theme, this.bridge.map.nodes.map((n) => n.id).join("|"));
+    const map = this.make.tilemap({ width: L.cols, height: L.rows, tileWidth: TILE, tileHeight: TILE });
+    const tiles = map.addTilesetImage("terrain", TERRAIN_KEY, OVERWORLD_TILE, OVERWORLD_TILE, TILESET_MARGIN, TILESET_SPACING);
+    if (!tiles) return false;
+    (["base", "ground", "water", "scenery"] as const).forEach((name, depth) => {
+      const layer = map.createBlankLayer(name, tiles, 0, 0, L.cols, L.rows)?.setDepth(-4 + depth);
+      layer?.putTilesAt(layers[name], 0, 0);
+    });
+    // Stage pictures (placeStageSprite): odd-width ones on the grid, even-width ones half a tile left, so either centres
+    // over its stage. Above the scenery, below the roads' beads and the markers.
+    const objects = this.textures.exists(OBJECTS_KEY) ? map.addTilesetImage("objects", OBJECTS_KEY, OVERWORLD_TILE, OVERWORLD_TILE, TILESET_MARGIN, TILESET_SPACING) : null;
+    if (objects) {
+      const odd = map.createBlankLayer("objects", objects, 0, 0, L.cols, L.rows);
+      const even = map.createBlankLayer("objects-half", objects, -TILE / 2, 0, L.cols, L.rows);
+      if (odd && even) this.objectLayers = { odd: odd.setDepth(-0.5), even: even.setDepth(-0.5) };
+    }
+    return true;
+  }
+
   private drawGround(theme: { ground: number; dark: number }, w: number, h: number) {
     const g = this.add.graphics();
     g.fillStyle(theme.ground, 1);
@@ -338,37 +376,17 @@ export class MapScene extends Phaser.Scene {
       this.tweens.add({ targets: pulse, scale: 1.5, alpha: 0, duration: 900, repeat: -1 });
     }
 
+    // The stage itself: a circle marker on the road (where the party stands), coloured by kind and state; what's there
+    // stands just above it (the object sheet's picture: a town, the castle…).
     const g = this.add.graphics().setDepth(2);
-    let glyphY = p.y;
-    let labelY = p.y + 8;
-    if (n.kind === "boss") {
-      this.drawCastle(g, p.x, p.y, done);
-      glyphY = p.y - 6;
-      labelY = p.y + 10;
-    } else if (n.kind === "semiboss") {
-      // Fortress: a squat tower with battlements.
-      g.fillStyle(0x000000, 0.3).fillEllipse(p.x, p.y + 7, 18, 5);
-      g.fillStyle(0x3a3a44, 1).fillRect(p.x - 8, p.y - 9, 16, 16);
-      g.fillStyle(fill, 1).fillRect(p.x - 7, p.y - 8, 14, 14);
-      g.fillStyle(0x3a3a44, 1);
-      for (const dx of [-7, -2, 3]) g.fillRect(p.x + dx, p.y - 11, 4, 3);
-      glyphY = p.y - 1;
-    } else if (HOUSE_KINDS.has(n.kind)) {
-      // House: a roofed tile.
-      g.fillStyle(0x000000, 0.3).fillEllipse(p.x, p.y + 7, 16, 4);
-      g.fillStyle(0x1a1a1a, 1).fillRect(p.x - 7, p.y - 3, 14, 10);
-      g.fillStyle(fill, 1).fillRect(p.x - 6, p.y - 2, 12, 8);
-      g.fillStyle(0x1a1a1a, 1).fillTriangle(p.x - 9, p.y - 2, p.x + 9, p.y - 2, p.x, p.y - 10);
-      g.fillStyle(Phaser.Display.Color.ValueToColor(fill).darken(25).color, 1).fillTriangle(p.x - 7, p.y - 3, p.x + 7, p.y - 3, p.x, p.y - 8);
-      glyphY = p.y + 2;
-    } else {
-      // Level dot.
-      const r = n.kind === "start" ? 5 : n.kind === "elite" ? 7 : 6;
-      g.fillStyle(0x000000, 0.35).fillEllipse(p.x, p.y + 4, r * 2 + 2, 5);
-      g.fillStyle(0x1a1a1a, 1).fillCircle(p.x, p.y, r + 1.5);
-      g.fillStyle(fill, 1).fillCircle(p.x, p.y, r);
-      g.fillStyle(0xffffff, done ? 0.15 : 0.45).fillCircle(p.x - r * 0.35, p.y - r * 0.35, r * 0.35);
-    }
+    const glyphY = p.y;
+    const labelY = p.y + 8;
+    const r = n.kind === "boss" ? 7 : n.kind === "start" ? 5 : 6;
+    g.fillStyle(0x000000, 0.35).fillEllipse(p.x, p.y + 4, r * 2 + 2, 5);
+    g.fillStyle(0x1a1a1a, 1).fillCircle(p.x, p.y, r + 1.5);
+    g.fillStyle(fill, 1).fillCircle(p.x, p.y, r);
+    g.fillStyle(0xffffff, done ? 0.15 : 0.45).fillCircle(p.x - r * 0.35, p.y - r * 0.35, r * 0.35);
+    this.placeStageSprite(n, cut ? 0.35 : done ? 0.6 : 1);
 
     const glyph = smooth(this.add
       .text(p.x, glyphY, style.glyph, { fontFamily: "serif", fontSize: n.kind === "boss" ? "11px" : "9px", color: "#ffffff", resolution: TEXT_RES })
@@ -396,19 +414,22 @@ export class MapScene extends Phaser.Scene {
     if (can) hit.on("pointerup", () => !this.dragged && this.clickStage(n.id));
   }
 
-  /** 2×2-tile castle standing on the boss stage. */
-  private drawCastle(g: Phaser.GameObjects.Graphics, x: number, y: number, done: boolean) {
-    const wall = done ? 0x5a5a5a : 0x7a7a8a;
-    const roof = done ? 0x6a4a4a : 0xb83a2e;
-    g.fillStyle(0x000000, 0.3).fillEllipse(x, y + 8, 36, 7);
-    g.fillStyle(0x1a1a1a, 1).fillRect(x - 13, y - 13, 26, 21);
-    g.fillStyle(wall, 1).fillRect(x - 12, y - 12, 24, 19);
-    for (const tx of [x - 16, x + 9]) {
-      g.fillStyle(0x1a1a1a, 1).fillRect(tx - 1, y - 19, 9, 27);
-      g.fillStyle(wall, 1).fillRect(tx, y - 18, 7, 25);
-      g.fillStyle(roof, 1).fillTriangle(tx - 2, y - 18, tx + 9, y - 18, tx + 3.5, y - 27);
-    }
-    g.fillStyle(0x1a1a1a, 1).fillRect(x - 4, y - 1, 8, 8);
+  /**
+   * What's at a stage, standing just above its marker: its object-sheet picture (map/tileset-catalog.ts
+   * `STAGE_SPRITES`), tile by tile on the object layers, centred over the marker (an even-width picture goes on the
+   * layer shifted half a tile). `alpha`: faded for stages done or cut off.
+   */
+  private placeStageSprite(n: MapNode, alpha: number) {
+    const sprite = STAGE_SPRITES[n.kind];
+    const at = this.layout.nodes.get(n.id);
+    if (!sprite || !at || !this.objectLayers) return;
+    const layer = sprite.w % 2 ? this.objectLayers.odd : this.objectLayers.even;
+    const left = at.x - Math.floor(sprite.w / 2) + (sprite.w % 2 ? 0 : 1);
+    for (let dy = 0; dy < sprite.h; dy++)
+      for (let dx = 0; dx < sprite.w; dx++) {
+        const tile = layer.putTileAt((sprite.row + dy) * OBJECT_COLUMNS + sprite.col + dx, left + dx, at.y - sprite.h + dy);
+        if (tile) tile.alpha = alpha;
+      }
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -428,8 +449,10 @@ export class MapScene extends Phaser.Scene {
     const L = this.layout;
     const cam = this.cameras.main;
     const byWidth = w / (VISIBLE_COLUMNS * COL_STEP * TILE);
-    const zoom = Math.max(Phaser.Math.Clamp(byWidth, 1.5, 3.5), h / (L.rows * TILE), w / (L.cols * TILE));
+    // Whole-number zoom (pixel-art tiles stay crisp, no shimmer), at least enough to fill the view.
+    const zoom = Math.max(Phaser.Math.Clamp(Math.round(byWidth), 2, 4), Math.ceil(h / (L.rows * TILE)), Math.ceil(w / (L.cols * TILE)));
     cam.setZoom(zoom);
+    cam.setRoundPixels(true);
     const inset = Math.max(0, Math.min(w * 0.6, this.bridge.insetRight?.() ?? 0));
     cam.setBounds(0, 0, L.cols * TILE, L.rows * TILE);
     cam.setFollowOffset(-inset / (2 * zoom), 0);

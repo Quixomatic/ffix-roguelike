@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.3.37",
+  "version": "0.3.38",
   "private": true,
   "type": "module",
   "portless": {
@@ -20,6 +20,7 @@
     "sprites:items": "bun scripts/build-item-icons.ts",
     "sprites:ui": "bun scripts/build-ui-icons.ts",
     "sprites:badges": "bun scripts/build-badges.ts",
+    "tiles:overworld": "bun scripts/build-overworld-tiles.ts",
     "ffrk:fetch": "bun scripts/fetch-ffrk-atlases.ts",
     "ffrk:organize": "bun scripts/organize-ffrk-atlases.ts",
     "ffrk:names": "bun scripts/name-ffrk-enemies.ts",
