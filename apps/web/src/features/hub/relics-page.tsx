@@ -3,6 +3,7 @@ import { rarityOf, relicTable, type RelicData } from "@ffix-roguelike/game-data"
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { PixelIcon } from "@/components/pixel-icon";
 import { FocusItem } from "@/features/input/focus";
 import { trpc } from "@/utils/trpc";
 
@@ -24,9 +25,9 @@ const FILTERS: { id: Filter; label: string }[] = [
 const number = (r: RelicData) => `No. ${String(r.sort).padStart(3, "0")}`;
 
 /**
- * The relic collection, like FF9's card browse screen: every relic in a numbered grid (unlocked ones show their badge,
- * locked ones an empty slot), the one under the cursor large beside it with its effects and how to unlock it, and a
- * collector rank on top.
+ * The relic collection, like FF9's card browse screen: every relic as a numbered tile in the Items page's style
+ * (unlocked ones show their badge and name, locked ones a silhouette with a padlock), the one under the cursor large
+ * beside it with its effects and how to unlock it, and a collector rank on top.
  */
 export function RelicsPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
@@ -75,20 +76,26 @@ export function RelicsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_22rem] md:items-start">
-        <div className="ff-window grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2 p-3">
-          {!shown.length && <div className="col-span-full py-6 text-center opacity-70">Nothing here yet.</div>}
+        {/* Tiles like the Items page's: the badge, its name under it; locked ones a black silhouette with a padlock. */}
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-2">
+          {!shown.length && <div className="ff-window col-span-full p-4 text-center opacity-70">Nothing here yet.</div>}
           {shown.map((r, i) => {
             const open = unlocked(r);
             const on = selected?.id === r.id;
             return (
               <FocusItem key={r.id} defaultFocus={i === 0} onFocus={() => setSelectedId(r.id)}>
                 <button
+                  type="button"
                   data-sound="none"
-                  className={`flex flex-col items-center gap-1 rounded border p-1.5 ${on ? "border-yellow-300 bg-yellow-300/10" : "border-white/15 bg-black/30"} ${open ? "" : "opacity-60"}`}
+                  className={`ff-window relative flex flex-col items-center gap-1 p-2 pt-5 text-center hover:brightness-125 ${on ? "ring-2 ring-yellow-300" : ""}`}
                   onClick={() => setSelectedId(r.id)}
                 >
-                  {open ? <Badge id={r.badge ?? 1} /> : <span className="flex h-20 w-20 items-center justify-center rounded-full border border-dashed border-white/25 text-2xl opacity-50">?</span>}
-                  <span className="text-xs tabular-nums opacity-80">{number(r)}</span>
+                  <span className={open ? "" : "opacity-60 [filter:brightness(0)]"}>
+                    <Badge id={r.badge ?? 1} />
+                  </span>
+                  <span className="absolute left-1.5 top-1 text-[0.6rem] tabular-nums opacity-70">{number(r)}</span>
+                  {!open && <PixelIcon name="lock" size={16} className="absolute right-1.5 top-1.5" />}
+                  <span className={`w-full truncate text-xs ${open ? "" : "opacity-60"}`}>{open ? r.name : "???"}</span>
                 </button>
               </FocusItem>
             );
@@ -108,7 +115,9 @@ function RelicDetail({ relic: r, unlocked, profile }: { relic: RelicData; unlock
   return (
     <div className="ff-window flex flex-col gap-3 p-4 md:sticky md:top-4">
       <div className="flex items-center gap-3">
-        {unlocked ? <Badge id={r.badge ?? 1} scale={3} view={36} /> : <span className="flex h-[108px] w-[108px] items-center justify-center rounded-full border border-dashed border-white/25 text-5xl opacity-50">?</span>}
+        <span className={unlocked ? "" : "opacity-60 [filter:brightness(0)]"}>
+          <Badge id={r.badge ?? 1} scale={3} view={36} />
+        </span>
         <div className="flex min-w-0 flex-col gap-1">
           <span className="text-xs tabular-nums opacity-70">{number(r)}</span>
           <span className="ff-display text-xl">{unlocked ? r.name : "???"}</span>

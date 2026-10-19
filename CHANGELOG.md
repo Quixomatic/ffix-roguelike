@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.47] - 2026-10-19
+
+### Changed
+- **Relics page tiles look like the Items page's.** Each relic is its own FF window tile: the badge, with its name under it and its number ("No. 001") in the corner. The tiles sit on the page instead of inside a window.
+  - **Locked relics** show their badge as a black silhouette with a padlock, like locked items, instead of an empty "?" circle. Their name stays "???" until unlocked.
+  - The tile under the cursor has a yellow ring, and tiles brighten on hover.
+- The detail panel's large badge is a silhouette for locked relics too.
+
 ## [0.3.46] - 2026-10-19
 
 ### Changed
