@@ -71,10 +71,17 @@ function impactMs(a: EffectAsset | null | undefined): number {
 
 const isEmpty = (p: string | undefined) => !p || /common\/(shot|hit|launch)_empty/.test(p);
 
+/**
+ * FFRK places characters, bosses and the status rig on them at 1.5× its stage scale (their `base_visible_nul`), but
+ * ability effects at 1× (`visible_nul`). Our evaluator leaves those root nodes out, so an effect drawn at the
+ * characters' pixel scale came out 1.5× too big next to them.
+ */
+const CHARACTER_STAGE_SCALE = 1.5;
+
 export interface PlayAt {
   from: { x: number; y: number };
   to: { x: number; y: number }[];
-  /** Pixel scale (FFRK draws characters and effects at the same scale). */
+  /** The characters' pixel scale (the effect is drawn at FFRK's size relative to them). */
   scale: number;
   speed: number;
   depth?: number;
@@ -95,7 +102,7 @@ export function playActionEffect(scene: Phaser.Scene, actionId: number | undefin
   const shotA = shot ? m.get(shot) : null;
   const hitA = hit ? m.get(hit) : null;
   const speed = Math.max(0.25, at.speed);
-  const opts = { scale: at.scale, speed, depth: at.depth ?? 60 };
+  const opts = { scale: at.scale / CHARACTER_STAGE_SCALE, speed, depth: at.depth ?? 60 };
 
   const tLaunch = leadMs(launchA) / speed;
   const tShot = leadMs(shotA) / speed;

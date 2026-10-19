@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.13] - 2026-10-19
+
+### Fixed
+- **Ability effects were drawn 1.5× too big.** FFRK places characters, bosses and the status rig on a character at 1.5× its stage scale, but ability effects (spells, hits, items, summons) at 1×. Our rig evaluator leaves those placements out, so characters and effects were both drawn at the heroes' pixel scale, and every effect came out half again as big as FFRK draws it next to the party. Effects now play at the heroes' scale ÷ 1.5 (`CHARACTER_STAGE_SCALE` in `battle-effects.ts`). Status auras and live bosses were already right: they share the characters' 1.5.
+
 ## [0.3.12] - 2026-10-19
 
 Live bosses polish: they freeze, take status colours, have the cursor and gauge on their real figure, and play FFRK's own particles.
