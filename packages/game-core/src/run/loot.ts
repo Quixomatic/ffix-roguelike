@@ -5,7 +5,7 @@ import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
 import { encounterEnemies, getScene, isSceneRef, rollSceneGroup, sceneGroup } from "../content/ff9-scenes";
 import { WORLDS } from "../content/worlds";
-import type { Rng } from "../rng";
+import { Rng } from "../rng";
 
 const GEAR_KINDS = new Set(["weapon", "wrist", "head", "armor", "accessory"]);
 
@@ -46,6 +46,15 @@ export function pickEncounter(rng: Rng, world: number, depth: number, kind: Batt
   if (kind === "boss") return rollScenes(rng, w.boss, 8);
   if (kind === "semiboss") return rollScenes(rng, w.semiBoss ?? w.elites[0] ?? w.boss, 8);
   return rollScenes(rng, pickGroup(rng, w, depth, kind, cap), cap);
+}
+
+/**
+ * The monsters a battle stage's picture shows on the overworld map: a likely group for its depth (the same window
+ * `pickEncounter` uses), seeded by the stage so it stays the same. A preview, not the fight: the real encounter is
+ * rolled on entering. Distinct enemy ids, the group's leader first.
+ */
+export function encounterPreview(world: number, depth: number, kind: BattleNodeKind, seed: string, partySize = 4): string[] {
+  return [...new Set(encounterEnemies(pickEncounter(Rng.fromSeed(seed), world, depth, kind, partySize)))];
 }
 
 function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "battle" | "elite", cap: number): string[] {

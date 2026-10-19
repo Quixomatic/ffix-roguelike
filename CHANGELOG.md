@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.48] - 2026-10-19
+
+### Changed
+- **New stage markers on the overworld.** Each stage is an SMW-style pixel dot drawn pixel by pixel, so it stays crisp at every zoom: a dark outline, a lighter top, a darker bottom and a soft shadow. Each dot is centred exactly on its tile, where the roads' beads meet.
+  - It replaces the anti-aliased circle with a text glyph (⚔, ☠, $…), which sat off-centre.
+  - Sizes are 12×10 px, and 16×12 px for the fortress and boss.
+  - Colours are by kind, as before. The boss is now crimson instead of near-black.
+  - The ring that pulses on stages you can walk to now takes the marker's shape.
+- **Battle and elite stages show their monsters.** One or two FFRK monster sprites idle just above the marker, in place of the tent / tower picture.
+  - They come from the likely group for that stage's depth on this map: game-core `encounterPreview`, the same depth window the real encounter is picked from. It's seeded by the run and stage, so a stage always shows the same monsters.
+  - It's a preview: the actual fight is still rolled when you enter.
+  - Monsters keep FFRK's size ratios: small ones at 1×, bigger sheets at ½ or ¼, so nothing towers over the map.
+  - Other stages keep their object-sheet pictures for now.
+
 ## [0.3.47] - 2026-10-19
 
 ### Changed

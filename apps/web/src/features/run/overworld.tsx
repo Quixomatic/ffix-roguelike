@@ -1,4 +1,4 @@
-import { WORLDS, type MapNode, type NodeKind, type RunState } from "@ffix-roguelike/game-core";
+import { encounterPreview, getEnemy, WORLDS, type MapNode, type NodeKind, type RunState } from "@ffix-roguelike/game-core";
 import { Bird, Castle, CircleHelp, Flag, Gem, Hammer, Music, Shield, Skull, Store, Swords, Tent, type LucideIcon } from "lucide-react";
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
@@ -7,7 +7,23 @@ import type { Action } from "@/features/input/actions";
 import { ButtonHint } from "@/features/input/button-hint";
 import { useInputDevice, useInputOwner } from "@/features/input/owner";
 
+import { enemySpriteFor } from "@/features/sprites/enemy-sprites";
+
 import { createMapGame, type MapBridge } from "./map-scene";
+
+/**
+ * The monsters drawn over each battle / elite stage (sprite keys, at most two): a likely group for the stage's depth
+ * (`encounterPreview`, seeded by the run and stage so it stays put). Monsters without an FFRK sheet are skipped.
+ */
+function stagePreviews(run: RunState): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const n of run.map.nodes) {
+    if (n.kind !== "battle" && n.kind !== "elite") continue;
+    const ids = encounterPreview(run.world, n.depth, n.kind, `${run.seed}|${run.stage}|${n.id}`, run.party.length);
+    out[n.id] = [...new Set(ids.map((id) => getEnemy(id).sprite))].filter((key) => enemySpriteFor(key)).slice(0, 2);
+  }
+  return out;
+}
 
 const KIND_ICON: Record<NodeKind, LucideIcon> = {
   start: Flag,
@@ -149,6 +165,7 @@ export function Overworld({
       visited: run.visited,
       leader: run.party[0]!.build.key,
       theme: world.theme,
+      previews: stagePreviews(run),
       onHover: setHover,
       isBusy: () => busyRef.current,
       onAction: (a) => onActionRef.current?.(a),

@@ -9,6 +9,7 @@ import Phaser from "phaser";
 import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { gameFontFamily } from "@/features/settings/fonts";
+import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets } from "@/features/sprites/enemy-sprites";
 import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 import { assetUrl } from "@/lib/assets";
@@ -28,6 +29,8 @@ export interface MapBridge {
   visited: string[];
   leader: string;
   theme: string;
+  /** Monsters drawn over battle / elite stages (stage id → enemy sprite keys, at most two; overworld.tsx). */
+  previews?: Record<string, string[]>;
   /** The party entered a next stage (Enter/Space/click on the stage it stands on, or a click from afar): commit the move. */
   onSelect(nodeId: string): void;
   onHover(node: MapNode | null): void;
@@ -44,20 +47,50 @@ export interface MapBridge {
   insetRight?(): number;
 }
 
-const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number }> = {
-  start: { color: 0xffffff, glyph: "★", size: 16 },
-  battle: { color: 0xd8483a, glyph: "⚔", size: 18 },
-  elite: { color: 0x8a3ad8, glyph: "☠", size: 20 },
-  semiboss: { color: 0xb8302a, glyph: "♛", size: 24 },
-  treasure: { color: 0xe8c040, glyph: "◆", size: 17 },
-  shop: { color: 0x3ab868, glyph: "$", size: 17 },
-  synth: { color: 0xd88a3a, glyph: "⚒", size: 17 },
-  stiltzkin: { color: 0xf0a0c8, glyph: "♪", size: 17 },
-  chocobo: { color: 0xf0d040, glyph: "✦", size: 17 },
-  moogle: { color: 0xf080b0, glyph: "✿", size: 18 },
-  event: { color: 0x3a8ad8, glyph: "?", size: 17 },
-  boss: { color: 0x202020, glyph: "♜", size: 28 },
+/** Each kind of stage's marker colour. */
+const NODE_COLOR: Record<NodeKind, number> = {
+  start: 0xf0f0f0,
+  battle: 0xd8483a,
+  elite: 0x8a3ad8,
+  semiboss: 0xd8702a,
+  treasure: 0xe8c040,
+  shop: 0x3ab868,
+  synth: 0xd88a3a,
+  stiltzkin: 0xf0a0c8,
+  chocobo: 0xf0d040,
+  moogle: 0xf080b0,
+  event: 0x3a8ad8,
+  boss: 0xb02020,
 };
+
+/** Marker sizes (px, even so they centre exactly on a tile's centre): the usual dot, and the bosses'. */
+const MARKER = { w: 12, h: 10 };
+const MARKER_BIG = { w: 16, h: 12 };
+
+/**
+ * An SMW-style level dot, pixel by pixel (no anti-aliased circles, so it stays crisp at every zoom), centred on (cx,
+ * cy): a dark outline, a lighter top, a darker bottom, and a soft shadow under it.
+ */
+function drawMarker(g: Phaser.GameObjects.Graphics, cx: number, cy: number, size: { w: number; h: number }, color: number) {
+  const { w, h } = size;
+  const inside = (x: number, y: number) => x >= 0 && y >= 0 && x < w && y < h && ((x + 0.5 - w / 2) / (w / 2)) ** 2 + ((y + 0.5 - h / 2) / (h / 2)) ** 2 <= 1;
+  const left = cx - w / 2;
+  const top = cy - h / 2;
+  const base = Phaser.Display.Color.ValueToColor(color);
+  const light = base.clone().lighten(25).color;
+  const dark = base.clone().darken(25).color;
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      if (!inside(x, y)) continue;
+      g.fillStyle(0x000000, 0.3).fillRect(left + x, top + y + 2, 1, 1);
+    }
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      if (!inside(x, y)) continue;
+      const edge = !inside(x - 1, y) || !inside(x + 1, y) || !inside(x, y - 1) || !inside(x, y + 1);
+      g.fillStyle(edge ? 0x141414 : y < h * 0.4 ? light : y >= h - 3 ? dark : color, 1).fillRect(left + x, top + y, 1, 1);
+    }
+}
 
 /** Short always-visible labels under each stage (the React overlay shows the longer description on hover). */
 const NODE_LABEL: Record<NodeKind, string> = {
@@ -183,6 +216,7 @@ export class MapScene extends Phaser.Scene {
 
   preload() {
     loadHeroSheets(this, [`hero/${this.bridge.leader}`]);
+    loadEnemySheets(this, Object.values(this.bridge.previews ?? {}).flat());
     if (!this.textures.exists(TERRAIN_KEY)) this.load.image(TERRAIN_KEY, assetUrl("sprites/overworld/terrain.png"));
     if (!this.textures.exists(OBJECTS_KEY)) this.load.image(OBJECTS_KEY, assetUrl("sprites/overworld/objects.png"));
   }
@@ -405,36 +439,29 @@ export class MapScene extends Phaser.Scene {
   private drawStage(n: MapNode, visited: Set<string>, reachable: Set<string>) {
     const b = this.bridge;
     const p = center(this.layout.nodes.get(n.id)!);
-    const style = NODE_STYLE[n.kind];
+    const color = NODE_COLOR[n.kind];
     const done = visited.has(n.id) && n.id !== b.position;
     const can = reachable.has(n.id);
     /** Not reachable any more from the route taken. */
     const cut = this.cutOff.has(n.id);
-    const fill = done ? Phaser.Display.Color.ValueToColor(style.color).darken(35).desaturate(60).color : cut ? Phaser.Display.Color.ValueToColor(style.color).darken(45).desaturate(85).color : style.color;
+    const fill = done ? Phaser.Display.Color.ValueToColor(color).darken(35).desaturate(60).color : cut ? Phaser.Display.Color.ValueToColor(color).darken(45).desaturate(85).color : color;
+    const size = n.kind === "boss" || n.kind === "semiboss" ? MARKER_BIG : MARKER;
 
     if (can) {
-      const pulse = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 9).setStrokeStyle(2, OPEN_PATH, 0.9).setDepth(1);
-      this.tweens.add({ targets: pulse, scale: 1.5, alpha: 0, duration: 900, repeat: -1 });
+      // A ring the marker's shape, swelling out from it.
+      const pulse = this.add.ellipse(p.x, p.y, size.w + 4, size.h + 4).setStrokeStyle(2, OPEN_PATH, 0.9).setDepth(1);
+      this.tweens.add({ targets: pulse, scale: 1.6, alpha: 0, duration: 900, repeat: -1 });
     }
 
-    // The stage itself: a circle marker on the road (where the party stands), coloured by kind and state; what's there
-    // stands just above it (the object sheet's picture: a town, the castle…).
+    // The stage itself: an SMW-style pixel dot on the road (where the party stands), centred on its tile and coloured by
+    // kind and state; what's there stands just above it (monsters for battles, else the object sheet's picture).
     const g = this.add.graphics().setDepth(2);
-    const glyphY = p.y;
-    const labelY = p.y + 8;
-    const r = n.kind === "boss" ? 7 : n.kind === "start" ? 5 : 6;
-    g.fillStyle(0x000000, 0.35).fillEllipse(p.x, p.y + 4, r * 2 + 2, 5);
-    g.fillStyle(0x1a1a1a, 1).fillCircle(p.x, p.y, r + 1.5);
-    g.fillStyle(fill, 1).fillCircle(p.x, p.y, r);
-    g.fillStyle(0xffffff, done ? 0.15 : 0.45).fillCircle(p.x - r * 0.35, p.y - r * 0.35, r * 0.35);
-    this.placeStageSprite(n, cut ? 0.35 : done ? 0.6 : 1);
+    drawMarker(g, p.x, p.y, size, fill);
+    const labelY = p.y + size.h / 2 + 1;
+    const alpha = cut ? 0.35 : done ? 0.6 : 1;
+    if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(n, this.bridge.previews[n.id]!, alpha);
+    else this.placeStageSprite(n, alpha);
 
-    const glyph = smooth(this.add
-      .text(p.x, glyphY, style.glyph, { fontFamily: "serif", fontSize: n.kind === "boss" ? "11px" : "9px", color: "#ffffff", resolution: TEXT_RES })
-      .setOrigin(0.5)
-      .setStroke("#000000", 2)
-      .setDepth(3));
-    if (done) glyph.setAlpha(0.6);
     const label = smooth(this.add
       .text(p.x, labelY, NODE_LABEL[n.kind], {
         fontFamily: gameFontFamily(),
@@ -447,12 +474,34 @@ export class MapScene extends Phaser.Scene {
       .setDepth(5));
     if (done) label.setAlpha(0.55);
     // Cut off: faded right back, so the stages still ahead stand out.
-    if (cut) for (const o of [g, glyph, label]) o.setAlpha(0.35);
+    if (cut) for (const o of [g, label]) o.setAlpha(0.35);
 
     const hit = this.add.circle(p.x, p.y, n.kind === "boss" ? 16 : 11, 0xffffff, 0.001).setDepth(6).setInteractive({ useHandCursor: can });
     hit.on("pointerover", () => b.onHover(n));
     hit.on("pointerout", () => b.onHover(null));
     if (can) hit.on("pointerup", () => !this.dragged && this.clickStage(n.id));
+  }
+
+  /**
+   * The monsters a battle stage may hold (at most two, `MapBridge.previews`), standing just above its marker, idling.
+   * FFRK sheets keep their size ratios: small monsters at 1×, bigger ones at ½ or ¼ so none towers over the map.
+   */
+  private placeMonsters(n: MapNode, keys: string[], alpha: number) {
+    const p = center(this.layout.nodes.get(n.id)!);
+    keys.forEach((key, i) => {
+      const ffrk = ensureEnemyAnims(this, key);
+      if (!ffrk) return;
+      const { info } = ffrk;
+      const scale = info.h <= 40 ? 1 : info.h <= 80 ? 0.5 : 0.25;
+      const dx = keys.length > 1 ? (i === 0 ? -5 : 6) : 0;
+      this.add
+        .sprite(p.x + dx, p.y - 3 - i, ffrk.texture, 0)
+        .setOrigin(info.originX / info.w, info.originY / info.h)
+        .setScale(scale)
+        .setDepth(1.5 - i * 0.1)
+        .setAlpha(alpha)
+        .play({ key: enemyAnimKey(info, "idle"), startFrame: i * 3 });
+    });
   }
 
   /**
