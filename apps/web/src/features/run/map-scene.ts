@@ -96,7 +96,7 @@ const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 997, // Crossed swords over shield
   elite: 254, // horned demon head
   shop: 989, // Dollar money bag
-  synth: 442, // iron anvil
+  synth: 499, // anvil and hammer
   treasure: 210, // treasure chest
 };
 

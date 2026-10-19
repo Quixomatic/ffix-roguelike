@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.64] - 2026-10-19
+
+### Changed
+- **Synthesis stages' badge** is now "anvil and hammer" (499), replacing the plain iron anvil (442).
+
 ## [0.3.63] - 2026-10-19
 
 ### Changed
