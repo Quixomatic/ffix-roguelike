@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.35] - 2026-10-19
+
+### Fixed
+- **Run sidebar relics: no ring.** Each held relic was wrapped in a rarity-coloured ring that stretched into a tall oval around the badge. The badge alone shows now (its popover still gives the rarity).
+
 ## [0.3.34] - 2026-10-19
 
 ### Changed

@@ -1,5 +1,5 @@
 import { partySynergies, type RunState } from "@ffix-roguelike/game-core";
-import { BASE_RELIC_SLOTS, rarityOf, relicById } from "@ffix-roguelike/game-data";
+import { BASE_RELIC_SLOTS, relicById } from "@ffix-roguelike/game-data";
 
 import { Badge } from "@/features/hub/badge";
 import { RelicPopover, SynergyChip } from "@/features/hub/relic-popover";
@@ -22,7 +22,7 @@ export function RelicRack({ run, compact = false }: { run: RunState; compact?: b
       <div className="flex flex-wrap items-center gap-1.5">
         {held.map((r) => (
           <RelicPopover key={r.id} relicId={r.id} side="left">
-            <button type="button" data-sound="none" className="cursor-help rounded-full ring-1" style={{ ["--tw-ring-color" as string]: rarityOf(r.rarity).color }}>
+            <button type="button" data-sound="none" className="inline-flex cursor-help">
               <Badge id={r.badge ?? 1} scale={1} view={compact ? 28 : 36} />
             </button>
           </RelicPopover>
