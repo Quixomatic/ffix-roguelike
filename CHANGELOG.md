@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.55] - 2026-10-19
+
+### Fixed
+- **Stage badges were blown up** by v0.3.54. It scaled each badge to 24 px tall on the assumption that they draw bigger than that. Measured, they draw only 15–20 px at 1× (#997 20×20, #989 17×20, #442 18×10, #210 15×14), so they grew 1.2–2.4×, and the flat anvil the most. Now each badge's longer side is 14 px (`BADGE_SIZE`): between ½ (too small) and 1× (too big), and the same for every badge.
+
 ## [0.3.54] - 2026-10-19
 
 ### Changed
