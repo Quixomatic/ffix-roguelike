@@ -82,7 +82,7 @@ const BADGE_CELL = 48;
  * they match. Drawn at their own size, standing FIGURE_GAP above the marker.
  */
 const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
-  battle: 334, // crossed swords
+  battle: 997, // Crossed swords over shield
   elite: 254, // horned demon head
   shop: 989, // Dollar money bag
   synth: 442, // iron anvil

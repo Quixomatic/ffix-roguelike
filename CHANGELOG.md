@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.53] - 2026-10-19
+
+### Changed
+- **Battle stages' badge** is now "Crossed swords over shield" (997), replacing plain crossed swords (334).
+
 ## [0.3.52] - 2026-10-19
 
 ### Changed
