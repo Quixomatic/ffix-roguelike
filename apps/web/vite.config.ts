@@ -42,6 +42,20 @@ function ffrkRawEffects(): Plugin {
           res.end();
         });
       });
+      // Boss rigs by their FFRK server paths (ab/character/boss/<id>/…), from the boss downloads (`ffrk:fetch bosses`):
+      // `<id>_1.json` is the rig, `img_<id>.png/json` the main sheet, other sheets `<id>~<file>`. For Practice's live
+      // boss animation (admin, dev only).
+      const bosses = join(root, "..", "bosses");
+      server.middlewares.use("/ffrk-raw/ab/character/boss", (req, res, next) => {
+        const m = /^\/(\d+)\/([^/?]+)/.exec(decodeURIComponent(req.url ?? ""));
+        if (!m) return next();
+        const [, id, name] = m;
+        const local = name === `${id}_1.json` ? `${id}.anim.json` : name === `img_${id}.png` ? `${id}.png` : name === `img_${id}.json` ? `${id}.json` : `${id}~${name}`;
+        const file = normalize(join(bosses, local));
+        if (!file.startsWith(bosses) || !existsSync(file)) return next();
+        res.setHeader("Content-Type", types[extname(file)] ?? "application/octet-stream");
+        createReadStream(file).pipe(res);
+      });
       server.middlewares.use("/ffrk-raw", (req, res, next) => {
         const file = normalize(join(root, decodeURIComponent((req.url ?? "/").split("?")[0]!)));
         if (!file.startsWith(root) || !existsSync(file) || !statSync(file).isFile()) return next();

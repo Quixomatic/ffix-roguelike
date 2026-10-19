@@ -90,6 +90,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209058,
   "src": "Abadon (FF9)"
  },
  "abomination": {
@@ -203,6 +204,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 215001,
   "src": "Adamantoise (FF15)"
  },
  "ahriman": {
@@ -312,6 +314,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209057,
   "src": "Amdusias (FF9)"
  },
  "anemone": {
@@ -415,6 +418,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209010,
   "src": "Antlion IX (FF9)"
  },
  "ark": {
@@ -505,6 +509,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209020,
   "src": "Ark (FF9)"
  },
  "armodullahan": {
@@ -665,6 +670,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209007,
   "src": "Beatrix (FF9)"
  },
  "behemoth": {
@@ -787,6 +793,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209002,
   "src": "Black Waltz 1 (FF9)"
  },
  "black-waltz-2": {
@@ -871,6 +878,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209004,
   "src": "Black Waltz 2 (FF9)"
  },
  "black-waltz-3": {
@@ -954,6 +962,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209005,
   "src": "Black Waltz 3 (FF9)"
  },
  "black-widow": {
@@ -1041,6 +1050,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 227035,
   "src": "Black Widow (FF7)"
  },
  "bomb": {
@@ -1220,6 +1230,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 208058,
   "src": "Catoblepas (FF8)"
  },
  "cave-imp": {
@@ -1323,6 +1334,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 203027,
   "src": "Cerberus (FF3)"
  },
  "chimera": {
@@ -1508,6 +1520,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209036,
   "src": "Deathguise (FF9)"
  },
  "dendrobium": {
@@ -1655,6 +1668,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209024,
   "src": "Earth Guardian (FF9)"
  },
  "fang": {
@@ -1802,6 +1816,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209026,
   "src": "Garland IX (FF9)"
  },
  "garuda": {
@@ -1892,6 +1907,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 214014,
   "src": "Garuda (FF14)"
  },
  "ghost": {
@@ -2014,6 +2030,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209006,
   "src": "Gizamaluk (FF9)"
  },
  "goblin": {
@@ -2199,6 +2216,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209035,
   "src": "Hades (FF9)"
  },
  "hecteyes": {
@@ -2327,6 +2345,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209017,
   "src": "Hilgigars (FF9)"
  },
  "hornet": {
@@ -2474,6 +2493,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 207134,
   "src": "Iron Man (FF7)"
  },
  "kefka": {
@@ -2564,6 +2584,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 206010,
   "src": "Kefka (FF6)"
  },
  "king-behemoth": {
@@ -2673,6 +2694,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209033,
   "src": "Kraken IX (FF9)"
  },
  "ladybug": {
@@ -2807,6 +2829,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209016,
   "src": "Lani (FF9)"
  },
  "lich": {
@@ -2897,6 +2920,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209034,
   "src": "Lich (FF9)"
  },
  "lizard-man": {
@@ -3044,6 +3068,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209031,
   "src": "Maliris (FF9)"
  },
  "mandragora": {
@@ -3166,6 +3191,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209022,
   "src": "Meltigemini (FF9)"
  },
  "mimic": {
@@ -3288,6 +3314,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209053,
   "src": "Mistodon (FF9)"
  },
  "mover": {
@@ -3435,6 +3462,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209030,
   "src": "Nova Dragon (FF9)"
  },
  "nymph": {
@@ -3576,6 +3604,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209054,
   "src": "Ogre (FF9)"
  },
  "ozma": {
@@ -3666,6 +3695,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209070,
   "src": "Ozma (FF9)"
  },
  "plant-brain": {
@@ -3760,6 +3790,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209001,
   "src": "Plant Brain (FF9)"
  },
  "plant-spider": {
@@ -3863,6 +3894,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209045,
   "src": "Prison Cage (FF9)"
  },
  "python": {
@@ -3972,6 +4004,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209069,
   "src": "Ragtime Mouse (FF9)"
  },
  "ralvuimago": {
@@ -4062,6 +4095,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209015,
   "src": "Ralvuimago (FF9)"
  },
  "ralvurahva": {
@@ -4146,6 +4180,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209009,
   "src": "Ralvurahva (FF9)"
  },
  "red-dragon": {
@@ -4236,6 +4271,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209048,
   "src": "Red Dragon IX (FF9)"
  },
  "sahagin": {
@@ -4377,6 +4413,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209003,
   "src": "Sealion (FF9)"
  },
  "seeker-bat": {
@@ -4505,6 +4542,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209059,
   "src": "Shell Dragon (FF9)"
  },
  "silver-dragon": {
@@ -4595,6 +4633,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209025,
   "src": "Silver Dragon (FF9)"
  },
  "skeleton": {
@@ -4733,6 +4772,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209018,
   "src": "Soulcage (FF9)"
  },
  "stroper": {
@@ -4842,6 +4882,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209023,
   "src": "Taharka (FF9)"
  },
  "tiamat": {
@@ -4932,6 +4973,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209032,
   "src": "Tiamat (FF9)"
  },
  "tonberry": {
@@ -5054,6 +5096,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209074,
   "src": "Troll (FF9)"
  },
  "type-a": {
@@ -5192,6 +5235,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 206017,
   "src": "Ultros (FF6)"
  },
  "vice": {
@@ -5373,6 +5417,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 206057,
   "src": "Yeti (FF6)"
  },
  "zaghnol": {
@@ -5450,6 +5495,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
     "repeat": false
    }
   },
+  "rig": 209084,
   "src": "Zaghnol (FF9)"
  },
  "zombie": {

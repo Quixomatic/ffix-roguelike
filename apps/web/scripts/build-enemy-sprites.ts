@@ -95,6 +95,8 @@ export interface GenInfo {
   /** Single-frame looks: hit flash and lightning palette (enemy sheets). */
   white?: number;
   thunder?: number;
+  /** FFRK boss rig id the sheet was baked from (for playing the rig live instead). */
+  rig?: number;
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
@@ -181,7 +183,7 @@ for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
         (anims[p.anim] ??= { frames: [], fps: (rig.fps || 60) / STEP, repeat: a.repeat }).frames.push(i);
       });
       writeFileSync(join(OUT_DIR, `${file}.png`), PNG.sync.write(grid));
-      info = { url: `/sprites/enemies/${file}.png`, w, h, originX: -minX, originY: -minY, anims };
+      info = { url: `/sprites/enemies/${file}.png`, w, h, originX: -minX, originY: -minY, anims, rig: Number(id) };
     }
     built.set(file, info);
   }

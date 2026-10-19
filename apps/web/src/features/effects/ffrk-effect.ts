@@ -12,7 +12,7 @@ import Phaser from "phaser";
 
 import { playSfx } from "@/features/audio/music";
 import { assetFetch } from "@/lib/assets";
-import { evalRig, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
+import { evalRig, visibilityAt, type EmitterNode, type Rig } from "@/features/sprites/ffrk-anim";
 
 /** The dev server's full effect library (the effects gallery browses it); the game loads effects by asset path. */
 export const EFFECT_BASE = import.meta.env.DEV ? "/ffrk-raw" : "/effects";
@@ -439,6 +439,11 @@ export interface PlayOptions {
    * Looping a tag keeps its particle emitters running across the wrap (FFRK's looping status auras).
    */
   tag?: string;
+  /**
+   * Follow the rig's own visibility switches (its entrance hides alternate forms; the tag may switch more) — for
+   * boss rigs played live (`visibilityAt`).
+   */
+  rigVisibility?: boolean;
 }
 
 export class FfrkEffectPlayer {
@@ -493,7 +498,8 @@ export class FfrkEffectPlayer {
       }
     }
     const f = Math.min(this.frame, end);
-    const ev = evalRig(this.asset.rig, f, (url) => this.asset.links.get(serverPath(url)));
+    const vis = this.opts.rigVisibility ? visibilityAt(this.asset.rig, this.opts.tag ?? null, f) : undefined;
+    const ev = evalRig(this.asset.rig, f, (url) => this.asset.links.get(serverPath(url)), vis);
     this.drawImages(ev.parts);
     this.drawSprites(ev.sprites, f);
     // Emitters start at their node's frame and keep their own clock.

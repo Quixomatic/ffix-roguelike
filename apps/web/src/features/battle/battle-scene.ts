@@ -7,6 +7,20 @@ import { bestiary, findItem } from "@ffix-roguelike/game-data";
 import Phaser from "phaser";
 
 import { playActionEffect, preloadEffects } from "@/features/effects/battle-effects";
+import { FfrkEffectPlayer, loadEffect } from "@/features/effects/ffrk-effect";
+
+/**
+ * Practice option (admins, dev server: the raw FFRK boss rigs are there): bosses drawn live from their FFRK rig —
+ * pieces rotated by the GPU at screen resolution, every frame at 60 fps — instead of the baked sprite sheet.
+ */
+export const LIVE_BOSSES_KEY = "ffix-live-bosses";
+const liveBosses = () => {
+  try {
+    return import.meta.env.DEV && localStorage.getItem(LIVE_BOSSES_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
 import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { preloadStatusLooks, StatusView } from "./status-view";
@@ -76,6 +90,8 @@ interface UnitView {
   gauge: Phaser.GameObjects.Graphics;
   /** Monster drawn from an FFRK sheet (idle/attack/damage/dead, white hit-flash cell). */
   ffrk?: EnemySpriteInfo;
+  /** Practice's live boss animation: the FFRK rig played in Phaser (the baked sheet stays, cropped away, for clicks). */
+  live?: { player: FfrkEffectPlayer; tag: string };
   /** FFRK's status looks on this unit: balloon, aura, special rigs, Doom's countdown. */
   status: StatusView;
   /** FFRK-style weapon rig: the weapon drawn between the body and the arm piece during attack frames. */
@@ -222,6 +238,43 @@ export class BattleScene extends Phaser.Scene {
     const hand = this.add.image(x, y - top - 18, HAND).setOrigin(0.5, 0.5).setScale(this.handScale()).setDepth(40).setVisible(false);
     const status = new StatusView(this, 30);
     this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, status, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    if (ffrk?.info.rig && liveBosses()) this.playLive(this.views.get(u.id)!, "idle", true);
+  }
+
+  /** Practice's live boss animation: play one of the rig's tags (idle loops; one-shots return to idle, dead stays). */
+  private playLive(v: UnitView, tag: string, loop: boolean) {
+    const id = v.ffrk?.rig;
+    if (!id) return;
+    void loadEffect(this, `ab/character/boss/${id}/${id}_1.json`).then((asset) => {
+      if (!asset || !v.sprite.active || !asset.rig.tag?.[tag]) return;
+      v.live?.player.destroy();
+      const player = new FfrkEffectPlayer(this, asset, {
+        x: v.sprite.x,
+        y: v.sprite.y,
+        scale: v.sprite.scaleX,
+        loop,
+        tag,
+        mute: true,
+        rigVisibility: true,
+        depth: v.sprite.depth,
+        onDone: loop || tag === "dead" ? undefined : () => this.playLive(v, "idle", true),
+      });
+      v.live = { player, tag };
+      // The baked sheet stays (clicks, stepping forward, fades) but draws nothing.
+      v.sprite.setCrop(0, 0, 0, 0);
+      this.syncLive(v);
+    });
+  }
+
+  /** Keep a live rig on its baked sprite: the sheet's centre → the rig's origin, its scale and fade. */
+  private syncLive(v: UnitView) {
+    if (!v.live) return;
+    const info = v.ffrk!;
+    const s = v.sprite.scaleX;
+    v.live.player.container
+      .setPosition(v.sprite.x + (info.originX - info.w / 2) * s, v.sprite.y + (info.originY - info.h / 2) * s)
+      .setScale(s)
+      .setAlpha(v.sprite.alpha);
   }
 
   /** The weapon and arm-piece layers for a hero strip (hidden until an attack frame needs them). */
@@ -303,6 +356,10 @@ export class BattleScene extends Phaser.Scene {
       if (u.side === "enemy") {
         v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
         if (v.ffrk) this.monsterPose(v, u, down);
+        if (v.live) {
+          if (down && v.live.tag !== "dead") this.playLive(v, "dead", false);
+          this.syncLive(v);
+        }
       }
       else if (v.animated) {
         v.sprite.setAlpha(u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
@@ -404,6 +461,12 @@ export class BattleScene extends Phaser.Scene {
     const anim: EnemyAnim | null = what === "attack" || what === "ability" || what === "throw" ? "attack" : what === "damage" ? "damage" : null;
     if (!anim) return;
     const a = info.anims[anim];
+    // Live rig (Practice): play the rig's own attack / damage, then back to idle.
+    if (v.live && a) {
+      this.playLive(v, anim, false);
+      v.holdUntil = this.time.now + (a.frames.length / a.fps) * 1000;
+      return;
+    }
     if (a) {
       v.sprite.play(enemyAnimKey(info, anim));
       v.holdUntil = this.time.now + (a.frames.length / a.fps) * 1000;

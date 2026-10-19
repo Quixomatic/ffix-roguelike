@@ -21,6 +21,8 @@ export interface EnemySpriteInfo {
   anims: Partial<Record<EnemyAnim, { frames: number[]; fps: number; repeat: boolean }>>;
   white?: number;
   thunder?: number;
+  /** FFRK boss rig id the sheet was baked from (Practice's live boss animation plays the rig itself). */
+  rig?: number;
   /** Where the art comes from (shown in the bestiary). */
   src: string;
 }

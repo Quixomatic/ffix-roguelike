@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.10] - 2026-10-18
+
+### Added
+- **Practice → "Live boss animation"** (dev server; Practice is admin-only): bosses are drawn live from their FFRK rig in Phaser instead of the baked sprite sheet, to compare against baking at a higher resolution.
+  - The pieces are rotated and scaled by the GPU at screen resolution, every frame at 60 fps, with no baked frames.
+  - The rig's own idle loops; attack and damage play the rig's tags, then return to idle; a KO plays its dead tag.
+  - The baked sprite stays underneath, drawing nothing, so clicking, targeting, stepping forward and fading work as before.
+  - The toggle restarts the fight and is remembered in the browser. Other monsters (sheets without a rig) are unchanged.
+- **The effect player follows a rig's visibility switches** (`rigVisibility`), so live bosses don't show their hidden second form either.
+- **Dev server: boss rigs by their FFRK paths** (`/ffrk-raw/ab/character/boss/<id>/…`), mapped to the boss downloads (rig, main sheet, extra sheets).
+- Sprite data records each boss's rig id (`EnemySpriteInfo.rig`).
+
+### Notes
+- The live mode needs the dev server's raw FFRK files (`ffrk:fetch bosses`). Shipping it to players would mean packing the boss rigs and sheets.
+
 ## [0.3.9] - 2026-10-18
 
 ### Fixed
