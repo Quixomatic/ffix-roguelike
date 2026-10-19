@@ -54,7 +54,14 @@ export const AURA: Partial<Record<Status, string>> = {
 /** Statuses with their own looping rig. */
 export const SPECIAL: Partial<Record<Status, string>> = {
   freeze: STATUS_SPECIAL_RIGS.freeze,
-  trance: STATUS_SPECIAL_RIGS.trance,
+};
+
+/**
+ * Statuses whose rig plays once as they begin (`on`) and once as they end (`off`), not looped: FFRK's Trance rig is
+ * the burst going in (`eff_trance`) and the flash coming out (`stop`). What lasts is the body's tint (battle scene).
+ */
+export const BURST: Partial<Record<Status, { rig: string; on: string; off: string }>> = {
+  trance: { rig: STATUS_SPECIAL_RIGS.trance, on: "eff_trance", off: "stop" },
 };
 
 /** Statuses that count down over the head (the counter on the status timer). */

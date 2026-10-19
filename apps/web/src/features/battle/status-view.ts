@@ -1,14 +1,14 @@
 /**
  * One unit's status looks on the battlefield, FFRK's way (see effects/status-looks.ts): the balloon over its head
  * (statuses taking turns every 0.75 s, popping open and closed), the aura looping on it (every 1.5 s), the special
- * rigs (Freeze, Trance) and Doom's countdown. Driven each frame from the unit's statuses.
+ * rigs (Freeze's ice), Trance's burst going in and out, and Doom's countdown. Driven each frame from the unit's statuses.
  */
 import type { StatusTimer } from "@ffix-roguelike/game-core";
 import type { Status } from "@ffix-roguelike/game-data";
 import Phaser from "phaser";
 
 import { FfrkEffectPlayer, loadEffect, type EffectAsset } from "@/features/effects/ffrk-effect";
-import { AURA, AURA_INTERVAL, BALLOON, BALLOON_INTERVAL, balloonPath, COUNTDOWN, SPECIAL, STATUS_EFF_RIG } from "@/features/effects/status-looks";
+import { AURA, AURA_INTERVAL, BALLOON, BALLOON_INTERVAL, balloonPath, BURST, COUNTDOWN, SPECIAL, STATUS_EFF_RIG } from "@/features/effects/status-looks";
 import { assetUrl } from "@/lib/assets";
 
 const BALLOON_ORDER = Object.keys(BALLOON) as Status[];
@@ -52,6 +52,9 @@ export class StatusView {
   private loading = new Set<string>();
   private countdown: Phaser.GameObjects.Text;
   private destroyed = false;
+  /** BURST statuses the unit had last frame, and their one-shot rigs still playing (they follow the unit). */
+  private bursting = new Set<Status>();
+  private bursts = new Set<FfrkEffectPlayer>();
 
   constructor(
     private scene: Phaser.Scene,
@@ -73,6 +76,7 @@ export class StatusView {
     this.updateBalloon(BALLOON_ORDER.filter(has), at, time);
     this.updateAura(AURA_ORDER.filter(has), at, time);
     this.updateSpecials((Object.keys(SPECIAL) as Status[]).filter(has), at);
+    this.updateBursts(statuses, at, hidden);
     const count = (Object.keys(COUNTDOWN) as Status[]).find((s) => has(s) && statuses[s]?.counter != null);
     if (count) {
       this.countdown
@@ -148,6 +152,24 @@ export class StatusView {
     for (const p of this.specials.values()) p.container.setPosition(at.x, at.y).setScale(at.scale);
   }
 
+  /** Play a BURST status's rig once as it begins and once as it ends (not when the unit is KO'd or gone). */
+  private updateBursts(statuses: Partial<Record<Status, StatusTimer>>, at: UnitAnchor, hidden: boolean) {
+    for (const s of Object.keys(BURST) as Status[]) {
+      const on = statuses[s] !== undefined;
+      if (on === this.bursting.has(s)) continue;
+      if (on) this.bursting.add(s);
+      else this.bursting.delete(s);
+      if (hidden) continue;
+      const b = BURST[s]!;
+      void loadEffect(this.scene, b.rig).then((asset) => {
+        if (!asset || this.destroyed || !this.scene.sys.isActive()) return;
+        const p: FfrkEffectPlayer = new FfrkEffectPlayer(this.scene, asset, { x: at.x, y: at.y, scale: at.scale, tag: on ? b.on : b.off, depth: this.depth + 1, onDone: () => this.bursts.delete(p) });
+        this.bursts.add(p);
+      });
+    }
+    for (const p of this.bursts) p.container.setPosition(at.x, at.y).setScale(at.scale);
+  }
+
   /** Load a rig and loop it (a tag of it, or the whole rig) on the unit. */
   private start(rig: string, tag: string | undefined, at: UnitAnchor, ready: (p: FfrkEffectPlayer) => void) {
     void loadEffect(this.scene, rig).then((asset: EffectAsset | null) => {
@@ -160,6 +182,7 @@ export class StatusView {
     this.destroyed = true;
     this.aura?.destroy();
     for (const p of this.specials.values()) p.destroy();
+    for (const p of this.bursts) p.destroy();
     this.balloon.destroy();
     this.countdown.destroy();
   }

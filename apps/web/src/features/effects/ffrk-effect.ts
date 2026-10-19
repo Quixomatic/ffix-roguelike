@@ -472,9 +472,20 @@ export class FfrkEffectPlayer {
     this.range = tagged ? [tagged[0]!, tagged[1]!] : asset.range;
     this.frame = this.range[0];
     // FFRK's own sounds fire on their frames (action_sound → lang/se/se_ogg/<id>.ogg).
-    const sounds = (asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string").map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
-    this.pending = [...(opts.onFrame ?? []), ...(opts.mute ? [] : sounds)].sort((a, b) => a.frame - b.frame);
+    this.pending = [...(opts.onFrame ?? []), ...(opts.mute ? [] : this.sounds())].sort((a, b) => a.frame - b.frame);
     scene.events.on(Phaser.Scenes.Events.UPDATE, this.tick, this);
+  }
+
+  /**
+   * FFRK's own sounds in the frames played (action_sound → lang/se/se_ogg/<id>.ogg). A rig with several tags has
+   * sounds for each; a tag's section mustn't fire the others' (those before it would all go off at its first frame).
+   */
+  private sounds() {
+    const [start, end] = this.range;
+    return (this.asset.rig.action ?? [])
+      .filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && x.frame >= start && x.frame <= end)
+      .sort((a, b) => a.frame - b.frame)
+      .map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
   }
 
   /** Total length in ms at speed 1 (rig frames only; trailing particles may run a little longer). */
@@ -491,7 +502,7 @@ export class FfrkEffectPlayer {
     if (this.frame > end) {
       if (this.opts.loop) {
         this.frame = start;
-        this.pending = (this.asset.rig.action ?? []).filter((x) => x.actionName === "action_sound" && typeof x.id === "string" && !this.opts.mute).map((x) => ({ frame: x.frame, fn: () => playSfx(`effects/se/se_ogg/${x.id}.ogg`) }));
+        this.pending = this.opts.mute ? [] : this.sounds();
         // A looping tag (a status aura) keeps its particles flowing; a looped effect starts them over.
         for (const [node, list] of this.emitters) {
           // Looping a tag: only emitters that have run their course start over (the rest keep flowing).

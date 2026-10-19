@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.14] - 2026-10-19
+
+### Fixed
+- **Trance's flashy entry burst looped for as long as Trance lasted.** FFRK's Trance rig (`status_eff_trance.json`) isn't a loop: it holds two one-off bursts, `eff_trance` (rays, bolts and a flash going in) and `stop` (the flash coming out). It was played as a looping status rig. Now the burst plays **once when Trance begins**, the exit flash **once when it ends** (not on a KO), and the pink body tint is what lasts, as in FFRK. New `BURST` table in `status-looks.ts`; `StatusView` plays these.
+- **A tagged section of an effect rig no longer fires the sounds of the rig's other sections.** Sound cues before the section's first frame all went off at once when it started, so Trance's exit sound would have played on entry. Sounds are now limited to the frames played (`FfrkEffectPlayer.sounds()`).
+
 ## [0.3.13] - 2026-10-19
 
 ### Fixed
