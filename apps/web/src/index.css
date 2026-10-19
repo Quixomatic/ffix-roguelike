@@ -10,7 +10,7 @@
   --ff-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
   --ff-weight: 600;
   --ff-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.6);
-  --ff-numbers-font: "Pixelify Sans", ui-monospace, monospace;
+  --ff-numbers-font: "Jersey 10", ui-monospace, monospace;
   --ff-numbers-weight: 400;
 }
 .ff-display {

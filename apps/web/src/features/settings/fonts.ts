@@ -36,7 +36,7 @@ export type FontId = (typeof FONTS)[number]["id"];
 export type FontLevel = "titleFont" | "headingFont" | "bodyFont" | "numbersFont";
 export type FontPicks = Record<FontLevel, FontId>;
 
-export const DEFAULT_FONTS: FontPicks = { titleFont: "pixelify", headingFont: "pixelify", bodyFont: "nunito", numbersFont: "pixelify" };
+export const DEFAULT_FONTS: FontPicks = { titleFont: "pixelify", headingFont: "pixelify", bodyFont: "nunito", numbersFont: "jersey" };
 
 export const FONT_LEVELS: { level: FontLevel; label: string; hint: string }[] = [
   { level: "titleFont", label: "Title", hint: "The wordmark in the sidebar and the title screen" },

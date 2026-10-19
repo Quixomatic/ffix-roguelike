@@ -9,7 +9,7 @@ const DEFAULTS = {
   titleFont: "pixelify",
   headingFont: "pixelify",
   bodyFont: "nunito",
-  numbersFont: "pixelify",
+  numbersFont: "jersey",
   battleSpeed: 1,
   autoBattle: false,
   musicVolume: 25,

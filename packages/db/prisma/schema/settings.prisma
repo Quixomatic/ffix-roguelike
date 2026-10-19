@@ -8,7 +8,7 @@ model UserSettings {
   titleFont   String  @default("pixelify")
   headingFont String  @default("pixelify")
   bodyFont    String  @default("nunito")
-  numbersFont String  @default("pixelify")
+  numbersFont String  @default("jersey")
   /// Battle animation speed multiplier the battle screen starts at (1, 2 or 4).
   battleSpeed Int     @default(1)
   /// Start battles with the Auto battle toggle on.
