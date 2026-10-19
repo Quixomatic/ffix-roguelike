@@ -72,8 +72,8 @@ export function ControllerPanel() {
             The game reads: <span className="text-yellow-200">{reading.length ? reading.join(" + ") : "nothing"}</span>
             <span className="opacity-60">
               {" "}
-              (D-pad / left stick move · A = 0 confirm · B = 1 cancel · X = 2 · Y = 3 · LB = 4 · RB = 5 · View = 8 · Start = 9 menu. On a run: Y opens
-              the party, X the bag, LB / RB flip between them. In battle: LB swaps the target side, RB all / single, Y next ready character, X Auto,
+              (D-pad / left stick move · A = 0 confirm · B = 1 cancel · X = 2 · Y = 3 · LB = 4 · RB = 5 · LT = 6 · RT = 7 · View = 8 · Start = 9 menu.
+              On a run: Y opens the party, X the bag, LB / RB flip between them, LT / RT zoom the map. In battle: LB swaps the target side, RB all / single, Y next ready character, X Auto,
               View the speed.)
             </span>
           </div>

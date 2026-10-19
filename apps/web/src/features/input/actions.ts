@@ -14,10 +14,14 @@
  * | triangle | C                     | Y (3)                         | △        |
  * | l1       | Q (Tab)               | LB (4)                        | L1       |
  * | r1       | E                     | RB (5)                        | R1       |
+ * | l2       | − (minus, numpad −)   | LT (6)                        | L2       |
+ * | r2       | + (=, numpad +)       | RT (7)                        | R2       |
  * | select   | V                     | Back / View (8)               | Select   |
  * | menu     | M                     | Start / Menu (9)              | Start    |
+ *
+ * L2 / R2 zoom the overworld map out / in.
  */
-export const ACTIONS = ["up", "down", "left", "right", "confirm", "cancel", "x", "triangle", "l1", "r1", "select", "menu"] as const;
+export const ACTIONS = ["up", "down", "left", "right", "confirm", "cancel", "x", "triangle", "l1", "r1", "l2", "r2", "select", "menu"] as const;
 export type Action = (typeof ACTIONS)[number];
 export const DIRECTIONS = ["up", "down", "left", "right"] as const satisfies readonly Action[];
 export const isDirection = (a: Action): a is (typeof DIRECTIONS)[number] => (DIRECTIONS as readonly Action[]).includes(a);
@@ -42,6 +46,8 @@ export const KEY_BINDINGS: Record<Action, KeyBinding[]> = {
   triangle: [k("KeyC", "c", 67)],
   l1: [k("KeyQ", "q", 81), k("Tab", "Tab", 9)],
   r1: [k("KeyE", "e", 69)],
+  l2: [k("Minus", "-", 189), k("NumpadSubtract", "-", 109)],
+  r2: [k("Equal", "=", 187), k("NumpadAdd", "+", 107)],
   select: [k("KeyV", "v", 86)],
   menu: [k("KeyM", "m", 77)],
 };
@@ -64,6 +70,8 @@ export const PAD_BUTTONS: Partial<Record<Action, number[]>> = {
   triangle: [3],
   l1: [4],
   r1: [5],
+  l2: [6],
+  r2: [7],
   select: [8],
   menu: [9],
 };
@@ -80,6 +88,8 @@ export const PAD_LABEL: Record<Action, string> = {
   triangle: "Y",
   l1: "LB",
   r1: "RB",
+  l2: "LT",
+  r2: "RT",
   select: "View",
   menu: "Start",
 };
@@ -94,6 +104,8 @@ export const KEY_LABEL: Record<Action, string> = {
   triangle: "C",
   l1: "Q",
   r1: "E",
+  l2: "−",
+  r2: "+",
   select: "V",
   menu: "M",
 };

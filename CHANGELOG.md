@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.40] - 2026-10-19
+
+### Changed
+- **The overworld map opens at 2× zoom** wherever it's shown. It used to pick 2–4× from the frame's width, so docking or floating the party sidebar jumped the zoom (3× floating, 2× docked). It only goes higher if 2× would leave the map short of filling the view.
+
+### Added
+- **Map zoom controls**, in whole steps from 1× to 4× so the pixel-art tiles stay crisp:
+  - **mouse wheel**: one step per notch (a trackpad's small scrolls add up to a step);
+  - **− / +** on the keyboard (also `=` and the numpad's − / +);
+  - **LT / RT** on a controller.
+
+  While the camera follows the party, zooming keeps the party in view. While looking around, the wheel zooms toward the pointer, and the keys and triggers zoom about the middle of the view. The map never zooms out past the point where it would stop filling the view.
+  - **Your zoom is remembered on this device** (browser storage), like the sidebar's dock choice.
+  - The map's hint line shows the zoom buttons; Settings → Controller lists LT = 6 / RT = 7.
+- **Two new input actions,** `l2` / `r2` (FF9's L2 / R2), in the shared controls table (`input/actions.ts`). Only the map uses them so far; battles and menus ignore them.
+
+### Fixed
+- Two stale comments in the overworld code: the flat dirt tile is no longer under the map (it's unused since v0.3.39's path roads), and the tilemap's layer list now includes the roads.
+
 ## [0.3.39] - 2026-10-19
 
 ### Changed

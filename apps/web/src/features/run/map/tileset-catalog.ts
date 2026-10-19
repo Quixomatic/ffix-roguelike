@@ -60,8 +60,8 @@ export const AUTOTILES = [
   { name: "waterGrass", sheet: "A1", tx: 8, ty: 9 },
   { name: "poison", sheet: "A1", tx: 8, ty: 3 },
   { name: "lavaPool", sheet: "A1", tx: 8, ty: 6 },
-  // Flat fill in the colour at A2 tile (tx, ty)'s first pixel: dirt, the sand the ground autotiles' edges sit on. Under the
-  // whole map; the ground autotile leaves the roads out, so they show as dirt paths with natural edges.
+  // Flat fill in the colour at A2 tile (tx, ty)'s first pixel: dirt, the sand the ground autotiles' edges sit on. Unused
+  // since the roads became narrow path tiles (ROAD_PIECES); kept for a dirt ground or carved areas.
   { name: "dirt", sheet: "flat", tx: 0, ty: 1 },
 ] as const;
 

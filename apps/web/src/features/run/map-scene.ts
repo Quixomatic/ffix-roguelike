@@ -12,7 +12,7 @@ import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from 
 
 import { assetUrl } from "@/lib/assets";
 
-import { buildMapLayout, COL_STEP, TILE, type Dir, type MapLayout, type TilePoint } from "./map/layout";
+import { buildMapLayout, TILE, type Dir, type MapLayout, type TilePoint } from "./map/layout";
 import { Walker } from "./map/navigation";
 import { buildTerrain } from "./map/terrain";
 import { OBJECT_COLUMNS, OVERWORLD_TILE, STAGE_SPRITES, TILESET_MARGIN, TILESET_SPACING } from "./map/tileset-catalog";
@@ -89,8 +89,34 @@ const OPEN_PATH = 0xfff2a8;
 const WALKED_PATH = 0x8a6a3a;
 /** World px per second the party walks. */
 const WALK_SPEED = 150;
-/** Roughly how many stage columns fit across the view (sets the zoom). */
-const VISIBLE_COLUMNS = 4.5;
+/**
+ * Camera zoom, in whole steps (pixel-art tiles stay crisp): 2× unless the player picks another, from ZOOM_MIN to
+ * ZOOM_MAX (wheel, − / +, LT / RT). The pick is remembered on this device. The view never zooms out past where the
+ * map would stop filling it.
+ */
+const ZOOM_DEFAULT = 2;
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 4;
+const ZOOM_STORAGE = "ffix-map-zoom";
+/** Wheel travel (deltaY) per zoom step, so a trackpad's stream of small deltas doesn't race through the steps. */
+const WHEEL_STEP = 100;
+
+function loadZoom(): number {
+  try {
+    const v = Number(localStorage.getItem(ZOOM_STORAGE));
+    return Number.isInteger(v) && v >= ZOOM_MIN && v <= ZOOM_MAX ? v : ZOOM_DEFAULT;
+  } catch {
+    return ZOOM_DEFAULT;
+  }
+}
+
+function saveZoom(zoom: number) {
+  try {
+    localStorage.setItem(ZOOM_STORAGE, String(zoom));
+  } catch {
+    // Storage blocked (private window…): the pick lasts until the map is rebuilt.
+  }
+}
 /** Looking around: screen pixels per second. */
 const PAN_SPEED = 700;
 /** Party sprite feet sit a little below the stage centre. */
@@ -130,6 +156,10 @@ export class MapScene extends Phaser.Scene {
   private spriteKey = "";
   /** Tilemap layers for stage pictures: on the grid (odd widths) and half a tile left (even widths). */
   private objectLayers?: { odd: Phaser.Tilemaps.TilemapLayer; even: Phaser.Tilemaps.TilemapLayer };
+  /** The zoom the player picked (ZOOM_MIN–ZOOM_MAX); the camera uses it unless the view needs more to stay filled. */
+  private zoomPick = ZOOM_DEFAULT;
+  /** Wheel travel not yet turned into a zoom step. */
+  private wheel = 0;
 
   constructor() {
     super("map");
@@ -146,6 +176,8 @@ export class MapScene extends Phaser.Scene {
     this.drag = null;
     this.dragged = false;
     this.returning = false;
+    this.zoomPick = loadZoom();
+    this.wheel = 0;
   }
 
   preload() {
@@ -233,6 +265,14 @@ export class MapScene extends Phaser.Scene {
       this.drag = null;
       this.dragged = false;
     });
+    // The wheel zooms a step at a time, toward the pointer while looking around.
+    this.input.on(Phaser.Input.Events.POINTER_WHEEL, (p: Phaser.Input.Pointer, _over: unknown, _dx: number, dy: number) => {
+      this.wheel += dy;
+      if (Math.abs(this.wheel) < WHEEL_STEP) return;
+      const step = this.wheel < 0 ? 1 : -1;
+      this.wheel = 0;
+      this.zoomBy(step, p);
+    });
   }
 
   // ---------------------------------------------------------------------------------------------------------
@@ -286,8 +326,8 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * The terrain as a Phaser tilemap (the overworld tileset, map/tileset-catalog.ts): one blank map the layout's size,
-   * with a layer per depth (ground, water, scenery), all from the one extruded terrain tileset, filled from
-   * map/terrain.ts. Roads, stages and the party draw on top. False if the tileset isn't loaded (then the plain ground).
+   * with a layer per depth (ground, roads, water, scenery), all from the one extruded terrain tileset, filled from
+   * map/terrain.ts. The road beads, stages and the party draw on top. False if the tileset isn't loaded (then the plain ground).
    */
   private drawTerrain(theme: string): boolean {
     if (!this.textures.exists(TERRAIN_KEY)) return false;
@@ -440,17 +480,42 @@ export class MapScene extends Phaser.Scene {
     this.fitCamera(size.width, size.height);
   }
 
+  /** The least whole-number zoom at which the map fills a w × h view. */
+  private fillZoom(w: number, h: number) {
+    const L = this.layout;
+    return Math.max(1, Math.ceil(h / (L.rows * TILE)), Math.ceil(w / (L.cols * TILE)));
+  }
+
   /**
-   * Zoom so ~VISIBLE_COLUMNS stage columns fit across, never so far out that the map stops filling the view. The map
-   * runs well past the castle (layout `MARGIN_END`), so with the party sidebar floating over the right edge the castle
-   * can still scroll clear of it; the party is centred in the part of the view that shows.
+   * Zoom in (+1) or out (−1) a step and remember it on this device. While the camera follows the party it stays on the
+   * party; while looking around, the wheel zooms toward the pointer (keys and triggers about the view's centre).
+   */
+  private zoomBy(step: number, pointer?: Phaser.Input.Pointer) {
+    const cam = this.cameras.main;
+    const { width: w, height: h } = this.scale.gameSize;
+    const from = cam.zoom;
+    const pick = Phaser.Math.Clamp(Math.max(this.zoomPick, this.fillZoom(w, h)) + step, ZOOM_MIN, ZOOM_MAX);
+    if (pick === this.zoomPick && Math.max(pick, this.fillZoom(w, h)) === from) return;
+    this.zoomPick = pick;
+    saveZoom(pick);
+    this.fitCamera(w, h);
+    const to = cam.zoom;
+    if (to === from || !pointer || !this.panned) return;
+    // Keep the world point under the pointer where it is (the camera zooms about its centre).
+    const anchor = (scroll: number, size: number, at: number) => scroll + size / 2 + (at - size / 2) / from - size / 2 - (at - size / 2) / to;
+    cam.setScroll(anchor(cam.scrollX, cam.width, pointer.x), anchor(cam.scrollY, cam.height, pointer.y));
+  }
+
+  /**
+   * The player's zoom (2× by default; `zoomBy`), or more when the view needs it to stay filled. Whole numbers only, so
+   * the pixel-art tiles stay crisp. The map runs well past the castle (layout `MARGIN_END`), so with the party sidebar
+   * floating over the right edge the castle can still scroll clear of it; the party is centred in the part of the view
+   * that shows.
    */
   private fitCamera(w: number, h: number) {
     const L = this.layout;
     const cam = this.cameras.main;
-    const byWidth = w / (VISIBLE_COLUMNS * COL_STEP * TILE);
-    // Whole-number zoom (pixel-art tiles stay crisp, no shimmer), at least enough to fill the view.
-    const zoom = Math.max(Phaser.Math.Clamp(Math.round(byWidth), 2, 4), Math.ceil(h / (L.rows * TILE)), Math.ceil(w / (L.cols * TILE)));
+    const zoom = Math.max(this.zoomPick, this.fillZoom(w, h));
     cam.setZoom(zoom);
     cam.setRoundPixels(true);
     const inset = Math.max(0, Math.min(w * 0.6, this.bridge.insetRight?.() ?? 0));
@@ -479,6 +544,8 @@ export class MapScene extends Phaser.Scene {
   private onAction(a: Action) {
     // View (V): look around — the directions pan the camera; View again, B or A comes back to the party.
     if (a === "select") return this.looking ? this.recenter() : ((this.looking = true), this.detachCamera(), this.bridge.onLook?.(true));
+    // LT / RT (− / +): zoom out / in, walking or looking.
+    if (a === "l2" || a === "r2") return this.zoomBy(a === "r2" ? 1 : -1);
     if (this.looking) {
       if (a === "cancel" || a === "confirm") this.recenter();
       else if (a === "triangle" || a === "x" || a === "menu") this.bridge.onAction?.(a);

@@ -135,6 +135,11 @@ export function Overworld({
   const busyRef = useRef(busy);
   busyRef.current = busy;
   const world = WORLDS[run.world]!;
+  const zoomHint = (
+    <>
+      <ButtonHint action="l2" /> <ButtonHint action="r2" /> {device === "pad" ? "" : "or wheel "}to zoom
+    </>
+  );
 
   useEffect(() => {
     if (!hostRef.current) return;
@@ -171,12 +176,12 @@ export function Overworld({
             {looking ? (
               <>
                 Looking around · {device === "pad" ? "right stick / D-pad" : "arrows / drag"} to pan · <ButtonHint action="select" /> or <ButtonHint action="cancel" /> back to
-                the party
+                the party · {zoomHint}
               </>
             ) : (
               <>
                 {device === "pad" ? "D-pad / stick to walk" : "WASD / arrows to walk"} · <ButtonHint action="confirm" /> enter a stage · <ButtonHint action="select" />{" "}
-                {device === "pad" ? "or right stick" : "or drag"} to look around
+                {device === "pad" ? "or right stick" : "or drag"} to look around · {zoomHint}
               </>
             )}
           </div>
