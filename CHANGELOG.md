@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.41] - 2026-10-19
+
+### Removed
+- **The dirt path under the overworld roads.** The routes are the SMW dotted beads on the ground again, as before v0.3.38. The terrain, water and scenery stay, and so does the open ground around the routes.
+  - `buildTerrain` no longer returns a roads layer, and the map scene draws ground → water → scenery.
+  - The road tiles are still built into terrain.png (`ROAD_PIECES` in the tile build), but nothing draws them. They come out of the build with the next tile-pack rebuild, or become a different road style if we want one.
+
 ## [0.3.40] - 2026-10-19
 
 ### Changed

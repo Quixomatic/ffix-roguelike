@@ -6,7 +6,7 @@
  */
 import { autotileShape, FULL_SHAPE, neighboursOf } from "./autotile";
 import type { MapLayout } from "./layout";
-import { autotileBase, ROAD_BASE, ROAD_E, ROAD_N, ROAD_S, ROAD_W, type AutotileName } from "./tileset-catalog";
+import { autotileBase, type AutotileName } from "./tileset-catalog";
 
 /**
  * What an area theme is made of: its ground; its water and how much of the free land it covers (0–1); its scenery
@@ -65,8 +65,6 @@ function threshold(values: number[], cover: number) {
 export interface TerrainLayers {
   /** Tile indices into terrain.png, row-major `rows × cols`; -1 = empty. The theme's ground, everywhere. */
   ground: number[][];
-  /** Narrow dirt roads along every route (each tile by the sides its routes leave through). */
-  roads: number[][];
   water: number[][];
   scenery: number[][];
 }
@@ -157,19 +155,6 @@ export function buildTerrain(layout: MapLayout, theme: string, seed: string): Te
 
   const empty = () => Array.from({ length: h }, () => Array<number>(w).fill(-1));
   const ground = Array.from({ length: h }, () => Array<number>(w).fill(autotileBase(cfg.ground) + FULL_SHAPE));
-  // Roads: each route's tiles link to the next one, so a tile connects exactly the sides its routes leave through
-  // (crossing roads that aren't linked stay apart).
-  const links: number[][] = Array.from({ length: h }, () => Array<number>(w).fill(0));
-  for (const r of layout.routes)
-    for (let i = 0; i + 1 < r.tiles.length; i++) {
-      const a = r.tiles[i]!;
-      const b = r.tiles[i + 1]!;
-      const side = b.x > a.x ? ROAD_E : b.x < a.x ? ROAD_W : b.y > a.y ? ROAD_S : ROAD_N;
-      const back = { [ROAD_E]: ROAD_W, [ROAD_W]: ROAD_E, [ROAD_S]: ROAD_N, [ROAD_N]: ROAD_S }[side]!;
-      links[a.y]![a.x]! |= side;
-      links[b.y]![b.x]! |= back;
-    }
-  const roads = links.map((row) => row.map((m) => (m ? ROAD_BASE + m : -1)));
   const water = empty();
   const scenery = empty();
   const isWater = new Set([cfg.water.tile]);
@@ -181,5 +166,5 @@ export function buildTerrain(layout: MapLayout, theme: string, seed: string): Te
       const shape = autotileShape(neighboursOf((nx, ny) => taken[ny]![nx] === t, x, y, w, h));
       (isWater.has(t) ? water : scenery)[y]![x] = autotileBase(t) + shape;
     }
-  return { ground, roads, water, scenery };
+  return { ground, water, scenery };
 }

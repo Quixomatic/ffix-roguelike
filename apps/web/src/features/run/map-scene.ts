@@ -326,7 +326,7 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * The terrain as a Phaser tilemap (the overworld tileset, map/tileset-catalog.ts): one blank map the layout's size,
-   * with a layer per depth (ground, roads, water, scenery), all from the one extruded terrain tileset, filled from
+   * with a layer per depth (ground, water, scenery), all from the one extruded terrain tileset, filled from
    * map/terrain.ts. The road beads, stages and the party draw on top. False if the tileset isn't loaded (then the plain ground).
    */
   private drawTerrain(theme: string): boolean {
@@ -336,8 +336,8 @@ export class MapScene extends Phaser.Scene {
     const map = this.make.tilemap({ width: L.cols, height: L.rows, tileWidth: TILE, tileHeight: TILE });
     const tiles = map.addTilesetImage("terrain", TERRAIN_KEY, OVERWORLD_TILE, OVERWORLD_TILE, TILESET_MARGIN, TILESET_SPACING);
     if (!tiles) return false;
-    (["ground", "roads", "water", "scenery"] as const).forEach((name, depth) => {
-      const layer = map.createBlankLayer(name, tiles, 0, 0, L.cols, L.rows)?.setDepth(-4 + depth);
+    (["ground", "water", "scenery"] as const).forEach((name, depth) => {
+      const layer = map.createBlankLayer(name, tiles, 0, 0, L.cols, L.rows)?.setDepth(-3 + depth);
       layer?.putTilesAt(layers[name], 0, 0);
     });
     // Stage pictures (placeStageSprite): odd-width ones on the grid, even-width ones half a tile left, so either centres
