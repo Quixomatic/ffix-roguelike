@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.15] - 2026-10-19
+
+### Added
+- **Boss frame** (`battle/boss-frame.tsx`): in fights with a boss, the boss's frame sits at the top centre of the battlefield.
+  - **HP**: a red bar plus the numbers left to chew through. Like the party window, it holds the HP from before a hit until that hit's effect lands.
+  - **Items left to steal**: one dot per item the enemy carried. The dot stays lit (gold) while the item is still there and becomes an empty ring once it's stolen. Hover the dots for "2 of 4 items left to steal".
+  - **Other enemies in the fight** (adds, parts, escorts) get smaller frames of the same kind on either side of the boss's.
+  - Fallen and hidden enemies drop out. Fights without a boss show nothing new.
+- The action banner (the move's name) now sits just under the boss frame instead of over it.
+
 ## [0.3.14] - 2026-10-19
 
 ### Fixed

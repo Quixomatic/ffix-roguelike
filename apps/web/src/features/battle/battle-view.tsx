@@ -9,6 +9,7 @@ import { MENU_EVENT } from "@/features/input/nav";
 import { useInputOwner } from "@/features/input/owner";
 
 import { createBattleGame, type BattleBridge } from "./battle-scene";
+import { BossFrame } from "./boss-frame";
 import { CommandMenu } from "./command-menu";
 import { EnemyList, PartyStatus } from "./party-status";
 import { useBattle } from "./use-battle";
@@ -89,11 +90,11 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
     <div className="ff-frame relative h-full min-h-[360px] w-full select-none overflow-hidden">
       <div ref={hostRef} className="absolute inset-0" />
 
-      {battle.banner && (
-        <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center">
-          <div className="ff-window px-6 py-1 text-xl">{battle.banner}</div>
-        </div>
-      )}
+      {/* Top centre: a boss fight's enemy frames, then the action banner under them. Clear of the corner buttons. */}
+      <div className="pointer-events-none absolute inset-x-48 top-2 flex flex-col items-center gap-2">
+        <BossFrame enemies={enemies} incoming={incoming} />
+        {battle.banner && <div className="ff-window px-6 py-1 text-xl">{battle.banner}</div>}
+      </div>
 
       <div className="absolute right-2 top-2 flex gap-2 text-sm">
         <button className="ff-window flex items-center gap-1.5 px-2 py-0.5" data-on={battle.auto} onClick={() => battle.setAuto(!battle.auto)}>
