@@ -232,6 +232,10 @@
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
   border-color: #c8f0c8;
 }
+/* A chosen card's footer band goes green with it (its own gradient, a shade darker; the line above stays). */
+.ff-panel[data-on="true"] .ff-panel-footer {
+  background: linear-gradient(180deg, #3f7a3f 0%, #2a5a2a 45%, #1c401c 100%);
+}
 /* A disabled button (opt in with `ff-btn` on an ff-panel button; cards and frames keep their own looks): a flat grey
    window, fully opaque (a see-through button shows whatever frame it overlaps), with dimmed content. Wins over the green
    "on" look; no lift, no clicks. */

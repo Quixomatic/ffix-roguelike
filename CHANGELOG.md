@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.31] - 2026-10-19
+
+### Fixed
+- **A chosen character card's footer goes green with the card.** On the embark page, a selected party member's card turned green but its synergy footer band stayed blue. The footer now takes a green gradient a shade darker than the card while the card is chosen (`.ff-panel[data-on="true"] .ff-panel-footer`).
+
 ## [0.3.30] - 2026-10-19
 
 ### Changed
