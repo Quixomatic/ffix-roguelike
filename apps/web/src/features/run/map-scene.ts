@@ -296,7 +296,7 @@ export class MapScene extends Phaser.Scene {
     const map = this.make.tilemap({ width: L.cols, height: L.rows, tileWidth: TILE, tileHeight: TILE });
     const tiles = map.addTilesetImage("terrain", TERRAIN_KEY, OVERWORLD_TILE, OVERWORLD_TILE, TILESET_MARGIN, TILESET_SPACING);
     if (!tiles) return false;
-    (["base", "ground", "water", "scenery"] as const).forEach((name, depth) => {
+    (["ground", "roads", "water", "scenery"] as const).forEach((name, depth) => {
       const layer = map.createBlankLayer(name, tiles, 0, 0, L.cols, L.rows)?.setDepth(-4 + depth);
       layer?.putTilesAt(layers[name], 0, 0);
     });

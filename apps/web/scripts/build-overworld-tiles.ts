@@ -5,7 +5,8 @@
  * git-ignored; credit Gif, Noiracide, Romi — see its LICENCE.txt) → `public/sprites/overworld/` (git-ignored, shipped in
  * the `overworld` asset pack):
  *
- *   terrain.png  each autotile in map/tileset-catalog.ts `AUTOTILES` baked into a row of its 47 shapes (map/autotile.ts)
+ *   terrain.png  each autotile in map/tileset-catalog.ts `AUTOTILES` baked into a row of its 47 shapes (map/autotile.ts),
+ *                then a row of 16 narrow road tiles composed from the object sheet's path pieces (`ROAD_PIECES`)
  *   objects.png  the object sheet (MZ "B", tileset_0), as 16×16 tiles
  *
  * The pack's MZ sheets are exact 3× upscales of its 16px art, so they're scaled back down by taking one pixel per 3×3
@@ -20,7 +21,7 @@ import { fileURLToPath } from "node:url";
 import { PNG } from "pngjs";
 
 import { AUTOTILE_SHAPES, QUARTER_SOURCE } from "../src/features/run/map/autotile";
-import { AUTOTILES, OBJECT_COLUMNS, OVERWORLD_TILE as T, TILESET_MARGIN, TILESET_SPACING } from "../src/features/run/map/tileset-catalog";
+import { AUTOTILES, OBJECT_COLUMNS, OVERWORLD_TILE as T, ROAD_PIECES, TILESET_MARGIN, TILESET_SPACING } from "../src/features/run/map/tileset-catalog";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SRC = join(HERE, "..", "..", "..", ".docs", "assets", "super-retro-world-overworld", "rpgmaker", "MZ", "tilesets");
@@ -71,8 +72,54 @@ const pixel = (png: PNG, x: number, y: number) => {
 const sheets = { A1: native("_srw_overworld_A1.png"), A2: native("_srw_overworld_A2.png") };
 const objects = native("_srw_tileset_0.png");
 
-// Terrain: one row per autotile, one column per shape; each tile is four quarters from the autotile's 2×3 block.
-const terrain = extrudedSheet(AUTOTILE_SHAPES.length, AUTOTILES.length, (col, row, put) => {
+// ── Roads: 16 connection tiles from the object sheet's path pieces (tileset-catalog `ROAD_PIECES`) ──
+/** The pieces' grass (their most common colour), which becomes see-through: the road then sits on any ground. */
+const grassKey = (() => {
+  const counts = new Map<string, number>();
+  const p = ROAD_PIECES.ns;
+  for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) {
+    const k = pixel(objects, p.col * T + x, p.row * T + y).join(",");
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  return [...counts].sort((a, b) => b[1] - a[1])[0]![0];
+})();
+type RoadPixel = { rgba: number[]; dirt: boolean } | null;
+/** One piece's pixels: null for its grass, the rest split into dirt (the light path) and edging (everything else). */
+function piece(key: keyof typeof ROAD_PIECES, flipY = false): RoadPixel[][] {
+  const p = ROAD_PIECES[key];
+  return Array.from({ length: T }, (_, y) =>
+    Array.from({ length: T }, (_, x) => {
+      const rgba = pixel(objects, p.col * T + x, p.row * T + (flipY ? T - 1 - y : y));
+      if (rgba.join(",") === grassKey) return null;
+      return { rgba, dirt: rgba[0]! > 180 };
+    }),
+  );
+}
+/** The road tile for a set of connected sides (ROAD_N | ROAD_E | ROAD_S | ROAD_W): see-through outside the path. */
+function roadTile(mask: number): RoadPixel[][] {
+  const sides = (["n", "e", "s", "w"] as const).filter((_, i) => mask & (1 << i));
+  const parts: RoadPixel[][][] = [];
+  if (sides.length === 1) parts.push(sides[0] === "s" ? piece("n", true) : piece(sides[0]!));
+  for (let i = 0; i < sides.length; i++)
+    for (let j = i + 1; j < sides.length; j++) {
+      const pair = `${sides[i]}${sides[j]}`;
+      parts.push(piece(({ ne: "ne", ns: "ns", nw: "nw", es: "es", ew: "ew", sw: "sw" } as const)[pair as "ne"]));
+    }
+  // Union: every part's edging, then every part's dirt over it (so the joins have no edging across the path).
+  const out: RoadPixel[][] = Array.from({ length: T }, () => Array<RoadPixel>(T).fill(null));
+  for (const pass of [false, true]) for (const part of parts) for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) if (part[y]![x] && part[y]![x]!.dirt === pass) out[y]![x] = part[y]![x];
+  return out;
+}
+
+// Terrain: one row per autotile, one column per shape; each tile is four quarters from the autotile's 2×3 block. After
+// them, one row of road tiles (the first 16 columns: every connection).
+const terrain = extrudedSheet(AUTOTILE_SHAPES.length, AUTOTILES.length + 1, (col, row, put) => {
+  if (row === AUTOTILES.length) {
+    if (col >= 16) return;
+    const tile = roadTile(col);
+    for (let y = 0; y < T; y++) for (let x = 0; x < T; x++) if (tile[y]![x]) put(x, y, tile[y]![x]!.rgba);
+    return;
+  }
   const a = AUTOTILES[row]!;
   if (a.sheet === "flat") {
     // A plain fill (dirt): every shape the same colour, from the A2 sheet.

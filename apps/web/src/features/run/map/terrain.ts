@@ -6,7 +6,7 @@
  */
 import { autotileShape, FULL_SHAPE, neighboursOf } from "./autotile";
 import type { MapLayout } from "./layout";
-import { autotileBase, type AutotileName } from "./tileset-catalog";
+import { autotileBase, ROAD_BASE, ROAD_E, ROAD_N, ROAD_S, ROAD_W, type AutotileName } from "./tileset-catalog";
 
 /**
  * What an area theme is made of: its ground; its water and how much of the free land it covers (0–1); its scenery
@@ -63,10 +63,10 @@ function threshold(values: number[], cover: number) {
 }
 
 export interface TerrainLayers {
-  /** Tile indices into terrain.png, row-major `rows × cols`; -1 = empty. Dirt under everything: the roads. */
-  base: number[][];
-  /** The theme's ground everywhere but the roads, edged against them (so roads show as dirt paths). */
+  /** Tile indices into terrain.png, row-major `rows × cols`; -1 = empty. The theme's ground, everywhere. */
   ground: number[][];
+  /** Narrow dirt roads along every route (each tile by the sides its routes leave through). */
+  roads: number[][];
   water: number[][];
   scenery: number[][];
 }
@@ -90,6 +90,30 @@ function hash(s: string) {
   return h >>> 0;
 }
 
+/** Every tile's distance (4-way steps) from the nearest road or stage tile. */
+function roadDistance(layout: MapLayout, w: number, h: number): number[][] {
+  const dist = Array.from({ length: h }, () => Array<number>(w).fill(Infinity));
+  const queue: [number, number][] = [];
+  const seed = (x: number, y: number) => {
+    if (dist[y]![x] === 0) return;
+    dist[y]![x] = 0;
+    queue.push([x, y]);
+  };
+  for (const r of layout.routes) for (const t of r.tiles) seed(t.x, t.y);
+  for (const p of layout.nodes.values()) seed(p.x, p.y);
+  for (let i = 0; i < queue.length; i++) {
+    const [x, y] = queue[i]!;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const nx = x + dx;
+      const ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h || dist[ny]![nx]! <= dist[y]![x]! + 1) continue;
+      dist[ny]![nx] = dist[y]![x]! + 1;
+      queue.push([nx, ny]);
+    }
+  }
+  return dist;
+}
+
 /** Build the terrain layers for a layout and area theme; `seed` keeps it the same each time (e.g. the map's stage ids). */
 export function buildTerrain(layout: MapLayout, theme: string, seed: string): TerrainLayers {
   const cfg = THEME_TERRAIN[theme] ?? THEME_TERRAIN.grassland!;
@@ -109,30 +133,43 @@ export function buildTerrain(layout: MapLayout, theme: string, seed: string): Te
   const taken: (AutotileName | null)[][] = Array.from({ length: h }, () => Array<AutotileName | null>(w).fill(null));
   const free: [number, number][] = [];
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (!blocked[y]![x]) free.push([x, y]);
+  // Away from the middle: each tile's distance (in tiles) from the nearest road, and a weight that keeps the route's
+  // surroundings open — nothing within OPEN tiles, fading in over the next RAMP — so scenery gathers toward the edges.
+  const dist = roadDistance(layout, w, h);
+  const OPEN = 2;
+  const RAMP = 6;
+  const away = (x: number, y: number) => Math.min(1, Math.max(0, (dist[y]![x]! - OPEN) / RAMP));
   const waterNoise = valueNoise(random, w, h, 7);
-  const wCut = threshold(free.map(([x, y]) => waterNoise(x, y)), cfg.water.cover);
-  for (const [x, y] of free) if (waterNoise(x, y) >= wCut) taken[y]![x] = cfg.water.tile;
+  const wetness = (x: number, y: number) => waterNoise(x, y) * away(x, y);
+  const wCut = threshold(free.map(([x, y]) => wetness(x, y)), cfg.water.cover);
+  for (const [x, y] of free) if (wetness(x, y) >= wCut && wetness(x, y) > 0) taken[y]![x] = cfg.water.tile;
   const land = free.filter(([x, y]) => !taken[y]![x]);
   const treeNoise = valueNoise(random, w, h, 5);
   const kindNoise = valueNoise(random, w, h, 10);
-  const sCut = threshold(land.map(([x, y]) => treeNoise(x, y)), cfg.scenery.cover);
+  const growth = (x: number, y: number) => treeNoise(x, y) * away(x, y);
+  const sCut = threshold(land.map(([x, y]) => growth(x, y)), cfg.scenery.cover);
   const total = cfg.scenery.tiles.reduce((n, t) => n + t.weight, 0);
   for (const [x, y] of land) {
-    if (treeNoise(x, y) < sCut) continue;
+    if (growth(x, y) < sCut || growth(x, y) <= 0) continue;
     let pick = kindNoise(x, y) * total;
     taken[y]![x] = (cfg.scenery.tiles.find((t) => (pick -= t.weight) < 0) ?? cfg.scenery.tiles[0]!).tile;
   }
 
   const empty = () => Array.from({ length: h }, () => Array<number>(w).fill(-1));
-  // Roads: every route tile (stages included, they sit on them) is dirt; the ground autotile edges itself against them.
-  const road: boolean[][] = Array.from({ length: h }, () => Array<boolean>(w).fill(false));
-  for (const r of layout.routes) for (const t of r.tiles) road[t.y]![t.x] = true;
-  for (const p of layout.nodes.values()) road[p.y]![p.x] = true;
-  const base = Array.from({ length: h }, () => Array<number>(w).fill(autotileBase("dirt") + FULL_SHAPE));
-  const groundBase = autotileBase(cfg.ground);
-  const ground = Array.from({ length: h }, (_, y) =>
-    Array.from({ length: w }, (_, x) => (road[y]![x] ? -1 : groundBase + autotileShape(neighboursOf((nx, ny) => !road[ny]![nx], x, y, w, h)))),
-  );
+  const ground = Array.from({ length: h }, () => Array<number>(w).fill(autotileBase(cfg.ground) + FULL_SHAPE));
+  // Roads: each route's tiles link to the next one, so a tile connects exactly the sides its routes leave through
+  // (crossing roads that aren't linked stay apart).
+  const links: number[][] = Array.from({ length: h }, () => Array<number>(w).fill(0));
+  for (const r of layout.routes)
+    for (let i = 0; i + 1 < r.tiles.length; i++) {
+      const a = r.tiles[i]!;
+      const b = r.tiles[i + 1]!;
+      const side = b.x > a.x ? ROAD_E : b.x < a.x ? ROAD_W : b.y > a.y ? ROAD_S : ROAD_N;
+      const back = { [ROAD_E]: ROAD_W, [ROAD_W]: ROAD_E, [ROAD_S]: ROAD_N, [ROAD_N]: ROAD_S }[side]!;
+      links[a.y]![a.x]! |= side;
+      links[b.y]![b.x]! |= back;
+    }
+  const roads = links.map((row) => row.map((m) => (m ? ROAD_BASE + m : -1)));
   const water = empty();
   const scenery = empty();
   const isWater = new Set([cfg.water.tile]);
@@ -144,5 +181,5 @@ export function buildTerrain(layout: MapLayout, theme: string, seed: string): Te
       const shape = autotileShape(neighboursOf((nx, ny) => taken[ny]![nx] === t, x, y, w, h));
       (isWater.has(t) ? water : scenery)[y]![x] = autotileBase(t) + shape;
     }
-  return { base, ground, water, scenery };
+  return { ground, roads, water, scenery };
 }

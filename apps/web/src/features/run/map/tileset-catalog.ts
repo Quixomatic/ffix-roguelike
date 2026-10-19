@@ -4,7 +4,8 @@
  * (scripts/build-overworld-tiles.ts) from the pack's RPG Maker MZ sheets, which are exact 3× upscales of the 16px art:
  *
  *   sprites/overworld/terrain.png  every autotile below baked into a strip of its 47 shapes (map/autotile.ts), one
- *                                  strip per row in AUTOTILES order — tile index = row × AUTOTILE_SHAPE_COUNT + shape
+ *                                  strip per row in AUTOTILES order — tile index = row × AUTOTILE_SHAPE_COUNT + shape —
+ *                                  then a row of the 16 narrow road tiles (ROAD_BASE + connection bits)
  *   sprites/overworld/objects.png  the object sheet (MZ "B", tileset_0): buildings, castles, mountains — 16×16 tiles
  *
  * Both are extruded (every tile's edge pixels repeated 1px outward; margin 1, spacing 2) so tiles never bleed into
@@ -65,6 +66,32 @@ export const AUTOTILES = [
 ] as const;
 
 export type AutotileName = (typeof AUTOTILES)[number]["name"];
+
+/**
+ * Narrow dirt roads: the object sheet's path pieces (native tile column/row; a path about half a tile wide with soft
+ * grass edging) by which sides they connect (N, E, S, W). The builder makes all 16 connection tiles from them, see-
+ * through outside the path, so they sit on any ground: a straight or corner per pair of connected sides, unioned
+ * (edging first, dirt over it, so joins are clean), or an end cap for one side. South's cap is north's, flipped.
+ */
+export const ROAD_PIECES = {
+  ew: { col: 1, row: 5 },
+  ns: { col: 0, row: 6 },
+  es: { col: 0, row: 5 },
+  sw: { col: 2, row: 5 },
+  ne: { col: 0, row: 7 },
+  nw: { col: 2, row: 7 },
+  e: { col: 1, row: 6 },
+  w: { col: 2, row: 6 },
+  n: { col: 1, row: 7 },
+} as const;
+
+/** Road connection bits (a road tile's index = ROAD_BASE + the bits of the sides it connects). */
+export const ROAD_N = 1;
+export const ROAD_E = 2;
+export const ROAD_S = 4;
+export const ROAD_W = 8;
+/** The road tiles' row in terrain.png comes after every autotile's strip; 16 tiles (every connection). */
+export const ROAD_BASE = (AUTOTILES.length as number) * AUTOTILE_SHAPE_COUNT;
 
 /** An autotile's first tile index in terrain.png (add the shape, 0–46). */
 export const autotileBase = (name: AutotileName): number => AUTOTILES.findIndex((a) => a.name === name) * AUTOTILE_SHAPE_COUNT;

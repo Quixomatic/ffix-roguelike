@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.39] - 2026-10-19
+
+### Changed
+- **Narrow roads.** The dirt roads were carved out of the ground autotile, whose edges ate into the neighbouring tiles, so each road read about two tiles wide. Now they're the tileset's own narrow path art (about half a tile wide, soft grass edging), as 16 connection tiles built from its path pieces (`ROAD_PIECES`):
+  - a straight or corner per pair of connected sides, unioned (edging first, dirt over it, so forks and crossings join cleanly), or an end cap;
+  - see-through outside the path, so they sit on any theme's ground.
+
+  Each road tile connects exactly the sides its routes leave through (from the routes' tile paths). The road tiles are an extra row in terrain.png (`ROAD_BASE` + N/E/S/W bits); the ground is plain fill again.
+- **Scenery away from the middle.** Forests and water fade in with distance from the nearest road: nothing within 2 tiles, full strength from 8. They gather toward the map's edges, leaving the route area open ground, so the map reads calmer.
+- The `overworld` pack is rebuilt and uploaded to R2.
+
 ## [0.3.38] - 2026-10-19
 
 The overworld map is a real tilemap, from the Super Retro World — Overworld tileset (16×16; credit Gif @gif_not_jif, Noiracide @Noiracide, Romi @DessRomaric; its licence asks for that credit and forbids redistributing the raw tiles, so they ship only inside the R2 pack).
