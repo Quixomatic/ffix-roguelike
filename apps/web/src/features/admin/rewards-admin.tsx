@@ -31,6 +31,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
+import { Badge, useBadgeCatalog } from "@/features/hub/badge";
 import { FocusItem } from "@/features/input/focus";
 import { ItemIcon } from "@/features/items/item-icon";
 import { KIND_LABEL } from "@/features/run/item-info";
@@ -1054,6 +1055,61 @@ function AchievementsTab({ tables }: { tables: RewardTables }) {
   );
 }
 
+/** At most this many badges in the picker grid at once (the search narrows the rest). */
+const BADGE_PICKER_MAX = 240;
+
+/** An achievement's badge: the current one, and a grid of the badge set to pick from, searchable by name and tags. */
+function BadgePicker({ value, onChange }: { value?: number; onChange(badge: number | undefined): void }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const catalog = useBadgeCatalog();
+  const info = catalog.data?.find((b) => b.id === value);
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const matches = (catalog.data ?? []).filter((b) => {
+    const text = `${b.id} ${b.name ?? ""} ${(b.tags ?? []).join(" ")}`.toLowerCase();
+    return words.every((w) => text.includes(w));
+  });
+  return (
+    <div className="flex flex-col gap-2 rounded border border-white/10 p-2">
+      <div className="flex items-center gap-3">
+        {value ? <Badge id={value} /> : <span className="flex h-20 w-20 items-center justify-center text-xs opacity-60">No badge</span>}
+        <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
+          <span className="ff-title text-sm">Badge</span>
+          <span className="truncate">{value ? `#${value}${info?.name ? ` · ${info.name}` : ""}` : "None yet"}</span>
+          <div className="flex gap-2">
+            <SaveButton pending={false} label={open ? "Close" : "Choose…"} onClick={() => setOpen(!open)} />
+            {value && <SaveButton pending={false} label="Clear" onClick={() => onChange(undefined)} />}
+          </div>
+        </div>
+      </div>
+      {open && (
+        <>
+          <Field label={`Search badges (${matches.length} of ${catalog.data?.length ?? 0}): name, tags or number`}>
+            <Text value={q} onChange={setQ} />
+          </Field>
+          <div className="grid max-h-80 grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1 overflow-y-auto pr-1">
+            {matches.slice(0, BADGE_PICKER_MAX).map((b) => (
+              <FocusItem key={b.id}>
+                <button
+                  title={`#${b.id} ${b.name ?? ""}${b.tags?.length ? ` (${b.tags.join(", ")})` : ""}`}
+                  className={`flex items-center justify-center rounded p-0.5 hover:bg-white/15 ${b.id === value ? "bg-yellow-300/20 ring-1 ring-yellow-300" : "bg-black/20"}`}
+                  onClick={() => {
+                    onChange(b.id);
+                    setOpen(false);
+                  }}
+                >
+                  <Badge id={b.id} scale={1} />
+                </button>
+              </FocusItem>
+            ))}
+          </div>
+          {matches.length > BADGE_PICKER_MAX && <div className="text-xs opacity-70">Showing {BADGE_PICKER_MAX}; search to narrow it down.</div>}
+        </>
+      )}
+    </div>
+  );
+}
+
 function AchievementEditor({
   achievement: a,
   isNew,
@@ -1111,6 +1167,8 @@ function AchievementEditor({
           <Check label="Secret (???)" checked={!!d.secret} onChange={(secret) => setD({ ...d, secret: secret || undefined })} />
         </div>
       </div>
+
+      <BadgePicker value={d.badge} onChange={(badge) => setD({ ...d, badge })} />
 
       <div className="flex flex-col gap-2 rounded border border-white/10 p-2">
         <div className="ff-title text-sm">Condition</div>

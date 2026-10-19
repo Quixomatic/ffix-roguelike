@@ -7,6 +7,7 @@
  *   weapons  public/sprites/weapons/       (sprites:heroes)
  *   items    public/sprites/items.png      (sprites:items)
  *   ui       public/sprites/ui/            (sprites:ui)
+ *   badges   public/sprites/badges/        (sprites:badges: achievement badge atlas + catalog)
  *   sfx      public/sfx/                   (FF9's menu sounds: python scripts/extract-ff9-sfx.py)
  *   enemies  public/sprites/enemies/       (sprites:enemies)
  *   effects  the FFRK effect files the game can play — `usedEffectPaths()` and everything they reference
@@ -121,6 +122,7 @@ const CLASSES: Record<string, () => Record<string, Source[]>> = {
   weapons: () => ({ weapons: dir(join(PUBLIC, "sprites", "weapons"), "sprites/weapons") }),
   items: () => ({ items: file(join(PUBLIC, "sprites", "items.png"), "sprites/items.png") }),
   ui: () => ({ ui: dir(join(PUBLIC, "sprites", "ui"), "sprites/ui") }),
+  badges: () => ({ badges: dir(join(PUBLIC, "sprites", "badges"), "sprites/badges") }),
   sfx: () => ({ sfx: dir(join(PUBLIC, "sfx"), "sfx") }),
   enemies: () => ({ enemies: dir(join(PUBLIC, "sprites", "enemies"), "sprites/enemies") }),
   effects: () => {

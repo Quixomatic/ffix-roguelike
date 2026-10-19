@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.19] - 2026-10-19
+
+### Added
+- **Achievement badges.** Every achievement can have a badge from the purchased badge set (`.docs/assets/achievement-badges`, 1,015 icons).
+  - **Achievements page:** each card shows its badge, in colour once earned and greyed until then. A secret one shows "?" until earned.
+  - **Admin → Rewards & gear → Achievements:** a badge picker in the editor shows the current badge, a searchable grid of the whole set (by name, tags or number), and Clear. Saves with the achievement (`AchievementData.badge`, validated 1…`BADGE_COUNT`).
+  - **First pass for the 44 seeded achievements** in `packages/db/seed/rewards/achievement-badges.json` (id → badge). On server start these fill in only achievements that have no badge yet, so existing rows get them and a badge picked on the admin page is never overwritten. A badge in `achievements.json` (e.g. after an admin export) counts too.
+- **Badge atlas + catalog:** `pnpm -F web sprites:badges` (`scripts/build-badges.ts`) packs the set into `public/sprites/badges/badges.png` (48 px cells, badge n at cell n − 1) and `badges.json`. The catalog includes `scripts/badge-catalog.json`, a name, search tags and frame style for all 1,015 badges, written by looking at each one.
+- **`badges` asset pack** (boot pack, 1.0 MB gzipped), uploaded to R2. `<Badge id scale view locked />` draws one (`features/hub/badge.tsx`).
+
 ## [0.3.18] - 2026-10-19
 
 ### Fixed

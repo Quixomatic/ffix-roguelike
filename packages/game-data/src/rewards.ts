@@ -170,6 +170,9 @@ export type AchievementCondition =
   | { kind: "metric"; metric: string; subject?: string; character?: string; min: number };
 export const ACHIEVEMENT_CONDITIONS = ["metric", "stat", "journey", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
 
+/** How many badges the achievement badge set has (`.docs/assets/achievement-badges`, built by web `sprites:badges`). */
+export const BADGE_COUNT = 1015;
+
 /** An achievement (the `achievement` table): its condition, its one-time reward, and how it's shown. */
 export interface AchievementData {
   id: string;
@@ -181,6 +184,8 @@ export interface AchievementData {
   enabled: boolean;
   /** Hidden until earned (shown as ???). */
   secret?: boolean;
+  /** Its badge icon: a number 1…BADGE_COUNT in the achievement badge set (web `sprites/badges`). */
+  badge?: number;
   condition: AchievementCondition;
   reward: {
     gil?: number;

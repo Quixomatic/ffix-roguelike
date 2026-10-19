@@ -7,7 +7,7 @@
  * `exportRewardSeeds` goes the other way: the database back into the seed files, so tuning done on the admin page
  * can be committed.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,6 +15,9 @@ import type { Database } from "./index";
 
 export const REWARD_SEED_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "seed", "rewards");
 const FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json", starter: "starter-upgrades.json", achievements: "achievements.json" } as const;
+
+/** First-pass badges for the seeded achievements (id → badge number); see `seedRewards`. */
+const BADGES_FILE = "achievement-badges.json";
 
 type Row = Record<string, unknown>;
 const read = (f: string) => JSON.parse(readFileSync(join(REWARD_SEED_DIR, f), "utf8")) as Row[];
@@ -49,6 +52,17 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
       skipDuplicates: true,
     }),
   ]);
+  // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
+  // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
+  const badgeFile = join(REWARD_SEED_DIR, BADGES_FILE);
+  const badgeMap: Record<string, number> = existsSync(badgeFile) ? JSON.parse(readFileSync(badgeFile, "utf8")) : {};
+  for (const r of achievements) if (typeof r.badge === "number") badgeMap[String(r.id)] = r.badge;
+  const badged = Object.entries(badgeMap);
+  if (badged.length) {
+    const ids = badged.map(([id]) => id);
+    const badges = badged.map(([, n]) => n);
+    await db.$executeRaw`UPDATE achievement a SET data = jsonb_set(a.data, '{badge}', to_jsonb(s.badge)) FROM unnest(${ids}::text[], ${badges}::int[]) AS s(id, badge) WHERE a.id = s.id AND a.data->'badge' IS NULL`;
+  }
   return {
     rarities: results[0].count,
     roles: results[1].count,

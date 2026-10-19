@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { PixelIcon } from "@/components/pixel-icon";
 import { FocusItem } from "@/features/input/focus";
+
+import { Badge } from "./badge";
 import { itemName } from "@/features/run/item-info";
 import { trpc } from "@/utils/trpc";
 
@@ -90,7 +92,10 @@ function AchievementCard({ a, done, profile }: { a: AchievementDef; done: boolea
   return (
     // A cursor stop (keyboard / controller), so the cursor can walk the grid and scroll the page with it.
     <FocusItem>
-      <button type="button" data-sound="none" className={`ff-window flex cursor-default flex-col gap-1 p-3 text-left ${done ? "" : "opacity-70"}`}>
+      <button type="button" data-sound="none" className={`ff-window flex cursor-default gap-3 p-3 text-left ${done ? "" : "opacity-70"}`}>
+        {/* Its badge: in colour once earned, greyed until then; a secret one stays a mystery. */}
+        {a.badge && !hidden ? <Badge id={a.badge} locked={!done} /> : <span className="flex h-20 w-20 shrink-0 items-center justify-center text-3xl opacity-40">?</span>}
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-start justify-between gap-2">
           <span className="text-lg">{hidden ? "???" : a.name}</span>
           {done ? <PixelIcon name="check" label="Earned" className="mt-1 shrink-0" /> : hidden && <PixelIcon name="lock" label="Secret" className="mt-1 shrink-0 opacity-80" />}
@@ -105,6 +110,7 @@ function AchievementCard({ a, done, profile }: { a: AchievementDef; done: boolea
           </div>
         )}
         {reward && <div className="text-xs text-yellow-200">{reward}</div>}
+        </span>
       </button>
     </FocusItem>
   );

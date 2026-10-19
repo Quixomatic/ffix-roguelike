@@ -8,6 +8,7 @@ import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
 import { JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
 import {
   ACHIEVEMENT_CATEGORIES,
+  BADGE_COUNT,
   ACHIEVEMENT_STATS,
   BOON_STATS,
   CARD_TYPES,
@@ -110,6 +111,7 @@ export const achievementInput = z.object({
   sort: z.number().int().min(0).max(9999),
   enabled: z.boolean(),
   secret: z.boolean().optional(),
+  badge: z.number().int().min(1).max(BADGE_COUNT).optional(),
   condition: z.discriminatedUnion("kind", [
     z.object({ kind: z.literal("stat"), stat: z.enum(ACHIEVEMENT_STATS), min: z.number().int().min(1).max(10_000_000) }),
     z.object({ kind: z.literal("journey"), journey: key }),
