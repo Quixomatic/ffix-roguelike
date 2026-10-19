@@ -67,21 +67,21 @@ function ffrkRawEffects(): Plugin {
 }
 
 /**
- * Build only: when the game loads its assets from R2 (`VITE_ASSET_BASE_URL`), don't ship the copies in `public/`
- * (sprites, music, menu sounds — ~64 MB) in the build output; they're only the dev fallback.
+ * Build only: never ship the local asset copies in `public/` (sprites, music, menu sounds — git-ignored build outputs
+ * of the asset scripts). Production loads every asset from the R2 packs (`VITE_ASSET_BASE_URL`); the local copies are
+ * the packer's input and the dev server's fallback only.
  */
 function dropPackedAssets(): Plugin {
   let outDir = "";
-  let remote = false;
   return {
     name: "drop-packed-assets",
     apply: "build",
     configResolved(config) {
       outDir = config.build.outDir;
-      remote = !!(config.env.VITE_ASSET_BASE_URL ?? process.env.VITE_ASSET_BASE_URL);
+      if (!(config.env.VITE_ASSET_BASE_URL ?? process.env.VITE_ASSET_BASE_URL))
+        config.logger.warn("VITE_ASSET_BASE_URL is not set: this build has no assets (production loads them from R2).");
     },
     closeBundle() {
-      if (!remote) return;
       for (const dir of ["sprites", "music", "sfx"]) rmSync(join(outDir, dir), { recursive: true, force: true });
     },
   };

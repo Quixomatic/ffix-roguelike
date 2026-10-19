@@ -68,5 +68,6 @@ dev-dist
 # FF9 menu sounds, extracted from the local FF9 install (python scripts/extract-ff9-sfx.py); shipped via the asset packs
 public/sfx/
 
-# Achievement badge atlas, built from the bought badge set (pnpm -F web sprites:badges); shipped via the asset packs
-public/sprites/badges/
+# Built sprites (sprites:heroes / enemies / items / ui / badges) from FFRK rips and bought packs: never committed.
+# Players load them from the R2 asset packs; these local copies are the packer's input and the dev-only fallback.
+public/sprites/

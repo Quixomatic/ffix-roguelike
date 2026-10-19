@@ -5,7 +5,8 @@
  * (`pnpm -F web assets:pack` → `assets:upload`): `loadPacks` downloads a pack once (with progress), keeps the
  * whole pack in Cache Storage (pack names are content-hashed, so a changed pack is a new name), and serves its
  * files from memory — `assetUrl` gives a blob URL (Phaser, <img>, CSS), `assetFetch` a Response.
- * Unset (dev), files come from the app's own `public/` and the dev server's `/ffrk-raw` effect library.
+ * Unset — **dev only** — files come from the local build outputs in `public/` (git-ignored) and the dev server's
+ * `/ffrk-raw` effect library. Production always uses R2: builds ship no local copies.
  */
 import { ENV } from "@/env";
 import { cachedFetch } from "@/lib/asset-cache";
@@ -15,6 +16,8 @@ import { readPack, type AssetManifest } from "./asset-pack";
 const BASE = (ENV.VITE_ASSET_BASE_URL ?? "").replace(/\/+$/, "");
 /** Assets come from R2 packs. */
 export const REMOTE = BASE !== "";
+// The local fallback is the dev server's alone: a production build without R2 has no assets to fall back to.
+if (!REMOTE && !import.meta.env.DEV) console.error("VITE_ASSET_BASE_URL is not set: the game's assets load from R2 in production.");
 
 const PACK_CACHE = "ffix-packs-v1";
 

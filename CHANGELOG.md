@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.21] - 2026-10-19
+
+### Changed
+- **No asset files in git.** All of `apps/web/public/sprites/` is git-ignored and untracked: 150 files, 22 MB of enemy sheets, hero strips, weapons, UI icons and the item atlas, committed before the R2 pack system existed. Music, menu sounds and badges were already ignored. The repo now tracks no image or audio files.
+  - The asset scripts still write their outputs to `public/` (sprites, music, sfx). Those local copies are `assets:pack`'s input and the **dev-only** fallback when `VITE_ASSET_BASE_URL` is unset.
+  - **Production always loads from R2:** a build never ships the local copies (vite `dropPackedAssets` now drops them always, not only when R2 is set). A build without `VITE_ASSET_BASE_URL` warns, and a production page without it logs an error.
+- Git history still has the old copies (up to v0.3.20).
+
 ## [0.3.20] - 2026-10-19
 
 ### Changed
