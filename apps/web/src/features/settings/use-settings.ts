@@ -5,26 +5,9 @@ import { preloadCoreMusic, setMusicVolume, setSfxVolume } from "@/features/audio
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
-/** Menu fonts (CSS font sets in index.css). */
-export const MENU_FONTS = [
-  { id: "rounded", label: "Rounded", hint: "Nunito text, pixel headings — easiest to read" },
-  { id: "classic", label: "Classic pixel", hint: "The pixel font everywhere" },
-  { id: "pixel", label: "Retro JRPG", hint: "DotGothic16 text, pixel headings" },
-  { id: "storybook", label: "Storybook", hint: "Alegreya Sans text, Cinzel headings" },
-] as const;
-export type MenuFont = (typeof MENU_FONTS)[number]["id"];
+import { applyFonts, DEFAULT_FONTS, type FontPicks } from "./fonts";
 
-/** Pixel fonts (index.css `data-pixel-font`): the font sets' pixel text — headings, Classic's everything, game labels. */
-export const PIXEL_FONTS = [
-  { id: "silkscreen", label: "Silkscreen", family: '"Silkscreen", monospace', hint: "Clean small caps" },
-  { id: "jersey", label: "Jersey 10", family: '"Jersey 10", monospace', hint: "Tall and narrow" },
-  { id: "pixelify", label: "Pixelify Sans", family: '"Pixelify Sans", monospace', hint: "The original blocky look" },
-] as const;
-export type PixelFont = (typeof PIXEL_FONTS)[number]["id"];
-
-export interface Settings {
-  menuFont: MenuFont;
-  pixelFont: PixelFont;
+export interface Settings extends FontPicks {
   battleSpeed: 1 | 2 | 4;
   autoBattle: boolean;
   /** 0–100. */
@@ -33,35 +16,9 @@ export interface Settings {
   sfxVolume: number;
 }
 
-export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", pixelFont: "silkscreen", battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
+export const DEFAULT_SETTINGS: Settings = { ...DEFAULT_FONTS, battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
 
-/**
- * Apply a menu font now and cache it in the browser, so index.html can apply it before the first paint next time
- * (the account's saved choice syncs in once settings load).
- */
-export function applyMenuFont(font: string) {
-  document.documentElement.dataset.font = font;
-  try {
-    localStorage.setItem("ff-font", font);
-  } catch {
-    // storage blocked: the account setting still applies after load
-  }
-}
-
-/** Apply a pixel font now and cache it in the browser (like `applyMenuFont`). */
-export function applyPixelFont(font: string) {
-  document.documentElement.dataset.pixelFont = font;
-  try {
-    localStorage.setItem("ff-pixel-font", font);
-  } catch {
-    // storage blocked: the account setting still applies after load
-  }
-}
-
-/** The pixel font's CSS family, for text drawn outside CSS (Phaser labels and popups). */
-export function pixelFontFamily(): string {
-  return getComputedStyle(document.documentElement).getPropertyValue("--ff-pixel").trim() || '"Silkscreen", monospace';
-}
+const picksOf = (s: Settings): FontPicks => ({ titleFont: s.titleFont, headingFont: s.headingFont, bodyFont: s.bodyFont });
 
 /** The signed-in player's settings (defaults when signed out or still loading) and a function to change them. */
 export function useSettings() {
@@ -75,8 +32,7 @@ export function useSettings() {
   );
   const settings: Settings = { ...DEFAULT_SETTINGS, ...(query.data as Partial<Settings> | undefined) };
   const update = (patch: Partial<Settings>) => {
-    if (patch.menuFont) applyMenuFont(patch.menuFont);
-    if (patch.pixelFont) applyPixelFont(patch.pixelFont);
+    if (patch.titleFont || patch.headingFont || patch.bodyFont) applyFonts(picksOf({ ...settings, ...patch }));
     if (patch.musicVolume != null) setMusicVolume(patch.musicVolume);
     if (patch.sfxVolume != null) setSfxVolume(patch.sfxVolume);
     if (session) mutation.mutate(patch);
@@ -84,15 +40,12 @@ export function useSettings() {
   return { settings, loaded: query.isSuccess, signedIn: !!session, update, saving: mutation.isPending };
 }
 
-/** Mounted once in the root: applies the account's saved menu font and volumes when settings load. */
+/** Mounted once in the root: applies the account's saved fonts and volumes when settings load. */
 export function SettingsSync() {
   const { settings, loaded } = useSettings();
   useEffect(() => {
-    if (loaded) applyMenuFont(settings.menuFont);
-  }, [loaded, settings.menuFont]);
-  useEffect(() => {
-    if (loaded) applyPixelFont(settings.pixelFont);
-  }, [loaded, settings.pixelFont]);
+    if (loaded) applyFonts(picksOf(settings));
+  }, [loaded, settings.titleFont, settings.headingFont, settings.bodyFont]);
   useEffect(() => {
     setMusicVolume(settings.musicVolume);
   }, [settings.musicVolume]);

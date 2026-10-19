@@ -1,46 +1,24 @@
 @import "@ffix-roguelike/ui/globals.css";
 
-/* ── Fonts (Settings → Menu font / Pixel font; saved to the account, cached per browser) ──────────────────────────
-   A font set (`data-font`) picks the body and heading fonts; its pixel text (headings, Classic's everything, the game
-   screens' labels) is the pixel font (`data-pixel-font`, `--ff-pixel`), at that font's own heading weight. */
+/* ── Fonts (Settings → Fonts: title, headings, body text; saved to the account, cached per browser) ────────────────
+   The picks set these variables on <html> (features/settings/fonts.ts); the defaults here are the default picks. */
 :root {
-  --ff-pixel: "Silkscreen", ui-monospace, monospace;
-  --ff-pixel-weight: 400;
-}
-:root[data-pixel-font="pixelify"] {
-  --ff-pixel: "Pixelify Sans", ui-monospace, monospace;
-  --ff-pixel-weight: 600;
-}
-:root[data-pixel-font="jersey"] {
-  --ff-pixel: "Jersey 10", ui-monospace, monospace;
-  --ff-pixel-weight: 400;
-}
-:root {
-  --ff-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
-  --ff-display: var(--ff-pixel);
-  --ff-display-weight: var(--ff-pixel-weight);
-  --ff-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.6);
-  --ff-weight: 600;
-}
-:root[data-font="classic"] {
-  --ff-font: var(--ff-pixel);
-  --ff-shadow: 2px 2px 0 #000;
-  --ff-weight: 400;
-}
-:root[data-font="storybook"] {
-  --ff-font: "Alegreya Sans", ui-serif, Georgia, serif;
-  --ff-display: "Cinzel", ui-serif, Georgia, serif;
+  --ff-title-font: "Pixelify Sans", ui-monospace, monospace;
+  --ff-title-weight: 600;
+  --ff-display: "Pixelify Sans", ui-monospace, monospace;
   --ff-display-weight: 600;
-  --ff-weight: 500;
-}
-:root[data-font="pixel"] {
-  --ff-font: "DotGothic16", ui-monospace, monospace;
-  --ff-shadow: 2px 2px 0 #000;
-  --ff-weight: 400;
+  --ff-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --ff-weight: 600;
+  --ff-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.6);
 }
 .ff-display {
   font-family: var(--ff-display);
   font-weight: var(--ff-display-weight);
+}
+/* The title level: the wordmark and the title screen. */
+.ff-brand {
+  font-family: var(--ff-title-font);
+  font-weight: var(--ff-title-weight);
 }
 
 /* ── FF9-style menu windows ─────────────────────────────────────────────── */

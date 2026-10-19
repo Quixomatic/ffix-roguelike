@@ -17,7 +17,7 @@ export default function Header() {
       <div className="flex flex-row items-center justify-between px-3 py-1.5">
         <nav className="flex items-center gap-5 ff-display text-lg text-white [text-shadow:2px_2px_0_#000]">
           <FocusItem>
-            <Link to="/" className="mr-2 text-xl tracking-wide">
+            <Link to="/" className="ff-brand mr-2 text-xl tracking-wide">
               FFIX <span className="text-yellow-200">Roguelike</span>
             </Link>
           </FocusItem>

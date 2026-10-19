@@ -3,10 +3,11 @@ model UserSettings {
   userId String @id
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  /// Menu font id — the web app's font sets in index.css: rounded | classic | pixel | storybook.
-  menuFont    String  @default("rounded")
-  /// Pixel font id — the font sets' pixel text (headings, Classic's everything, in-game labels): pixelify | silkscreen | jersey.
-  pixelFont   String  @default("silkscreen")
+  /// Font ids (the web app's FONTS in features/settings/fonts.ts) for each level of text: the title (wordmark, title
+  /// screen), headings (and the game screens' labels), and body text.
+  titleFont   String  @default("pixelify")
+  headingFont String  @default("pixelify")
+  bodyFont    String  @default("nunito")
   /// Battle animation speed multiplier the battle screen starts at (1, 2 or 4).
   battleSpeed Int     @default(1)
   /// Start battles with the Auto battle toggle on.

@@ -204,7 +204,7 @@ function Sidebar({ open }: { open: boolean }) {
     <aside className={`flex h-full w-60 min-h-0 flex-col gap-3 transition-transform duration-300 ease-out ${open ? "" : "-translate-x-full"} border-r-2 border-[#e8e8f4]/40 bg-gradient-to-b from-[#1b2466] via-[#10164a] to-[#070a1f] p-3 text-sidebar-foreground`}>
       {/* The header bar's wordmark: home (the title screen). */}
       <FocusItem>
-        <Link to="/" className="ff-display pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
+        <Link to="/" className="ff-brand pt-2 text-center text-2xl tracking-wide text-white [text-shadow:2px_2px_0_#000]">
           FFIX <span className="text-yellow-200">Roguelike</span>
         </Link>
       </FocusItem>

@@ -11,7 +11,8 @@ import { FocusItem } from "@/features/input/focus";
 
 import { AvatarPanel } from "./avatar-panel";
 import { ControllerPanel } from "./controller-panel";
-import { MENU_FONTS, PIXEL_FONTS, useSettings, type Settings } from "./use-settings";
+import { FONT_LEVELS, FONTS } from "./fonts";
+import { useSettings, type Settings } from "./use-settings";
 
 /** General settings: menu font, battle presentation, battle mode. Saved to the player's account. */
 export function SettingsPage() {
@@ -38,51 +39,32 @@ export function SettingsPage() {
 
         <ControllerPanel />
 
-        <Panel title="Menu font" className="md:col-span-2">
-          <div className="grid gap-2 sm:grid-cols-2">
-            {MENU_FONTS.map((f) => (
-              <FocusItem key={f.id}>
-                <button
-                  data-font-preview={f.id}
-                  className={`flex flex-col gap-1 rounded border p-2 text-left transition hover:brightness-125 ${
-                    settings.menuFont === f.id ? "border-yellow-300 bg-yellow-300/10" : "border-white/20 bg-black/25"
-                  }`}
-                  onClick={() => update({ menuFont: f.id })}
-                >
-                  <span className="flex items-center justify-between">
-                    <span className="text-lg">{f.label}</span>
-                    {settings.menuFont === f.id && <span className="text-yellow-200">✓</span>}
-                  </span>
-                  <span className="text-xs opacity-70">{f.hint}</span>
-                  <FontSample font={f.id} />
-                </button>
-              </FocusItem>
+        <Panel title="Fonts" className="md:col-span-2">
+          <div className="flex flex-col gap-3">
+            {FONT_LEVELS.map(({ level, label, hint }) => (
+              <div key={level} className="flex flex-col gap-1.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-base">{label}</span>
+                  <span className="text-xs opacity-70">{hint}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {FONTS.map((f) => (
+                    <FocusItem key={f.id}>
+                      <button
+                        className={`rounded border px-3 py-1 text-lg transition hover:brightness-125 ${
+                          settings[level] === f.id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25"
+                        }`}
+                        style={{ fontFamily: f.family, fontWeight: level === "bodyFont" ? f.weight : f.headingWeight }}
+                        onClick={() => update({ [level]: f.id })}
+                      >
+                        {f.label}
+                      </button>
+                    </FocusItem>
+                  ))}
+                </div>
+              </div>
             ))}
-          </div>
-        </Panel>
-
-        <Panel title="Pixel font" className="md:col-span-2">
-          <div className="mb-2 text-xs opacity-70">The pixel text in the font sets above: headings, all of Classic pixel, and the labels on the map and in battle.</div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {PIXEL_FONTS.map((f) => (
-              <FocusItem key={f.id}>
-                <button
-                  className={`flex flex-col gap-1 rounded border p-2 text-left transition hover:brightness-125 ${
-                    settings.pixelFont === f.id ? "border-yellow-300 bg-yellow-300/10" : "border-white/20 bg-black/25"
-                  }`}
-                  onClick={() => update({ pixelFont: f.id })}
-                >
-                  <span className="flex items-center justify-between">
-                    <span className="text-lg">{f.label}</span>
-                    {settings.pixelFont === f.id && <span className="text-yellow-200">✓</span>}
-                  </span>
-                  <span className="text-xs opacity-70">{f.hint}</span>
-                  <span className="rounded bg-black/30 px-2 py-1 text-lg" style={{ fontFamily: f.family }}>
-                    Zidane — Lv 12 · 9,999
-                  </span>
-                </button>
-              </FocusItem>
-            ))}
+            <FontSample />
           </div>
         </Panel>
 
@@ -212,25 +194,15 @@ function Choice({ on, onClick, children }: { on: boolean; onClick(): void; child
   );
 }
 
-/** A line of sample text in a given font set, whatever font is active. */
-function FontSample({ font }: { font: string }) {
-  // Pixel text follows the pixel font picked below (--ff-pixel, at its own heading weight).
-  const pixel = "var(--ff-pixel)";
-  const families: Record<string, [string, string]> = {
-    rounded: ['"Nunito", sans-serif', pixel],
-    classic: [pixel, pixel],
-    pixel: ['"DotGothic16", monospace', pixel],
-    storybook: ['"Alegreya Sans", serif', '"Cinzel", serif'],
-  };
-  const [body, display] = families[font] ?? families.rounded!;
+/** The three levels together, in the fonts picked now. */
+function FontSample() {
   return (
-    <span className="rounded bg-black/30 px-2 py-1">
-      <span className="block text-base" style={{ fontFamily: display, fontWeight: display === pixel ? "var(--ff-pixel-weight)" : 600 }}>
-        Zidane — Lv 12
+    <div className="flex flex-col gap-1 rounded bg-black/30 px-3 py-2">
+      <span className="ff-brand text-2xl">
+        FFIX <span className="text-yellow-200">Roguelike</span>
       </span>
-      <span className="block text-sm" style={{ fontFamily: body }}>
-        Mage Masher · Atk 14 · Steal, Flee. HP 412/412
-      </span>
-    </span>
+      <span className="ff-display text-lg">Zidane — Lv 12</span>
+      <span className="text-sm">Mage Masher · Atk 14 · Steal, Flee. HP 412/412</span>
+    </div>
   );
 }

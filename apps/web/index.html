@@ -11,13 +11,12 @@
       rel="stylesheet"
     />
     <script>
-      // Apply the saved menu and pixel fonts before first paint (see src/features/settings/use-settings.ts).
+      // Apply the saved font picks before first paint (their CSS variables, cached by src/features/settings/fonts.ts).
       try {
-        document.documentElement.dataset.font = localStorage.getItem("ff-font") || "rounded";
-        document.documentElement.dataset.pixelFont = localStorage.getItem("ff-pixel-font") || "silkscreen";
+        const vars = JSON.parse(localStorage.getItem("ff-font-vars") || "{}");
+        for (const k in vars) document.documentElement.style.setProperty(k, vars[k]);
       } catch {
-        document.documentElement.dataset.font = "rounded";
-        document.documentElement.dataset.pixelFont = "silkscreen";
+        // index.css's defaults apply
       }
     </script>
   </head>
