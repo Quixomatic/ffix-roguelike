@@ -13,6 +13,15 @@ const STAT_LABEL: Record<string, string> = {
 };
 export const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+/** A synergy's colour (by id or tag); a calm blue for one without. */
+export const synergyColor = (idOrTag: string) => synergyTable().find((s) => s.id === idOrTag || s.tag === idOrTag)?.color ?? "#5a8ad0";
+
+/** A chip tinted with a synergy's colour: its colour as the fill (see-through) and the edge, white text. */
+export const synergyChipStyle = (idOrTag: string) => {
+  const c = synergyColor(idOrTag);
+  return { background: `${c}59`, border: `1px solid ${c}`, color: "#fff" };
+};
+
 /** A synergy tag's display name ("tantalus" → "Tantalus", "summoner" → "Summoners"). */
 export const tagName = (tag: string) => synergyTable().find((s) => s.tag === tag)?.name ?? cap(tag);
 

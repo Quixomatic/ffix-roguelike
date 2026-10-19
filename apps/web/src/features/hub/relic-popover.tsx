@@ -5,7 +5,7 @@ import type { ReactElement, ReactNode } from "react";
 import { FocusItem } from "@/features/input/focus";
 
 import { Badge } from "./badge";
-import { effectText } from "./relic-text";
+import { effectText, synergyChipStyle, synergyColor } from "./relic-text";
 
 /** The roster characters (for who carries a synergy's tag). */
 const ROSTER = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant", "beatrix", "blank"];
@@ -78,14 +78,16 @@ export function SynergyDetails({ synergy: s, count, party }: { synergy: SynergyD
       <div className="flex items-center gap-2">
         {s.badge && <Badge id={s.badge} scale={1} />}
         <div className="flex min-w-0 flex-col">
-          <span className="ff-display text-lg text-sky-100">{s.name}</span>
+          <span className="ff-display text-lg" style={{ color: synergyColor(s.id) }}>
+            {s.name}
+          </span>
           <span className="text-xs opacity-80">Party synergy{count != null ? ` · ${count} in the party` : ""}</span>
         </div>
       </div>
       {s.description && <div className="italic opacity-80">{s.description}</div>}
       <ul className="flex flex-col gap-1">
         {s.tiers.map((t) => (
-          <li key={t.count} className={`rounded px-2 py-1 ${t === reached ? "bg-sky-800/60 text-sky-50" : "bg-black/25 opacity-80"}`}>
+          <li key={t.count} className={`rounded px-2 py-1 ${t === reached ? "" : "bg-black/25 opacity-80"}`} style={t === reached ? synergyChipStyle(s.id) : undefined}>
             <span className="tabular-nums text-yellow-200">{t.count}+</span> {t.text}
           </li>
         ))}
@@ -131,8 +133,59 @@ export function SynergyPopover({
 }
 
 /**
- * A character's synergy tags as small badges, each with its popover on hover: for character cards' footers (the card
- * is the cursor stop, so the badges are hover only).
+ * The one synergy chip used everywhere (character cards, the embark page, the run sidebar): tinted with the synergy's
+ * colour, its badge, its name and — given `count` — how many of the party share it, `detail` adds the tier reached
+ * beneath. Its card shows on hover (and on the cursor, unless `cursor` is false: inside something that's already a
+ * cursor stop).
+ */
+export function SynergyChip({
+  synergy: s,
+  count,
+  party,
+  detail = false,
+  cursor = true,
+  side = "right",
+  className = "",
+}: {
+  synergy: SynergyData;
+  count?: number;
+  party?: string[];
+  detail?: boolean;
+  cursor?: boolean;
+  side?: Side;
+  className?: string;
+}) {
+  const reached = count != null ? [...s.tiers].sort((a, b) => b.count - a.count).find((t) => count >= t.count) : undefined;
+  const body = (
+    <>
+      <span className="inline-flex items-center gap-1">
+        {s.badge && <Badge id={s.badge} scale={1} view={20} />}
+        <span>{s.name}</span>
+        {count != null && <span className="tabular-nums opacity-80">{count}</span>}
+      </span>
+      {detail && reached && <span className="opacity-85">{reached.text}</span>}
+    </>
+  );
+  const cls = `inline-flex cursor-help flex-col rounded px-1.5 py-0.5 text-left text-xs ${className}`;
+  return (
+    <SynergyPopover synergyId={s.id} count={count} party={party} side={side} cursor={cursor}>
+      {/* A span inside something that's already a button (a character card): buttons can't nest. */}
+      {cursor ? (
+        <button type="button" data-sound="none" className={cls} style={synergyChipStyle(s.id)}>
+          {body}
+        </button>
+      ) : (
+        <span className={cls} style={synergyChipStyle(s.id)}>
+          {body}
+        </span>
+      )}
+    </SynergyPopover>
+  );
+}
+
+/**
+ * A character's synergy tags as chips, each with its popover on hover: for character cards' footers (the card is the
+ * cursor stop, so the chips are hover only).
  */
 export function SynergyTags({ character, party, side = "top" }: { character: string; party?: string[]; side?: Side }) {
   const tags = characterTags(character);
@@ -141,15 +194,9 @@ export function SynergyTags({ character, party, side = "top" }: { character: str
     <span className="flex flex-wrap gap-1">
       {tags.map((tag) => {
         const s = synergyTable().find((x) => x.tag === tag);
+        if (!s) return null;
         const count = party ? party.filter((k) => characterTags(k).includes(tag)).length : undefined;
-        return (
-          <SynergyPopover key={tag} tag={tag} count={count} party={party} side={side} cursor={false}>
-            <span className="inline-flex items-center gap-1 rounded bg-sky-900/60 px-1.5 py-0.5 text-xs text-sky-100">
-              {s?.badge && <Badge id={s.badge} scale={1} view={20} />}
-              {s?.name ?? tag}
-            </span>
-          </SynergyPopover>
-        );
+        return <SynergyChip key={tag} synergy={s} count={count} party={party} side={side} cursor={false} />;
       })}
     </span>
   );

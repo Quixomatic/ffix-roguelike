@@ -72,6 +72,8 @@ export interface SynergyData {
   tag: string;
   description?: string;
   badge?: number;
+  /** Its colour (CSS hex): chips and badges for it are tinted with it, so synergies read apart at a glance. */
+  color?: string;
   /** Thresholds, lowest first; only the highest reached applies. */
   tiers: { count: number; text: string; effects: ModifierEffect[] }[];
   enabled: boolean;

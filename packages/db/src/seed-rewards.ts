@@ -80,6 +80,13 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     const badges = badged.map(([, n]) => n);
     await db.$executeRaw`UPDATE achievement a SET data = jsonb_set(a.data, '{badge}', to_jsonb(s.badge)) FROM unnest(${ids}::text[], ${badges}::int[]) AS s(id, badge) WHERE a.id = s.id AND a.data->'badge' IS NULL`;
   }
+  // Synergy colours added to the seed after the rows existed: fill in rows that have none (an edited colour stays).
+  const coloured = synergies.filter((r) => typeof r.color === "string");
+  if (coloured.length) {
+    const ids = coloured.map((r) => String(r.id));
+    const colors = coloured.map((r) => String(r.color));
+    await db.$executeRaw`UPDATE synergy s SET data = jsonb_set(s.data, '{color}', to_jsonb(c.color)) FROM unnest(${ids}::text[], ${colors}::text[]) AS c(id, color) WHERE s.id = c.id AND s.data->'color' IS NULL`;
+  }
   return {
     rarities: results[0].count,
     roles: results[1].count,

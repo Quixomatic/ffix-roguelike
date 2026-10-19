@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.32] - 2026-10-19
+
+### Added
+- **Each synergy has its own colour** (`SynergyData.color`, data like the rest; editable once the admin synergy tab exists). First pass: Summoners light purple, Alexandria gold, Mages deep indigo, Tantalus crimson, Knights steel blue, Outsiders moss green.
+  - Server start fills the colour into synergy rows that have none (like achievement badges); an edited colour stays.
+
+### Changed
+- **One standard synergy chip everywhere** (`SynergyChip` in `features/hub/relic-popover.tsx`). It's tinted with the synergy's colour and shows its badge, name, the party count, optionally the tier reached beneath, and its popover.
+  - **Where:** character card footers (embark and Party pages), the embark page's Party synergies card (with the tier text), and the run sidebar.
+  - On character cards the chip is a hover-only span (the card is the button); elsewhere it's a cursor stop.
+- The synergy popover's heading is in the synergy's colour, and the tier the party has reached is highlighted in it.
+
 ## [0.3.31] - 2026-10-19
 
 ### Fixed

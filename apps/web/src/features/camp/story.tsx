@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PixelIcon } from "@/components/pixel-icon";
 import { Badge } from "@/features/hub/badge";
-import { RelicPopover, SynergyPopover } from "@/features/hub/relic-popover";
+import { RelicPopover, SynergyChip } from "@/features/hub/relic-popover";
 import { effectText } from "@/features/hub/relic-text";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
@@ -194,16 +194,7 @@ function StartingRelic({ profile, party, value, onChange }: { profile: Profile; 
       <div className="ff-panel flex flex-col gap-2 p-4">
         <div className="ff-display text-lg">Party synergies</div>
         {synergies.length ? (
-          synergies.map(({ synergy, count, tier }) => (
-            <SynergyPopover key={synergy.id} synergyId={synergy.id} count={count} party={party} side="left">
-              <button type="button" data-sound="none" className="flex cursor-help flex-col rounded bg-sky-900/50 px-2 py-1 text-left text-sky-100">
-                <span className="text-sm">
-                  {synergy.name} <span className="tabular-nums opacity-80">{count}</span>
-                </span>
-                <span className="text-xs opacity-80">{tier.text}</span>
-              </button>
-            </SynergyPopover>
-          ))
+          synergies.map(({ synergy, count }) => <SynergyChip key={synergy.id} synergy={synergy} count={count} party={party} detail side="left" className="w-full" />)
         ) : (
           <div className="text-sm opacity-60">None with this party. Characters' synergies are on their cards.</div>
         )}
