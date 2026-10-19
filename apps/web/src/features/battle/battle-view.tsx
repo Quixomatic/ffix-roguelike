@@ -92,7 +92,7 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
 
       {/* Top centre: a boss fight's enemy frames, then the action banner under them. Clear of the corner buttons. */}
       <div className="pointer-events-none absolute inset-x-48 top-2 flex flex-col items-center gap-2">
-        <BossFrame enemies={enemies} incoming={incoming} />
+        <BossFrame enemies={enemies} bossFight={!!state.bossFight} incoming={incoming} />
         {battle.banner && <div className="ff-window px-6 py-1 text-xl">{battle.banner}</div>}
       </div>
 

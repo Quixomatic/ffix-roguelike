@@ -33,6 +33,8 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
         party: ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(newBuild(k, level), i)),
         enemies: structuredClone(foes.units),
         ...(foes.scene ? { scene: foes.scene } : {}),
+        // The world's boss pick is a boss fight (the boss frame shows).
+        bossFight: encounter % groups.length >= w.encounters.length + w.elites.length,
         inventory: [
           { itemId: itemByName("Potion").id, count: 6 },
           { itemId: itemByName("Hi-Potion").id, count: 2 },

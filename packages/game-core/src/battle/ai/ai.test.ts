@@ -9,7 +9,7 @@ import { newBuild } from "../../stats";
 import { autoCommand } from "../autoplay";
 import { BattleEngine, createBattle, replayBattle } from "../engine";
 import type { BattleEvent, BattleState, BattleUnit } from "../types";
-import { enemyUnit, partyUnit } from "../units";
+import { enemyUnit, partyUnit, shownHp } from "../units";
 import { decodeInstr, disassemble, instructions, parseScript } from "./disasm";
 import { getBattleScript, registerBattleScripts } from "./registry";
 
@@ -210,6 +210,30 @@ describe("battle AI VM", () => {
     for (let i = 0; i < 30; i++) e.step();
     const map = e.state.ai!.map;
     expect(map[25]! | (map[26]! << 8)).toBe(Math.floor(pb.maxHp / 2));
+  });
+
+  test("Gizamaluke's faked 65,535 HP shows as what's left: 13,875, and he falls when it's gone", () => {
+    // His script maxes his HP out and ends the fight once he has lost 13,875 (FF9's 3,875 + the boss buffer).
+    const e = new BattleEngine(battle("GZ_E014", { level: 40, pattern: 0 }));
+    const step = (n: number) => {
+      for (let i = 0; i < n && !e.state.outcome; i++) {
+        for (const id of [...e.state.ready]) e.submit({ actorId: id, kind: "defend", targetIds: [] });
+        e.step();
+      }
+    };
+    step(400);
+    const g = e.state.units.find((u) => u.side === "enemy")!;
+    expect(g.maxHp).toBe(55535);
+    expect(shownHp(g)).toEqual({ hp: 13875, maxHp: 13875 });
+    e.damage(g, 9999);
+    e.damage(g, 3875);
+    expect(shownHp(g).hp).toBe(1);
+    step(600);
+    expect(e.state.outcome).toBeNull();
+    e.damage(g, 1);
+    expect(shownHp(g).hp).toBe(0);
+    step(3000);
+    expect(e.state.outcome).toBe("victory");
   });
 
   test("Plant Brain at 0 HP is held for its script, which brings in its second phase", () => {

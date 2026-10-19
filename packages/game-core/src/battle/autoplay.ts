@@ -10,6 +10,8 @@ import type { BattleCommand, BattleUnit } from "./types";
 
 const HEAL_SCRIPTS = new Set([10]);
 const DAMAGE_SCRIPTS = new Set([9, 18, 19, 20, 63, 85, 21]);
+/** Commands 21 (Double White) and 23 (Double Black) cast two spells per turn. */
+const DOUBLE_CAST = new Set([21, 23]);
 
 export function autoCommand(e: BattleEngine, u: BattleUnit): BattleCommand {
   const foes = e.opponents(u).filter((x) => e.isTargetable(x));
@@ -37,7 +39,10 @@ export function autoCommand(e: BattleEngine, u: BattleUnit): BattleCommand {
     .sort((a, b) => b.power - a.power)[0];
   if (nuke && target) {
     const all = nuke.targets.startsWith("all") || nuke.targets === "everyone";
-    return { actorId: u.id, kind: "ability", actionId: nuke.id, targetIds: all ? [] : [target.id] };
+    const cmd: BattleCommand = { actorId: u.id, kind: "ability", actionId: nuke.id, targetIds: all ? [] : [target.id] };
+    // Double Black / Double White (Trance Vivi, Eiko): cast it twice when there's MP for both.
+    if (DOUBLE_CAST.has(e.commandOf(u, nuke.id)?.id ?? -1) && e.mpCost(u, nuke) * 2 <= u.mp) cmd.second = { actionId: nuke.id, targetIds: cmd.targetIds };
+    return cmd;
   }
   return { actorId: u.id, kind: "attack", targetIds: target ? [target.id] : [] };
 }

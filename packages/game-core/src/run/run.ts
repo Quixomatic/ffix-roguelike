@@ -369,6 +369,7 @@ function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, en
     mode: run.battleMode ?? "wait",
     canFlee: nodeKind === "battle",
     noSurprise: nodeKind !== "battle",
+    bossFight: nodeKind === "boss" || nodeKind === "semiboss",
     meta: { gil: run.gil, thefts: run.stats.steals, dragonKills: run.stats.dragonKills ?? 0, tonberryKills: run.stats.tonberryKills ?? 0 },
   });
   run.phase = { kind: "battle", nodeId, nodeKind, enemies, battle };

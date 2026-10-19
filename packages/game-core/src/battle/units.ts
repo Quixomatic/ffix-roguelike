@@ -169,6 +169,15 @@ function ff9Unit(def: EnemyDef, slot: number, tier: number): BattleUnit {
   };
 }
 
+/**
+ * The HP to show for a unit: its own, or, when a battle script fakes it (`hpShown`, FF9's 65,535 trick), what's left
+ * before the script ends the fight.
+ */
+export function shownHp(u: BattleUnit, hp = u.hp): { hp: number; maxHp: number } {
+  if (!u.hpShown) return { hp, maxHp: u.maxHp };
+  return { hp: Math.max(0, Math.min(u.hpShown.max, hp - u.hpShown.offset)), maxHp: u.hpShown.max };
+}
+
 export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
   if (def.ff9) return ff9Unit(def, slot, tier);
   const b = def.stats ?? baseStats(def.level, tier);

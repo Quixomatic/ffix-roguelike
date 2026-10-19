@@ -191,6 +191,12 @@ export function setMember(engine: BattleEngine, ai: AiState, u: BattleUnit, kind
       return;
     case 35: {
       const buf = ai.hpBuf[idx] ?? 0;
+      // FF9's fake-HP trick: maxing HP out (65,535) while the script itself ends the fight once the unit has lost what
+      // it had (its HP as the script saw it, buffer included). Show that amount counting down, not 65,535.
+      if (val >= 0xffff && !u.hpShown) {
+        const real = u.maxHp + buf;
+        u.hpShown = { max: real, offset: val - buf - real };
+      }
       if (buf > 0 && val >= buf) u.maxHp = Math.max(1, val - buf);
       else {
         ai.hpBuf[idx] = 0;

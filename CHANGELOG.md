@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.16] - 2026-10-19
+
+### Changed
+- **Boss fights are flagged by us, not by FF9's monster flags.** `BattleState.bossFight` is set for a run's boss and fortress (semi-boss) nodes and for Practice's boss pick. The boss frame shows in every such fight; Black Waltz 1 in the Ice Cavern was missing it because FF9 doesn't flag him as a boss. The big frame goes to FF9's flagged boss(es), else to the enemy with the most HP; the rest get the small frames.
+- **The boss frame shows each enemy's level** ("Lv 16").
+
+### Fixed
+- **Gizamaluke showed 55,535 HP.** His FF9 battle script fakes his HP: it maxes it out at 65,535 and ends the fight itself once he has lost what he had. That's **13,875**: FF9's data gives him 13,875, which is 3,875 plus the 10,000 every FF9 boss carries, and his script doesn't take the 10,000 off. The engine already ran this faithfully (he falls after exactly 13,875 damage, now pinned by a test), but the frame showed the faked number. When a script maxes HP out, the unit now records its real total (`hpShown`), and `shownHp(u)` gives what's left: 13,875 counting down to 0.
+- **Auto-battle cast Double Black / Double White only once.** The auto AI now adds the second spell when the spell it picks comes from a Double command and there's MP for both. (Casting it from the menu already asked for the second spell; the engine casts both.)
+
+### Notes
+- My first checks of Gizamaluke's kill point were wrong: they stepped a Wait-mode battle that was paused for a party command, so nothing happened. Feeding the party commands shows the script working.
+
 ## [0.3.15] - 2026-10-19
 
 ### Added

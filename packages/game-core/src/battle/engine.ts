@@ -111,6 +111,8 @@ export interface CreateBattleOptions {
   scene?: string;
   /** The scene's spawn pattern (FF9 GetBattleGroupId); defaults to the "#n" in `scene`, else 0. */
   pattern?: number;
+  /** A boss fight (the battle shows the boss frame); see BattleState.bossFight. */
+  bossFight?: boolean;
 }
 
 export function createBattle(opts: CreateBattleOptions): BattleState {
@@ -139,6 +141,7 @@ export function createBattle(opts: CreateBattleOptions): BattleState {
     inputs: [],
     outcome: null,
     canFlee: opts.canFlee ?? true,
+    ...(opts.bossFight ? { bossFight: true } : {}),
     stolen: [],
     learned: [],
     gilBonus: 0,

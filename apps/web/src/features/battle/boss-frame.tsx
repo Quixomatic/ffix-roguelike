@@ -1,29 +1,32 @@
-import { isShownUnit, type BattleUnit } from "@ffix-roguelike/game-core";
+import { isShownUnit, shownHp, type BattleUnit } from "@ffix-roguelike/game-core";
 import { useRef } from "react";
 
 /**
- * Boss fights: the boss's frame at the top centre (its HP left to chew through and the items still there to steal),
- * with the other enemies' frames smaller beside it. Nothing in fights without a boss. A unit an effect hasn't hit yet
- * (`incoming`) keeps showing its HP from before the hit, like the party window.
+ * Boss fights (`bossFight`: our own flag — a run's boss or fortress node, Practice's boss pick): the boss's frame at
+ * the top centre (level, the HP left to chew through, the items still there to steal), with the other enemies'
+ * frames smaller beside it. The boss is whoever FF9 flags as one, else the enemy with the most HP. A unit an effect
+ * hasn't hit yet (`incoming`) keeps showing its HP from before the hit, like the party window.
  */
-export function BossFrame({ enemies, incoming = () => false }: { enemies: BattleUnit[]; incoming?: (id: string) => boolean }) {
+export function BossFrame({ enemies, bossFight, incoming = () => false }: { enemies: BattleUnit[]; bossFight: boolean; incoming?: (id: string) => boolean }) {
   /** HP last shown per enemy (held while an effect is on its way), and how many items each could be stolen at first. */
   const lastHp = useRef(new Map<string, number>());
   const stealTotal = useRef(new Map<string, number>());
-  if (!enemies.some((u) => u.boss)) return null;
+  if (!bossFight) return null;
 
   const shown = enemies.filter((u) => isShownUnit(u) && ((u.hp > 0 && u.statuses.death === undefined) || incoming(u.id)));
   const frame = (u: BattleUnit, big: boolean) => {
     if (!incoming(u.id)) lastHp.current.set(u.id, u.hp);
-    const hp = lastHp.current.get(u.id) ?? u.hp;
+    const { hp, maxHp } = shownHp(u, lastHp.current.get(u.id) ?? u.hp);
     // A stolen slot's item becomes -1; count the slots that held one the first time the unit is seen.
     const left = (u.steal ?? []).filter((s) => s.itemId >= 0).length;
     if (!stealTotal.current.has(u.id)) stealTotal.current.set(u.id, left);
     const total = stealTotal.current.get(u.id)!;
-    return <EnemyFrame key={u.id} unit={u} hp={hp} stealLeft={left} stealTotal={total} big={big} />;
+    return <EnemyFrame key={u.id} unit={u} hp={hp} maxHp={maxHp} stealLeft={left} stealTotal={total} big={big} />;
   };
-  const bosses = shown.filter((u) => u.boss);
-  const others = shown.filter((u) => !u.boss);
+  const flagged = enemies.filter((u) => u.boss);
+  const main = flagged.length ? flagged : [...enemies].sort((a, b) => shownHp(b).maxHp - shownHp(a).maxHp).slice(0, 1);
+  const bosses = shown.filter((u) => main.includes(u));
+  const others = shown.filter((u) => !main.includes(u));
   if (!shown.length) return null;
 
   return (
@@ -35,12 +38,15 @@ export function BossFrame({ enemies, incoming = () => false }: { enemies: Battle
   );
 }
 
-function EnemyFrame({ unit, hp, stealLeft, stealTotal, big }: { unit: BattleUnit; hp: number; stealLeft: number; stealTotal: number; big: boolean }) {
-  const pct = unit.maxHp > 0 ? Math.max(0, Math.min(1, hp / unit.maxHp)) : 0;
+function EnemyFrame({ unit, hp, maxHp, stealLeft, stealTotal, big }: { unit: BattleUnit; hp: number; maxHp: number; stealLeft: number; stealTotal: number; big: boolean }) {
+  const pct = maxHp > 0 ? Math.max(0, Math.min(1, hp / maxHp)) : 0;
   return (
     <div className={`ff-window flex flex-col ${big ? "w-[26rem] max-w-full gap-1 px-3 py-2" : "w-44 gap-0.5 px-2 py-1 text-sm"}`}>
       <div className="flex items-center justify-between gap-2">
-        <span className={`truncate ${big ? "ff-display text-lg" : ""}`}>{unit.name}</span>
+        <span className="flex min-w-0 items-baseline gap-2">
+          <span className={`truncate ${big ? "ff-display text-lg" : ""}`}>{unit.name}</span>
+          <span className={`shrink-0 tabular-nums text-yellow-200 ${big ? "text-sm" : "text-xs"}`}>Lv {unit.level}</span>
+        </span>
         {stealTotal > 0 && <StealDots left={stealLeft} total={stealTotal} big={big} />}
       </div>
       <div className={`ff-gauge ${big ? "h-3" : "h-1.5"}`}>
@@ -48,7 +54,7 @@ function EnemyFrame({ unit, hp, stealLeft, stealTotal, big }: { unit: BattleUnit
       </div>
       <div className={`text-right tabular-nums ${big ? "text-sm" : "text-xs"} opacity-80`}>
         {hp.toLocaleString()}
-        <span className="opacity-60"> / {unit.maxHp.toLocaleString()}</span>
+        <span className="opacity-60"> / {maxHp.toLocaleString()}</span>
       </div>
     </div>
   );

@@ -150,6 +150,11 @@ export interface BattleUnit {
   noAtb?: boolean;
   /** A boss whose HP ran out, held for its script to stage the end (FF9's "HP < 10,000" dying state). */
   ff9Dying?: boolean;
+  /**
+   * The HP to show when a script fakes it (FF9's 65,535 trick: Gizamaluke's script maxes his HP out and ends the fight
+   * itself once he has lost his real amount): shown HP = hp − `offset`, out of `max`. See `shownHp`.
+   */
+  hpShown?: { max: number; offset: number };
 }
 
 export type CommandKind = "attack" | "ability" | "item" | "throw" | "defend" | "flee" | "change";
@@ -233,6 +238,8 @@ export interface BattleState {
   inputs: InputRecord[];
   outcome: BattleOutcome | null;
   canFlee: boolean;
+  /** A boss fight by our own map (a run's boss / fortress node, Practice's boss pick), whatever FF9's flags say. */
+  bossFight?: boolean;
   /** Spoils collected during the fight (steals, Quina's blue magic). */
   stolen: number[];
   learned: { unitId: string; actionId: number }[];
