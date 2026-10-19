@@ -89,7 +89,6 @@ const BADGE_SIZE = 14;
 const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 997, // Crossed swords over shield
   elite: 254, // horned demon head
-  shop: 989, // Dollar money bag
   synth: 442, // iron anvil
   treasure: 210, // treasure chest
 };

@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.57] - 2026-10-19
+
+### Changed
+- **Shop stages show a building again,** drawn from the overworld tileset like the boss castle, instead of the money-bag badge (the badges are front-on icons and looked out of place on the top-down map). It's two orange shopfronts side by side, one with a chimney: a small market street 2 tiles wide, centred over the marker and fading like the castle once visited or cut off (`STAGE_SPRITES.shop`).
+- Battle, elite, synthesis and treasure keep their badges for now, until top-down art for them is chosen.
+
 ## [0.3.56] - 2026-10-19
 
 ### Changed

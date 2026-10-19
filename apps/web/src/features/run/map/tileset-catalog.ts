@@ -112,7 +112,7 @@ export const STAGE_SPRITES: Partial<Record<string, ObjectSprite>> = {
   start: { col: 3, row: 6, w: 1, h: 1 }, // signpost
   battle: { col: 8, row: 13, w: 1, h: 1 }, // red tent: a monster camp
   elite: { col: 10, row: 12, w: 1, h: 2 }, // tall stone tower
-  shop: { col: 8, row: 1, w: 1, h: 1 }, // orange shop with a sign
+  shop: { col: 8, row: 2, w: 2, h: 1 }, // two orange shopfronts side by side (one with a chimney): a market street
   synth: { col: 8, row: 3, w: 1, h: 1 }, // blue shop with a sign
   stiltzkin: { col: 10, row: 5, w: 1, h: 1 }, // market stall
   chocobo: { col: 8, row: 12, w: 1, h: 1 }, // blue tent
