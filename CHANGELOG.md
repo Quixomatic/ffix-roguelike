@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.58] - 2026-10-19
+
+### Changed
+- **Stage badges float right on their marker** instead of standing above it. Each is centred on the dot (by what the badge actually draws), raised 3 px (`BADGE_LIFT`) and in front of it, and bobs gently. The bobs are out of step with each other; done and cut-off stages hold still. The coloured dot shows around it as its base.
+- **Shop stages show the money-bag badge again** (989), so battle, elite, shop, synthesis and treasure all try the floating look together. The start signpost, the Moogle / Stiltzkin / Chocobo characters, and the event, fortress and boss pictures are unchanged.
+
 ## [0.3.57] - 2026-10-19
 
 ### Changed

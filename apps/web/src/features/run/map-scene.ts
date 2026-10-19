@@ -82,13 +82,16 @@ const BADGE_CELL = 48;
  * #997 20×20, #989 17×20, #442 18×10…), which stood far too big over the markers; ½ was too small.
  */
 const BADGE_SIZE = 14;
+/** How far (world px) a floating badge sits above its marker's centre. */
+const BADGE_LIFT = 3;
 /**
  * The badge standing over each of these stages (badge numbers, from scripts/badge-catalog.json), all plain ones so
- * they match. Each is scaled to BADGE_SIZE by what it actually draws, standing FIGURE_GAP above the marker.
+ * they match. Each is scaled to BADGE_SIZE by what it actually draws and floats right on its marker, bobbing gently.
  */
 const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 997, // Crossed swords over shield
   elite: 254, // horned demon head
+  shop: 989, // Dollar money bag
   synth: 442, // iron anvil
   treasure: 210, // treasure chest
 };
@@ -493,7 +496,7 @@ export class MapScene extends Phaser.Scene {
     const badge = STAGE_BADGES[n.kind];
     // Badges and figures stand clear of the marker, a few px above its top edge.
     const standY = p.y - size.h / 2 - FIGURE_GAP;
-    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, standY, badge, alpha);
+    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, p.y, badge, alpha);
     else if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(p.x, standY, this.bridge.previews[n.id]!, alpha);
     else this.placeStageSprite(n, alpha);
 
@@ -518,18 +521,20 @@ export class MapScene extends Phaser.Scene {
   }
 
   /**
-   * A stage's badge (`STAGE_BADGES`), its bottom at `y` (above the marker) and centred on `x`, by what the badge
-   * actually draws, its longer side scaled to BADGE_SIZE.
+   * A stage's badge (`STAGE_BADGES`) floating right on its marker centred at (x, y): centred by what the badge actually
+   * draws, its longer side scaled to BADGE_SIZE, raised a little and bobbing gently over the dot.
    */
   private placeBadge(x: number, y: number, badge: number, alpha: number) {
     const frame = badge - 1;
     const box = this.figureBounds(BADGES_KEY, frame) ?? { x: 0, y: 0, w: BADGE_CELL, h: BADGE_CELL };
-    this.add
-      .image(x, y, BADGES_KEY, frame)
-      .setOrigin((box.x + box.w / 2) / BADGE_CELL, (box.y + box.h) / BADGE_CELL)
+    const img = this.add
+      .image(x, y - BADGE_LIFT, BADGES_KEY, frame)
+      .setOrigin((box.x + box.w / 2) / BADGE_CELL, (box.y + box.h / 2) / BADGE_CELL)
       .setScale(BADGE_SIZE / Math.max(box.w, box.h))
-      .setDepth(1.4)
+      .setDepth(3)
       .setAlpha(alpha);
+    // Done and cut-off stages hold still; the rest bob, out of step with each other.
+    if (alpha === 1) this.tweens.add({ targets: img, y: img.y - 1.5, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: (x * 7 + y * 3) % 900 });
   }
 
   /**
