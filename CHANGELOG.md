@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.52] - 2026-10-19
+
+### Changed
+- **Stage badges are twice the size**, drawn at their own size instead of ½.
+- **Badges and figures stand clear of their marker.** Their bottom now sits 3 px above the marker's top edge (`FIGURE_GAP`); before, it sat 3 px above the marker's centre, so they touched the dot or tucked behind it. The Moogle, Stiltzkin and Chocobo characters get the same lift.
+
 ## [0.3.51] - 2026-10-19
 
 ### Changed

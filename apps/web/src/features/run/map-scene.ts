@@ -71,12 +71,15 @@ const MONSTER_HEIGHT = 20;
 /** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
 const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
 
+/** How far (world px) above its marker's top edge a stage's badge or figure stands. */
+const FIGURE_GAP = 3;
+
 /** The achievement badge atlas (features/hub/badge.tsx: 48 px cells, badge n at frame n − 1; the `badges` pack). */
 const BADGES_KEY = "badges";
 const BADGE_CELL = 48;
 /**
  * The badge standing over each of these stages (badge numbers, from scripts/badge-catalog.json), all plain ones so
- * they match. Drawn at ½ (native pixels at the map's 2× zoom).
+ * they match. Drawn at their own size, standing FIGURE_GAP above the marker.
  */
 const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 334, // crossed swords
@@ -484,8 +487,10 @@ export class MapScene extends Phaser.Scene {
     const labelY = p.y + size.h / 2 + 1;
     const alpha = cut ? 0.35 : done ? 0.6 : 1;
     const badge = STAGE_BADGES[n.kind];
-    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p, badge, alpha);
-    else if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(n, this.bridge.previews[n.id]!, alpha);
+    // Badges and figures stand clear of the marker, a few px above its top edge.
+    const standY = p.y - size.h / 2 - FIGURE_GAP;
+    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, standY, badge, alpha);
+    else if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(p.x, standY, this.bridge.previews[n.id]!, alpha);
     else this.placeStageSprite(n, alpha);
 
     const label = smooth(this.add
@@ -508,14 +513,16 @@ export class MapScene extends Phaser.Scene {
     if (can) hit.on("pointerup", () => !this.dragged && this.clickStage(n.id));
   }
 
-  /** A stage's badge (`STAGE_BADGES`), standing on the marker: centred over it by what the badge actually draws. */
-  private placeBadge(p: { x: number; y: number }, badge: number, alpha: number) {
+  /**
+   * A stage's badge (`STAGE_BADGES`), its bottom at `y` (above the marker) and centred on `x`, by what the badge
+   * actually draws, at its own size.
+   */
+  private placeBadge(x: number, y: number, badge: number, alpha: number) {
     const frame = badge - 1;
     const box = this.figureBounds(BADGES_KEY, frame) ?? { x: 0, y: 0, w: BADGE_CELL, h: BADGE_CELL };
     this.add
-      .image(p.x, p.y - 3, BADGES_KEY, frame)
+      .image(x, y, BADGES_KEY, frame)
       .setOrigin((box.x + box.w / 2) / BADGE_CELL, (box.y + box.h) / BADGE_CELL)
-      .setScale(0.5)
       .setDepth(1.4)
       .setAlpha(alpha);
   }
@@ -523,10 +530,9 @@ export class MapScene extends Phaser.Scene {
   /**
    * The figures a stage shows (`MapBridge.previews`; at most two), like the party on the Play page's Party card: the
    * same height whatever their sheet (scaled by what they actually draw, `figureBounds`), side by side and overlapping
-   * on one baseline just above the marker, the first facing left and the second right, in front of it.
+   * on one baseline (`baseline`, above the marker) centred on `cx`, the first facing left and the second right.
    */
-  private placeMonsters(n: MapNode, keys: string[], alpha: number) {
-    const p = center(this.layout.nodes.get(n.id)!);
+  private placeMonsters(cx: number, baseline: number, keys: string[], alpha: number) {
     const figures = keys.flatMap((key) => {
       const ffrk = ensureEnemyAnims(this, key);
       const box = ffrk && this.figureBounds(ffrk.texture, 0);
@@ -534,10 +540,9 @@ export class MapScene extends Phaser.Scene {
       const scale = Math.min(1, MONSTER_HEIGHT / box.h);
       return [{ ...ffrk, box, scale, width: box.w * scale }];
     });
-    const baseline = p.y - 3;
     figures.forEach((f, i) => {
       // Overlap by a third of each figure's width (one figure stands centred).
-      const x = figures.length > 1 ? (i === 0 ? p.x - f.width * 0.33 : p.x + f.width * 0.33) : p.x;
+      const x = figures.length > 1 ? (i === 0 ? cx - f.width * 0.33 : cx + f.width * 0.33) : cx;
       // FFRK monsters face right: the first turns to face left.
       const flip = figures.length > 1 && i === 0;
       this.add
