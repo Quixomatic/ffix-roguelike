@@ -11,8 +11,15 @@ export interface Atlas {
   frames: Record<string, { frame: { x: number; y: number; w: number; h: number } }>;
 }
 
-/** Render `parts` (sheet `sheet`, atlas `atlas`) into a tightly cropped PNG; returns it and the rig-space origin within it. */
-export function renderPose(parts: DrawPart[], sheet: PNG, atlas: Atlas, pad = 2): { png: PNG; originX: number; originY: number } {
+/** The sheet and atlas a part draws from (rigs can use several sheets: each image node names its own). */
+export type SheetLookup = (part: DrawPart) => { sheet: PNG; atlas: Atlas } | undefined;
+
+/**
+ * Render `parts` into a tightly cropped PNG; returns it and the rig-space origin within it. `source` is one sheet +
+ * atlas, or a lookup giving each part's own (`sheet` / `atlas` args, or a SheetLookup as `sheet`).
+ */
+export function renderPose(parts: DrawPart[], source: PNG | SheetLookup, atlasArg?: Atlas, pad = 2): { png: PNG; originX: number; originY: number } {
+  const lookup: SheetLookup = typeof source === "function" ? source : () => ({ sheet: source, atlas: atlasArg! });
   const b = poseBounds(parts);
   const ox = Math.floor(b.minX) - pad;
   const oy = Math.floor(b.minY) - pad;
@@ -20,8 +27,10 @@ export function renderPose(parts: DrawPart[], sheet: PNG, atlas: Atlas, pad = 2)
   const H = Math.max(1, Math.ceil(b.maxY) + pad - oy);
   const out = new PNG({ width: W, height: H });
   for (const p of parts) {
-    const fr = atlas.frames[p.packerid]?.frame;
-    if (!fr) continue;
+    const src = lookup(p);
+    const fr = src?.atlas.frames[p.packerid]?.frame;
+    if (!src || !fr) continue;
+    const sheet = src.sheet;
     const [a, bb, c, d, tx, ty] = p.m;
     const det = a * d - bb * c;
     if (Math.abs(det) < 1e-9) continue;

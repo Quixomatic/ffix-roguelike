@@ -21,7 +21,7 @@ import { PNG } from "pngjs";
 
 import { poseAt, poseBounds, type DrawPart, type Rig } from "../src/features/sprites/ffrk-anim";
 import { ENEMY_SPRITE_MAP } from "./enemy-sprite-map";
-import { renderPose, type Atlas } from "./lib/render-rig";
+import { renderPose, type Atlas, type SheetLookup } from "./lib/render-rig";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAW = join(HERE, "..", "..", "..", ".docs", "assets", "FFRK-data", "_raw");
@@ -127,8 +127,20 @@ for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
         continue;
       }
       const rig = readJson<Rig>(`${base}.anim.json`);
-      const sheet = readPng(`${base}.png`);
-      const atlas = readJson<Atlas>(`${base}.json`);
+      const main = { sheet: readPng(`${base}.png`), atlas: readJson<Atlas>(`${base}.json`) };
+      // Each image node names its sheet; extra ones are fetched as `<id>~img_<id>_1.png` (fetch-ffrk-atlases).
+      const sheets = new Map<string, { sheet: PNG; atlas: Atlas } | undefined>();
+      const sheetOf: SheetLookup = (p) => {
+        const file = p.url?.split("/").pop();
+        if (!file || file === `img_${id}.png`) return main;
+        // Only further body sheets (img_<id>_N.png); masks and overlays (img_mask_…) need FFRK's special blending.
+        if (!new RegExp(`^img_${id}_\\d+\\.png$`).test(file)) return undefined;
+        if (!sheets.has(file)) {
+          const extra = join(RAW, "bosses", `${id}~${file}`);
+          sheets.set(file, existsSync(extra) && existsSync(extra.replace(/\.png$/, ".json")) ? { sheet: readPng(extra), atlas: readJson<Atlas>(extra.replace(/\.png$/, ".json")) } : undefined);
+        }
+        return sheets.get(file) ?? main;
+      };
       // Every pose first, so all cells share one box (and one origin).
       const poses: { anim: string; parts: DrawPart[] }[] = [];
       for (const a of BOSS_ANIMS) {
@@ -149,7 +161,7 @@ for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
         const shifted = p.parts.map((q) => ({ ...q, m: [q.m[0], q.m[1], q.m[2], q.m[3], q.m[4] - minX, q.m[5] - minY] as DrawPart["m"] }));
         const anchor: DrawPart = { node: "", packerid: "", w: 1, h: 1, m: [1, 0, 0, 1, 0, 0], alpha: 0, tint: [1, 1, 1], blend: "alpha" };
         const corner: DrawPart = { ...anchor, m: [1, 0, 0, 1, w - 1, h - 1] };
-        const { png } = renderPose([anchor, corner, ...shifted], sheet, atlas, 0);
+        const { png } = renderPose([anchor, corner, ...shifted], sheetOf, undefined, 0);
         PNG.bitblt(png, grid, 0, 0, Math.min(w, png.width), Math.min(h, png.height), (i % cols) * w, Math.floor(i / cols) * h);
         const a = BOSS_ANIMS.find((x) => x.name === p.anim)!;
         (anims[p.anim] ??= { frames: [], fps: (rig.fps || 60) / STEP, repeat: a.repeat }).frames.push(i);

@@ -66,7 +66,31 @@ async function fetchId(kind: Kind, id: number): Promise<boolean> {
   const parts = files[kind](id);
   if (!(await net.get(parts[0]!.name, parts[0]!.url))) return false;
   for (const p of parts.slice(1)) await net.get(p.name, p.url);
+  if (kind === "bosses") await fetchRigSheets(id);
   return true;
+}
+
+/** The local name of a boss rig's extra sheet: `<id>~img_<id>_1.png` (and `.json`). */
+export const rigSheetName = (id: number | string, file: string) => `${id}~${file}`;
+
+/**
+ * A boss rig can draw from more than its main sheet: each image node names its own (`image.url`, e.g.
+ * `img_209002_1.png` — Black Waltz 1's body, wings and arms). Fetch every extra sheet and its atlas the rig uses.
+ */
+async function fetchRigSheets(id: number) {
+  const rigPath = join(OUT, "bosses", `${id}.anim.json`);
+  if (!existsSync(rigPath)) return;
+  const urls = new Set<string>();
+  const text = readFileSync(rigPath, "utf8");
+  for (const m of text.matchAll(/"url"\s*:\s*"([^"]+\.png)"/g)) urls.add(m[1]!);
+  const net = netFor("bosses");
+  for (const url of urls) {
+    const file = url.split("/").pop()!;
+    if (file === `img_${id}.png` || !url.includes(`/boss/${id}/`)) continue;
+    const remote = url.replace(/^\/Content\/lang\//, "https://dff.sp.mbga.jp/dff/static/lang/");
+    await net.get(rigSheetName(id, file), remote);
+    await net.get(rigSheetName(id, file.replace(/\.png$/, ".json")), remote.replace(/\.png$/, ".json"));
+  }
 }
 
 async function crawlBlock(kind: Kind, base: number): Promise<number> {

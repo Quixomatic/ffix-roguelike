@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.8] - 2026-10-18
+
+### Fixed
+- **Black Waltz 1 showed only his hat.** His FFRK rig draws his body, wings, arms and bell from a second sheet (`img_209002_1`), which was never downloaded, so every piece but the head was silently skipped. He's whole now: wings, robe, arms, the bell, in every animation.
+  - **`ffrk:fetch bosses`** now reads each rig for the sheets its pieces name and downloads the extra ones with their atlases, saved as `<id>~img_<id>_1.png/.json`. 224 boss rigs reference extra sheets.
+  - **`sprites:enemies`** draws each piece from the sheet it names (`render-rig`'s `renderPose` takes a per-part lookup). It only uses further body sheets (`img_<id>_N`): masks and overlays (`img_mask_…`) need FFRK's special blending, so they stay out as before.
+  - Of the monsters in the game, only Black Waltz 1 changed. The `enemies` pack is rebuilt and uploaded to R2.
+
 ## [0.3.7] - 2026-10-18
 
 ### Added
