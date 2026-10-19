@@ -73,6 +73,12 @@ const LOAD = { BBG: 1, NPC: 2, CHR: 4, INITNPC: 8, INITCHR: 16, FADENPC: 32, FAD
 export const DYING_TIMEOUT = 15 * 6;
 /** Ticks outside the normal phase before the VM forces the battle to resume (stuck intro/cutscene safety). */
 const EVENT_TIMEOUT = 15 * 120;
+/**
+ * Boss fights whose script keeps its own HP margin instead of FF9's +10,000 (Memoria btl_para: "the HP gap is not
+ * always 10 000 (Gizamaluke…)"): Gizamaluke's script reads his HP, maxes it out at 65,535 as room for his death scene
+ * (sinking back into the water), and ends the fight once he has lost what it read: his real 3,875.
+ */
+const NO_HP_BUFFER = new Set(["GZ_E014"]);
 /** Instructions per object run before the VM assumes an infinite loop and yields. */
 const MAX_STEPS = 20000;
 
@@ -221,7 +227,7 @@ export class BattleAi {
     };
     const ai = new BattleAi(eng, script);
     const s = ai.s;
-    for (const u of eng.state.units) if (u.side === "enemy" && u.boss) s.hpBuf[btlIndex(u)] = 10000;
+    if (!NO_HP_BUFFER.has(scene)) for (const u of eng.state.units) if (u.side === "enemy" && u.boss) s.hpBuf[btlIndex(u)] = 10000;
     // NewThread(0, 0): the main entry starts in its Init function right away.
     ai.newObj(0, 0, 2).state = STATE_INIT;
     // Party members' entries (linked by character), one per battle slot.

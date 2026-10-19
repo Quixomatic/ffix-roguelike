@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.17] - 2026-10-19
+
+### Fixed
+- **Gizamaluke has his real 3,875 HP and the boss frame shows 3,875.** We gave every boss FF9's hidden +10,000 HP buffer, but Gizamaluke's fight doesn't use it. Memoria's `btl_para` notes "the HP gap is not always 10 000 (Gizamaluke…)". His script reads his HP, maxes it out at 65,535 as room for his death scene (sinking back into the water), and ends the fight once he has lost what it read. With our extra buffer, it read 13,875, so the fight ran 10,000 HP too long.
+  - His fight (`GZ_E014`) now has no buffer (`NO_HP_BUFFER` in `battle/ai/vm.ts`). His script reads 3,875, and 3,875 damage ends the fight.
+  - The boss frame shows 3,875 counting down to 0 (the display offset from v0.3.16).
+  - The test now pins the kill at 3,875.
+
 ## [0.3.16] - 2026-10-19
 
 ### Changed
