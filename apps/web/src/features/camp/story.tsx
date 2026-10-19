@@ -146,56 +146,64 @@ const LAST_RELIC = "ffix-last-relic";
 function StartingRelic({ profile, party, value, onChange }: { profile: Profile; party: string[]; value: string | null | undefined; onChange(id: string | null): void }) {
   const starters = starterRelics(profile);
   const synergies = activeSynergies(party);
+  const chosen = starters.find((r) => r.id === value);
   const button = (id: string | null, body: React.ReactNode) => (
     <button
       onClick={() => onChange(id)}
-      className={`flex w-28 flex-col items-center gap-1 rounded border-2 p-1.5 text-center text-xs ${value === id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25 hover:bg-black/40"}`}
+      className={`flex aspect-square w-full items-center justify-center rounded border-2 ${value === id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25 hover:bg-black/40"}`}
     >
       {body}
     </button>
   );
-  // A relic tile shows its full card on hover / cursor (the items' popover); "None" is a plain cursor stop.
+  // A relic tile is just its badge: its full card shows on hover / cursor (the items' popover, opening toward the
+  // page). "None" is a plain cursor stop.
   const tile = (id: string | null, body: React.ReactNode) =>
     id ? (
-      <RelicPopover key={id} relicId={id} side="top">
+      <RelicPopover key={id} relicId={id} side="left">
         {button(id, body)}
       </RelicPopover>
     ) : (
       <FocusItem key="none">{button(null, body)}</FocusItem>
     );
   return (
-    <div className="ff-panel flex flex-col gap-3 px-5 py-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div className="ff-display text-xl">Starting relic</div>
-        <Link to="/relics" className="text-sm text-[#c8d0ff] hover:underline">
-          Your collection
-        </Link>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {starters.map((r) =>
-          tile(
-            r.id,
+    <div className="flex flex-col gap-3">
+      <div className="ff-panel flex flex-col gap-3 p-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <div className="ff-display text-lg">Starting relic</div>
+          <Link to="/relics" className="text-xs text-[#c8d0ff] hover:underline">
+            Collection
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {starters.map((r) => tile(r.id, <Badge id={r.badge ?? 1} scale={1} />))}
+          {tile(null, <span className="text-xs opacity-70">None</span>)}
+        </div>
+        <div className="min-h-10 text-sm">
+          {chosen ? (
             <>
-              <Badge id={r.badge ?? 1} scale={1} />
-              <span className="leading-tight">{r.name}</span>
-            </>,
-          ),
-        )}
-        {tile(null, <span className="flex h-10 items-center opacity-70">None</span>)}
+              <div className="text-yellow-200">{chosen.name}</div>
+              <div className="text-xs text-[#c8d0ff]">{chosen.effects.map(effectText).join(" · ")}</div>
+            </>
+          ) : (
+            <div className="opacity-60">No starting relic</div>
+          )}
+        </div>
       </div>
-      {value && <div className="text-sm text-[#c8d0ff]">{starters.find((r) => r.id === value)?.effects.map(effectText).join(" · ")}</div>}
-      <div className="text-sm">
-        <span className="opacity-80">Party synergies: </span>
+      <div className="ff-panel flex flex-col gap-2 p-4">
+        <div className="ff-display text-lg">Party synergies</div>
         {synergies.length ? (
           synergies.map(({ synergy, count, tier }) => (
-            <SynergyPopover key={synergy.id} synergyId={synergy.id} count={count} party={party} side="top">
-              <span className="mr-2 inline-block cursor-help rounded bg-sky-900/50 px-1.5 py-0.5 text-xs text-sky-100">
-                {synergy.name} {count}: {tier.text}
-              </span>
+            <SynergyPopover key={synergy.id} synergyId={synergy.id} count={count} party={party} side="left">
+              <button type="button" data-sound="none" className="flex cursor-help flex-col rounded bg-sky-900/50 px-2 py-1 text-left text-sky-100">
+                <span className="text-sm">
+                  {synergy.name} <span className="tabular-nums opacity-80">{count}</span>
+                </span>
+                <span className="text-xs opacity-80">{tier.text}</span>
+              </button>
             </SynergyPopover>
           ))
         ) : (
-          <span className="opacity-60">none with this party</span>
+          <div className="text-sm opacity-60">None with this party. Characters' synergies are on their cards.</div>
         )}
       </div>
     </div>
@@ -292,6 +300,9 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <Breadcrumbs crumbs={[CAMP, { label: "Story", to: "/story" }, { label: j.name }]} />
+      {/* The page beside a sticky sidebar (the starting relic and the party's synergies), within the page's width. */}
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start">
+      <div className="flex min-w-0 flex-col gap-5">
       <div className="ff-panel flex flex-wrap items-center justify-between gap-4 px-5 py-4">
         <div>
           <div className="ff-title tracking-[0.25em]">EMBARK</div>
@@ -370,7 +381,6 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
         </div>
       </div>
 
-      <StartingRelic profile={p} party={party} value={relic} onChange={setRelic} />
       {current && !sameJourney && (
         <div className="text-sm text-pink-200">
           Beginning this run ends your run in progress ({currentJourney?.name ?? "another journey"}, map {current.state.stage + 1}).
@@ -389,7 +399,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
 
       <div className="text-sm text-[#c8d0ff]">Pick up to four. Click a card to add or remove them.</div>
       {/* Cards share row tracks (subgrid), so names, stats, gear and footers line up across a row. */}
-      <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-4`}>
+      <div className={`${CARD_GRID} sm:grid-cols-2 lg:grid-cols-3`}>
         {rosterEntries(p).map((e) => {
           const chosen = party.includes(e.key);
           return (
@@ -405,6 +415,11 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             </FocusItem>
           );
         })}
+      </div>
+      </div>
+      <aside className="lg:sticky lg:top-6">
+        <StartingRelic profile={p} party={party} value={relic} onChange={setRelic} />
+      </aside>
       </div>
     </div>
   );

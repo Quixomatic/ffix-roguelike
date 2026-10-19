@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.26] - 2026-10-19
+
+### Changed
+- **Embark page: the starting relic is a sticky sidebar.** The page is now two columns inside its usual width: the journey, party and roster on the left, and a sidebar on the right that stays in view while you scroll the roster. On narrow screens it drops below.
+  - **Starting relic:** compact badge-only tiles in a grid, plus "None", each showing its full card on hover or cursor (the items' popover, opening toward the page). The chosen relic's name and effects show beneath.
+  - **Party synergies:** a stacked list (name, count, the tier reached), each with its popover; it updates as the party changes.
+  - The roster grid is three across beside the sidebar.
+
 ## [0.3.25] - 2026-10-19
 
 ### Added
