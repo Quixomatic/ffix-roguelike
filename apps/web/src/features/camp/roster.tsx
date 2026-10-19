@@ -1,10 +1,11 @@
 import { deriveStats, nextSlotCost, starterGear, startLevelCost, type CharacterBuild } from "@ffix-roguelike/game-core";
-import { characters, getCharacter, MAIN_CAST } from "@ffix-roguelike/game-data";
+import { characters, characterTags, getCharacter, MAIN_CAST } from "@ffix-roguelike/game-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
+import { SynergyTags } from "@/features/hub/relic-popover";
 import { FocusItem } from "@/features/input/focus";
 import { itemName } from "@/features/run/item-info";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
@@ -77,20 +78,33 @@ export function RosterLine({ profile, size = 64 }: { profile: RosterProfile; siz
 
 /**
  * Character cards in a grid line up row by row: each card spans `CARD_ROWS` rows of the grid (`CARD_GRID` on the grid,
- * `CARD_CELL` on each card) and lays its lines into them with subgrid — name, stats, gear, gear slots, footer — so
+ * `CARD_CELL` on each card) and lays its lines into them with subgrid — name, stats, gear, gear slots, footer, synergy
+ * badges — so
  * matching lines sit at the same height in every card of a row, however long each one is.
  */
-export const CARD_ROWS = 5;
+export const CARD_ROWS = 6;
 export const CARD_GRID = "grid gap-x-3 gap-y-1.5";
-export const CARD_CELL = "row-span-5 mb-1.5 grid grid-rows-subgrid gap-y-1.5";
+export const CARD_CELL = "row-span-6 mb-1.5 grid grid-rows-subgrid gap-y-1.5";
 
 /**
  * A character at a glance: how they start a run, or how to recruit them. `rows` renders just its `CARD_ROWS` lines,
  * for a card that's a subgrid cell (`CARD_CELL`); otherwise they're stacked (e.g. in a popover).
  */
-export function CharacterCard({ entry: e, footer, rows }: { entry: RosterEntry; footer?: ReactNode; rows?: boolean }) {
-  const lines = e.unlocked ? unlockedLines(e.build, footer) : lockedLines(e.key, e.hint, footer);
+export function CharacterCard({ entry: e, footer, rows, party }: { entry: RosterEntry; footer?: ReactNode; rows?: boolean; party?: string[] }) {
+  const lines = [...(e.unlocked ? unlockedLines(e.build, footer) : lockedLines(e.key, e.hint, footer)), synergyFooter(e.key, party)];
   return rows ? <>{lines}</> : <div className="flex flex-col gap-1.5">{lines}</div>;
+}
+
+/**
+ * The card's last section: the character's synergy tags as badges (hover one for what it does; given `party`, how many
+ * of the party share it), in a footer band across the card's bottom edge (the card is `p-3`).
+ */
+function synergyFooter(key: string, party?: string[]) {
+  return (
+    <div key="synergies" className="ff-panel-footer -mx-[10px] -mb-[10px] mt-1 flex min-h-9 items-center px-3 py-1.5">
+      {characterTags(key).length ? <SynergyTags character={key} party={party} /> : <span className="text-xs opacity-60">No synergies</span>}
+    </div>
+  );
 }
 
 function unlockedLines(b: CharacterBuild, footer: ReactNode) {

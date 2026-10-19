@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.25] - 2026-10-19
+
+### Added
+- **Relic and synergy popovers** (`features/hub/relic-popover.tsx`): the same FF hover card the items use. Hover them, or reach them with the cursor.
+  - **Relic card:** badge, name and rarity in colour, Cursed / Starter, description, every effect in plain words, the flavour line.
+  - **Synergy card:** badge, name, description, every tier (the one the party has reached highlighted), and which characters carry the tag (the party's highlighted).
+  - **Where:** embark page (starting relic tiles, party synergy chips), run sidebar (each relic in the rack, each active synergy), and the "give up which relic?" chooser. These replace the old browser tooltips.
+- **Character cards show their synergies.** On the embark page and the Party page, every character card has a new footer band (the journey cards' footer style) with the character's synergy tags as badges. Hover one for its card; on the embark page it also counts how many of the chosen party share it. The cards' subgrid grows to six rows, so the footers line up across a row.
+
 ## [0.3.24] - 2026-10-19
 
 Relics phase 3 (`.plans/relics-and-synergies.md`): relics in runs.

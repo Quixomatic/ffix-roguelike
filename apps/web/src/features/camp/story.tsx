@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PixelIcon } from "@/components/pixel-icon";
 import { Badge } from "@/features/hub/badge";
+import { RelicPopover, SynergyPopover } from "@/features/hub/relic-popover";
 import { effectText } from "@/features/hub/relic-text";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
@@ -145,17 +146,23 @@ const LAST_RELIC = "ffix-last-relic";
 function StartingRelic({ profile, party, value, onChange }: { profile: Profile; party: string[]; value: string | null | undefined; onChange(id: string | null): void }) {
   const starters = starterRelics(profile);
   const synergies = activeSynergies(party);
-  const tile = (id: string | null, body: React.ReactNode, title: string) => (
-    <FocusItem key={id ?? "none"}>
-      <button
-        title={title}
-        onClick={() => onChange(id)}
-        className={`flex w-28 flex-col items-center gap-1 rounded border-2 p-1.5 text-center text-xs ${value === id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25 hover:bg-black/40"}`}
-      >
-        {body}
-      </button>
-    </FocusItem>
+  const button = (id: string | null, body: React.ReactNode) => (
+    <button
+      onClick={() => onChange(id)}
+      className={`flex w-28 flex-col items-center gap-1 rounded border-2 p-1.5 text-center text-xs ${value === id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25 hover:bg-black/40"}`}
+    >
+      {body}
+    </button>
   );
+  // A relic tile shows its full card on hover / cursor (the items' popover); "None" is a plain cursor stop.
+  const tile = (id: string | null, body: React.ReactNode) =>
+    id ? (
+      <RelicPopover key={id} relicId={id} side="top">
+        {button(id, body)}
+      </RelicPopover>
+    ) : (
+      <FocusItem key="none">{button(null, body)}</FocusItem>
+    );
   return (
     <div className="ff-panel flex flex-col gap-3 px-5 py-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -172,19 +179,24 @@ function StartingRelic({ profile, party, value, onChange }: { profile: Profile; 
               <Badge id={r.badge ?? 1} scale={1} />
               <span className="leading-tight">{r.name}</span>
             </>,
-            `${r.name}\n${r.effects.map(effectText).join("\n")}`,
           ),
         )}
-        {tile(null, <span className="flex h-10 items-center opacity-70">None</span>, "Start without a relic")}
+        {tile(null, <span className="flex h-10 items-center opacity-70">None</span>)}
       </div>
       {value && <div className="text-sm text-[#c8d0ff]">{starters.find((r) => r.id === value)?.effects.map(effectText).join(" · ")}</div>}
       <div className="text-sm">
         <span className="opacity-80">Party synergies: </span>
-        {synergies.length ? synergies.map(({ synergy, count, tier }) => (
-          <span key={synergy.id} className="mr-2 inline-block rounded bg-sky-900/50 px-1.5 py-0.5 text-xs text-sky-100" title={tier.text}>
-            {synergy.name} {count}: {tier.text}
-          </span>
-        )) : <span className="opacity-60">none with this party</span>}
+        {synergies.length ? (
+          synergies.map(({ synergy, count, tier }) => (
+            <SynergyPopover key={synergy.id} synergyId={synergy.id} count={count} party={party} side="top">
+              <span className="mr-2 inline-block cursor-help rounded bg-sky-900/50 px-1.5 py-0.5 text-xs text-sky-100">
+                {synergy.name} {count}: {tier.text}
+              </span>
+            </SynergyPopover>
+          ))
+        ) : (
+          <span className="opacity-60">none with this party</span>
+        )}
       </div>
     </div>
   );
@@ -388,7 +400,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
                 data-on={chosen}
                 className={`ff-panel p-3 text-left transition enabled:hover:brightness-110 ${CARD_CELL} ${e.unlocked ? "" : "opacity-60"}`}
               >
-                <CharacterCard rows entry={e} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
+                <CharacterCard rows entry={e} party={party} footer={e.unlocked ? <div className={`text-xs ${chosen ? "text-yellow-200" : "opacity-70"}`}>{chosen ? `In the party · slot ${party.indexOf(e.key) + 1}` : "Click to add"}</div> : undefined} />
               </button>
             </FocusItem>
           );

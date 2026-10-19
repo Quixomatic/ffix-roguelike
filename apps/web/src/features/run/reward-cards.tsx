@@ -3,6 +3,7 @@ import { abilityName, BASE_RELIC_SLOTS, getCharacter, getItem, RARITIES, rarityO
 import { useState } from "react";
 
 import { Badge } from "@/features/hub/badge";
+import { RelicPopover } from "@/features/hub/relic-popover";
 import { effectText } from "@/features/hub/relic-text";
 import { FocusItem } from "@/features/input/focus";
 import { DeltaChips } from "@/features/gear/gear-delta";
@@ -77,10 +78,10 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
       <div className="flex flex-col gap-3">
         <div className="ff-title text-center text-base">Your relics are full: give one up for {incoming?.kind === "relic" ? incoming.name : "it"}</div>
         <div className="grid gap-2 sm:grid-cols-3">
-          {(run.relics ?? []).map((id, i) => {
+          {(run.relics ?? []).map((id) => {
             const r = relicById(id);
             return (
-              <FocusItem key={id} defaultFocus={i === 0}>
+              <RelicPopover key={id} relicId={id} side="top">
                 <button
                   className="ff-window ff-lift flex items-center gap-2 p-2 text-left disabled:opacity-60"
                   disabled={pending}
@@ -93,7 +94,7 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
                     <span className="block text-xs opacity-70">{r?.effects.map(effectText).join(" · ")}</span>
                   </span>
                 </button>
-              </FocusItem>
+              </RelicPopover>
             );
           })}
         </div>
