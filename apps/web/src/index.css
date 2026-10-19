@@ -1,32 +1,46 @@
 @import "@ffix-roguelike/ui/globals.css";
 
-/* ── Fonts (picked in the header, saved per browser; default "rounded") ──── */
+/* ── Fonts (Settings → Menu font / Pixel font; saved to the account, cached per browser) ──────────────────────────
+   A font set (`data-font`) picks the body and heading fonts; its pixel text (headings, Classic's everything, the game
+   screens' labels) is the pixel font (`data-pixel-font`, `--ff-pixel`), at that font's own heading weight. */
+:root {
+  --ff-pixel: "Silkscreen", ui-monospace, monospace;
+  --ff-pixel-weight: 400;
+}
+:root[data-pixel-font="pixelify"] {
+  --ff-pixel: "Pixelify Sans", ui-monospace, monospace;
+  --ff-pixel-weight: 600;
+}
+:root[data-pixel-font="jersey"] {
+  --ff-pixel: "Jersey 10", ui-monospace, monospace;
+  --ff-pixel-weight: 400;
+}
 :root {
   --ff-font: "Nunito", ui-sans-serif, system-ui, sans-serif;
-  --ff-display: "Pixelify Sans", ui-monospace, monospace;
+  --ff-display: var(--ff-pixel);
+  --ff-display-weight: var(--ff-pixel-weight);
   --ff-shadow: 1px 1px 0 #000, 0 0 2px rgba(0, 0, 0, 0.6);
   --ff-weight: 600;
 }
 :root[data-font="classic"] {
-  --ff-font: "Pixelify Sans", ui-monospace, monospace;
-  --ff-display: "Pixelify Sans", ui-monospace, monospace;
+  --ff-font: var(--ff-pixel);
   --ff-shadow: 2px 2px 0 #000;
   --ff-weight: 400;
 }
 :root[data-font="storybook"] {
   --ff-font: "Alegreya Sans", ui-serif, Georgia, serif;
   --ff-display: "Cinzel", ui-serif, Georgia, serif;
+  --ff-display-weight: 600;
   --ff-weight: 500;
 }
 :root[data-font="pixel"] {
   --ff-font: "DotGothic16", ui-monospace, monospace;
-  --ff-display: "Pixelify Sans", ui-monospace, monospace;
   --ff-shadow: 2px 2px 0 #000;
   --ff-weight: 400;
 }
 .ff-display {
   font-family: var(--ff-display);
-  font-weight: 600;
+  font-weight: var(--ff-display-weight);
 }
 
 /* ── FF9-style menu windows ─────────────────────────────────────────────── */

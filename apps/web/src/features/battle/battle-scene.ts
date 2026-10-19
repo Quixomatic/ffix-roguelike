@@ -34,6 +34,7 @@ import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRi
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 import { poseAt, poseBounds, visibilityAt, type Rig } from "@/features/sprites/ffrk-anim";
+import { pixelFontFamily } from "@/features/settings/use-settings";
 import { assetUrl } from "@/lib/assets";
 
 /** Texture key of the target glove (public/sprites/ui/hand-down.png, from the Time Fantasy icon pack). */
@@ -692,7 +693,7 @@ export class BattleScene extends Phaser.Scene {
     if (!v) return;
     const t = this.add
       .text(v.home.x + (index % 2) * 10, v.home.y - 10 - (index % 3) * 6, text, {
-        fontFamily: '"Pixelify Sans", monospace',
+        fontFamily: pixelFontFamily(),
         fontSize: `${Math.round((big ? size + 8 : size) * Math.max(1, this.k))}px`,
         color,
       })

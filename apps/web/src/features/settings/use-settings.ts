@@ -8,14 +8,23 @@ import { trpc } from "@/utils/trpc";
 /** Menu fonts (CSS font sets in index.css). */
 export const MENU_FONTS = [
   { id: "rounded", label: "Rounded", hint: "Nunito text, pixel headings — easiest to read" },
-  { id: "classic", label: "Classic pixel", hint: "Pixelify Sans everywhere (the original look)" },
+  { id: "classic", label: "Classic pixel", hint: "The pixel font everywhere" },
   { id: "pixel", label: "Retro JRPG", hint: "DotGothic16 text, pixel headings" },
   { id: "storybook", label: "Storybook", hint: "Alegreya Sans text, Cinzel headings" },
 ] as const;
 export type MenuFont = (typeof MENU_FONTS)[number]["id"];
 
+/** Pixel fonts (index.css `data-pixel-font`): the font sets' pixel text — headings, Classic's everything, game labels. */
+export const PIXEL_FONTS = [
+  { id: "silkscreen", label: "Silkscreen", family: '"Silkscreen", monospace', hint: "Clean small caps" },
+  { id: "jersey", label: "Jersey 10", family: '"Jersey 10", monospace', hint: "Tall and narrow" },
+  { id: "pixelify", label: "Pixelify Sans", family: '"Pixelify Sans", monospace', hint: "The original blocky look" },
+] as const;
+export type PixelFont = (typeof PIXEL_FONTS)[number]["id"];
+
 export interface Settings {
   menuFont: MenuFont;
+  pixelFont: PixelFont;
   battleSpeed: 1 | 2 | 4;
   autoBattle: boolean;
   /** 0–100. */
@@ -24,7 +33,7 @@ export interface Settings {
   sfxVolume: number;
 }
 
-export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
+export const DEFAULT_SETTINGS: Settings = { menuFont: "rounded", pixelFont: "silkscreen", battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
 
 /**
  * Apply a menu font now and cache it in the browser, so index.html can apply it before the first paint next time
@@ -37,6 +46,21 @@ export function applyMenuFont(font: string) {
   } catch {
     // storage blocked: the account setting still applies after load
   }
+}
+
+/** Apply a pixel font now and cache it in the browser (like `applyMenuFont`). */
+export function applyPixelFont(font: string) {
+  document.documentElement.dataset.pixelFont = font;
+  try {
+    localStorage.setItem("ff-pixel-font", font);
+  } catch {
+    // storage blocked: the account setting still applies after load
+  }
+}
+
+/** The pixel font's CSS family, for text drawn outside CSS (Phaser labels and popups). */
+export function pixelFontFamily(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue("--ff-pixel").trim() || '"Silkscreen", monospace';
 }
 
 /** The signed-in player's settings (defaults when signed out or still loading) and a function to change them. */
@@ -52,6 +76,7 @@ export function useSettings() {
   const settings: Settings = { ...DEFAULT_SETTINGS, ...(query.data as Partial<Settings> | undefined) };
   const update = (patch: Partial<Settings>) => {
     if (patch.menuFont) applyMenuFont(patch.menuFont);
+    if (patch.pixelFont) applyPixelFont(patch.pixelFont);
     if (patch.musicVolume != null) setMusicVolume(patch.musicVolume);
     if (patch.sfxVolume != null) setSfxVolume(patch.sfxVolume);
     if (session) mutation.mutate(patch);
@@ -65,6 +90,9 @@ export function SettingsSync() {
   useEffect(() => {
     if (loaded) applyMenuFont(settings.menuFont);
   }, [loaded, settings.menuFont]);
+  useEffect(() => {
+    if (loaded) applyPixelFont(settings.pixelFont);
+  }, [loaded, settings.pixelFont]);
   useEffect(() => {
     setMusicVolume(settings.musicVolume);
   }, [settings.musicVolume]);

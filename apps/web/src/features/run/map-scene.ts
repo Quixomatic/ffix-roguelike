@@ -8,6 +8,7 @@ import Phaser from "phaser";
 
 import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
+import { pixelFontFamily } from "@/features/settings/use-settings";
 import { ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
 
 import { assetUrl } from "@/lib/assets";
@@ -436,7 +437,7 @@ export class MapScene extends Phaser.Scene {
     if (done) glyph.setAlpha(0.6);
     const label = smooth(this.add
       .text(p.x, labelY, NODE_LABEL[n.kind], {
-        fontFamily: "\"Pixelify Sans\", monospace",
+        fontFamily: pixelFontFamily(),
         fontSize: n.kind === "boss" ? "8px" : "7px",
         color: can ? "#fff2a8" : "#ffffff",
         resolution: TEXT_RES,

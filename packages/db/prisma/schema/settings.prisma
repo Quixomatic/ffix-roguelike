@@ -5,6 +5,8 @@ model UserSettings {
 
   /// Menu font id — the web app's font sets in index.css: rounded | classic | pixel | storybook.
   menuFont    String  @default("rounded")
+  /// Pixel font id — the font sets' pixel text (headings, Classic's everything, in-game labels): pixelify | silkscreen | jersey.
+  pixelFont   String  @default("silkscreen")
   /// Battle animation speed multiplier the battle screen starts at (1, 2 or 4).
   battleSpeed Int     @default(1)
   /// Start battles with the Auto battle toggle on.

@@ -11,7 +11,7 @@ import { FocusItem } from "@/features/input/focus";
 
 import { AvatarPanel } from "./avatar-panel";
 import { ControllerPanel } from "./controller-panel";
-import { MENU_FONTS, useSettings, type Settings } from "./use-settings";
+import { MENU_FONTS, PIXEL_FONTS, useSettings, type Settings } from "./use-settings";
 
 /** General settings: menu font, battle presentation, battle mode. Saved to the player's account. */
 export function SettingsPage() {
@@ -55,6 +55,31 @@ export function SettingsPage() {
                   </span>
                   <span className="text-xs opacity-70">{f.hint}</span>
                   <FontSample font={f.id} />
+                </button>
+              </FocusItem>
+            ))}
+          </div>
+        </Panel>
+
+        <Panel title="Pixel font" className="md:col-span-2">
+          <div className="mb-2 text-xs opacity-70">The pixel text in the font sets above: headings, all of Classic pixel, and the labels on the map and in battle.</div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {PIXEL_FONTS.map((f) => (
+              <FocusItem key={f.id}>
+                <button
+                  className={`flex flex-col gap-1 rounded border p-2 text-left transition hover:brightness-125 ${
+                    settings.pixelFont === f.id ? "border-yellow-300 bg-yellow-300/10" : "border-white/20 bg-black/25"
+                  }`}
+                  onClick={() => update({ pixelFont: f.id })}
+                >
+                  <span className="flex items-center justify-between">
+                    <span className="text-lg">{f.label}</span>
+                    {settings.pixelFont === f.id && <span className="text-yellow-200">✓</span>}
+                  </span>
+                  <span className="text-xs opacity-70">{f.hint}</span>
+                  <span className="rounded bg-black/30 px-2 py-1 text-lg" style={{ fontFamily: f.family }}>
+                    Zidane — Lv 12 · 9,999
+                  </span>
                 </button>
               </FocusItem>
             ))}
@@ -189,16 +214,18 @@ function Choice({ on, onClick, children }: { on: boolean; onClick(): void; child
 
 /** A line of sample text in a given font set, whatever font is active. */
 function FontSample({ font }: { font: string }) {
+  // Pixel text follows the pixel font picked below (--ff-pixel, at its own heading weight).
+  const pixel = "var(--ff-pixel)";
   const families: Record<string, [string, string]> = {
-    rounded: ['"Nunito", sans-serif', '"Pixelify Sans", monospace'],
-    classic: ['"Pixelify Sans", monospace', '"Pixelify Sans", monospace'],
-    pixel: ['"DotGothic16", monospace', '"Pixelify Sans", monospace'],
+    rounded: ['"Nunito", sans-serif', pixel],
+    classic: [pixel, pixel],
+    pixel: ['"DotGothic16", monospace', pixel],
     storybook: ['"Alegreya Sans", serif', '"Cinzel", serif'],
   };
   const [body, display] = families[font] ?? families.rounded!;
   return (
     <span className="rounded bg-black/30 px-2 py-1">
-      <span className="block text-base" style={{ fontFamily: display }}>
+      <span className="block text-base" style={{ fontFamily: display, fontWeight: display === pixel ? "var(--ff-pixel-weight)" : 600 }}>
         Zidane — Lv 12
       </span>
       <span className="block text-sm" style={{ fontFamily: body }}>

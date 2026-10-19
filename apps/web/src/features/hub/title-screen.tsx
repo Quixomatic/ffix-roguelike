@@ -13,7 +13,7 @@ export function TitleScreen() {
   return (
     <div className="flex min-h-[calc(100svh-2.5rem)] flex-col items-center justify-center gap-8 overflow-hidden px-4 py-10">
 
-      <div className="relative text-center font-['Pixelify_Sans'] text-white [text-shadow:3px_3px_0_#000]">
+      <div className="relative text-center font-(family-name:--ff-pixel) text-white [text-shadow:3px_3px_0_#000]">
         <div className="ff-title text-base tracking-[0.3em]">A ROGUELITE</div>
         <h1 className="ff-pop text-5xl sm:text-7xl">
           FINAL FANTASY <span className="text-yellow-200">IX</span>

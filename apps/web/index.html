@@ -7,15 +7,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Nunito:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&family=Cinzel:wght@600;700&family=DotGothic16&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Nunito:wght@500;700;800&family=Alegreya+Sans:wght@400;500;700&family=Cinzel:wght@600;700&family=DotGothic16&family=Silkscreen:wght@400;700&family=Jersey+10&display=swap"
       rel="stylesheet"
     />
     <script>
-      // Apply the saved menu font before first paint (see src/features/settings/use-settings.ts).
+      // Apply the saved menu and pixel fonts before first paint (see src/features/settings/use-settings.ts).
       try {
         document.documentElement.dataset.font = localStorage.getItem("ff-font") || "rounded";
+        document.documentElement.dataset.pixelFont = localStorage.getItem("ff-pixel-font") || "silkscreen";
       } catch {
         document.documentElement.dataset.font = "rounded";
+        document.documentElement.dataset.pixelFont = "silkscreen";
       }
     </script>
   </head>
