@@ -80,3 +80,34 @@ model StarterUpgrade {
   @@index([character])
   @@map("starter_upgrade")
 }
+
+/// A relic (.plans/relics-and-synergies.md): run-long passive with effects as data. `data` is game-data's RelicData.
+/// Which ones a player has unlocked is player_profile.relicsUnlocked (plus relics flagged `free`).
+model Relic {
+  id        String   @id
+  sort      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("relic")
+}
+
+/// A party synergy: tiers by how many active party members share its tag. `data` is game-data's SynergyData.
+model Synergy {
+  id        String   @id
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("synergy")
+}
+
+/// A character's synergy tags (Tantalus, Summoner, Knight…).
+model CharacterTag {
+  character String   @id
+  tags      String[] @default([])
+  updatedAt DateTime @updatedAt
+
+  @@map("character_tag")
+}

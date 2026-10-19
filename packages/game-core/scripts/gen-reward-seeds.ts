@@ -301,7 +301,8 @@ for (const [key, slots] of Object.entries(CHAINS)) {
   }
 }
 
-const files: Record<keyof typeof REWARD_SEED_FILES, unknown> = { rarities, roles, sources, boons, gear, starter, achievements };
+// Relics, synergies and character tags are written by hand (packages/db/seed/rewards), not generated.
+const files: Partial<Record<keyof typeof REWARD_SEED_FILES, unknown>> = { rarities, roles, sources, boons, gear, starter, achievements };
 mkdirSync(REWARD_CACHE_DIR, { recursive: true });
 for (const [k, data] of Object.entries(files) as [keyof typeof REWARD_SEED_FILES, unknown][]) {
   if (only.length && !only.includes(k)) continue;

@@ -29,8 +29,10 @@ import {
   type BattleUnit,
   type CommandSource,
   type ConsumableStock,
+  type ModifierSpec,
   type QueuedCommand,
 } from "./types";
+import { applyStatModifiers, effectsFor, resolveModifiers, startTrance, sumPct } from "./modifiers";
 
 /** Hard cap so a stalemate can't run forever (15 minutes). */
 export const MAX_TICKS = 15 * 900;
@@ -113,6 +115,8 @@ export interface CreateBattleOptions {
   pattern?: number;
   /** A boss fight (the battle shows the boss frame); see BattleState.bossFight. */
   bossFight?: boolean;
+  /** Relic and synergy effects (battle/modifiers.ts `relicModifiers`, `synergyModifiers`). */
+  modifiers?: ModifierSpec[];
 }
 
 export function createBattle(opts: CreateBattleOptions): BattleState {
@@ -150,8 +154,20 @@ export function createBattle(opts: CreateBattleOptions): BattleState {
     meta: { thefts: opts.meta?.thefts ?? 0, dragonKills: opts.meta?.dragonKills ?? 0, tonberryKills: opts.meta?.tonberryKills ?? 0 },
     start,
   };
+  // Relics and synergies: tied to the party units now (stored, for replays); stat effects change the units up front.
+  const modifiers = resolveModifiers(opts.modifiers ?? [], units);
+  if (modifiers.length) {
+    state.modifiers = modifiers;
+    applyStatModifiers(units, modifiers);
+  }
   const engine = new BattleEngine(state, rng);
   for (const u of units) engine.initUnit(u, start);
+  // Battle-start effects: statuses (Protect, Haste…) and a head start on Trance.
+  for (const u of units) {
+    if (u.side !== "party" || !engine.isAlive(u)) continue;
+    for (const e of effectsFor(modifiers, u.id, "startStatus")) engine.alterStatus(u, e.status);
+    u.trance = startTrance(modifiers, u);
+  }
   if (opts.scene) {
     const [scene, pat] = opts.scene.replace(/^@/, "").split("#");
     state.scene = scene!;
@@ -289,6 +305,9 @@ export class BattleEngine {
   mpCost(u: BattleUnit, action: BattleAction): number {
     let mp = action.mp;
     if (u.side === "party" && u.supports.includes(SA.halfMp)) mp = Math.floor(mp / 2);
+    // Relics / synergies: MP discounts add up (at most 90% off).
+    const off = Math.min(90, sumPct(this.state.modifiers, u.id, "mpDiscount", "pct"));
+    if (off > 0) mp = Math.floor((mp * (100 - off)) / 100);
     return mp;
   }
 
@@ -1347,6 +1366,18 @@ export class BattleEngine {
     this.dropFromReady(u);
     this.state.queue = this.state.queue.filter((q) => q.command.actorId !== u.id);
     this.emit({ type: "ko", targetId: u.id });
+    if (u.side === "enemy") this.onKillEffects();
+  }
+
+  /** Relics / synergies: an enemy fell to the acting party member, who gets back a share of max HP / MP. */
+  private onKillEffects() {
+    const actorId = this.current?.command.actorId;
+    const killer = actorId ? this.state.units.find((x) => x.id === actorId) : undefined;
+    if (!killer || killer.side !== "party" || !this.isAlive(killer)) return;
+    const hp = sumPct(this.state.modifiers, killer.id, "onKill", "hpPct");
+    const mp = sumPct(this.state.modifiers, killer.id, "onKill", "mpPct");
+    if (hp > 0 && killer.hp < killer.maxHp) this.heal(killer, Math.max(1, Math.floor((killer.maxHp * hp) / 100)));
+    if (mp > 0 && killer.mp < killer.maxMp) this.healMp(killer, Math.max(1, Math.floor((killer.maxMp * mp) / 100)));
   }
 
   revive(u: BattleUnit, hp: number) {

@@ -57,7 +57,18 @@ export function loadGameDataCache(): GameData {
 
 /** The committed reward / gear-availability seed data (packages/db/seed/rewards) — what the server seeds into Postgres. */
 export const REWARD_CACHE_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "db", "seed", "rewards");
-export const REWARD_SEED_FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json", starter: "starter-upgrades.json", achievements: "achievements.json" } as const;
+export const REWARD_SEED_FILES = {
+  rarities: "rarities.json",
+  roles: "roles.json",
+  sources: "sources.json",
+  boons: "boons.json",
+  gear: "gear-availability.json",
+  starter: "starter-upgrades.json",
+  achievements: "achievements.json",
+  relics: "relics.json",
+  synergies: "synergies.json",
+  characterTags: "character-tags.json",
+} as const;
 
 export const hasRewardCache = () => Object.values(REWARD_SEED_FILES).every((f) => existsSync(join(REWARD_CACHE_DIR, f)));
 
@@ -72,6 +83,9 @@ export function loadRewardCache(): RewardTables {
     gear: read(REWARD_SEED_FILES.gear),
     starter: read(REWARD_SEED_FILES.starter),
     achievements: read(REWARD_SEED_FILES.achievements),
+    relics: read(REWARD_SEED_FILES.relics),
+    synergies: read(REWARD_SEED_FILES.synergies),
+    characterTags: read(REWARD_SEED_FILES.characterTags),
   };
   registerRewardTables(tables);
   return tables;

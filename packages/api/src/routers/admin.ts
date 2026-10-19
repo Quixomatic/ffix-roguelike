@@ -130,6 +130,7 @@ export const achievementInput = z.object({
     items: z.array(z.string().max(60)).max(20).optional(),
     bestInSlotFor: key.optional(),
     supplies: z.array(z.string().max(60)).max(20).optional(),
+    relicSlots: z.number().int().min(1).max(5).optional(),
   }),
   notes: z.string().max(500).optional(),
 });

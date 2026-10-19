@@ -57,6 +57,8 @@ export interface Profile {
   supplyRanks?: Record<number, number>;
   /** Gear unlocked into run drop pools (catalog, achievements, won runs). */
   gearUnlocked?: number[];
+  /** Relics unlocked by sources other than an achievement or `free` (meta/relics.ts `relicUnlocked`). */
+  relicsUnlocked?: string[];
   /** Journeys cleared at least once (each unlocks the next). */
   journeysCleared?: string[];
   stats: ProfileStats;

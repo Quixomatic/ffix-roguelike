@@ -30,6 +30,8 @@ model PlayerProfile {
   achievements String[] @default([])
   /// Gear unlocked into run drop pools (catalog, achievements, won runs) — FF9 item ids.
   gearUnlocked Int[]    @default([])
+  /// Relics unlocked into the player's collection by achievements (relic ids; `free` relics needn't be listed).
+  relicsUnlocked String[] @default([])
   /// Reward rerolls / bans per run (charges; earned or bought later — .plans/rewards.md §3.9). Not used yet.
   rewardRerolls Int @default(0)
   rewardBans    Int @default(0)

@@ -19,6 +19,7 @@ import type {
 
 export * from "./types";
 export * from "./rewards";
+export * from "./relics";
 
 /** FF9's character, ability, item and system tables (Memoria CSV import, scripts/import-memoria.ts). */
 export interface GameData {

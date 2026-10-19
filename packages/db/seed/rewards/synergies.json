@@ -1,0 +1,68 @@
+[
+  {
+    "id": "tantalus",
+    "name": "Tantalus",
+    "tag": "tantalus",
+    "description": "Thieves, actors, family.",
+    "badge": 289,
+    "tiers": [
+      { "count": 2, "text": "Steal chances +25%", "effects": [{ "kind": "steal", "ratePct": 25 }] },
+      { "count": 3, "text": "Steal chances +50%, Speed +5%", "effects": [{ "kind": "steal", "ratePct": 50 }, { "kind": "stat", "stat": "speed", "pct": 5 }] }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "summoners",
+    "name": "Summoners",
+    "tag": "summoner",
+    "description": "The last of Madain Sari.",
+    "badge": 166,
+    "tiers": [{ "count": 2, "text": "Trance starts 25% full; abilities cost 10% less MP", "effects": [{ "kind": "trance", "startPct": 25 }, { "kind": "mpDiscount", "pct": 10 }] }],
+    "enabled": true
+  },
+  {
+    "id": "alexandria",
+    "name": "Alexandria",
+    "tag": "alexandria",
+    "description": "The princess and her sworn knights.",
+    "badge": 520,
+    "tiers": [
+      { "count": 2, "text": "Alexandrians start battles with Protect", "effects": [{ "kind": "startStatus", "status": "protect", "scope": { "kind": "tag", "tag": "alexandria" } }] },
+      { "count": 3, "text": "The party starts battles with Protect and Shell", "effects": [{ "kind": "startStatus", "status": "protect" }, { "kind": "startStatus", "status": "shell" }] }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "knights",
+    "name": "Knights",
+    "tag": "knight",
+    "description": "Steel and oaths.",
+    "badge": 275,
+    "tiers": [
+      { "count": 2, "text": "Knights: Strength +10%", "effects": [{ "kind": "stat", "stat": "strength", "pct": 10, "scope": { "kind": "tag", "tag": "knight" } }] },
+      { "count": 3, "text": "Party: Strength +10%, Defence +10%", "effects": [{ "kind": "stat", "stat": "strength", "pct": 10 }, { "kind": "stat", "stat": "defence", "pct": 10 }] }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "mages",
+    "name": "Mages",
+    "tag": "mage",
+    "description": "Those who hear the world's song.",
+    "badge": 512,
+    "tiers": [
+      { "count": 2, "text": "Mages: Magic +10%", "effects": [{ "kind": "stat", "stat": "magic", "pct": 10, "scope": { "kind": "tag", "tag": "mage" } }] },
+      { "count": 3, "text": "Party: Magic +10%, abilities cost 10% less MP", "effects": [{ "kind": "stat", "stat": "magic", "pct": 10 }, { "kind": "mpDiscount", "pct": 10 }] }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "outsiders",
+    "name": "Outsiders",
+    "tag": "outsider",
+    "description": "Wanderers who fit nowhere but here.",
+    "badge": 135,
+    "tiers": [{ "count": 2, "text": "Defeating an enemy restores 3% max HP", "effects": [{ "kind": "onKill", "hpPct": 3 }] }],
+    "enabled": true
+  }
+]

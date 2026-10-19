@@ -14,6 +14,7 @@ import { findItem, getAction, type Element, type Status } from "@ffix-roguelike/
 
 import { SCRIPT } from "../content/enemy-actions";
 import type { BattleEngine } from "./engine";
+import { sumPct } from "./modifiers";
 import { ENEMY_CATEGORY, PLAYER_CATEGORY, type BattleAction, type BattleUnit } from "./types";
 
 // ── flags ────────────────────────────────────────────────────────────────────
@@ -641,10 +642,13 @@ export class Calc {
       }
     }
     const master = this.hasSA(c, SA.masterThief);
+    // Relics / synergies: steal chances up by a percentage (capped at certain).
+    const bonus = sumPct(this.e.state.modifiers, c.id, "steal", "ratePct");
     for (let i = slots.length - 1; i >= 0; i--) {
       const slot = slots[i]!;
       if (slot.itemId < 0) continue;
-      const rate = master ? Math.max(32, slot.chance) : slot.chance;
+      const base = master ? Math.max(32, slot.chance) : slot.chance;
+      const rate = bonus ? Math.min(256, Math.round((base * (100 + bonus)) / 100)) : base;
       if (this.rnd8() < rate) return this.stealItem(i);
     }
     this.e.emit({ type: "steal", actorId: c.id, targetId: t.id, itemId: null });

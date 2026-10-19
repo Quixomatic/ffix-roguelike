@@ -1,6 +1,6 @@
 /**
  * Seed the reward and gear-availability tables (reward_rarity, reward_role, reward_source, reward_boon,
- * gear_availability) from packages/db/seed/rewards. **Inserts missing rows only**: rows already in the database
+ * gear_availability, starter_upgrade, achievement, relic, synergy, character_tag) from packages/db/seed/rewards. **Inserts missing rows only**: rows already in the database
  * — possibly edited on the admin page — are never overwritten, so the server can run this on every startup. New
  * rows in the seed files (a new boon, a new gear piece) appear on the next start.
  *
@@ -14,7 +14,18 @@ import { fileURLToPath } from "node:url";
 import type { Database } from "./index";
 
 export const REWARD_SEED_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "seed", "rewards");
-const FILES = { rarities: "rarities.json", roles: "roles.json", sources: "sources.json", boons: "boons.json", gear: "gear-availability.json", starter: "starter-upgrades.json", achievements: "achievements.json" } as const;
+const FILES = {
+  rarities: "rarities.json",
+  roles: "roles.json",
+  sources: "sources.json",
+  boons: "boons.json",
+  gear: "gear-availability.json",
+  starter: "starter-upgrades.json",
+  achievements: "achievements.json",
+  relics: "relics.json",
+  synergies: "synergies.json",
+  characterTags: "character-tags.json",
+} as const;
 
 /** First-pass badges for the seeded achievements (id → badge number); see `seedRewards`. */
 const BADGES_FILE = "achievement-badges.json";
@@ -25,7 +36,7 @@ const data = (r: Row) => r as object;
 
 /** Returns how many rows were inserted per table. */
 export async function seedRewards(db: Database): Promise<Record<keyof typeof FILES, number>> {
-  const [rarities, roles, sources, boons, gear, starter, achievements] = [
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags] = [
     read(FILES.rarities),
     read(FILES.roles),
     read(FILES.sources),
@@ -33,6 +44,9 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     read(FILES.gear),
     read(FILES.starter),
     read(FILES.achievements),
+    read(FILES.relics),
+    read(FILES.synergies),
+    read(FILES.characterTags),
   ];
   const results = await db.$transaction([
     db.rewardRarity.createMany({ data: rarities.map((r) => ({ id: String(r.id), sort: Number(r.sort), data: data(r) })), skipDuplicates: true }),
@@ -51,6 +65,9 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
       data: achievements.map((r) => ({ id: String(r.id), category: String(r.category), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) })),
       skipDuplicates: true,
     }),
+    db.relic.createMany({ data: relics.map((r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) })), skipDuplicates: true }),
+    db.synergy.createMany({ data: synergies.map((r) => ({ id: String(r.id), enabled: r.enabled !== false, data: data(r) })), skipDuplicates: true }),
+    db.characterTag.createMany({ data: characterTags.map((r) => ({ character: String(r.character), tags: (r.tags as string[]) ?? [] })), skipDuplicates: true }),
   ]);
   // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
   // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
@@ -71,6 +88,9 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     gear: results[4].count,
     starter: results[5].count,
     achievements: results[6].count,
+    relics: results[7].count,
+    synergies: results[8].count,
+    characterTags: results[9].count,
   };
 }
 
@@ -86,6 +106,9 @@ export async function resetRewardTable(db: Database, table: keyof typeof FILES):
     gear: () => db.gearAvailability.deleteMany(),
     starter: () => db.starterUpgrade.deleteMany(),
     achievements: () => db.achievement.deleteMany(),
+    relics: () => db.relic.deleteMany(),
+    synergies: () => db.synergy.deleteMany(),
+    characterTags: () => db.characterTag.deleteMany(),
   }[table];
   await del();
   return (await seedRewards(db))[table];
@@ -93,7 +116,7 @@ export async function resetRewardTable(db: Database, table: keyof typeof FILES):
 
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
-  const [rarities, roles, sources, boons, gear, starter, achievements] = await Promise.all([
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags] = await Promise.all([
     db.rewardRarity.findMany({ orderBy: { sort: "asc" } }),
     db.rewardRole.findMany({ orderBy: { key: "asc" } }),
     db.rewardSource.findMany({ orderBy: { id: "asc" } }),
@@ -101,6 +124,9 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
     db.gearAvailability.findMany({ orderBy: { itemId: "asc" } }),
     db.starterUpgrade.findMany({ orderBy: [{ character: "asc" }, { slot: "asc" }, { tier: "asc" }] }),
     db.achievement.findMany({ orderBy: [{ category: "asc" }, { sort: "asc" }] }),
+    db.relic.findMany({ orderBy: { sort: "asc" } }),
+    db.synergy.findMany({ orderBy: { id: "asc" } }),
+    db.characterTag.findMany({ orderBy: { character: "asc" } }),
   ]);
   const write = (f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
   write(FILES.rarities, rarities);
@@ -110,4 +136,7 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
   write(FILES.gear, gear);
   write(FILES.starter, starter);
   write(FILES.achievements, achievements);
+  write(FILES.relics, relics);
+  write(FILES.synergies, synergies);
+  writeFileSync(join(REWARD_SEED_DIR, FILES.characterTags), `${JSON.stringify(characterTags.map((r) => ({ character: r.character, tags: r.tags })), null, 2)}\n`);
 }

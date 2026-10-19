@@ -1,9 +1,20 @@
-import type { ActionData, Element, Status, TargetType, WeaponData } from "@ffix-roguelike/game-data";
+import type { ActionData, Element, ModifierEffect, Status, TargetType, WeaponData } from "@ffix-roguelike/game-data";
 
 import type { ElementProfile } from "../stats";
 import type { AiState } from "./ai/vm";
 
 export type Side = "party" | "enemy";
+
+/** A relic or synergy effect with where it came from ("relic:<id>", "synergy:<id>"), before it's tied to units. */
+export interface ModifierSpec {
+  source: string;
+  effect: ModifierEffect;
+}
+
+/** A modifier tied to the party units it applies to (their unit ids). */
+export interface ActiveModifier extends ModifierSpec {
+  units: string[];
+}
 
 /** Monster families (sprites + killer abilities). Mapped onto FF9's enemy category bits. */
 export type EnemyFamily = "beast" | "bird" | "bug" | "stone" | "undead" | "dragon" | "devil" | "human" | "machine" | "amorphous";
@@ -240,6 +251,11 @@ export interface BattleState {
   canFlee: boolean;
   /** A boss fight by our own map (a run's boss / fortress node, Practice's boss pick), whatever FF9's flags say. */
   bossFight?: boolean;
+  /**
+   * Relic and synergy effects in force (battle/modifiers.ts), tied to party unit ids when the battle was created.
+   * Stored here so a replay uses exactly these, however the relics are tuned later.
+   */
+  modifiers?: ActiveModifier[];
   /** Spoils collected during the fight (steals, Quina's blue magic). */
   stolen: number[];
   learned: { unitId: string; actionId: number }[];

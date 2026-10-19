@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.22] - 2026-10-19
+
+Relics phase 1 (`.plans/relics-and-synergies.md`): the data and the battle engine for the run-power layer. Nothing shows in runs yet.
+
+### Added
+- **Tables:** `relic`, `synergy` and `character_tag` (migration `relics`, generated with `db:migrate`), plus `player_profile.relicsUnlocked`. Seeded on server start like the reward tables (insert-missing-only), exported by the admin export, and loaded into the reward registry (`relicTable`, `relicById`, `synergyTable`, `characterTags`).
+- **Seeds:**
+  - **10 placeholder relics** with badge icons: Thief's Gloves, Ether Pouch, Power Wrist, Rosetta Ring (free starters); Protect Ring, Blood Fang, Tantalus Bandana, Hermes Sandals, Pumice Piece; cursed Kuja's Mirror.
+  - **6 synergies:** Tantalus, Summoners, Alexandria, Knights, Mages, Outsiders.
+  - **Tags** for all ten characters.
+- **Relic data** (game-data `RelicData`): rarity, cursed, starter, free, `unlockedBy` (achievement id), badge, effects, weight, minTier, sort.
+- **Unlocking** (game-core `meta/relics.ts`): a relic is unlocked when it's free, when the player has its `unlockedBy` achievement (retroactive), or when it's in `relicsUnlocked`.
+  - `starterRelics` lists those that can start a run.
+  - `relicSlotCount` = 3 + earned achievements' new `reward.relicSlots`.
+- **Battle modifiers** (game-core `battle/modifiers.ts`): relics and active synergies become effect specs. `createBattle({ modifiers })` ties them to the party units their scope covers (whole party, a tag, or one character) and stores them in `BattleState.modifiers`, so replays use exactly those however relics are re-tuned.
+  - **Six effect primitives:** `stat` (± % to a battle stat, applied up front), `startStatus`, `trance` (gauge head start), `steal` (+% steal chance, capped at certain), `mpDiscount` (adds up, at most 90%), `onKill` (the killing blow's attacker gets back % max HP / MP).
+  - `activeSynergies(partyKeys)` gives each tag's highest tier reached, counting the active party only.
+- **Tests:** 12 in `battle/modifiers.test.ts`: each primitive, tag scope, a cursed relic, synergy tiers, unlock and slot rules, and an exact replay of a battle with relics. Game-core: 329 pass, 0 fail.
+
+### Notes
+- **Restart the server** to seed the new tables.
+
 ## [0.3.21] - 2026-10-19
 
 ### Changed

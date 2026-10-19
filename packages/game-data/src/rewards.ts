@@ -4,6 +4,7 @@
  * runtime registry: the server registers them from the DB, the web app from `content.rewards`, tests and the sim
  * from the seed files (`loadRewardCache` in ./cache). Never read at module load.
  */
+import type { CharacterTags, RelicData, SynergyData } from "./relics";
 
 export const RARITIES = ["common", "uncommon", "rare", "epic", "legendary"] as const;
 export type RarityId = (typeof RARITIES)[number];
@@ -198,6 +199,8 @@ export interface AchievementData {
     bestInSlotFor?: string;
     /** Camp supplies this unlocks (item names). */
     supplies?: string[];
+    /** Extra relic slots for every run from now on. (Relics name the achievement that unlocks them: `unlockedBy`.) */
+    relicSlots?: number;
   };
   notes?: string;
 }
@@ -212,6 +215,10 @@ export interface RewardTables {
   starter: StarterUpgrade[];
   /** Achievement definitions. */
   achievements: AchievementData[];
+  /** Relics, party synergies and characters' synergy tags (relics.ts). */
+  relics?: RelicData[];
+  synergies?: SynergyData[];
+  characterTags?: CharacterTags[];
 }
 
 let tables: RewardTables | null = null;
@@ -245,6 +252,23 @@ export function achievementTable(): AchievementData[] {
     .filter((a) => a.enabled)
     .sort((a, b) => ACHIEVEMENT_CATEGORIES.indexOf(a.category) - ACHIEVEMENT_CATEGORIES.indexOf(b.category) || a.sort - b.sort);
 }
+
+/** Enabled relics in collection order (empty until the tables are loaded). */
+export function relicTable(): RelicData[] {
+  if (!tables) return [];
+  return (tables.relics ?? []).filter((r) => r.enabled).sort((a, b) => a.sort - b.sort);
+}
+
+export const relicById = (id: string): RelicData | undefined => (tables?.relics ?? []).find((r) => r.id === id && r.enabled);
+
+/** Enabled party synergies. */
+export function synergyTable(): SynergyData[] {
+  if (!tables) return [];
+  return (tables.synergies ?? []).filter((s) => s.enabled);
+}
+
+/** A character's synergy tags. */
+export const characterTags = (key: string): string[] => (tables?.characterTags ?? []).find((c) => c.character === key)?.tags ?? [];
 
 /** A character's enabled upgrade tiers for one slot, in order. */
 export function starterUpgradesFor(key: string, slot: StarterUpgrade["slot"]): StarterUpgrade[] {
