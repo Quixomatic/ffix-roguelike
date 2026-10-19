@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.29] - 2026-10-19
+
+### Changed
+- **Embark page:** the run buttons sit at the party card's bottom-right corner (still straddling its bottom edge), not centred.
+
 ## [0.3.28] - 2026-10-19
 
 ### Changed

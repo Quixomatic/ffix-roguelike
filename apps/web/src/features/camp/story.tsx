@@ -357,9 +357,10 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             );
           })}
         </div>
-        {/* The main action (Continue run, else Begin run) on the right; New run to its left. One size for both. Arriving
+        {/* At the card's bottom-right corner: the main action (Continue run, else Begin run) rightmost, New run to its
+            left. One size for both. Arriving
             on the page lands on the main one: pick a party with the cursor afterwards, or just go. */}
-        <div className="absolute inset-x-0 bottom-0 flex translate-y-1/2 items-center justify-center gap-3 px-5">
+        <div className="absolute inset-x-0 bottom-0 flex translate-y-1/2 items-center justify-end gap-3 px-5">
           <FocusItem defaultFocus={!sameJourney}>
             <button
               onClick={startClicked}
