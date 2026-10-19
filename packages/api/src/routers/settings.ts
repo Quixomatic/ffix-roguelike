@@ -9,6 +9,7 @@ const DEFAULTS = {
   titleFont: "pixelify",
   headingFont: "pixelify",
   bodyFont: "nunito",
+  numbersFont: "pixelify",
   battleSpeed: 1,
   autoBattle: false,
   musicVolume: 25,
@@ -19,17 +20,19 @@ const settingsInput = z.object({
   titleFont: z.enum(FONT_IDS).optional(),
   headingFont: z.enum(FONT_IDS).optional(),
   bodyFont: z.enum(FONT_IDS).optional(),
+  numbersFont: z.enum(FONT_IDS).optional(),
   battleSpeed: z.union([z.literal(1), z.literal(2), z.literal(4)]).optional(),
   autoBattle: z.boolean().optional(),
   musicVolume: z.number().int().min(0).max(100).optional(),
   sfxVolume: z.number().int().min(0).max(100).optional(),
 });
 
-type Row = { titleFont: string; headingFont: string; bodyFont: string; battleSpeed: number; autoBattle: boolean; musicVolume: number; sfxVolume: number };
+type Row = { titleFont: string; headingFont: string; bodyFont: string; numbersFont: string; battleSpeed: number; autoBattle: boolean; musicVolume: number; sfxVolume: number };
 const view = (row: Row | null) => ({
   titleFont: row?.titleFont ?? DEFAULTS.titleFont,
   headingFont: row?.headingFont ?? DEFAULTS.headingFont,
   bodyFont: row?.bodyFont ?? DEFAULTS.bodyFont,
+  numbersFont: row?.numbersFont ?? DEFAULTS.numbersFont,
   battleSpeed: row?.battleSpeed ?? DEFAULTS.battleSpeed,
   autoBattle: row?.autoBattle ?? DEFAULTS.autoBattle,
   musicVolume: row?.musicVolume ?? DEFAULTS.musicVolume,

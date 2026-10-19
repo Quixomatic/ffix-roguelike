@@ -39,35 +39,6 @@ export function SettingsPage() {
 
         <ControllerPanel />
 
-        <Panel title="Fonts" className="md:col-span-2">
-          <div className="flex flex-col gap-3">
-            {FONT_LEVELS.map(({ level, label, hint }) => (
-              <div key={level} className="flex flex-col gap-1.5">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-base">{label}</span>
-                  <span className="text-xs opacity-70">{hint}</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {FONTS.map((f) => (
-                    <FocusItem key={f.id}>
-                      <button
-                        className={`rounded border px-3 py-1 text-lg transition hover:brightness-125 ${
-                          settings[level] === f.id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25"
-                        }`}
-                        style={{ fontFamily: f.family, fontWeight: level === "bodyFont" ? f.weight : f.headingWeight }}
-                        onClick={() => update({ [level]: f.id })}
-                      >
-                        {f.label}
-                      </button>
-                    </FocusItem>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <FontSample />
-          </div>
-        </Panel>
-
         <Panel title="Battle mode">
           <div className="flex gap-2">
             {(["WAIT", "ACTIVE"] as const).map((m) => (
@@ -115,6 +86,35 @@ export function SettingsPage() {
         </Panel>
 
         <LiveBossesPanel />
+
+        <Panel title="Fonts" className="md:col-span-2">
+          <div className="flex flex-col gap-3">
+            {FONT_LEVELS.map(({ level, label, hint }) => (
+              <div key={level} className="flex flex-col gap-1.5">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-base">{label}</span>
+                  <span className="text-xs opacity-70">{hint}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {FONTS.map((f) => (
+                    <FocusItem key={f.id}>
+                      <button
+                        className={`rounded border px-3 py-1 text-lg transition hover:brightness-125 ${
+                          settings[level] === f.id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25"
+                        }`}
+                        style={{ fontFamily: f.family, fontWeight: level === "bodyFont" || level === "numbersFont" ? f.weight : f.headingWeight }}
+                        onClick={() => update({ [level]: f.id })}
+                      >
+                        {f.label}
+                      </button>
+                    </FocusItem>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <FontSample />
+          </div>
+        </Panel>
       </div>
     </div>
   );
@@ -203,6 +203,11 @@ function FontSample() {
       </span>
       <span className="ff-display text-lg">Zidane — Lv 12</span>
       <span className="text-sm">Mage Masher · Atk 14 · Steal, Flee. HP 412/412</span>
+      <span className="flex gap-4 text-2xl [text-shadow:2px_2px_0_#000]" style={{ fontFamily: "var(--ff-numbers-font)", fontWeight: "var(--ff-numbers-weight)" }}>
+        <span>1,234</span>
+        <span className="text-[#9cf0a0]">456</span>
+        <span className="text-[#c8d0ff]">Miss</span>
+      </span>
     </div>
   );
 }

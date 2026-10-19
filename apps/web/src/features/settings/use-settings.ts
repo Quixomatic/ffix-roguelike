@@ -18,7 +18,7 @@ export interface Settings extends FontPicks {
 
 export const DEFAULT_SETTINGS: Settings = { ...DEFAULT_FONTS, battleSpeed: 1, autoBattle: false, musicVolume: 25, sfxVolume: 25 };
 
-const picksOf = (s: Settings): FontPicks => ({ titleFont: s.titleFont, headingFont: s.headingFont, bodyFont: s.bodyFont });
+const picksOf = (s: Settings): FontPicks => ({ titleFont: s.titleFont, headingFont: s.headingFont, bodyFont: s.bodyFont, numbersFont: s.numbersFont });
 
 /** The signed-in player's settings (defaults when signed out or still loading) and a function to change them. */
 export function useSettings() {
@@ -32,7 +32,7 @@ export function useSettings() {
   );
   const settings: Settings = { ...DEFAULT_SETTINGS, ...(query.data as Partial<Settings> | undefined) };
   const update = (patch: Partial<Settings>) => {
-    if (patch.titleFont || patch.headingFont || patch.bodyFont) applyFonts(picksOf({ ...settings, ...patch }));
+    if (patch.titleFont || patch.headingFont || patch.bodyFont || patch.numbersFont) applyFonts(picksOf({ ...settings, ...patch }));
     if (patch.musicVolume != null) setMusicVolume(patch.musicVolume);
     if (patch.sfxVolume != null) setSfxVolume(patch.sfxVolume);
     if (session) mutation.mutate(patch);
@@ -45,7 +45,7 @@ export function SettingsSync() {
   const { settings, loaded } = useSettings();
   useEffect(() => {
     if (loaded) applyFonts(picksOf(settings));
-  }, [loaded, settings.titleFont, settings.headingFont, settings.bodyFont]);
+  }, [loaded, settings.titleFont, settings.headingFont, settings.bodyFont, settings.numbersFont]);
   useEffect(() => {
     setMusicVolume(settings.musicVolume);
   }, [settings.musicVolume]);

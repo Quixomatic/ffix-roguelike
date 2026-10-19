@@ -5,6 +5,7 @@
  *   title    --ff-title-font / --ff-title-weight   the wordmark (sidebar, header bar) and the title screen
  *   heading  --ff-display / --ff-display-weight    `.ff-display` headings, and the game screens' labels (map, battle)
  *   body     --ff-font / --ff-weight / --ff-shadow  the FF windows' text
+ *   numbers  --ff-numbers-font / --ff-numbers-weight  battle damage / heal numbers, Miss, and Doom's countdown
  *
  * The variables are cached in the browser so index.html can set them before the first paint (the account's saved
  * picks sync in once settings load). The ids must match the API's FONT_IDS (packages/api/src/routers/settings.ts).
@@ -32,15 +33,16 @@ export const FONTS = [
 ] as const satisfies readonly FontDef[];
 
 export type FontId = (typeof FONTS)[number]["id"];
-export type FontLevel = "titleFont" | "headingFont" | "bodyFont";
+export type FontLevel = "titleFont" | "headingFont" | "bodyFont" | "numbersFont";
 export type FontPicks = Record<FontLevel, FontId>;
 
-export const DEFAULT_FONTS: FontPicks = { titleFont: "pixelify", headingFont: "pixelify", bodyFont: "nunito" };
+export const DEFAULT_FONTS: FontPicks = { titleFont: "pixelify", headingFont: "pixelify", bodyFont: "nunito", numbersFont: "pixelify" };
 
 export const FONT_LEVELS: { level: FontLevel; label: string; hint: string }[] = [
   { level: "titleFont", label: "Title", hint: "The wordmark in the sidebar and the title screen" },
-  { level: "headingFont", label: "Headings", hint: "Page and window headings, names, and the labels on the map and in battle" },
+  { level: "headingFont", label: "Headings", hint: "Page and window headings, names, and the stage labels on the map" },
   { level: "bodyFont", label: "Body text", hint: "Everything else in the menus" },
+  { level: "numbersFont", label: "Battle numbers", hint: "Damage and healing numbers, Miss, and Doom's countdown" },
 ];
 
 const fontDef = (id: string): FontDef => FONTS.find((f) => f.id === id) ?? FONTS[0];
@@ -50,7 +52,10 @@ export function fontVars(picks: FontPicks): Record<string, string> {
   const title = fontDef(picks.titleFont);
   const heading = fontDef(picks.headingFont);
   const body = fontDef(picks.bodyFont);
+  const numbers = fontDef(picks.numbersFont);
   return {
+    "--ff-numbers-font": numbers.family,
+    "--ff-numbers-weight": String(numbers.weight),
     "--ff-title-font": title.family,
     "--ff-title-weight": String(title.headingWeight),
     "--ff-display": heading.family,
@@ -74,7 +79,15 @@ export function applyFonts(picks: FontPicks) {
   }
 }
 
-/** The heading font's CSS family, for text drawn outside CSS (Phaser labels and popups). */
+const cssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+/** The heading font's CSS family, for labels drawn outside CSS (the map's stage labels). */
 export function gameFontFamily(): string {
-  return getComputedStyle(document.documentElement).getPropertyValue("--ff-display").trim() || fontDef(DEFAULT_FONTS.headingFont).family;
+  return cssVar("--ff-display") || fontDef(DEFAULT_FONTS.headingFont).family;
+}
+
+/** The battle numbers' font for Phaser text: family and weight. */
+export function numbersFont(): { family: string; weight: string } {
+  const def = fontDef(DEFAULT_FONTS.numbersFont);
+  return { family: cssVar("--ff-numbers-font") || def.family, weight: cssVar("--ff-numbers-weight") || String(def.weight) };
 }

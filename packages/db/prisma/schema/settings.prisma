@@ -4,10 +4,11 @@ model UserSettings {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   /// Font ids (the web app's FONTS in features/settings/fonts.ts) for each level of text: the title (wordmark, title
-  /// screen), headings (and the game screens' labels), and body text.
+  /// screen), headings (and the map's stage labels), body text, and battle numbers (damage, Miss, Doom's countdown).
   titleFont   String  @default("pixelify")
   headingFont String  @default("pixelify")
   bodyFont    String  @default("nunito")
+  numbersFont String  @default("pixelify")
   /// Battle animation speed multiplier the battle screen starts at (1, 2 or 4).
   battleSpeed Int     @default(1)
   /// Start battles with the Auto battle toggle on.

@@ -9,7 +9,7 @@ import Phaser from "phaser";
 
 import { FfrkEffectPlayer, loadEffect, type EffectAsset } from "@/features/effects/ffrk-effect";
 import { AURA, AURA_INTERVAL, BALLOON, BALLOON_INTERVAL, balloonPath, BURST, COUNTDOWN, SPECIAL, STATUS_EFF_RIG } from "@/features/effects/status-looks";
-import { gameFontFamily } from "@/features/settings/fonts";
+import { numbersFont } from "@/features/settings/fonts";
 import { assetUrl } from "@/lib/assets";
 
 const BALLOON_ORDER = Object.keys(BALLOON) as Status[];
@@ -63,7 +63,7 @@ export class StatusView {
   ) {
     this.balloon = scene.add.image(0, 0, "__DEFAULT").setVisible(false).setDepth(depth + 2);
     this.countdown = scene.add
-      .text(0, 0, "", { fontFamily: gameFontFamily(), fontSize: "18px", color: "#ff6a6a", fontStyle: "bold" })
+      .text(0, 0, "", { fontFamily: numbersFont().family, fontSize: "18px", color: "#ff6a6a", fontStyle: "bold" })
       .setOrigin(0.5, 1)
       .setStroke("#000000", 5)
       .setDepth(depth + 3)
