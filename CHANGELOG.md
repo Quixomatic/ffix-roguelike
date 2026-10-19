@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.61] - 2026-10-19
+
+### Changed
+- **The Moogle and Stiltzkin characters are bigger:** drawn at their sheets' own size (about 16×23 px, `FIGURE_SCALE`) instead of shrunk to 16 px, so they're also pixel-crisp. The Chocobo stays scaled down to 16 px, since its sheet is far larger.
+
 ## [0.3.60] - 2026-10-19
 
 ### Changed

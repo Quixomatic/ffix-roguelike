@@ -68,6 +68,11 @@ const NODE_COLOR: Record<NodeKind, number> = {
 
 /** A stage character's size (world px, its longer side), floating on its marker like the badges. */
 const FIGURE_SIZE = 16;
+/**
+ * Characters drawn at a fixed scale instead: the moogles' party sheets are small already (about 16×23 px), so they
+ * stand at their own size (crisp, and a touch bigger than the rest).
+ */
+const FIGURE_SCALE: Record<string, number> = { "enemy/npc-moogle": 1, "enemy/npc-stiltzkin": 1 };
 /** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
 const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
 
@@ -552,7 +557,7 @@ export class MapScene extends Phaser.Scene {
       // Flipped, so the figure's centre is mirrored in the frame.
       .setOrigin(1 - (box.x + box.w / 2) / info.w, (box.y + box.h / 2) / info.h)
       .setFlipX(true)
-      .setScale(FIGURE_SIZE / Math.max(box.w, box.h))
+      .setScale(FIGURE_SCALE[key] ?? FIGURE_SIZE / Math.max(box.w, box.h))
       .setDepth(3)
       .setAlpha(alpha)
       .play(enemyAnimKey(info, "idle"));
