@@ -130,11 +130,13 @@ const CLASSES: Record<string, () => Record<string, Source[]>> = {
   },
   // The in-game bosses' FFRK rigs and sheets, for drawing them live (Settings → Live boss animation), at the FFRK
   // server paths the effect player loads: <id>_1.json (rig), img_<id>.png/json, further body sheets img_<id>_N.
-  // Masks and overlays (img_mask_…) stay out, as in the baked sprites.
+  // Masks and overlays (img_mask_…) stay out, as in the baked sprites. Also the rigs' particle and frame-animation
+  // files (pb_*.json, .sajson: death puffs, smoke, water…) and the effect images they use that the effects pack lacks.
   bosses: () => {
     const raw = join(EFFECTS, "..", "bosses");
     const ids = [...new Set(Object.values(ENEMY_SPRITE_MAP).flatMap((s) => ("boss" in s ? [s.boss] : [])))];
     const sources: Source[] = [];
+    const images = new Set<string>();
     for (const id of ids) {
       const at = (local: string, name: string) => existsSync(join(raw, local)) && sources.push({ disk: join(raw, local), path: `effects/ab/character/boss/${id}/${name}` });
       if (!existsSync(join(raw, `${id}.anim.json`))) continue;
@@ -142,7 +144,13 @@ const CLASSES: Record<string, () => Record<string, Source[]>> = {
       at(`${id}.png`, `img_${id}.png`);
       at(`${id}.json`, `img_${id}.json`);
       for (const f of readdirSync(raw).filter((x) => x.startsWith(`${id}~img_${id}_`))) at(f, f.slice(`${id}~`.length));
+      for (const f of readdirSync(raw).filter((x) => x.startsWith(`${id}~pb_`) || (x.startsWith(`${id}~`) && x.endsWith(".sajson")))) {
+        at(f, f.slice(`${id}~`.length));
+        for (const m of readFileSync(join(raw, f), "utf8").matchAll(/(?:\/Content\/|\.\/)lang\/(ab\/effect_image\/[^"]+\.(?:png|json))/g)) images.add(m[1]!);
+      }
     }
+    const shipped = new Set(effectFiles().sources.map((s) => s.path));
+    for (const p of images) if (!shipped.has(`effects/${p}`)) sources.push(...file(join(EFFECTS, p), `effects/${p}`));
     return { bosses: sources };
   },
   music: () =>

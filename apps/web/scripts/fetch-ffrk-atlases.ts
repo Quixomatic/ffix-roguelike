@@ -56,7 +56,7 @@ const IMAGE = "https://dff.sp.mbga.jp/dff/static/lang/image";
 const ENLIR_RELICS = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".refs", "enlir", "relics.csv");
 
 /** One fetcher per asset kind (disk cache, remembered misses, timeouts/retries — see lib/fetcher.ts). */
-const nets: Partial<Record<Kind | "icons", Fetcher>> = {};
+const nets: Partial<Record<Kind | "icons" | "effects", Fetcher>> = {};
 const netFor = (kind: Kind | "icons") =>
   (nets[kind] ??= new Fetcher({ root: join(OUT, kind), baseUrl: "", concurrency: CONCURRENCY, localPath: (name) => join(OUT, kind, name) }));
 
@@ -73,9 +73,15 @@ async function fetchId(kind: Kind, id: number): Promise<boolean> {
 /** The local name of a boss rig's extra sheet: `<id>~img_<id>_1.png` (and `.json`). */
 export const rigSheetName = (id: number | string, file: string) => `${id}~${file}`;
 
+const remoteOf = (url: string) => url.replace(/^(?:\/Content\/|\.\/)lang\//, "https://dff.sp.mbga.jp/dff/static/lang/");
+/** The effect library (`_raw/effects`, FFRK server paths), for the shared effect images boss particles use. */
+const effectNet = () => (nets.effects ??= new Fetcher({ root: join(OUT, "effects"), baseUrl: "", concurrency: CONCURRENCY, localPath: (name) => join(OUT, "effects", name) }));
+
 /**
  * A boss rig can draw from more than its main sheet: each image node names its own (`image.url`, e.g.
- * `img_209002_1.png` — Black Waltz 1's body, wings and arms). Fetch every extra sheet and its atlas the rig uses.
+ * `img_209002_1.png` — Black Waltz 1's body, wings and arms). Fetch every extra sheet and its atlas the rig uses,
+ * and its particle (`pb_*.json`) and frame-animation (`.sajson`) files — a death puff, smoke, water — saved the same
+ * way (`<id>~<file>`), with the effect images those use (`ab/effect_image/…`, into the effect library).
  */
 async function fetchRigSheets(id: number) {
   const rigPath = join(OUT, "bosses", `${id}.anim.json`);
@@ -87,9 +93,18 @@ async function fetchRigSheets(id: number) {
   for (const url of urls) {
     const file = url.split("/").pop()!;
     if (file === `img_${id}.png` || !url.includes(`/boss/${id}/`)) continue;
-    const remote = url.replace(/^\/Content\/lang\//, "https://dff.sp.mbga.jp/dff/static/lang/");
+    const remote = remoteOf(url);
     await net.get(rigSheetName(id, file), remote);
     await net.get(rigSheetName(id, file.replace(/\.png$/, ".json")), remote.replace(/\.png$/, ".json"));
+  }
+  const fx = new Set<string>();
+  for (const m of text.matchAll(/"file"\s*:\s*"([^"]+\/boss\/\d+\/((?:pb_[^"/]+\.json)|(?:[^"/]+\.sajson)))"/g)) fx.add(m[1]!);
+  for (const url of fx) {
+    const name = rigSheetName(id, url.split("/").pop()!);
+    if (!(await net.get(name, remoteOf(url)))) continue;
+    const local = join(OUT, "bosses", name);
+    if (!existsSync(local)) continue;
+    for (const m of readFileSync(local, "utf8").matchAll(/(?:\/Content\/|\.\/)lang\/(ab\/effect_image\/[^"]+\.(?:png|json))/g)) await effectNet().get(m[1]!, remoteOf(`/Content/lang/${m[1]}`));
   }
 }
 

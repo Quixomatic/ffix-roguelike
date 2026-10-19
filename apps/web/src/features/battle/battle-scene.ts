@@ -33,6 +33,7 @@ import { preloadStatusLooks, StatusView } from "./status-view";
 import { HERO_CELL, heroSheetForSprite, weaponSprite, type HeroAnim, type HeroRigFrame, type HeroVariant } from "@/features/sprites/hero-sheets";
 import { enemyAnimKey, ensureEnemyAnims, loadEnemySheets, type EnemyAnim, type EnemySpriteInfo } from "@/features/sprites/enemy-sprites";
 import { drawBattleBackground, ensureHeroAnims, ensurePlaceholder, heroAnimKey, loadHeroSheets } from "@/features/sprites/sprites";
+import { poseAt, poseBounds, visibilityAt, type Rig } from "@/features/sprites/ffrk-anim";
 import { assetUrl } from "@/lib/assets";
 
 /** Texture key of the target glove (public/sprites/ui/hand-down.png, from the Time Fantasy icon pack). */
@@ -79,6 +80,10 @@ interface UnitView {
   home: { x: number; y: number };
   /** Centre to the top of the figure (where the cursor hangs). */
   top: number;
+  /** Centre to the bottom of the figure (where the ATB gauge sits). */
+  bottom: number;
+  /** The figure's middle, across, from the sprite's centre (a live boss's rig needn't be centred on its sheet). */
+  cx: number;
   /** Party member drawn from an FFRK strip: plays poses instead of the placeholder's tilt and bob. */
   animated: boolean;
   /** A one-shot pose (attack, hurt…) holds until this scene time. */
@@ -96,12 +101,33 @@ interface UnitView {
   gauge: Phaser.GameObjects.Graphics;
   /** Monster drawn from an FFRK sheet (idle/attack/damage/dead, white hit-flash cell). */
   ffrk?: EnemySpriteInfo;
-  /** Practice's live boss animation: the FFRK rig played in Phaser (the baked sheet stays, cropped away, for clicks). */
+  /** Live boss animation: the FFRK rig played in Phaser (the baked sheet stays, cropped away, for clicks). */
   live?: { player: FfrkEffectPlayer; tag: string };
+  /** The live rig's idle extent in rig pixels around its origin (where the cursor, gauge and status bubble go). */
+  liveBox?: RigBox;
   /** FFRK's status looks on this unit: balloon, aura, special rigs, Doom's countdown. */
   status: StatusView;
   /** FFRK-style weapon rig: the weapon drawn between the body and the arm piece during attack frames. */
   rig?: { frames: (HeroRigFrame | null)[]; weapon: Phaser.GameObjects.Image; grip: [number, number]; arm: Phaser.GameObjects.Sprite };
+}
+
+type RigBox = ReturnType<typeof poseBounds>;
+/** Each boss rig's idle extent (rig pixels around its origin), worked out once. */
+const idleBoxes = new Map<number, RigBox>();
+function idleBox(id: number, rig: Rig): RigBox | undefined {
+  if (!idleBoxes.has(id)) {
+    const range = rig.tag?.idle;
+    if (!range) return undefined;
+    let box: RigBox | undefined;
+    for (let f = range[0]; f <= range[1]; f += 2) {
+      const b = poseBounds(poseAt(rig, f, visibilityAt(rig, "idle", f)));
+      if (!Number.isFinite(b.minX)) continue;
+      box = box ? { minX: Math.min(box.minX, b.minX), minY: Math.min(box.minY, b.minY), maxX: Math.max(box.maxX, b.maxX), maxY: Math.max(box.maxY, b.maxY) } : b;
+    }
+    if (!box) return undefined;
+    idleBoxes.set(id, box);
+  }
+  return idleBoxes.get(id);
 }
 
 const GAUGE_W = 56;
@@ -201,12 +227,32 @@ export class BattleScene extends Phaser.Scene {
           : { x: (v.ref.x / BATTLE_W) * w, y: (v.ref.y / BATTLE_H) * h };
       this.tweens.killTweensOf(v.sprite);
       v.sprite.setPosition(v.home.x, v.home.y).setScale(v.animated ? this.heroScale : v.ffrk ? this.enemyScale() : v.baseScale * this.k);
-      v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
-      v.cursor.setPosition(v.home.x, v.home.y - v.top - 18);
-      v.hand.setScale(this.handScale()).setPosition(v.home.x, v.home.y - v.top - 18);
+      this.measure(v);
       v.rig?.weapon.setScale(this.heroScale);
       v.rig?.arm.setScale(this.heroScale);
     }
+  }
+
+  /**
+   * The figure's extent around its sprite's centre — top (cursor, glove, status bubble), bottom (gauge), middle — and
+   * the cursor and glove placed by it. A live boss is measured by its rig's idle pose; everything else by its sprite.
+   */
+  private measure(v: UnitView) {
+    const box = v.live && v.liveBox;
+    if (box && v.ffrk) {
+      const s = v.sprite.scaleX;
+      const ox = v.ffrk.originX - v.ffrk.w / 2;
+      const oy = v.ffrk.originY - v.ffrk.h / 2;
+      v.top = -(oy + box.minY) * s;
+      v.bottom = (oy + box.maxY) * s;
+      v.cx = (ox + (box.minX + box.maxX) / 2) * s;
+    } else {
+      v.top = v.animated ? (HERO_CELL / 2 - HERO_HEADROOM) * this.heroScale : v.sprite.displayHeight / 2;
+      v.bottom = v.sprite.displayHeight / 2;
+      v.cx = 0;
+    }
+    v.cursor.setPosition(v.home.x + v.cx, v.home.y - v.top - 18);
+    v.hand.setScale(this.handScale()).setPosition(v.home.x + v.cx, v.home.y - v.top - 18);
   }
 
   /** The target glove replaces the ▼ marker, a little bigger: 24 px (32 px on very large canvases). */
@@ -243,11 +289,11 @@ export class BattleScene extends Phaser.Scene {
     const gauge = this.add.graphics().setDepth(20);
     const hand = this.add.image(x, y - top - 18, HAND).setOrigin(0.5, 0.5).setScale(this.handScale()).setDepth(40).setVisible(false);
     const status = new StatusView(this, 30);
-    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, animated, holdUntil: 0, cursor, hand, gauge, status, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
+    this.views.set(u.id, { ref: { x, y }, baseScale, sprite, home: { x, y }, top, bottom: sprite.displayHeight / 2, cx: 0, animated, holdUntil: 0, cursor, hand, gauge, status, ffrk: ffrk?.info, rig: animated ? this.addRig(u.sprite, sprite) : undefined });
     if (ffrk?.info.rig && liveBosses()) this.playLive(this.views.get(u.id)!, "idle", true);
   }
 
-  /** Practice's live boss animation: play one of the rig's tags (idle loops; one-shots return to idle, dead stays). */
+  /** Live boss animation: play one of the rig's tags (idle loops; one-shots return to idle, dead stays). */
   private playLive(v: UnitView, tag: string, loop: boolean) {
     const id = v.ffrk?.rig;
     if (!id || this.liveDropped) return;
@@ -266,6 +312,8 @@ export class BattleScene extends Phaser.Scene {
         onDone: loop || tag === "dead" ? undefined : () => this.playLive(v, "idle", true),
       });
       v.live = { player, tag };
+      v.liveBox ??= idleBox(id, asset.rig);
+      this.measure(v);
       // The baked sheet stays (clicks, stepping forward, fades) but draws nothing.
       v.sprite.setCrop(0, 0, 0, 0);
       this.syncLive(v);
@@ -288,14 +336,20 @@ export class BattleScene extends Phaser.Scene {
       v.live.player.destroy();
       v.live = undefined;
       v.sprite.setCrop();
+      this.measure(v);
     }
   }
 
-  /** Keep a live rig on its baked sprite: the sheet's centre → the rig's origin, its scale and fade. */
+  /**
+   * Keep a live rig on its baked sprite: the sheet's centre → the rig's origin, its scale and fade, its status tint,
+   * and held still while the sheet is (Stop, Sleep, Petrify, Freeze).
+   */
   private syncLive(v: UnitView) {
     if (!v.live) return;
     const info = v.ffrk!;
     const s = v.sprite.scaleX;
+    v.live.player.paused = v.sprite.anims.isPaused;
+    v.live.player.tint = v.sprite.isTinted ? v.sprite.tintTopLeft : 0xffffff;
     v.live.player.container
       .setPosition(v.sprite.x + (info.originX - info.w / 2) * s, v.sprite.y + (info.originY - info.h / 2) * s)
       .setScale(s)
@@ -343,8 +397,8 @@ export class BattleScene extends Phaser.Scene {
     if (down) return;
     const gw = GAUGE_W * Math.max(1, this.k);
     const gh = GAUGE_H * Math.max(1, this.k);
-    const x = v.home.x - gw / 2;
-    const y = v.home.y + v.sprite.displayHeight / 2 + 4;
+    const x = v.home.x + v.cx - gw / 2;
+    const y = v.home.y + v.bottom + 4;
     // Hold the gauge where it was while an effect is still on its way (the engine already zeroed a fallen unit's).
     const incoming = this.time.now < (v.impactAt ?? 0);
     if (!incoming) v.lastAtb = Math.min(1, u.atb / u.atbMax);
@@ -382,10 +436,7 @@ export class BattleScene extends Phaser.Scene {
       if (u.side === "enemy") {
         v.sprite.setAlpha(!shown && !down ? 0 : down || u.removed ? Math.max(0, v.sprite.alpha - 0.03) : u.statuses.vanish ? 0.35 : 1);
         if (v.ffrk) this.monsterPose(v, u, down);
-        if (v.live) {
-          if (down && v.live.tag !== "dead") this.playLive(v, "dead", false);
-          this.syncLive(v);
-        }
+        if (v.live && down && v.live.tag !== "dead") this.playLive(v, "dead", false);
       }
       else if (v.animated) {
         v.sprite.setAlpha(u.statuses.jump ? 0 : u.statuses.vanish ? 0.35 : 1);
@@ -403,6 +454,8 @@ export class BattleScene extends Phaser.Scene {
         const mix = (c: number) => Math.round(255 + (c - 255) * pulse * 0.7);
         v.sprite.setTint(Phaser.Display.Color.GetColor(mix(to[0]!), mix(to[1]!), mix(to[2]!)));
       } else v.sprite.clearTint();
+      // After the tint: a live boss takes it, and the pause, from its sheet.
+      this.syncLive(v);
       const targeted = this.bridge.highlighted.has(u.id);
       const aimed = this.bridge.aimed.has(u.id) && shown;
       // Yellow markers: every valid target; the glove points at the one(s) being aimed at.
@@ -417,7 +470,7 @@ export class BattleScene extends Phaser.Scene {
       this.drawGauge(v, u, time, down || stone || !shown);
       // Status looks follow the unit (stepping forward too); a status an effect is still bringing waits for the hit.
       if (this.time.now >= (v.impactAt ?? 0))
-        v.status.update(u.statuses, { x: v.sprite.x, y: v.home.y, top: v.top, scale: this.heroScale, facing: u.side === "party" ? 1 : -1 }, time, down || !shown || !!u.removed || u.statuses.jump !== undefined);
+        v.status.update(u.statuses, { x: v.sprite.x + v.cx, y: v.home.y, top: v.top, scale: this.heroScale, facing: u.side === "party" ? 1 : -1 }, time, down || !shown || !!u.removed || u.statuses.jump !== undefined);
     }
   }
 
@@ -487,7 +540,7 @@ export class BattleScene extends Phaser.Scene {
     const anim: EnemyAnim | null = what === "attack" || what === "ability" || what === "throw" ? "attack" : what === "damage" ? "damage" : null;
     if (!anim) return;
     const a = info.anims[anim];
-    // Live rig (Practice): play the rig's own attack / damage, then back to idle.
+    // Live rig: play the rig's own attack / damage, then back to idle.
     if (v.live && a) {
       this.playLive(v, anim, false);
       v.holdUntil = this.time.now + (a.frames.length / a.fps) * 1000;

@@ -43,8 +43,8 @@ function ffrkRawEffects(): Plugin {
         });
       });
       // Boss rigs by their FFRK server paths (ab/character/boss/<id>/…), from the boss downloads (`ffrk:fetch bosses`):
-      // `<id>_1.json` is the rig, `img_<id>.png/json` the main sheet, other sheets `<id>~<file>`. For Practice's live
-      // boss animation (admin, dev only).
+      // `<id>_1.json` is the rig, `img_<id>.png/json` the main sheet, other sheets and particle files `<id>~<file>`.
+      // Live boss animation in development (builds load the `bosses` asset pack).
       const bosses = join(root, "..", "bosses");
       server.middlewares.use("/ffrk-raw/ab/character/boss", (req, res, next) => {
         const m = /^\/(\d+)\/([^/?]+)/.exec(decodeURIComponent(req.url ?? ""));

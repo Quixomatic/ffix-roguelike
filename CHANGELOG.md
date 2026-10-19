@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.12] - 2026-10-19
+
+Live bosses polish: they freeze, take status colours, have the cursor and gauge on their real figure, and play FFRK's own particles.
+
+### Fixed
+- **Stop, Sleep, Petrify and Freeze now hold a live boss still.** They paused only the hidden baked sprite, so the live rig kept moving. The effect player has a `paused` switch (the frame holds and is still drawn).
+- **Status colours show on live bosses**: Petrify's grey, Poison's green, Trance's pink, and the Protect / Shell pulse. They were set on the hidden sprite only; the effect player's new `tint` is multiplied over the rig's own colours.
+- **Cursor, target glove, ATB gauge and status bubble sit on a live boss's real figure.** They came from the baked sheet's box, which spans every pose (attack lunges included), so they hung too high and too low. A live boss is now measured by its rig's idle pose (worked out once per rig); anything else is measured as before, and a battle that drops back to the sheets switches back too.
+
+### Added
+- **Bosses play FFRK's own particles and frame animations**: death puffs and explosions, smoke, water, feathers. 17 of the 46 in-game boss rigs use them; they were never downloaded, so they were silently skipped.
+  - `ffrk:fetch bosses` now also downloads each rig's `pb_*.json` / `.sajson` files (saved as `<id>~<file>`), and the shared effect images they use into the effect library.
+  - The `bosses` pack carries them, plus the effect images the effects pack doesn't already have: 177 files, 1.0 MB gzipped. Uploaded to R2.
+  - The dev server serves them at their FFRK paths like the rigs' other files.
+
+### Changed
+- Comments that still called live bosses a Practice-only / dev-only feature are updated.
+
 ## [0.3.11] - 2026-10-18
 
 Bosses animate live from FFRK's own rigs, for everyone.

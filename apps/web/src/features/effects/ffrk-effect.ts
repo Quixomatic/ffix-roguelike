@@ -456,6 +456,10 @@ export class FfrkEffectPlayer {
   private pending: { frame: number; fn: () => void }[];
   /** The rig frames played: the tag's (`opts.tag`), else the effect's main range. */
   private readonly range: [number, number];
+  /** Hold the current frame (a live boss under Stop, Sleep, Petrify…); it's still drawn, so `tint` changes show. */
+  paused = false;
+  /** A colour multiplied over the rig's own (a live boss's status tint); white leaves it as authored. */
+  tint = 0xffffff;
 
   constructor(
     private scene: Phaser.Scene,
@@ -480,7 +484,7 @@ export class FfrkEffectPlayer {
 
   private tick(_time: number, delta: number) {
     if (this.finished) return;
-    const dt = (delta / 1000) * (this.opts.speed ?? 1);
+    const dt = this.paused ? 0 : (delta / 1000) * (this.opts.speed ?? 1);
     this.frame += dt * (this.asset.rig.fps || 60);
     const [start, end] = this.range;
     while (this.pending.length && this.frame >= this.pending[0]!.frame) this.pending.shift()!.fn();
@@ -553,7 +557,7 @@ export class FfrkEffectPlayer {
         .setRotation(Math.atan2(b, a))
         .setScale((sx * p.w) / img.frame.width, ((sx ? det / sx : 0) * p.h) / img.frame.height)
         .setAlpha(p.alpha)
-        .setTint(rgb(p.tint))
+        .setTint(rgb(p.tint, this.tint))
         .setBlendMode(p.blend === "add" ? Phaser.BlendModes.ADD : Phaser.BlendModes.NORMAL);
     });
     for (let i = parts.length; i < this.images.length; i++) this.images[i]?.setVisible(false);
@@ -598,7 +602,7 @@ export class FfrkEffectPlayer {
           .setRotation(Math.atan2(b, a))
           .setScale(sx, sx ? det / sx : 0)
           .setAlpha(s.alpha)
-          .setTint(rgb(s.tint))
+          .setTint(rgb(s.tint, this.tint))
           .setBlendMode(s.blend === "add" ? Phaser.BlendModes.ADD : Phaser.BlendModes.NORMAL);
       }
     }
@@ -618,8 +622,10 @@ export class FfrkEffectPlayer {
   }
 }
 
-const rgb = (t: [number, number, number]) => {
-  const c = t.map((v) => Math.round(Math.min(1, Math.max(0, v)) * 255));
+/** A rig colour (0–1 per channel) as 0xRRGGBB, multiplied by `mul` (0xRRGGBB; white = unchanged). */
+const rgb = (t: [number, number, number], mul = 0xffffff) => {
+  const m = [(mul >> 16) & 255, (mul >> 8) & 255, mul & 255];
+  const c = t.map((v, i) => Math.round(Math.min(1, Math.max(0, v)) * m[i]!));
   return (c[0]! << 16) | (c[1]! << 8) | c[2]!;
 };
 
