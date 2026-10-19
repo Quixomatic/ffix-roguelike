@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.33] - 2026-10-19
+
+### Changed
+- **Party synergies show the ones not yet active.** The embark page's Party synergies card and the run sidebar list every synergy the party has at least one member of.
+  - Active ones look as before.
+  - Ones short of their first tier are plainly off: greyed, a dashed edge, a progress count ("Outsiders 1/2"), and on the embark card "Needs 2 in the party". Active ones come first, then the closest to turning on.
+  - game-core `partySynergies(keys)` returns each with its count, the tier reached (if any) and the members needed for the next tier.
+- **Character card footers drop the numbers:** their synergy chips show just the badge and name (the popover still highlights the tier the party has reached), and they never grey out.
+- Test: `partySynergies` (active / short / next tier, active first). Game-core: 335 pass, 0 fail.
+
 ## [0.3.32] - 2026-10-19
 
 ### Added

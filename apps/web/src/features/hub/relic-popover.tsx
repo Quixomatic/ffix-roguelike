@@ -143,6 +143,7 @@ export function SynergyChip({
   count,
   party,
   detail = false,
+  showCount = true,
   cursor = true,
   side = "right",
   className = "",
@@ -151,22 +152,28 @@ export function SynergyChip({
   count?: number;
   party?: string[];
   detail?: boolean;
+  /** Show the party count on the chip (character cards leave it to the popover). */
+  showCount?: boolean;
   cursor?: boolean;
   side?: Side;
   className?: string;
 }) {
   const reached = count != null ? [...s.tiers].sort((a, b) => b.count - a.count).find((t) => count >= t.count) : undefined;
+  // Short of its first tier (where the count shows: a party's synergies): shown, but plainly not active — greyed, a
+  // dashed edge, "1/2". Character cards' tag chips (no count shown) never grey.
+  const first = Math.min(...s.tiers.map((t) => t.count));
+  const inactive = showCount && count != null && !reached;
   const body = (
     <>
       <span className="inline-flex items-center gap-1">
         {s.badge && <Badge id={s.badge} scale={1} view={20} />}
         <span>{s.name}</span>
-        {count != null && <span className="tabular-nums opacity-80">{count}</span>}
+        {showCount && count != null && <span className="tabular-nums opacity-80">{inactive ? `${count}/${first}` : count}</span>}
       </span>
-      {detail && reached && <span className="opacity-85">{reached.text}</span>}
+      {detail && (reached ? <span className="opacity-85">{reached.text}</span> : inactive && <span className="opacity-85">Needs {first} in the party</span>)}
     </>
   );
-  const cls = `inline-flex cursor-help flex-col rounded px-1.5 py-0.5 text-left text-xs ${className}`;
+  const cls = `inline-flex cursor-help flex-col rounded px-1.5 py-0.5 text-left text-xs ${inactive ? "border-dashed opacity-60 grayscale" : ""} ${className}`;
   return (
     <SynergyPopover synergyId={s.id} count={count} party={party} side={side} cursor={cursor}>
       {/* A span inside something that's already a button (a character card): buttons can't nest. */}
@@ -196,7 +203,7 @@ export function SynergyTags({ character, party, side = "top" }: { character: str
         const s = synergyTable().find((x) => x.tag === tag);
         if (!s) return null;
         const count = party ? party.filter((k) => characterTags(k).includes(tag)).length : undefined;
-        return <SynergyChip key={tag} synergy={s} count={count} party={party} side={side} cursor={false} />;
+        return <SynergyChip key={tag} synergy={s} count={count} party={party} side={side} cursor={false} showCount={false} />;
       })}
     </span>
   );

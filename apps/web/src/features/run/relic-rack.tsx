@@ -1,4 +1,4 @@
-import { activeSynergies, type RunState } from "@ffix-roguelike/game-core";
+import { partySynergies, type RunState } from "@ffix-roguelike/game-core";
 import { BASE_RELIC_SLOTS, rarityOf, relicById } from "@ffix-roguelike/game-data";
 
 import { Badge } from "@/features/hub/badge";
@@ -15,7 +15,8 @@ export function RelicRack({ run, compact = false }: { run: RunState; compact?: b
   });
   const slots = run.relicSlots ?? BASE_RELIC_SLOTS;
   const party = run.party.map((m) => m.build.key);
-  const synergies = activeSynergies(party);
+  // Active synergies, then the ones the party is short of (greyed, "1/2").
+  const synergies = partySynergies(party);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-1.5">

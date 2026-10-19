@@ -1,4 +1,4 @@
-import { activeSynergies, availableJourneys, encounterNames, getArea, JOURNEYS, MAX_TIER, starterRelics, type JourneyDef, type Profile } from "@ffix-roguelike/game-core";
+import { availableJourneys, encounterNames, getArea, JOURNEYS, MAX_TIER, partySynergies, starterRelics, type JourneyDef, type Profile } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -147,7 +147,7 @@ const LAST_RELIC = "ffix-last-relic";
  */
 function StartingRelic({ profile, party, value, onChange }: { profile: Profile; party: string[]; value: string | null | undefined; onChange(id: string | null): void }) {
   const starters = starterRelics(profile);
-  const synergies = activeSynergies(party);
+  const synergies = partySynergies(party);
   const chosen = starters.find((r) => r.id === value);
   const button = (id: string | null, body: React.ReactNode) => (
     <button
@@ -194,6 +194,7 @@ function StartingRelic({ profile, party, value, onChange }: { profile: Profile; 
       <div className="ff-panel flex flex-col gap-2 p-4">
         <div className="ff-display text-lg">Party synergies</div>
         {synergies.length ? (
+          // Active ones, then the ones still short of a tier (greyed, "1/2"): what one more member would turn on.
           synergies.map(({ synergy, count }) => <SynergyChip key={synergy.id} synergy={synergy} count={count} party={party} detail side="left" className="w-full" />)
         ) : (
           <div className="text-sm opacity-60">None with this party. Characters' synergies are on their cards.</div>

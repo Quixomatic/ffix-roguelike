@@ -34,6 +34,32 @@ export function activeSynergies(partyKeys: string[]): ActiveSynergy[] {
   return out;
 }
 
+export interface PartySynergy {
+  synergy: SynergyData;
+  /** Party members sharing its tag (at least one). */
+  count: number;
+  /** The highest tier reached; undefined while short of the first. */
+  tier?: SynergyData["tiers"][number];
+  /** Members needed for the next tier up (undefined at the top). */
+  next?: number;
+}
+
+/**
+ * Every synergy the party has at least one member of: the active ones (a tier reached) and the ones still short
+ * (to show as not yet active, "1/2"). Active first, then by how close.
+ */
+export function partySynergies(partyKeys: string[]): PartySynergy[] {
+  const out: PartySynergy[] = [];
+  for (const synergy of synergyTable()) {
+    const count = partyKeys.filter((k) => characterTags(k).includes(synergy.tag)).length;
+    if (!count) continue;
+    const tiers = [...synergy.tiers].sort((a, b) => a.count - b.count);
+    const tier = [...tiers].reverse().find((t) => count >= t.count);
+    out.push({ synergy, count, tier, next: tiers.find((t) => t.count > count)?.count });
+  }
+  return out.sort((a, b) => Number(!!b.tier) - Number(!!a.tier) || b.count / (b.next ?? b.count) - a.count / (a.next ?? a.count));
+}
+
 export function synergyModifiers(partyKeys: string[]): ModifierSpec[] {
   return activeSynergies(partyKeys).flatMap(({ synergy, tier }) => tier.effects.map((effect) => ({ source: `synergy:${synergy.id}`, effect })));
 }

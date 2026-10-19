@@ -12,7 +12,7 @@ import { relicSlotCount, relicUnlocked, starterRelics } from "../meta/relics";
 import { newBuild } from "../stats";
 import { autoBattle } from "./autoplay";
 import { BattleEngine, createBattle, getBattleAction, replayBattle } from "./engine";
-import { activeSynergies, relicModifiers, sumPct, synergyModifiers } from "./modifiers";
+import { activeSynergies, partySynergies, relicModifiers, sumPct, synergyModifiers } from "./modifiers";
 import { TRANCE_MAX, type ModifierSpec } from "./types";
 import { enemyUnit, partyUnit } from "./units";
 
@@ -103,6 +103,17 @@ describe("synergies", () => {
     expect(alex.count).toBe(3);
     expect(alex.tier.count).toBe(3);
     expect(activeSynergies(["vivi"])).toEqual([]);
+  });
+
+  test("partySynergies lists the ones still short of a tier too, active first", () => {
+    // Zidane: Tantalus + Outsiders (both need 2); Garnet + Eiko: Summoners (active), Mages 2 (active).
+    const list = partySynergies(["zidane", "garnet", "eiko"]);
+    const byId = Object.fromEntries(list.map((x) => [x.synergy.id, x]));
+    expect(byId.summoners).toMatchObject({ count: 2, next: undefined });
+    expect(byId.summoners!.tier).toBeDefined();
+    expect(byId.outsiders).toMatchObject({ count: 1, tier: undefined, next: 2 });
+    expect(byId.mages).toMatchObject({ count: 2, next: 3 });
+    expect(list.findIndex((x) => !x.tier)).toBeGreaterThan(list.findLastIndex((x) => !!x.tier));
   });
 
   test("a synergy's tag-scoped effect covers only those members", () => {
