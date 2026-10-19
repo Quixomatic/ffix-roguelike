@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.34] - 2026-10-19
+
+### Changed
+- **The run sidebar lists only active synergies** again. The not-yet-active ones (greyed, "1/2") show only on the embark page's Party synergies card, where they help pick a party.
+
 ## [0.3.33] - 2026-10-19
 
 ### Changed

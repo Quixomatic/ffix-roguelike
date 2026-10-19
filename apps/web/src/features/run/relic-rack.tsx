@@ -15,8 +15,8 @@ export function RelicRack({ run, compact = false }: { run: RunState; compact?: b
   });
   const slots = run.relicSlots ?? BASE_RELIC_SLOTS;
   const party = run.party.map((m) => m.build.key);
-  // Active synergies, then the ones the party is short of (greyed, "1/2").
-  const synergies = partySynergies(party);
+  // Only the active synergies during a run (the embark page also shows the ones the party is short of).
+  const synergies = partySynergies(party).filter((s) => s.tier);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-1.5">
