@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.49] - 2026-10-19
+
+### Changed
+- **Battle stages' monsters stand like the Party card's heroes.** They're the same height whatever their sheet: each is scaled so its figure stands 20 px tall on the map. The figure is measured from the sprite's opaque pixels, since the frame padding varies a lot between sheets.
+  - They stand side by side on one baseline, overlapping by a third, the first facing left and the second facing right.
+  - A single monster stands centred.
+
+### Fixed
+- **Only some battle stages showed monsters.** A monster with no FFRK sheet yet (Axe Beak, Zuu, Trick Sparrow and a few others) can't be drawn, and a stage whose previewed group was all such monsters fell back to the tent. Those stages now show two monsters from the same map's pool that do have sheets (elites from the elite and battle pools), picked by the stage so they stay put.
+
 ## [0.3.48] - 2026-10-19
 
 ### Changed

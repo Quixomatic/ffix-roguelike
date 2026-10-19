@@ -63,6 +63,11 @@ const NODE_COLOR: Record<NodeKind, number> = {
   boss: 0xb02020,
 };
 
+/** How tall (world px) the monsters over a battle stage stand, whatever their sheet: a little over a tile. */
+const MONSTER_HEIGHT = 20;
+/** Each monster sheet's figure box (`MapScene.figureBounds`), measured once per page. */
+const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
+
 /** Marker sizes (px, even so they centre exactly on a tile's centre): the usual dot, and the bosses'. */
 const MARKER = { w: 12, h: 10 };
 const MARKER_BIG = { w: 16, h: 12 };
@@ -483,25 +488,64 @@ export class MapScene extends Phaser.Scene {
   }
 
   /**
-   * The monsters a battle stage may hold (at most two, `MapBridge.previews`), standing just above its marker, idling.
-   * FFRK sheets keep their size ratios: small monsters at 1×, bigger ones at ½ or ¼ so none towers over the map.
+   * The monsters a battle stage may hold (at most two, `MapBridge.previews`), like the party on the Play page's Party
+   * card: the same height whatever their sheet (scaled by what they actually draw, `figureBounds`), side by side and
+   * overlapping on one baseline just above the marker, the first facing left and the second right, in front of it.
    */
   private placeMonsters(n: MapNode, keys: string[], alpha: number) {
     const p = center(this.layout.nodes.get(n.id)!);
-    keys.forEach((key, i) => {
+    const figures = keys.flatMap((key) => {
       const ffrk = ensureEnemyAnims(this, key);
-      if (!ffrk) return;
-      const { info } = ffrk;
-      const scale = info.h <= 40 ? 1 : info.h <= 80 ? 0.5 : 0.25;
-      const dx = keys.length > 1 ? (i === 0 ? -5 : 6) : 0;
-      this.add
-        .sprite(p.x + dx, p.y - 3 - i, ffrk.texture, 0)
-        .setOrigin(info.originX / info.w, info.originY / info.h)
-        .setScale(scale)
-        .setDepth(1.5 - i * 0.1)
-        .setAlpha(alpha)
-        .play({ key: enemyAnimKey(info, "idle"), startFrame: i * 3 });
+      const box = ffrk && this.figureBounds(ffrk.texture);
+      if (!ffrk || !box) return [];
+      const scale = Math.min(1, MONSTER_HEIGHT / box.h);
+      return [{ ...ffrk, box, scale, width: box.w * scale }];
     });
+    const baseline = p.y - 3;
+    figures.forEach((f, i) => {
+      // Overlap by a third of each figure's width (one figure stands centred).
+      const x = figures.length > 1 ? (i === 0 ? p.x - f.width * 0.33 : p.x + f.width * 0.33) : p.x;
+      // FFRK monsters face right: the first turns to face left.
+      const flip = figures.length > 1 && i === 0;
+      this.add
+        .sprite(Math.round(x), baseline, f.texture, 0)
+        .setOrigin(flip ? 1 - (f.box.x + f.box.w / 2) / f.info.w : (f.box.x + f.box.w / 2) / f.info.w, (f.box.y + f.box.h) / f.info.h)
+        .setFlipX(flip)
+        .setScale(f.scale)
+        .setDepth(1.4 + i * 0.05)
+        .setAlpha(alpha)
+        .play({ key: enemyAnimKey(f.info, "idle"), startFrame: i * 3 });
+    });
+  }
+
+  /** What a sheet's first frame actually draws (its opaque pixels' box, in frame px), measured once per sheet. */
+  private figureBounds(texture: string): { x: number; y: number; w: number; h: number } | null {
+    const cached = FIGURE_BOUNDS.get(texture);
+    if (cached !== undefined) return cached;
+    const frame = this.textures.getFrame(texture, 0);
+    const source = frame?.source.image as CanvasImageSource | undefined;
+    let box: { x: number; y: number; w: number; h: number } | null = null;
+    if (frame && source) {
+      const { cutX, cutY, cutWidth: w, cutHeight: h } = frame;
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+      ctx.drawImage(source, cutX, cutY, w, h, 0, 0, w, h);
+      const data = ctx.getImageData(0, 0, w, h).data;
+      let minX = w, minY = h, maxX = -1, maxY = -1;
+      for (let y = 0; y < h; y++)
+        for (let x = 0; x < w; x++)
+          if (data[(y * w + x) * 4 + 3]! > 16) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+      if (maxX >= 0) box = { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+    }
+    FIGURE_BOUNDS.set(texture, box);
+    return box;
   }
 
   /**
