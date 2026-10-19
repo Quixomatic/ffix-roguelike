@@ -5691,5 +5691,168 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   },
   "white": 1,
   "src": "stand-in: Kuja (FFRK party sheet)"
+ },
+ "npc-moogle": {
+  "url": "/sprites/enemies/player-106005.png",
+  "w": 32,
+  "h": 32,
+  "originX": 16,
+  "originY": 32,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   },
+   "damage": {
+    "frames": [
+     2
+    ],
+    "fps": 1,
+    "repeat": false
+   },
+   "attack": {
+    "frames": [
+     3
+    ],
+    "fps": 1,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     4
+    ],
+    "fps": 1,
+    "repeat": false
+   }
+  },
+  "white": 1,
+  "src": "Mog (FFRK party sheet, FF6)"
+ },
+ "npc-stiltzkin": {
+  "url": "/sprites/enemies/player-150013.png",
+  "w": 32,
+  "h": 32,
+  "originX": 16,
+  "originY": 32,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   },
+   "damage": {
+    "frames": [
+     2
+    ],
+    "fps": 1,
+    "repeat": false
+   },
+   "attack": {
+    "frames": [
+     3
+    ],
+    "fps": 1,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     4
+    ],
+    "fps": 1,
+    "repeat": false
+   }
+  },
+  "white": 1,
+  "src": "stand-in: Montblanc (FFRK party sheet, FFT) — FFRK never drew Stiltzkin"
+ },
+ "npc-chocobo": {
+  "url": "/sprites/enemies/boss-390001.png",
+  "w": 70,
+  "h": 76,
+  "originX": 34,
+  "originY": 68,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 390001,
+  "src": "Fat Chocobo (FFRK boss rig)"
  }
 };

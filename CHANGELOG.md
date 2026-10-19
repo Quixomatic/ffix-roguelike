@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.50] - 2026-10-19
+
+### Added
+- **Moogle, Stiltzkin and Chocobo stages show their own character** over the marker, at the same standard height as the battle stages' monsters, idling:
+  - **Moogle:** Mog, from FFRK's party sheet 106005 (FF6).
+  - **Stiltzkin:** Montblanc, from FFRK's party sheet 150013 (FFT), as a stand-in, since FFRK never drew Stiltzkin.
+  - **Chocobo:** the Fat Chocobo, from FFRK boss rig 390001, animated. FFRK has no small chocobo sheet; the only small one is a single FFT still with no atlas, which the pipeline can't take yet.
+- They go through the same pipeline as the monster sprites: `npc-moogle`, `npc-stiltzkin` and `npc-chocobo` entries in `scripts/enemy-sprite-map.ts`, built by `sprites:enemies` into `enemy-sprites.gen.ts` (only these three entries were added; the other sheets are unchanged).
+- The `enemies` asset pack is rebuilt and uploaded to R2.
+- The other stages (shop, synthesis, event, start, fortress, boss) keep their object-sheet pictures.
+
 ## [0.3.49] - 2026-10-19
 
 ### Changed

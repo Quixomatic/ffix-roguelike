@@ -11,11 +11,19 @@ import { enemySpriteFor } from "@/features/sprites/enemy-sprites";
 
 import { createMapGame, type MapBridge } from "./map-scene";
 
+/** Who stands over the stages with a character of their own (FFRK sheets built as `npc-…` in enemy-sprite-map.ts). */
+const STAGE_FIGURES: Partial<Record<NodeKind, string>> = {
+  moogle: "enemy/npc-moogle",
+  stiltzkin: "enemy/npc-stiltzkin",
+  chocobo: "enemy/npc-chocobo",
+};
+
 /** Distinct sprite keys of these monsters that have an FFRK sheet. */
 const drawable = (ids: string[]) => [...new Set(ids.map((id) => getEnemy(id).sprite))].filter((key) => enemySpriteFor(key));
 
 /**
- * The monsters drawn over each battle / elite stage (sprite keys, at most two): a likely group for the stage's depth
+ * The figures drawn over stages (sprite keys, at most two): the Moogle, Stiltzkin and Chocobo stages' own characters
+ * (`STAGE_FIGURES`), and on each battle / elite stage the monsters of a likely group for the stage's depth
  * (`encounterPreview`, seeded by the run and stage so it stays put). Monsters without an FFRK sheet are skipped; when
  * none of the group has one, two from the map's own pool that do (picked by the stage, so it stays put too).
  */
@@ -27,6 +35,8 @@ function stagePreviews(run: RunState): Record<string, string[]> {
   };
   const out: Record<string, string[]> = {};
   run.map.nodes.forEach((n, i) => {
+    const figure = STAGE_FIGURES[n.kind];
+    if (figure && enemySpriteFor(figure)) out[n.id] = [figure];
     if (n.kind !== "battle" && n.kind !== "elite") return;
     const seed = `${run.seed}|${run.stage}|${n.id}`;
     let keys = drawable(encounterPreview(run.world, n.depth, n.kind, seed, run.party.length));

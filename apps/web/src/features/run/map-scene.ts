@@ -29,7 +29,10 @@ export interface MapBridge {
   visited: string[];
   leader: string;
   theme: string;
-  /** Monsters drawn over battle / elite stages (stage id → enemy sprite keys, at most two; overworld.tsx). */
+  /**
+   * Figures drawn over stages (stage id → enemy-sheet sprite keys, at most two; overworld.tsx): battle / elite stages'
+   * monsters, and the Moogle, Stiltzkin and Chocobo stages' own characters. Stages without one show their picture.
+   */
   previews?: Record<string, string[]>;
   /** The party entered a next stage (Enter/Space/click on the stage it stands on, or a click from afar): commit the move. */
   onSelect(nodeId: string): void;

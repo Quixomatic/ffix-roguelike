@@ -141,4 +141,8 @@ export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   "blank": { player: 109066, src: "Blank (FFRK party sheet)" },
   "kuja": { player: 109010, src: "Kuja (FFRK party sheet)" },
   "trance-kuja": { player: 109010, src: "stand-in: Kuja (FFRK party sheet)" },
+  // Not monsters: the overworld's stage figures (Moogle, Stiltzkin and Chocobo stages), keyed "npc-…".
+  "npc-moogle": { player: 106005, src: "Mog (FFRK party sheet, FF6)" },
+  "npc-stiltzkin": { player: 150013, src: "stand-in: Montblanc (FFRK party sheet, FFT) — FFRK never drew Stiltzkin" },
+  "npc-chocobo": { boss: 390001, src: "Fat Chocobo (FFRK boss rig)" },
 };
