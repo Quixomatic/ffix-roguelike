@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.60] - 2026-10-19
+
+### Changed
+- **Only the stages you can walk to next bob.** These are the ones with the pulsing ring. Every other stage's badge or character holds still until the party gets there.
+
 ## [0.3.59] - 2026-10-19
 
 ### Changed

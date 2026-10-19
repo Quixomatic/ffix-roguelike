@@ -492,8 +492,8 @@ export class MapScene extends Phaser.Scene {
     const alpha = cut ? 0.35 : done ? 0.6 : 1;
     const badge = STAGE_BADGES[n.kind];
     const figure = this.bridge.previews?.[n.id]?.[0];
-    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, p.y, badge, alpha);
-    else if (figure) this.placeFigure(p.x, p.y, figure, alpha);
+    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p.x, p.y, badge, alpha, can);
+    else if (figure) this.placeFigure(p.x, p.y, figure, alpha, can);
     else this.placeStageSprite(n, alpha);
 
     const label = smooth(this.add
@@ -518,9 +518,9 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * A stage's badge (`STAGE_BADGES`) floating right on its marker centred at (x, y): centred by what the badge actually
-   * draws, its longer side scaled to BADGE_SIZE, raised a little and bobbing gently over the dot.
+   * draws, its longer side scaled to BADGE_SIZE, raised a little; bobbing gently when the party can go there (`live`).
    */
-  private placeBadge(x: number, y: number, badge: number, alpha: number) {
+  private placeBadge(x: number, y: number, badge: number, alpha: number, live: boolean) {
     const frame = badge - 1;
     const box = this.figureBounds(BADGES_KEY, frame) ?? { x: 0, y: 0, w: BADGE_CELL, h: BADGE_CELL };
     const img = this.add
@@ -529,20 +529,20 @@ export class MapScene extends Phaser.Scene {
       .setScale(BADGE_SIZE / Math.max(box.w, box.h))
       .setDepth(3)
       .setAlpha(alpha);
-    this.hover(img, x, y, alpha);
+    if (live) this.hover(img, x, y);
   }
 
-  /** Done and cut-off stages hold still; the rest bob gently, out of step with each other. */
-  private hover(target: Phaser.GameObjects.Components.Transform, x: number, y: number, alpha: number) {
-    if (alpha === 1) this.tweens.add({ targets: target, y: target.y - 1.5, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: (x * 7 + y * 3) % 900 });
+  /** A gentle bob, for the stages the party can go to next (each out of step with the others). */
+  private hover(target: Phaser.GameObjects.Components.Transform, x: number, y: number) {
+    this.tweens.add({ targets: target, y: target.y - 1.5, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: (x * 7 + y * 3) % 900 });
   }
 
   /**
    * A stage's own character (`MapBridge.previews`: the Moogle, Stiltzkin and Chocobo stages' FFRK sheets) floating right
    * on its marker like the badges: centred by what it actually draws (`figureBounds`), its longer side FIGURE_SIZE,
-   * idling and bobbing, and turned to face left (the sheets face right).
+   * idling, bobbing when the party can go there (`live`), and turned to face left (the sheets face right).
    */
-  private placeFigure(x: number, y: number, key: string, alpha: number) {
+  private placeFigure(x: number, y: number, key: string, alpha: number, live: boolean) {
     const ffrk = ensureEnemyAnims(this, key);
     const box = ffrk && this.figureBounds(ffrk.texture, 0);
     if (!ffrk || !box) return;
@@ -556,7 +556,7 @@ export class MapScene extends Phaser.Scene {
       .setDepth(3)
       .setAlpha(alpha)
       .play(enemyAnimKey(info, "idle"));
-    this.hover(sprite, x, y, alpha);
+    if (live) this.hover(sprite, x, y);
   }
 
   /** What a sheet's frame actually draws (its opaque pixels' box, in frame px), measured once per frame. */
