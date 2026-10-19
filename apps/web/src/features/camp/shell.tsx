@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BarChart3, FlaskConical, Gamepad2, Home, Menu, Package, Settings, Sparkles, Sword, Trophy, Undo2, Wrench } from "lucide-react";
+import { BarChart3, FlaskConical, Gamepad2, Gem, Home, Menu, Package, Settings, Sparkles, Sword, Trophy, Undo2, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -37,6 +37,7 @@ const GAME_NAV: NavItem[] = [
 const MORE_NAV: NavItem[] = [
   { to: "/items", label: "Items", icon: Package },
   { to: "/achievements", label: "Achievements", icon: Trophy },
+  { to: "/relics", label: "Relics", icon: Gem },
   { to: "/stats", label: "Stats", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },
 ];

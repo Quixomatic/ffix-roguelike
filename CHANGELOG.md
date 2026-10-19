@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.23] - 2026-10-19
+
+Relics phase 2 (`.plans/relics-and-synergies.md` §3.7): the relic collection page.
+
+### Added
+- **Relics page** (`/relics`, in the sidebar after Achievements), modelled on FF9's card browse screen.
+  - **Numbered grid** of every relic in collection order (No. 001…). Unlocked ones show their badge; locked ones show an empty "?" slot.
+  - **Detail panel:** follows the cursor, keyboard, controller or mouse alike.
+    - Unlocked relics: large badge, number, name, rarity (in its colour), Cursed / Starter tags, description, each effect in plain words ("+10% Strength", "Steal chances +100% (Tantalus members)", "A killing blow restores 5% HP"), which synergies it works with, and its flavour line.
+    - Locked relics: the achievement that unlocks it, with its description and progress bar ("???" if the achievement is secret).
+  - **Collector rank:** count, bar and an FF9-style title from Beginner to Master.
+  - **Filters and slots:** All / Unlocked / Locked / Starters, plus the relic slots per run.
+- `effectText(effect)` (`features/hub/relics-page.tsx`): any effect primitive in words, for later run screens.
+
+### Notes
+- Lifetime numbers per relic (times taken, runs won) come with relics in runs (phase 3), when there's something to count.
+
 ## [0.3.22] - 2026-10-19
 
 Relics phase 1 (`.plans/relics-and-synergies.md`): the data and the battle engine for the run-power layer. Nothing shows in runs yet.
