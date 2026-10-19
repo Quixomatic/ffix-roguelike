@@ -70,9 +70,9 @@ const NODE_COLOR: Record<NodeKind, number> = {
 const FIGURE_SIZE = 16;
 /**
  * Characters drawn at a fixed scale instead: the moogles' party sheets are small already (about 16×23 px), so they
- * stand at their own size (crisp, and a touch bigger than the rest).
+ * stand a little under their own size, a touch bigger than the rest.
  */
-const FIGURE_SCALE: Record<string, number> = { "enemy/npc-moogle": 1, "enemy/npc-stiltzkin": 1 };
+const FIGURE_SCALE: Record<string, number> = { "enemy/npc-moogle": 0.85, "enemy/npc-stiltzkin": 0.85 };
 /** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
 const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
 
@@ -544,7 +544,8 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * A stage's own character (`MapBridge.previews`: the Moogle, Stiltzkin and Chocobo stages' FFRK sheets) floating right
-   * on its marker like the badges: centred by what it actually draws (`figureBounds`), its longer side FIGURE_SIZE,
+   * on its marker like the badges: its feet (the bottom of what it actually draws, `figureBounds`) on the dot's centre,
+   * centred across, its longer side FIGURE_SIZE,
    * idling, bobbing when the party can go there (`live`), and turned to face left (the sheets face right).
    */
   private placeFigure(x: number, y: number, key: string, alpha: number, live: boolean) {
@@ -553,9 +554,9 @@ export class MapScene extends Phaser.Scene {
     if (!ffrk || !box) return;
     const { info } = ffrk;
     const sprite = this.add
-      .sprite(x, y - BADGE_LIFT, ffrk.texture, 0)
-      // Flipped, so the figure's centre is mirrored in the frame.
-      .setOrigin(1 - (box.x + box.w / 2) / info.w, (box.y + box.h / 2) / info.h)
+      .sprite(x, y, ffrk.texture, 0)
+      // Feet on the dot's centre; flipped, so the figure's centre is mirrored in the frame.
+      .setOrigin(1 - (box.x + box.w / 2) / info.w, (box.y + box.h) / info.h)
       .setFlipX(true)
       .setScale(FIGURE_SCALE[key] ?? FIGURE_SIZE / Math.max(box.w, box.h))
       .setDepth(3)

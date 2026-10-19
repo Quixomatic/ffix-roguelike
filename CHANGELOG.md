@@ -2,6 +2,12 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.62] - 2026-10-19
+
+### Changed
+- **The Moogle, Stiltzkin and Chocobo characters stand on their marker by their feet.** The bottom of what each actually draws now rests at the dot's centre, so they sit higher instead of hanging down to its bottom edge.
+- **The Moogle and Stiltzkin are a little smaller:** 0.85× their sheets (about 20 px tall, was 23).
+
 ## [0.3.61] - 2026-10-19
 
 ### Changed
