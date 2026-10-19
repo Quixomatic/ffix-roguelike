@@ -1262,6 +1262,9 @@ export class BattleEngine {
       if (!this.has(u, "death")) this.killUnit(u);
       return;
     }
+    // A script that fakes HP (Gizamaluke) stages the end itself once the real HP is gone: FF9's dying state, out of
+    // reach and not acting while its death scene plays (Memoria's IsSpecialHPInDyingState, which can't spot him).
+    if (u.hpShown && u.hp <= u.hpShown.offset) u.ff9Dying = true;
     if (u.side !== "party") return;
     const low = u.hp * 6 <= u.maxHp;
     if (low && !this.has(u, "lowHp")) u.statuses.lowHp = {};

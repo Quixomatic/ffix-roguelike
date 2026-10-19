@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.18] - 2026-10-19
+
+### Fixed
+- **Gizamaluke's fight counted him as still standing when it ended.** Once his real 3,875 HP is gone, his script plays his death scene (sinking back into the water) and ends the battle itself, but our engine never marked him as down: v0.3.17 shipped with the encounter test for his fight failing. He now enters FF9's dying state the moment his real HP runs out: out of reach and not acting while the scene plays. This is the state Memoria's `IsSpecialHPInDyingState` checks for, though it can't detect it in Gizamaluke's fight. Game-core tests: 317 pass, 0 fail.
+
 ## [0.3.17] - 2026-10-19
 
 ### Fixed
