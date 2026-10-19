@@ -28,6 +28,11 @@ export interface MapBridge {
   onAction?(action: Action): void;
   /** The camera left the party to look around (true), or came back to it (false). */
   onLook?(looking: boolean): void;
+  /**
+   * Screen pixels on the map's right covered by something floating over it (the party sidebar): the camera may scroll
+   * that far past the map's right edge, so the castle can come out from under it, and centres the party in what shows.
+   */
+  insetRight?(): number;
 }
 
 const NODE_STYLE: Record<NodeKind, { color: number; glyph: string; size: number }> = {
@@ -187,7 +192,7 @@ export class MapScene extends Phaser.Scene {
     cam.setBounds(0, 0, worldW, worldH);
     cam.setBackgroundColor(theme.dark);
     this.fitCamera(this.scale.gameSize.width, this.scale.gameSize.height);
-    cam.centerOn(this.party.x, this.party.y);
+    cam.centerOn(this.party.x - cam.followOffset.x, this.party.y);
     cam.startFollow(this.party, false, 0.12, 0.12);
     this.scale.on(Phaser.Scale.Events.RESIZE, this.onResize, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.scale.off(Phaser.Scale.Events.RESIZE, this.onResize, this));
@@ -244,7 +249,8 @@ export class MapScene extends Phaser.Scene {
   /** One frame of easing back to the party (it may be walking meanwhile); follows it again once there. */
   private easeBack(delta: number) {
     const cam = this.cameras.main;
-    const tx = cam.clampX(this.party.x - cam.width * cam.originX);
+    // Where following would put the camera (the follow offset centres the party beside a floating sidebar).
+    const tx = cam.clampX(this.party.x - cam.followOffset.x - cam.width * cam.originX);
     const ty = cam.clampY(this.party.y - cam.height * cam.originY);
     const dx = tx - cam.scrollX;
     const dy = ty - cam.scrollY;
@@ -413,12 +419,20 @@ export class MapScene extends Phaser.Scene {
     this.fitCamera(size.width, size.height);
   }
 
-  /** Zoom so ~VISIBLE_COLUMNS stage columns fit across, never so far out that the map stops filling the view. */
+  /**
+   * Zoom so ~VISIBLE_COLUMNS stage columns fit across, never so far out that the map stops filling the view. With the
+   * party sidebar floating over the right edge, the bounds reach that much further right (the castle can scroll out
+   * from under it) and the party is centred in the part of the view that shows.
+   */
   private fitCamera(w: number, h: number) {
     const L = this.layout;
+    const cam = this.cameras.main;
     const byWidth = w / (VISIBLE_COLUMNS * COL_STEP * TILE);
     const zoom = Math.max(Phaser.Math.Clamp(byWidth, 1.5, 3.5), h / (L.rows * TILE), w / (L.cols * TILE));
-    this.cameras.main.setZoom(zoom);
+    cam.setZoom(zoom);
+    const inset = Math.max(0, Math.min(w * 0.6, this.bridge.insetRight?.() ?? 0));
+    cam.setBounds(0, 0, L.cols * TILE + inset / zoom, L.rows * TILE);
+    cam.setFollowOffset(-inset / (2 * zoom), 0);
   }
 
   // ---------------------------------------------------------------------------------------------------------

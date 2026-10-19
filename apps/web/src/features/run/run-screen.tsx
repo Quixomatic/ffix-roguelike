@@ -121,6 +121,8 @@ export function RunScreen() {
           <div className="absolute inset-0">
             <Overworld
               run={run}
+              // The floating sidebar (17rem + its 0.75rem margin) covers the map's right edge.
+              insetRight={floating ? 17.75 * REM : 0}
               busy={actions.move.isPending}
               onMove={(nodeId) => actions.move.mutate({ nodeId })}
               onAction={(a) => {
@@ -161,6 +163,8 @@ export function RunScreen() {
 }
 
 const PARTY_LAYOUT_KEY = "ffix-run-party-layout";
+/** Pixels per rem (the root font size), for sizes the canvas needs in pixels. */
+const REM = typeof document === "undefined" ? 16 : parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
 /** The party's place on the run screen (floating over the game, or docked beside it), remembered in this browser. */
 function usePartyLayout(): [PartyLayout, (layout: PartyLayout) => void] {

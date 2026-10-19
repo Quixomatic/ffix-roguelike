@@ -110,12 +110,17 @@ export function Overworld({
   onMove,
   busy,
   onAction,
+  insetRight = 0,
 }: {
   run: RunState;
   onMove(nodeId: string): void;
   busy: boolean;
   onAction?(action: Action): void;
+  /** Screen px on the right covered by the floating party sidebar (0 when it's docked beside the map). */
+  insetRight?: number;
 }) {
+  const insetRef = useRef(insetRight);
+  insetRef.current = insetRight;
   // The map has the controls while it's up (keyboard + controller through Phaser's input); a panel opened over it takes
   // them back for the menus until it closes (input/owner.ts).
   useInputOwner("game");
@@ -143,6 +148,7 @@ export function Overworld({
       isBusy: () => busyRef.current,
       onAction: (a) => onActionRef.current?.(a),
       onLook: setLooking,
+      insetRight: () => insetRef.current,
       // The scene calls this once the party has walked onto the stage: commit the move.
       onSelect: (id) => {
         if (busyRef.current) return;

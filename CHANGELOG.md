@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.36] - 2026-10-19
+
+### Fixed
+- **The boss castle no longer hides under the floating party sidebar.** The map camera was clamped to the map's right edge, so at the last stage the castle sat under the sidebar.
+  - The map scene now knows how much of its right side the floating sidebar covers (`MapBridge.insetRight`; 17rem + margin, 0 when the party is docked).
+  - The camera may scroll that far past the edge, and centres the party in the part of the view that shows, including when starting and when easing back after looking around.
+  - It follows layout changes (docking / floating resizes the map, which refits the camera).
+
 ## [0.3.35] - 2026-10-19
 
 ### Fixed
