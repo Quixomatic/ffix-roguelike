@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.42] - 2026-10-19
+
+### Added
+- **The run's party collapses to mini mode.** A new icon button after Party / Bag (⇕) switches the party cards to a row of mini cells, and back. The header, relics and synergies above stay as they are.
+  - **Each cell** shows the member's sprite (kneeling at Low HP, down when KO'd, shades when Blind), with a thin HP bar and a thin MP bar under it.
+  - **Hover a cell (or put the cursor on it)** for that member's full card. Click it for their character sheet.
+  - Optimize gear is hidden while collapsed.
+  - The choice is remembered in this browser (`ffix-party-mini`).
+
+### Removed
+- **The party sidebar's Menu button.** It sent Start, which opens the hub's left sidebar. When the sidebar was already out, it only moved the keyboard cursor into it, so a click looked like it did nothing. The round menu button in the corner and Start / M still open the menu.
+
 ## [0.3.41] - 2026-10-19
 
 ### Removed
