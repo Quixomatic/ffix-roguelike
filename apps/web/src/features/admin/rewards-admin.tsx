@@ -73,7 +73,7 @@ export function RewardsAdminPage() {
           <div className="text-xs opacity-70">Saves go live at once. Export writes the tables into the repo's seed files.</div>
         </div>
         <FocusItem>
-          <button className="ff-panel ff-lift px-3 py-1 text-sm" disabled={exportSeeds.isPending} onClick={() => exportSeeds.mutate()}>
+          <button className="ff-panel ff-btn ff-lift px-3 py-1 text-sm" disabled={exportSeeds.isPending} onClick={() => exportSeeds.mutate()}>
             Export to seed files
           </button>
         </FocusItem>
@@ -178,7 +178,7 @@ function Select<T extends string>({ value, options, onChange }: { value: T; opti
 function SaveButton({ pending, onClick, label = "Save" }: { pending: boolean; onClick(): void; label?: string }) {
   return (
     <FocusItem>
-      <button className="ff-panel ff-lift px-4 py-1 text-sm" disabled={pending} onClick={onClick}>
+      <button className="ff-panel ff-btn ff-lift px-4 py-1 text-sm" disabled={pending} onClick={onClick}>
         {pending ? "Saving…" : label}
       </button>
     </FocusItem>

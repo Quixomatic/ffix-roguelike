@@ -232,6 +232,18 @@
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
   border-color: #c8f0c8;
 }
+/* A disabled button (opt in with `ff-btn` on an ff-panel button; cards and frames keep their own looks): a flat grey
+   window, fully opaque (a see-through button shows whatever frame it overlaps), with dimmed content. Wins over the green
+   "on" look; no lift, no clicks. */
+.ff-panel.ff-btn:disabled,
+.ff-panel.ff-btn[aria-disabled="true"] {
+  background: linear-gradient(180deg, #4a4e66 0%, #33364a 45%, #24263a 100%);
+  border-color: #9a9db4;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
 /* Keyboard / controller cursor (features/input): where the focus is, shown only while navigating by keys
    (<html data-input="keys">) — a yellow ring, or FF9's glove on menu options. */
 :root[data-input="keys"] [data-focused="true"]:not(.ff-option) {

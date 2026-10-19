@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.30] - 2026-10-19
+
+### Changed
+- **Embark page run buttons are green:** Begin run, New run and Continue run all use the green "on" panel.
+
+### Fixed
+- **A disabled button no longer shows the frame behind it.** The run buttons straddle the party card's edge, and `opacity-50` let its white border show through like a strikethrough.
+  - Buttons now have a proper disabled look: a flat grey FF window, fully opaque, with dimmed text, no lift and no clicks (`.ff-panel.ff-btn:disabled` in `index.css`).
+  - It's opt-in with the `ff-btn` class. So far it's on the embark run buttons and the admin page's Save / Export buttons; cards and frames keep their own looks.
+
 ## [0.3.29] - 2026-10-19
 
 ### Changed

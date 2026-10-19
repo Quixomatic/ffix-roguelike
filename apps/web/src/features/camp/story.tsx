@@ -365,7 +365,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             <button
               onClick={startClicked}
               disabled={!party.length || start.isPending}
-              className={`ff-panel ff-lift inline-flex items-center gap-2 disabled:pointer-events-none disabled:opacity-50 ${RUN_BUTTON}`}
+              data-on="true"
+              className={`ff-panel ff-btn ff-lift inline-flex items-center gap-2 ${RUN_BUTTON}`}
             >
               {start.isPending ? (
                 "Setting out…"
@@ -378,7 +379,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
           </FocusItem>
           {sameJourney && (
             <FocusItem defaultFocus>
-              <Link to="/run" className={`ff-panel ff-lift inline-flex items-center gap-2 ${RUN_BUTTON}`}>
+              <Link to="/run" data-on="true" className={`ff-panel ff-lift inline-flex items-center gap-2 ${RUN_BUTTON}`}>
                 Continue run <PixelIcon name="arrow-right" size={20} />
               </Link>
             </FocusItem>
