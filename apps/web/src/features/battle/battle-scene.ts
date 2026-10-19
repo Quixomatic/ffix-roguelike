@@ -10,17 +10,23 @@ import { playActionEffect, preloadEffects } from "@/features/effects/battle-effe
 import { FfrkEffectPlayer, loadEffect } from "@/features/effects/ffrk-effect";
 
 /**
- * Practice option (admins, dev server: the raw FFRK boss rigs are there): bosses drawn live from their FFRK rig —
- * pieces rotated by the GPU at screen resolution, every frame at 60 fps — instead of the baked sprite sheet.
+ * Live boss animation (Settings; on unless turned off — per device, since it's about the device's performance):
+ * bosses drawn live from their FFRK rig (the `bosses` asset pack) — pieces rotated by the GPU at screen resolution,
+ * every frame at 60 fps — instead of the baked sprite sheet. A rig that doesn't load keeps the sheet, and a battle
+ * whose frame rate stays low drops back to the sheets.
  */
 export const LIVE_BOSSES_KEY = "ffix-live-bosses";
-const liveBosses = () => {
+export function liveBossesOn(): boolean {
   try {
-    return import.meta.env.DEV && localStorage.getItem(LIVE_BOSSES_KEY) === "1";
+    return localStorage.getItem(LIVE_BOSSES_KEY) !== "0";
   } catch {
-    return false;
+    return true;
   }
-};
+}
+const liveBosses = liveBossesOn;
+/** Below this many frames per second for LOW_FPS_MS, a battle drops back to the baked boss sheets. */
+const LOW_FPS = 30;
+const LOW_FPS_MS = 3000;
 import type { Action } from "@/features/input/actions";
 import { PHASER_INPUT, SceneInput } from "@/features/input/scene-input";
 import { preloadStatusLooks, StatusView } from "./status-view";
@@ -244,7 +250,7 @@ export class BattleScene extends Phaser.Scene {
   /** Practice's live boss animation: play one of the rig's tags (idle loops; one-shots return to idle, dead stays). */
   private playLive(v: UnitView, tag: string, loop: boolean) {
     const id = v.ffrk?.rig;
-    if (!id) return;
+    if (!id || this.liveDropped) return;
     void loadEffect(this, `ab/character/boss/${id}/${id}_1.json`).then((asset) => {
       if (!asset || !v.sprite.active || !asset.rig.tag?.[tag]) return;
       v.live?.player.destroy();
@@ -264,6 +270,25 @@ export class BattleScene extends Phaser.Scene {
       v.sprite.setCrop(0, 0, 0, 0);
       this.syncLive(v);
     });
+  }
+
+  /** How long the frame rate has been low while live bosses play; past LOW_FPS_MS this battle uses the sheets. */
+  private lowFpsMs = 0;
+  private liveDropped = false;
+
+  private watchLiveFps(delta: number) {
+    if (this.liveDropped || ![...this.views.values()].some((v) => v.live)) return;
+    this.lowFpsMs = this.game.loop.actualFps < LOW_FPS ? this.lowFpsMs + delta : 0;
+    if (this.lowFpsMs < LOW_FPS_MS) return;
+    // Too slow on this device: back to the baked sheets for the rest of the battle (Settings can turn it off for good).
+    this.liveDropped = true;
+    console.warn(`Live boss animation: ${Math.round(this.game.loop.actualFps)} fps — using the baked sprites for this battle`);
+    for (const v of this.views.values()) {
+      if (!v.live) continue;
+      v.live.player.destroy();
+      v.live = undefined;
+      v.sprite.setCrop();
+    }
   }
 
   /** Keep a live rig on its baked sprite: the sheet's centre → the rig's origin, its scale and fade. */
@@ -336,7 +361,8 @@ export class BattleScene extends Phaser.Scene {
     g.fillRect(x, y, gw * pct, gh);
   }
 
-  update(time: number) {
+  update(time: number, delta: number) {
+    this.watchLiveFps(delta);
     const state = this.bridge.getState();
     // Change Row moves a party member back/forward.
     if (state.units.some((u) => this.views.get(u.id)?.partySlot != null && !!this.views.get(u.id)!.backRow !== !!u.backRow)) {

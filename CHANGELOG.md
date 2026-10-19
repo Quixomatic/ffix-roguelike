@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.11] - 2026-10-18
+
+Bosses animate live from FFRK's own rigs, for everyone.
+
+### Changed
+- **Live boss animation is the default.** Bosses are drawn from their FFRK rig in Phaser: each piece is rotated and scaled by the GPU at screen resolution, every frame at 60 fps. This replaces the baked sprite sheets, whose rotations stepped by whole art pixels at 20 fps and read like tearing.
+  - **Settings → Live boss animation** (On / Off) turns it off on a slow device. It's saved on this device, not the account, since it's about the device's performance.
+  - **Falls back by itself:**
+    - a rig that doesn't load keeps the baked sprite;
+    - a battle running under 30 fps for 3 seconds switches to the baked sprites for the rest of that battle (logged in the console).
+  - Practice's switch is the same setting. It's on by default and no longer dev-only.
+
+### Added
+- **`bosses` asset pack** (`assets:pack bosses`): the in-game bosses' rigs, main sheets and further body sheets at their FFRK paths, so the effect player loads them like any effect. 140 files, 0.9 MB gzipped, loaded at startup with the other sprites. Uploaded to R2.
+
 ## [0.3.10] - 2026-10-18
 
 ### Added

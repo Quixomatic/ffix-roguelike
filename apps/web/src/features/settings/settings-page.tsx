@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { setMusicVolume } from "@/features/audio/music";
 
+import { LIVE_BOSSES_KEY, liveBossesOn } from "@/features/battle/battle-scene";
 import { Panel } from "@/features/gear/character-panels";
 import { trpc } from "@/utils/trpc";
 import { FocusItem } from "@/features/input/focus";
@@ -105,8 +106,42 @@ export function SettingsPage() {
           </div>
           <div className="text-xs opacity-70">Start battles with Auto on (the party picks its own commands).</div>
         </Panel>
+
+        <LiveBossesPanel />
       </div>
     </div>
+  );
+}
+
+/**
+ * Live boss animation: on unless turned off. Kept in this browser, not the account — it's about this device's
+ * performance (a slow battle drops back to the baked sprites on its own too).
+ */
+function LiveBossesPanel() {
+  const [on, setOn] = useState(liveBossesOn);
+  const set = (v: boolean) => {
+    setOn(v);
+    try {
+      localStorage.setItem(LIVE_BOSSES_KEY, v ? "1" : "0");
+    } catch {
+      /* not remembered */
+    }
+  };
+  return (
+    <Panel title="Live boss animation">
+      <div className="flex gap-2">
+        <Choice on={!on} onClick={() => set(false)}>
+          Off
+        </Choice>
+        <Choice on={on} onClick={() => set(true)}>
+          On
+        </Choice>
+      </div>
+      <div className="text-xs opacity-70">
+        Bosses animate live from FFRK's own rigs: smooth, every frame. Turn it off on a slow device. A battle that runs slowly switches to the simpler
+        sprites by itself. Saved on this device.
+      </div>
+    </Panel>
   );
 }
 

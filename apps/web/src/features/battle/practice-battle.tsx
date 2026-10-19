@@ -2,7 +2,7 @@ import { createBattle, encounterNames, encounterUnits, newBuild, partyUnit, TICK
 import { itemByName } from "@ffix-roguelike/game-data";
 import { useMemo, useState } from "react";
 
-import { LIVE_BOSSES_KEY } from "./battle-scene";
+import { LIVE_BOSSES_KEY, liveBossesOn } from "./battle-scene";
 import { BattleView } from "./battle-view";
 import { useBattleScript } from "./use-battle-script";
 import { FocusItem } from "@/features/input/focus";
@@ -18,13 +18,7 @@ interface Props {
 export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   const [round, setRound] = useState(0);
   const [result, setResult] = useState<BattleState | null>(null);
-  const [live, setLive] = useState(() => {
-    try {
-      return localStorage.getItem(LIVE_BOSSES_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
+  const [live, setLive] = useState(liveBossesOn);
   const w = WORLDS[world] ?? WORLDS[0]!;
   const groups = [...w.encounters, ...w.elites, w.boss];
   const group = groups[encounter % groups.length]!;
@@ -108,9 +102,8 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
             New fight
           </button>
         </FocusItem>
-        {import.meta.env.DEV && (
-          // Bosses drawn live from their FFRK rig (dev server: the raw rigs) instead of the baked sprite; restarts the fight.
-          <FocusItem>
+        {/* The same switch as Settings → Live boss animation (this device); restarts the fight to compare. */}
+        <FocusItem>
             <label className="flex cursor-pointer items-center gap-1.5 text-sm" title="Bosses drawn live from their FFRK rig: pieces rotate at screen resolution, at 60 fps">
               <input
                 type="checkbox"
@@ -129,7 +122,6 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
               Live boss animation
             </label>
           </FocusItem>
-        )}
         {result && (
           <span className="text-yellow-200">
             {result.outcome} in {Math.round(result.tick / TICKS_PER_SECOND)}s

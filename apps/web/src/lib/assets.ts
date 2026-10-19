@@ -131,4 +131,4 @@ export async function prunePackCache(): Promise<void> {
 }
 
 /** The packs every session needs before the game renders. */
-export const BOOT_PACKS = ["heroes", "weapons", "items", "ui", "sfx", "enemies", "effects"];
+export const BOOT_PACKS = ["heroes", "weapons", "items", "ui", "sfx", "enemies", "effects", "bosses"];
