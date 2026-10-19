@@ -1,4 +1,4 @@
-import { encounterEnemies, encounterPreview, getEnemy, WORLDS, type MapNode, type NodeKind, type RunState } from "@ffix-roguelike/game-core";
+import { WORLDS, type MapNode, type NodeKind, type RunState } from "@ffix-roguelike/game-core";
 import { Bird, Castle, CircleHelp, Flag, Gem, Hammer, Music, Shield, Skull, Store, Swords, Tent, type LucideIcon } from "lucide-react";
 import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
@@ -18,32 +18,13 @@ const STAGE_FIGURES: Partial<Record<NodeKind, string>> = {
   chocobo: "enemy/npc-chocobo",
 };
 
-/** Distinct sprite keys of these monsters that have an FFRK sheet. */
-const drawable = (ids: string[]) => [...new Set(ids.map((id) => getEnemy(id).sprite))].filter((key) => enemySpriteFor(key));
-
-/**
- * The figures drawn over stages (sprite keys, at most two): the Moogle, Stiltzkin and Chocobo stages' own characters
- * (`STAGE_FIGURES`), and on each battle / elite stage the monsters of a likely group for the stage's depth
- * (`encounterPreview`, seeded by the run and stage so it stays put). Monsters without an FFRK sheet are skipped; when
- * none of the group has one, two from the map's own pool that do (picked by the stage, so it stays put too).
- */
+/** The figures drawn over stages (stage id → sprite keys): the Moogle, Stiltzkin and Chocobo stages' characters. */
 function stagePreviews(run: RunState): Record<string, string[]> {
-  const world = WORLDS[run.world]!;
-  const pools = {
-    battle: drawable(world.encounters.flatMap((g) => encounterEnemies(g))),
-    elite: drawable([...world.elites, ...world.encounters].flatMap((g) => encounterEnemies(g))),
-  };
   const out: Record<string, string[]> = {};
-  run.map.nodes.forEach((n, i) => {
+  for (const n of run.map.nodes) {
     const figure = STAGE_FIGURES[n.kind];
     if (figure && enemySpriteFor(figure)) out[n.id] = [figure];
-    if (n.kind !== "battle" && n.kind !== "elite") return;
-    const seed = `${run.seed}|${run.stage}|${n.id}`;
-    let keys = drawable(encounterPreview(run.world, n.depth, n.kind, seed, run.party.length));
-    const pool = pools[n.kind];
-    if (!keys.length && pool.length) keys = [pool[i % pool.length]!, pool[(i + 1) % pool.length]!];
-    out[n.id] = [...new Set(keys)].slice(0, 2);
-  });
+  }
   return out;
 }
 

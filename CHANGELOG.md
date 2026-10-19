@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.51] - 2026-10-19
+
+### Changed
+- **Battle, elite, shop, synthesis and treasure stages show a badge** from the achievement badge set over their marker. They were picked from the badge catalog (`scripts/badge-catalog.json`), all plain, unframed ones so they match:
+
+  | Stage | Badge |
+  |---|---|
+  | Battle | crossed swords (334) |
+  | Elite | horned demon head (254) |
+  | Shop | Dollar money bag (989) |
+  | Synthesis | iron anvil (442) |
+  | Treasure | treasure chest (210) |
+
+  - They're drawn at ½, which is native pixels at the map's 2× zoom, and stand on the marker by what each badge actually draws.
+  - `STAGE_BADGES` in `map-scene.ts` holds the badge numbers.
+  - The badge atlas is the `badges` boot pack that's already on R2.
+  - Treasure stages had no picture before.
+
+### Removed
+- **The monster previews on battle and elite stages** (v0.3.48–0.3.49). They could show monsters that never turn up in that map's fights. game-core's `encounterPreview` is gone with them.
+- Moogle, Stiltzkin and Chocobo stages keep their FFRK characters. The start, event, fortress and boss stages keep their pictures.
+
 ## [0.3.50] - 2026-10-19
 
 ### Added

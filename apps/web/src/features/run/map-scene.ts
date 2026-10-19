@@ -66,10 +66,25 @@ const NODE_COLOR: Record<NodeKind, number> = {
   boss: 0xb02020,
 };
 
-/** How tall (world px) the monsters over a battle stage stand, whatever their sheet: a little over a tile. */
+/** How tall (world px) the figures over a stage stand, whatever their sheet: a little over a tile. */
 const MONSTER_HEIGHT = 20;
-/** Each monster sheet's figure box (`MapScene.figureBounds`), measured once per page. */
+/** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
 const FIGURE_BOUNDS = new Map<string, { x: number; y: number; w: number; h: number } | null>();
+
+/** The achievement badge atlas (features/hub/badge.tsx: 48 px cells, badge n at frame n − 1; the `badges` pack). */
+const BADGES_KEY = "badges";
+const BADGE_CELL = 48;
+/**
+ * The badge standing over each of these stages (badge numbers, from scripts/badge-catalog.json), all plain ones so
+ * they match. Drawn at ½ (native pixels at the map's 2× zoom).
+ */
+const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
+  battle: 334, // crossed swords
+  elite: 254, // horned demon head
+  shop: 989, // Dollar money bag
+  synth: 442, // iron anvil
+  treasure: 210, // treasure chest
+};
 
 /** Marker sizes (px, even so they centre exactly on a tile's centre): the usual dot, and the bosses'. */
 const MARKER = { w: 12, h: 10 };
@@ -225,6 +240,7 @@ export class MapScene extends Phaser.Scene {
   preload() {
     loadHeroSheets(this, [`hero/${this.bridge.leader}`]);
     loadEnemySheets(this, Object.values(this.bridge.previews ?? {}).flat());
+    if (!this.textures.exists(BADGES_KEY)) this.load.spritesheet(BADGES_KEY, assetUrl("sprites/badges/badges.png"), { frameWidth: BADGE_CELL, frameHeight: BADGE_CELL });
     if (!this.textures.exists(TERRAIN_KEY)) this.load.image(TERRAIN_KEY, assetUrl("sprites/overworld/terrain.png"));
     if (!this.textures.exists(OBJECTS_KEY)) this.load.image(OBJECTS_KEY, assetUrl("sprites/overworld/objects.png"));
   }
@@ -467,7 +483,9 @@ export class MapScene extends Phaser.Scene {
     drawMarker(g, p.x, p.y, size, fill);
     const labelY = p.y + size.h / 2 + 1;
     const alpha = cut ? 0.35 : done ? 0.6 : 1;
-    if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(n, this.bridge.previews[n.id]!, alpha);
+    const badge = STAGE_BADGES[n.kind];
+    if (badge && this.textures.exists(BADGES_KEY)) this.placeBadge(p, badge, alpha);
+    else if (this.bridge.previews?.[n.id]?.length) this.placeMonsters(n, this.bridge.previews[n.id]!, alpha);
     else this.placeStageSprite(n, alpha);
 
     const label = smooth(this.add
@@ -490,16 +508,28 @@ export class MapScene extends Phaser.Scene {
     if (can) hit.on("pointerup", () => !this.dragged && this.clickStage(n.id));
   }
 
+  /** A stage's badge (`STAGE_BADGES`), standing on the marker: centred over it by what the badge actually draws. */
+  private placeBadge(p: { x: number; y: number }, badge: number, alpha: number) {
+    const frame = badge - 1;
+    const box = this.figureBounds(BADGES_KEY, frame) ?? { x: 0, y: 0, w: BADGE_CELL, h: BADGE_CELL };
+    this.add
+      .image(p.x, p.y - 3, BADGES_KEY, frame)
+      .setOrigin((box.x + box.w / 2) / BADGE_CELL, (box.y + box.h) / BADGE_CELL)
+      .setScale(0.5)
+      .setDepth(1.4)
+      .setAlpha(alpha);
+  }
+
   /**
-   * The monsters a battle stage may hold (at most two, `MapBridge.previews`), like the party on the Play page's Party
-   * card: the same height whatever their sheet (scaled by what they actually draw, `figureBounds`), side by side and
-   * overlapping on one baseline just above the marker, the first facing left and the second right, in front of it.
+   * The figures a stage shows (`MapBridge.previews`; at most two), like the party on the Play page's Party card: the
+   * same height whatever their sheet (scaled by what they actually draw, `figureBounds`), side by side and overlapping
+   * on one baseline just above the marker, the first facing left and the second right, in front of it.
    */
   private placeMonsters(n: MapNode, keys: string[], alpha: number) {
     const p = center(this.layout.nodes.get(n.id)!);
     const figures = keys.flatMap((key) => {
       const ffrk = ensureEnemyAnims(this, key);
-      const box = ffrk && this.figureBounds(ffrk.texture);
+      const box = ffrk && this.figureBounds(ffrk.texture, 0);
       if (!ffrk || !box) return [];
       const scale = Math.min(1, MONSTER_HEIGHT / box.h);
       return [{ ...ffrk, box, scale, width: box.w * scale }];
@@ -521,11 +551,12 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
-  /** What a sheet's first frame actually draws (its opaque pixels' box, in frame px), measured once per sheet. */
-  private figureBounds(texture: string): { x: number; y: number; w: number; h: number } | null {
-    const cached = FIGURE_BOUNDS.get(texture);
+  /** What a sheet's frame actually draws (its opaque pixels' box, in frame px), measured once per frame. */
+  private figureBounds(texture: string, frameIndex: number): { x: number; y: number; w: number; h: number } | null {
+    const id = `${texture}#${frameIndex}`;
+    const cached = FIGURE_BOUNDS.get(id);
     if (cached !== undefined) return cached;
-    const frame = this.textures.getFrame(texture, 0);
+    const frame = this.textures.getFrame(texture, frameIndex);
     const source = frame?.source.image as CanvasImageSource | undefined;
     let box: { x: number; y: number; w: number; h: number } | null = null;
     if (frame && source) {
@@ -547,7 +578,7 @@ export class MapScene extends Phaser.Scene {
           }
       if (maxX >= 0) box = { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
     }
-    FIGURE_BOUNDS.set(texture, box);
+    FIGURE_BOUNDS.set(id, box);
     return box;
   }
 
