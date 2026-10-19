@@ -2,6 +2,30 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.24] - 2026-10-19
+
+Relics phase 3 (`.plans/relics-and-synergies.md`): relics in runs.
+
+### Added
+- **Starting relic** on the embark page.
+  - Your unlocked starter relics appear as badge tiles, plus "None". The last pick is remembered, and each tile shows its effects on hover.
+  - The panel also shows the party synergies the chosen party has going in, live as you change the party.
+  - The server checks the relic is unlocked and a starter (`run.start` `relic`).
+- **Relics in every battle:** a run's relics and its party's active synergies become the battle's modifiers (`createBattle({ modifiers })`), so Protect Ring's Protect, Power Wrist's Strength and Summoners' Trance head start all apply.
+- **Relic reward cards.** Boss rewards always include one; fortress (semi-boss) rewards do half the time. It replaces the offer's last card.
+  - It's chosen from your unlocked relics you don't hold, in the area's tier, weighted (`rollRelicCard`).
+  - The card shows its badge, name in rarity colour, "Cursed" when it is, and its effects.
+- **The rack (swap only).**
+  - A run has 3 slots, plus achievements' `relicSlots`.
+  - A relic fills a free slot. When the rack is full, taking one asks which held relic to give up ("Back to the cards" cancels). There's no selling or discarding.
+  - `claim` takes `replace`.
+- **Run sidebar:** the relic rack (badges ringed in rarity colour, then empty slots) and the active synergies, each with what it does on hover.
+- **Metrics:** `relics.taken` (starting relic and cards) and `relics.runs_won` per relic. The relic collection page shows "Taken N×" and "Runs won with it" for unlocked relics, and the Stats page names relic subjects.
+- **Tests:** 5 in `run/relics-run.test.ts` (starting relic rules, battle modifiers from relics and synergies, rack fill/full/swap/duplicate, relic card rolls, boss offers). Game-core: 334 pass, 0 fail.
+
+### Notes
+- A run already in progress has no relics (it started before them); new runs do.
+
 ## [0.3.23] - 2026-10-19
 
 Relics phase 2 (`.plans/relics-and-synergies.md` §3.7): the relic collection page.

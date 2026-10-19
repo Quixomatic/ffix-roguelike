@@ -1,4 +1,4 @@
-import { availableJourneys, encounterNames, getArea, JOURNEYS, MAX_TIER, type JourneyDef } from "@ffix-roguelike/game-core";
+import { activeSynergies, availableJourneys, encounterNames, getArea, JOURNEYS, MAX_TIER, starterRelics, type JourneyDef, type Profile } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PixelIcon } from "@/components/pixel-icon";
+import { Badge } from "@/features/hub/badge";
+import { effectText } from "@/features/hub/relic-text";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 import { FocusItem } from "@/features/input/focus";
@@ -133,6 +135,60 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
 }
 
 const LAST_PARTY = "ffix-mock-last-party";
+/** The last starting relic picked ("" = none). */
+const LAST_RELIC = "ffix-last-relic";
+
+/**
+ * The embark page's starting relic: the player's unlocked starter relics as tiles (or none), and the synergies the
+ * chosen party has going in. `.plans/relics-and-synergies.md`.
+ */
+function StartingRelic({ profile, party, value, onChange }: { profile: Profile; party: string[]; value: string | null | undefined; onChange(id: string | null): void }) {
+  const starters = starterRelics(profile);
+  const synergies = activeSynergies(party);
+  const tile = (id: string | null, body: React.ReactNode, title: string) => (
+    <FocusItem key={id ?? "none"}>
+      <button
+        title={title}
+        onClick={() => onChange(id)}
+        className={`flex w-28 flex-col items-center gap-1 rounded border-2 p-1.5 text-center text-xs ${value === id ? "border-yellow-300 bg-yellow-300/10 text-yellow-200" : "border-white/20 bg-black/25 hover:bg-black/40"}`}
+      >
+        {body}
+      </button>
+    </FocusItem>
+  );
+  return (
+    <div className="ff-panel flex flex-col gap-3 px-5 py-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div className="ff-display text-xl">Starting relic</div>
+        <Link to="/relics" className="text-sm text-[#c8d0ff] hover:underline">
+          Your collection
+        </Link>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {starters.map((r) =>
+          tile(
+            r.id,
+            <>
+              <Badge id={r.badge ?? 1} scale={1} />
+              <span className="leading-tight">{r.name}</span>
+            </>,
+            `${r.name}\n${r.effects.map(effectText).join("\n")}`,
+          ),
+        )}
+        {tile(null, <span className="flex h-10 items-center opacity-70">None</span>, "Start without a relic")}
+      </div>
+      {value && <div className="text-sm text-[#c8d0ff]">{starters.find((r) => r.id === value)?.effects.map(effectText).join(" · ")}</div>}
+      <div className="text-sm">
+        <span className="opacity-80">Party synergies: </span>
+        {synergies.length ? synergies.map(({ synergy, count, tier }) => (
+          <span key={synergy.id} className="mr-2 inline-block rounded bg-sky-900/50 px-1.5 py-0.5 text-xs text-sky-100" title={tier.text}>
+            {synergy.name} {count}: {tier.text}
+          </span>
+        )) : <span className="opacity-60">none with this party</span>}
+      </div>
+    </div>
+  );
+}
 
 /**
  * The in-between page after choosing a journey: the journey and tier, four party slots, and the roster to
@@ -146,6 +202,19 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
   const [party, setParty] = useState<string[] | null>(null);
   /** Asking before a start that would wipe the run in progress. */
   const [confirming, setConfirming] = useState(false);
+  /** The starting relic (an unlocked starter): the last one used, else the first. Null: none. */
+  const [relic, setRelic] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    if (!profile.data || relic !== undefined) return;
+    let last: string | null = null;
+    try {
+      last = localStorage.getItem(LAST_RELIC);
+    } catch {
+      /* not remembered */
+    }
+    const starters = starterRelics(profile.data);
+    setRelic(last === "" ? null : (starters.find((r) => r.id === last) ?? starters[0])?.id ?? null);
+  }, [profile.data, relic]);
   const start = useMutation(
     trpc.run.start.mutationOptions({
       onSuccess: async () => {
@@ -198,7 +267,12 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
     } catch {
       /* not remembered */
     }
-    start.mutate({ party, tier, journey: j.id, replace });
+    try {
+      localStorage.setItem(LAST_RELIC, relic ?? "");
+    } catch {
+      /* not remembered */
+    }
+    start.mutate({ party, tier, journey: j.id, replace, ...(relic && starterRelics(p).some((r) => r.id === relic) ? { relic } : {}) });
   };
   const startClicked = () => (current ? setConfirming(true) : begin(false));
   const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
@@ -283,6 +357,8 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
           </FocusItem>
         </div>
       </div>
+
+      <StartingRelic profile={p} party={party} value={relic} onChange={setRelic} />
       {current && !sameJourney && (
         <div className="text-sm text-pink-200">
           Beginning this run ends your run in progress ({currentJourney?.name ?? "another journey"}, map {current.state.stage + 1}).

@@ -1,5 +1,5 @@
 import { bagValue, getEnemy, METRIC_SECTIONS, METRICS, parseBagKey, type MetricBag, type MetricDef, type Profile } from "@ffix-roguelike/game-core";
-import { findItem, getAction, getCharacter } from "@ffix-roguelike/game-data";
+import { findItem, getAction, getCharacter, relicById } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -24,6 +24,7 @@ function subjectName(def: MetricDef, subject: string): string {
     if (def.subject === "enemy") return getEnemy(subject).name;
     if (def.subject === "item") return findItem(Number(subject))?.name ?? subject;
     if (def.subject === "ability") return getAction(Number(subject)).name;
+    if (def.subject === "relic") return relicById(subject)?.name ?? subject;
   } catch {
     /* unknown: show the id */
   }

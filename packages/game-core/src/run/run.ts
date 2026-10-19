@@ -6,9 +6,10 @@
  * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
  * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
-import { findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
+import { BASE_RELIC_SLOTS, findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, relicById, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
+import { relicModifiers, synergyModifiers } from "../battle/modifiers";
 import type { BattleEvent, BattleState, BattleUnit, InputRecord } from "../battle/types";
 import { battleMetrics, mergeBags, record, type MetricBag } from "../metrics/collect";
 
@@ -140,6 +141,12 @@ export interface RunState {
   rewardBans?: string[];
   /** Wait (time stops while choosing) or Active battles — the player's setting; missing = wait. */
   battleMode?: "wait" | "active";
+  /** Relics held, in rack order (`.plans/relics-and-synergies.md`): their effects apply in every battle. */
+  relics?: string[];
+  /** Rack size for this run (3 + achievements' extra slots, at run start). */
+  relicSlots?: number;
+  /** Relics the player has unlocked (snapshot at run start): what relic cards can offer. */
+  unlockedRelics?: string[];
 }
 
 export interface StartRunInput {
@@ -155,6 +162,12 @@ export interface StartRunInput {
   journey?: string;
   /** Wait or Active battles (default wait). */
   battleMode?: "wait" | "active";
+  /** The starting relic (must be unlocked and a starter). */
+  relic?: string;
+  /** Relics the player has unlocked (game-core meta/relics `unlockedRelics`). */
+  unlockedRelics?: string[];
+  /** Relic rack size (meta/relics `relicSlotCount`; default BASE_RELIC_SLOTS). */
+  relicSlots?: number;
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -234,7 +247,9 @@ export function startRun(input: StartRunInput): RunState {
   const journey = getJourney(input.journey ?? JOURNEYS[0]!.id);
   const firstArea = getArea(journey.areas[0]!).index;
   const map = generateWorldMap(rng.fork("map0"), firstArea);
-  return {
+  const unlockedRelics = [...(input.unlockedRelics ?? [])];
+  if (input.relic && (!unlockedRelics.includes(input.relic) || !relicById(input.relic)?.starter)) throw new RunError("That relic can't start a run");
+  const run: RunState = {
     version: 1,
     seed: input.seed,
     rng: rng.state,
@@ -254,7 +269,12 @@ export function startRun(input: StartRunInput): RunState {
     stats: { battles: 0, bossKills: [], eaten: 0, steals: 0 },
     unlockedGear: [...(input.unlockedGear ?? [])],
     battleMode: input.battleMode ?? "wait",
+    relics: input.relic ? [input.relic] : [],
+    relicSlots: Math.max(1, input.relicSlots ?? BASE_RELIC_SLOTS),
+    unlockedRelics,
   };
+  if (input.relic) track(run, "relics.taken", 1, { subject: input.relic });
+  return run;
 }
 
 function withSupplies(kit: { itemId: number; count: number }[], supplies: Record<number, number>) {
@@ -370,6 +390,8 @@ function startBattle(run: RunState, nodeId: string, nodeKind: BattleNodeKind, en
     canFlee: nodeKind === "battle",
     noSurprise: nodeKind !== "battle",
     bossFight: nodeKind === "boss" || nodeKind === "semiboss",
+    // The run's relics and its party's synergies (the whole run party is the active party: at most four).
+    modifiers: [...relicModifiers(run.relics ?? []), ...synergyModifiers(run.party.map((m) => m.build.key))],
     meta: { gil: run.gil, thefts: run.stats.steals, dragonKills: run.stats.dragonKills ?? 0, tonberryKills: run.stats.tonberryKills ?? 0 },
   });
   run.phase = { kind: "battle", nodeId, nodeKind, enemies, battle };
@@ -511,8 +533,11 @@ function applyRewards(run: RunState, r: { exp: number; ap: number; gil: number; 
   return summary;
 }
 
-/** Take one of the offered gear pieces (or null to skip) and continue. */
-export function claimReward(run: RunState, choice: number | null): RunState {
+/**
+ * Take one of the offered cards / gear pieces (or null to skip) and continue. A relic card when the rack is full needs
+ * `replace`: the held relic it takes the place of.
+ */
+export function claimReward(run: RunState, choice: number | null, replace?: string): RunState {
   const p = run.phase;
   if (p.kind !== "rewards" && p.kind !== "treasure") throw new RunError("No reward to claim");
   let next = structuredClone(run);
@@ -525,7 +550,7 @@ export function claimReward(run: RunState, choice: number | null): RunState {
       const card = p.offer.cards[choice];
       if (!card) throw new RunError("Invalid choice");
       track(next, "rewards.taken", 1, { subject: card.kind });
-      next = applyCard(next, card);
+      next = applyCard(next, card, replace);
     }
   } else if (choice != null) {
     const itemId = p.gearChoices[choice];
@@ -561,9 +586,22 @@ function gainLevels(m: RunMember, levels: number) {
  * Apply a reward card. Gear goes on the member it was for (bound to them; what it replaces goes to the bag), boons
  * stack on the member (or everyone), AP goes to the ability, supplies and gil to the bag.
  */
-export function applyCard(run: RunState, card: RewardCard): RunState {
+export function applyCard(run: RunState, card: RewardCard, replace?: string): RunState {
   let next = structuredClone(run);
   switch (card.kind) {
+    case "relic": {
+      // Into a free slot, or in place of the held relic the player gave up for it (swap only: no selling).
+      const rack = (next.relics ??= []);
+      if (rack.includes(card.relicId)) throw new RunError("You already have that relic");
+      if (rack.length < (next.relicSlots ?? BASE_RELIC_SLOTS)) rack.push(card.relicId);
+      else {
+        const at = replace ? rack.indexOf(replace) : -1;
+        if (at < 0) throw new RunError("Your relics are full: choose one to give up");
+        rack[at] = card.relicId;
+      }
+      track(next, "relics.taken", 1, { subject: card.relicId });
+      return next;
+    }
     case "gear": {
       const uid = next.nextUid++;
       next.gear.push({ uid, itemId: card.itemId, secured: false, holder: null, boundTo: card.key });

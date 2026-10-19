@@ -63,10 +63,12 @@ export const runRouter = router({
         journey: z.string().default("evil-forest"),
         /** Wipe the run in progress (if any) and start this one. */
         replace: z.boolean().default(false),
+        /** The starting relic (an unlocked starter relic). */
+        relic: z.string().max(60).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey, input.replace);
+      const row = await startRun(ctx.db, ctx.session.user.id, input.party, input.tier, input.journey, input.replace, input.relic);
       return { id: row.id };
     }),
 
@@ -77,7 +79,10 @@ export const runRouter = router({
     act(ctx.db, ctx.session.user.id, (r) => finishBattle(r, input.inputs as InputRecord[]), { battleInputs: input.inputs as InputRecord[] }),
   ),
 
-  claim: protectedProcedure.input(z.object({ choice: z.number().int().min(0).nullable() })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => claimReward(r, input.choice))),
+  /** Take a reward card (or null to skip); `replace`: the relic a relic card takes the place of when the rack is full. */
+  claim: protectedProcedure
+    .input(z.object({ choice: z.number().int().min(0).nullable(), replace: z.string().max(60).optional() }))
+    .mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => claimReward(r, input.choice, input.replace))),
   buy: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => buy(r, input.index))),
   synthesize: protectedProcedure
     .input(z.object({ recipeId: z.number().int().min(0) }))

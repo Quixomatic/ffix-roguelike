@@ -191,7 +191,7 @@ function single(key: string, value: number, character: string, subject?: string)
 }
 
 /** A finished run's metrics: finished / won / lost by journey, for the player and each member, and levels gained. */
-export function runEndMetrics(o: { journey: string; won: boolean; tier: number; gilEarned: number; builds: CharacterBuild[]; startLevels: Record<string, number> }): MetricBag {
+export function runEndMetrics(o: { journey: string; won: boolean; tier: number; gilEarned: number; builds: CharacterBuild[]; startLevels: Record<string, number>; relics?: string[] }): MetricBag {
   const bag: MetricBag = {};
   const outcome = o.won ? "runs.won" : "runs.lost";
   for (const key of ["runs.finished", outcome]) {
@@ -199,6 +199,7 @@ export function runEndMetrics(o: { journey: string; won: boolean; tier: number; 
     for (const b of o.builds) for (const [kk, v] of Object.entries(single(key, 1, b.key, o.journey))) bag[kk] = (bag[kk] ?? 0) + v;
   }
   if (o.won) record(bag, "runs.best_tier", o.tier);
+  if (o.won) for (const id of o.relics ?? []) record(bag, "relics.runs_won", 1, { subject: id });
   record(bag, "runs.gil_earned", o.gilEarned);
   for (const b of o.builds) record(bag, "levels.gained", Math.max(0, b.level - (o.startLevels[b.key] ?? b.level)), { character: b.key });
   return bag;

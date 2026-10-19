@@ -9,6 +9,7 @@ import { FocusItem } from "@/features/input/focus";
 import { MENU_EVENT } from "@/features/input/nav";
 
 import { itemEffectText, itemName } from "./item-info";
+import { RelicRack } from "./relic-rack";
 import { boonText } from "./reward-cards";
 import type { RunActions } from "./use-run";
 
@@ -68,6 +69,10 @@ export function PartySidebar({
           <div className="ff-title text-xs">Gil</div>
           <div className="tabular-nums text-yellow-200">{run.gil}</div>
         </div>
+      </div>
+      {/* Relics held (and empty slots), and the party's active synergies. */}
+      <div className="ff-window px-3 py-2">
+        <RelicRack run={run} compact />
       </div>
       {canManage && (
         <div className="grid grid-cols-3 gap-1 text-sm">

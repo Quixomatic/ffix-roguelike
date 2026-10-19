@@ -1,5 +1,5 @@
-import { achievement, achievementProgress, relicSlotCount, relicUnlocked, type Profile } from "@ffix-roguelike/game-core";
-import { rarityOf, relicTable, synergyTable, type ModifierEffect, type RelicData } from "@ffix-roguelike/game-data";
+import { achievement, achievementProgress, bagValue, relicSlotCount, relicUnlocked, type Profile } from "@ffix-roguelike/game-core";
+import { rarityOf, relicTable, type RelicData } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -7,51 +7,11 @@ import { FocusItem } from "@/features/input/focus";
 import { trpc } from "@/utils/trpc";
 
 import { Badge } from "./badge";
+import { effectText, tagName } from "./relic-text";
 
 /** FF9's card collector levels, by how much of the collection is unlocked. */
 const COLLECTOR_RANKS = ["Beginner", "Novice", "Player", "Collector", "Expert", "Veteran", "Champion", "Master"];
 const collectorRank = (have: number, total: number) => COLLECTOR_RANKS[Math.min(COLLECTOR_RANKS.length - 1, Math.floor((have / Math.max(1, total)) * (COLLECTOR_RANKS.length - 1)))]!;
-
-const STAT_LABEL: Record<string, string> = {
-  strength: "Strength",
-  magic: "Magic",
-  spirit: "Spirit",
-  speed: "Speed",
-  attack: "Attack",
-  defence: "Defence",
-  magicDefence: "Magic Defence",
-  evade: "Evade",
-  magicEvade: "Magic Evade",
-};
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-
-/** Who an effect covers, in words ("" for the whole party). */
-function scopeText(e: ModifierEffect): string {
-  const s = e.scope;
-  if (!s || s.kind === "party") return "";
-  if (s.kind === "character") return ` (${cap(s.character)})`;
-  const synergy = synergyTable().find((x) => x.tag === s.tag);
-  return ` (${synergy?.name ?? cap(s.tag)} members)`;
-}
-
-/** One effect in plain words. */
-export function effectText(e: ModifierEffect): string {
-  const who = scopeText(e);
-  switch (e.kind) {
-    case "stat":
-      return `${e.pct > 0 ? "+" : ""}${e.pct}% ${STAT_LABEL[e.stat] ?? e.stat}${who}`;
-    case "startStatus":
-      return `Start battles with ${cap(e.status)}${who}`;
-    case "trance":
-      return `Trance starts ${e.startPct}% full${who}`;
-    case "steal":
-      return `Steal chances +${e.ratePct}%${who}`;
-    case "mpDiscount":
-      return `Abilities cost ${e.pct}% less MP${who}`;
-    case "onKill":
-      return `A killing blow restores ${[e.hpPct ? `${e.hpPct}% HP` : "", e.mpPct ? `${e.mpPct}% MP` : ""].filter(Boolean).join(" and ")}${who}`;
-  }
-}
 
 type Filter = "all" | "unlocked" | "locked" | "starter";
 const FILTERS: { id: Filter; label: string }[] = [
@@ -169,8 +129,16 @@ function RelicDetail({ relic: r, unlocked, profile }: { relic: RelicData; unlock
               <li key={i}>• {effectText(e)}</li>
             ))}
           </ul>
-          {synergies.length > 0 && <div className="text-xs opacity-70">Works with: {[...new Set(synergies)].map((t) => synergyTable().find((s) => s.tag === t)?.name ?? cap(t)).join(", ")}</div>}
+          {synergies.length > 0 && <div className="text-xs opacity-70">Works with: {[...new Set(synergies)].map(tagName).join(", ")}</div>}
           {r.flavor && <div className="text-sm italic opacity-80">“{r.flavor}”</div>}
+          <div className="flex gap-4 border-t border-white/10 pt-2 text-xs opacity-80">
+            <span>
+              Taken <span className="tabular-nums text-yellow-200">{bagValue(profile?.metrics, "relics.taken", { subject: r.id })}</span>×
+            </span>
+            <span>
+              Runs won with it <span className="tabular-nums text-yellow-200">{bagValue(profile?.metrics, "relics.runs_won", { subject: r.id })}</span>
+            </span>
+          </div>
         </>
       ) : (
         <div className="flex flex-col gap-2 text-sm">

@@ -12,6 +12,7 @@ import {
   itemByName,
   rarityOf,
   RARITIES,
+  relicById,
   rewardTables,
   sourceOf,
   type AbilityRef,
@@ -44,7 +45,28 @@ export type RewardCard =
   | { kind: "boon"; rarity: RarityId; /** null: the whole party. */ key: string | null; boonId: string; name: string; stat: BoonStat; amount: number }
   | { kind: "ap"; rarity: RarityId; key: string; ref: AbilityRef; amount: number }
   | { kind: "supplies"; rarity: RarityId; itemId: number; count: number }
-  | { kind: "gil"; rarity: RarityId; amount: number };
+  | { kind: "gil"; rarity: RarityId; amount: number }
+  /** A relic for the run's rack (its rarity is the relic's own). */
+  | { kind: "relic"; rarity: RarityId; relicId: string; name: string };
+
+/** Chance (percent) a boss / fortress (semi-boss) reward offer includes a relic card, when there's a relic to offer. */
+export const RELIC_CARD_CHANCE: Partial<Record<RewardSourceId, number>> = { boss: 100, semiboss: 50 };
+
+/**
+ * A relic the run could be offered: unlocked (the run's snapshot), not already held, in tier for this area, weighted
+ * by its `weight`. Null when there's none left.
+ */
+export function rollRelicCard(run: RunState, rng: Rng): RewardCard | null {
+  const tier = WORLDS[run.world]!.tier;
+  const held = new Set(run.relics ?? []);
+  const options = (run.unlockedRelics ?? []).flatMap((id) => {
+    const r = relicById(id);
+    return r && !held.has(r.id) && r.minTier <= tier && r.weight > 0 ? [r] : [];
+  });
+  if (!options.length) return null;
+  const r = rng.weighted(options.map((x) => ({ weight: x.weight, value: x })));
+  return { kind: "relic", rarity: r.rarity, relicId: r.id, name: r.name };
+}
 
 export interface RewardOffer {
   source: RewardSourceId;
@@ -172,6 +194,11 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
       card = make(type, rarity);
     }
     cards.push(card ?? gilCard(rarity));
+  }
+  // Bosses (always) and fortresses (sometimes) offer a relic too: it takes the last card's place.
+  if (cards.length && rng.chance(RELIC_CARD_CHANCE[source] ?? 0)) {
+    const relic = rollRelicCard(run, rng);
+    if (relic) cards[cards.length - 1] = relic;
   }
   return { source, cards, skipGil: src.skipGil * mult };
 }

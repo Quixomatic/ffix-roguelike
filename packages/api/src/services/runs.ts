@@ -9,7 +9,9 @@ import {
   bagDelta,
   mergeBags,
   record,
+  relicSlotCount,
   runEndMetrics,
+  unlockedRelics,
   upgradeRunState,
   campSupplies,
   startingSupplies,
@@ -39,7 +41,7 @@ export function toTrpcError(e: unknown): never {
  * Start a run. With a run already going, `replace` wipes it first (it ends as ABANDONED, nothing folded into the
  * profile — like starting over in Pokelike); without it, the request is refused so a run is never lost by accident.
  */
-export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string, replace = false) {
+export async function startRun(db: Database, userId: string, partyKeys: string[], tier: number, journey: string, replace = false, relic?: string) {
   const loaded = await loadProfile(db, userId);
   const { id: profileId, profile } = loaded;
   const current = await getActiveRun(db, profileId);
@@ -64,6 +66,10 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
       unlockedGear: profile.gearUnlocked ?? [],
       journey,
       battleMode: loaded.battleMode === "ACTIVE" ? "active" : "wait",
+      // The starting relic is checked against what's unlocked (and a starter) by the run rules.
+      relic,
+      unlockedRelics: unlockedRelics(profile).map((r) => r.id),
+      relicSlots: relicSlotCount(profile),
     });
   } catch (e) {
     toTrpcError(e);
@@ -110,6 +116,7 @@ export async function act(
       gilEarned: outcome.gilEarned,
       builds: after.party.map((m) => m.build),
       startLevels: Object.fromEntries(Object.entries(profile.builds).map(([k, b]) => [k, b.level])),
+      relics: after.relics ?? [],
     });
     // A won run extends the streak of runs won before it (most recent first).
     if (won) {

@@ -7,7 +7,7 @@
 
 export type MetricAgg = "sum" | "max" | "min";
 /** What a metric's subject names: `enemies.killed` / `goblin`, `items.used` / `236`… */
-export type MetricSubject = "enemy" | "item" | "ability" | "status" | "journey" | "stage" | "event" | "card";
+export type MetricSubject = "enemy" | "item" | "ability" | "status" | "journey" | "stage" | "event" | "card" | "relic";
 export type MetricSection = "battles" | "combat" | "support" | "runs" | "bosses" | "camp";
 
 export interface MetricDef {
@@ -77,6 +77,8 @@ export const METRICS: MetricDef[] = [
   m("gear.synthesized", "Synthesized", "Items made at synthesis shops.", "runs", "sum", false, { subject: "item" }),
   m("gear.sold", "Gear sold", "Gear sold in runs.", "runs", "sum", false),
   m("gear.sell_gil", "Gil from selling", "Gil from gear sold in runs.", "runs", "sum", false),
+  m("relics.taken", "Relics taken", "Relics taken in runs (the starting relic and reward cards), by relic.", "runs", "sum", false, { subject: "relic" }),
+  m("relics.runs_won", "Runs won with a relic", "Runs won holding each relic.", "runs", "sum", false, { subject: "relic" }),
   m("events.chosen", "Event choices", "Choices made at ? events, by event.", "runs", "sum", false, { subject: "event" }),
   m("chocobo.digs", "Chocobo digs", "Spots dug in Chocobo Hot & Cold.", "runs", "sum", false),
   m("rewards.taken", "Reward cards taken", "Reward cards taken, by kind (gear, boon, AP…).", "runs", "sum", false, { subject: "card" }),

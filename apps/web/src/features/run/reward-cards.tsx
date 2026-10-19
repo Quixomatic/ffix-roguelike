@@ -1,6 +1,9 @@
 import { apCost, gearChange, type RewardCard, type RewardOffer, type RunState } from "@ffix-roguelike/game-core";
-import { abilityName, getCharacter, getItem, RARITIES, rarityOf, type RarityId } from "@ffix-roguelike/game-data";
+import { abilityName, BASE_RELIC_SLOTS, getCharacter, getItem, RARITIES, rarityOf, relicById, type RarityId } from "@ffix-roguelike/game-data";
+import { useState } from "react";
 
+import { Badge } from "@/features/hub/badge";
+import { effectText } from "@/features/hub/relic-text";
 import { FocusItem } from "@/features/input/focus";
 import { DeltaChips } from "@/features/gear/gear-delta";
 import { ItemIcon } from "@/features/items/item-icon";
@@ -61,6 +64,47 @@ export const boonText = (stat: string, amount: number) => (stat.endsWith("Pct") 
  */
 export function RewardOfferView({ run, offer, actions }: { run: RunState; offer: RewardOffer; actions: RunActions }) {
   const pending = actions.claim.isPending;
+  /** A relic card picked while the rack is full: which held relic to give up for it. */
+  const [swapFor, setSwapFor] = useState<number | null>(null);
+  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? BASE_RELIC_SLOTS);
+  const take = (i: number) => {
+    if (offer.cards[i]?.kind === "relic" && rackFull) setSwapFor(i);
+    else actions.claim.mutate({ choice: i });
+  };
+  if (swapFor != null) {
+    const incoming = offer.cards[swapFor];
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="ff-title text-center text-base">Your relics are full: give one up for {incoming?.kind === "relic" ? incoming.name : "it"}</div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {(run.relics ?? []).map((id, i) => {
+            const r = relicById(id);
+            return (
+              <FocusItem key={id} defaultFocus={i === 0}>
+                <button
+                  className="ff-window ff-lift flex items-center gap-2 p-2 text-left disabled:opacity-60"
+                  disabled={pending}
+                  data-sound="purchase"
+                  onClick={() => actions.claim.mutate({ choice: swapFor, replace: id })}
+                >
+                  <Badge id={r?.badge ?? 1} scale={1} />
+                  <span className="min-w-0">
+                    <span className="block truncate">{r?.name ?? id}</span>
+                    <span className="block text-xs opacity-70">{r?.effects.map(effectText).join(" · ")}</span>
+                  </span>
+                </button>
+              </FocusItem>
+            );
+          })}
+        </div>
+        <FocusItem>
+          <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => setSwapFor(null)}>
+            Back to the cards
+          </button>
+        </FocusItem>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-3">
       <div className="ff-title text-center text-base">Choose one</div>
@@ -72,7 +116,7 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
               style={{ borderColor: rarityOf(card.rarity).color }}
               disabled={pending}
               data-sound="purchase"
-              onClick={() => actions.claim.mutate({ choice: i })}
+              onClick={() => take(i)}
             >
               <CardBody run={run} card={card} />
             </button>
@@ -102,7 +146,7 @@ function CardBody({ run, card }: { run: RunState; card: RewardCard }) {
   const rarity = rarityOf(card.rarity);
   const head = (
     <div className="flex items-center justify-between gap-2">
-      {"key" in card ? <Who keyName={card.key} /> : <span className="ff-display text-base">Supplies</span>}
+      {"key" in card ? <Who keyName={card.key} /> : <span className="ff-display text-base">{card.kind === "relic" ? "Relic" : "Supplies"}</span>}
       <span className="text-xs font-bold uppercase tracking-wide" style={{ color: rarity.color }}>
         {rarity.name}
       </span>
@@ -183,5 +227,27 @@ function CardBody({ run, card }: { run: RunState; card: RewardCard }) {
           <div className="text-xl text-yellow-200">+{card.amount} gil</div>
         </>
       );
+    case "relic": {
+      const r = relicById(card.relicId);
+      return (
+        <>
+          {head}
+          <div className="flex items-center gap-2">
+            <Badge id={r?.badge ?? 1} scale={1} />
+            <span className="min-w-0">
+              <span className="ff-display block truncate text-xl" style={{ color: rarity.color }}>
+                {card.name}
+              </span>
+              <span className="text-xs opacity-70">{r?.cursed ? "Cursed · " : ""}For the rest of the run</span>
+            </span>
+          </div>
+          <ul className="flex flex-col gap-0.5 text-sm text-[#c8d0ff]">
+            {r?.effects.map((e, i) => (
+              <li key={i}>• {effectText(e)}</li>
+            ))}
+          </ul>
+        </>
+      );
+    }
   }
 }
