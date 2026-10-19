@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.27] - 2026-10-19
+
+### Changed
+- **Embark page: the party card is laid out top to bottom.**
+  - The "Party" heading is on top, then the four slots in a centred row.
+  - The run buttons (Begin run, or Continue run + New run) are centred and float half on, half off the card's bottom edge, with room below so nothing overlaps.
+
 ## [0.3.26] - 2026-10-19
 
 ### Changed

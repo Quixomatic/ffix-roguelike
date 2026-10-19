@@ -329,9 +329,10 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
         </div>
       </div>
 
-      <div className="ff-panel flex flex-wrap items-center gap-4 px-5 py-4">
-        <div className="ff-display mr-2 text-xl">Party</div>
-        <div className="flex flex-1 flex-wrap gap-3">
+      {/* The party: heading, the four slots, and the run buttons straddling the card's bottom edge (room below for them). */}
+      <div className="ff-panel relative mb-7 flex flex-col gap-3 px-5 pb-12 pt-4">
+        <div className="ff-display text-xl">Party</div>
+        <div className="flex flex-wrap justify-center gap-3">
           {Array.from({ length: 4 }, (_, i) => {
             const k = party[i];
             return (
@@ -354,7 +355,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             );
           })}
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="absolute inset-x-0 bottom-0 flex translate-y-1/2 items-center justify-center gap-3 px-5">
           {sameJourney && (
             <FocusItem>
               <Link to="/run" className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl">
