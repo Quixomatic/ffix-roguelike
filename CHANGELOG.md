@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.63] - 2026-10-19
+
+### Changed
+- **The stage characters stand a smidge lower:** their feet rest 3 px below the dot's centre (`FIGURE_FEET`). v0.3.62 put them at the centre, which read as too high; the bottom edge, before that, was too low.
+
 ## [0.3.62] - 2026-10-19
 
 ### Changed
