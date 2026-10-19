@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.20] - 2026-10-19
+
+### Changed
+- **The badge atlas is no longer in git.** `public/sprites/badges/` is git-ignored like `public/sfx/` and the music. It's built locally from the bought badge set (`pnpm -F web sprites:badges`) and reaches players only through the `badges` asset pack on R2. The local copy stays as `assets:pack`'s source and the no-R2 dev fallback. The catalog of names and tags (`scripts/badge-catalog.json`) stays committed, since it's our data, not the art. Git history still has the v0.3.19 copy.
+
 ## [0.3.19] - 2026-10-19
 
 ### Added
