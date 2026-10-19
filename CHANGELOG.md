@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.28] - 2026-10-19
+
+### Changed
+- **Embark page run buttons:** the main action is always on the right: Continue run when this journey has a run in progress, else Begin run. New run sits to its left. Both are now the same medium size (Continue run was oversized). The cursor lands on the main action when you arrive.
+
 ## [0.3.27] - 2026-10-19
 
 ### Changed

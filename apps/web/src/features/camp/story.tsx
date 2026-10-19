@@ -136,6 +136,8 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
 }
 
 const LAST_PARTY = "ffix-mock-last-party";
+/** The embark page's run buttons (Begin / New / Continue run): all one size. */
+const RUN_BUTTON = "px-6 py-2 text-xl";
 /** The last starting relic picked ("" = none). */
 const LAST_RELIC = "ffix-last-relic";
 
@@ -355,30 +357,31 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
             );
           })}
         </div>
+        {/* The main action (Continue run, else Begin run) on the right; New run to its left. One size for both. Arriving
+            on the page lands on the main one: pick a party with the cursor afterwards, or just go. */}
         <div className="absolute inset-x-0 bottom-0 flex translate-y-1/2 items-center justify-center gap-3 px-5">
-          {sameJourney && (
-            <FocusItem>
-              <Link to="/run" className="ff-panel ff-lift inline-flex items-center gap-2 px-8 py-3 text-2xl">
-                Continue run <PixelIcon name="arrow-right" size={32} />
-              </Link>
-            </FocusItem>
-          )}
-          {/* Arriving on the page lands here: pick a party with the cursor afterwards, or just go. */}
-          <FocusItem defaultFocus>
+          <FocusItem defaultFocus={!sameJourney}>
             <button
               onClick={startClicked}
               disabled={!party.length || start.isPending}
-              className={`ff-panel ff-lift inline-flex items-center gap-2 disabled:pointer-events-none disabled:opacity-50 ${sameJourney ? "px-5 py-1.5 text-lg" : "px-8 py-3 text-2xl"}`}
+              className={`ff-panel ff-lift inline-flex items-center gap-2 disabled:pointer-events-none disabled:opacity-50 ${RUN_BUTTON}`}
             >
               {start.isPending ? (
                 "Setting out…"
               ) : (
                 <>
-                  {sameJourney ? "New run" : "Begin run"} <PixelIcon name="arrow-right" size={sameJourney ? 16 : 32} />
+                  {sameJourney ? "New run" : "Begin run"} <PixelIcon name="arrow-right" size={20} />
                 </>
               )}
             </button>
           </FocusItem>
+          {sameJourney && (
+            <FocusItem defaultFocus>
+              <Link to="/run" className={`ff-panel ff-lift inline-flex items-center gap-2 ${RUN_BUTTON}`}>
+                Continue run <PixelIcon name="arrow-right" size={20} />
+              </Link>
+            </FocusItem>
+          )}
         </div>
       </div>
 
