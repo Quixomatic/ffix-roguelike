@@ -4,7 +4,7 @@ import type { EnemySpriteInfo } from "./enemy-sprites";
 export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  "abadon": {
   "url": "/sprites/enemies/boss-209058.png",
-  "w": 119,
+  "w": 104,
   "h": 104,
   "originX": 62,
   "originY": 93,
@@ -226,10 +226,10 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "amdusias": {
   "url": "/sprites/enemies/boss-209057.png",
-  "w": 124,
-  "h": 151,
+  "w": 112,
+  "h": 121,
   "originX": 56,
-  "originY": 145,
+  "originY": 115,
   "anims": {
    "idle": {
     "frames": [
@@ -420,9 +420,9 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  "ark": {
   "url": "/sprites/enemies/boss-209020.png",
   "w": 167,
-  "h": 330,
+  "h": 148,
   "originX": 78,
-  "originY": 339,
+  "originY": 157,
   "anims": {
    "idle": {
     "frames": [
@@ -958,10 +958,10 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "black-widow": {
   "url": "/sprites/enemies/boss-227035.png",
-  "w": 128,
-  "h": 254,
-  "originX": 54,
-  "originY": 248,
+  "w": 82,
+  "h": 52,
+  "originX": 43,
+  "originY": 48,
   "anims": {
    "idle": {
     "frames": [
@@ -1423,9 +1423,9 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  "deathguise": {
   "url": "/sprites/enemies/boss-209036.png",
   "w": 125,
-  "h": 281,
+  "h": 111,
   "originX": 61,
-  "originY": 278,
+  "originY": 108,
   "anims": {
    "idle": {
     "frames": [
@@ -3086,10 +3086,10 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "meltigemini": {
   "url": "/sprites/enemies/boss-209022.png",
-  "w": 90,
-  "h": 90,
-  "originX": 51,
-  "originY": 77,
+  "w": 60,
+  "h": 47,
+  "originX": 26,
+  "originY": 34,
   "anims": {
    "idle": {
     "frames": [
@@ -3886,7 +3886,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "ragtime-mouse": {
   "url": "/sprites/enemies/boss-209069.png",
-  "w": 66,
+  "w": 65,
   "h": 69,
   "originX": 36,
   "originY": 66,
@@ -3976,9 +3976,9 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "ralvuimago": {
   "url": "/sprites/enemies/boss-209015.png",
-  "w": 90,
-  "h": 83,
-  "originX": 45,
+  "w": 79,
+  "h": 77,
+  "originX": 36,
   "originY": 63,
   "anims": {
    "idle": {
@@ -4756,8 +4756,8 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
  },
  "taharka": {
   "url": "/sprites/enemies/boss-209023.png",
-  "w": 114,
-  "h": 100,
+  "w": 111,
+  "h": 78,
   "originX": 51,
   "originY": 81,
   "anims": {

@@ -2,6 +2,23 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.9] - 2026-10-18
+
+### Fixed
+- **Bosses drew a frozen copy of themselves over the animation**, which looked like screen tearing (well spotted). FFRK rigs switch whole groups on and off on their timeline. The entrance animation, which FFRK's battle engine plays first, hides alternate forms; Black Waltz 1's transformed body is one. The sprite builder ignored those switches, so the still second form sat on top of the moving one: Black Waltz 1 drew 24 pieces, two whole bodies.
+  - **`visibilityAt(rig, tag, frame)`** (`ffrk-anim.ts`): the switches made by the entrance (`in`) plus the current animation up to the frame. `poseAt` / `evalRig` take it, and the sprite builder uses it for every pose.
+  - **18 boss sprites change**: Black Waltz 1, Ark and Deathguise (the long-known "both forms at once"), Ralvuimago, Meltigemini, Taharka, Earth Guardian, Garland, Maliris, Tiamat, Red Dragon, Amdusias, Abadon, Shell Dragon, Ragtime Mouse, Zaghnol, Adamantoise and Black Widow.
+  - The `enemies` pack is rebuilt and uploaded to R2.
+
+### Added
+- **`sprites:enemies --scale N --step N --out <dir>`**: trial bakes at N× detail and 60/N fps into a scratch folder, reporting the sheets' size (raw and gzipped). The game's sprite data is left alone. Measured, the whole monster set gzipped (today: 1×, 20 fps = 15.0 MB):
+  - 2× detail at 20 fps: 22.2 MB
+  - 3× detail at 20 fps: 29.0 MB (3 sheets taller than 4096 px)
+  - 3× detail at 30 fps: 41.3 MB (4 sheets taller than 4096 px)
+  - 1× detail at 60 fps: 36.0 MB
+  - 2× detail at 60 fps: 57.4 MB
+- `.docs/ffrk-assets.md`: timeline visibility and rigs with several sheets.
+
 ## [0.3.8] - 2026-10-18
 
 ### Fixed

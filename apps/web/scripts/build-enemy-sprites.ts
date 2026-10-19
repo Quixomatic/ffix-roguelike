@@ -19,14 +19,25 @@ import { fileURLToPath } from "node:url";
 
 import { PNG } from "pngjs";
 
-import { poseAt, poseBounds, type DrawPart, type Rig } from "../src/features/sprites/ffrk-anim";
+import { poseAt, poseBounds, visibilityAt, type DrawPart, type Rig } from "../src/features/sprites/ffrk-anim";
 import { ENEMY_SPRITE_MAP } from "./enemy-sprite-map";
 import { renderPose, type Atlas, type SheetLookup } from "./lib/render-rig";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RAW = join(HERE, "..", "..", "..", ".docs", "assets", "FFRK-data", "_raw");
-const OUT_DIR = join(HERE, "..", "public", "sprites", "enemies");
 const GEN = join(HERE, "..", "src", "features", "sprites", "enemy-sprites.gen.ts");
+
+/**
+ * Options for trying other bakes without touching what ships: `--scale N` renders boss poses at N× detail (rotated
+ * pieces step by 1/N of an art pixel), `--step N` keeps every Nth rig frame (60 / N fps), `--out <dir>` writes the sheets
+ * there instead (and leaves enemy-sprites.gen.ts alone). E.g. `bun scripts/build-enemy-sprites.ts --scale 3 --step 2
+ * --out .assets/trial` then compare the folder's size.
+ */
+const argv = process.argv.slice(2);
+const opt = (name: string) => (argv.includes(name) ? argv[argv.indexOf(name) + 1] : undefined);
+const SCALE = Math.max(1, Number(opt("--scale") ?? 1));
+const TRIAL = opt("--out");
+const OUT_DIR = TRIAL ? join(process.cwd(), TRIAL) : join(HERE, "..", "public", "sprites", "enemies");
 
 /** Boss animations rendered (rig tag → our name), every STEP-th rig frame (rigs run at 60 fps). */
 const BOSS_ANIMS: { name: string; tags: string[]; repeat: boolean }[] = [
@@ -35,7 +46,7 @@ const BOSS_ANIMS: { name: string; tags: string[]; repeat: boolean }[] = [
   { name: "damage", tags: ["damage"], repeat: false },
   { name: "dead", tags: ["dead"], repeat: false },
 ];
-const STEP = 3;
+const STEP = Math.max(1, Number(opt("--step") ?? 3));
 const MAX_SHEET_W = 4096;
 
 interface FrameRect {
@@ -146,19 +157,22 @@ for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
       for (const a of BOSS_ANIMS) {
         const tag = a.tags.map((t) => rig.tag[t]).find(Boolean);
         if (!tag) continue;
-        for (let f = tag[0]; f <= tag[1]; f += STEP) poses.push({ anim: a.name, parts: poseAt(rig, f) });
+        // With the rig's own visibility switches (its entrance hides alternate forms; the tag may switch more).
+        const tagName = a.tags.find((t) => rig.tag[t])!;
+        for (let f = tag[0]; f <= tag[1]; f += STEP) poses.push({ anim: a.name, parts: poseAt(rig, f, visibilityAt(rig, tagName, f)) });
       }
       const boxes = poses.map((p) => poseBounds(p.parts)).filter((b) => Number.isFinite(b.minX));
       const minX = Math.floor(Math.min(...boxes.map((b) => b.minX))) - 1;
       const minY = Math.floor(Math.min(...boxes.map((b) => b.minY))) - 1;
-      const w = Math.ceil(Math.max(...boxes.map((b) => b.maxX))) + 1 - minX;
-      const h = Math.ceil(Math.max(...boxes.map((b) => b.maxY))) + 1 - minY;
+      const w = (Math.ceil(Math.max(...boxes.map((b) => b.maxX))) + 1 - minX) * SCALE;
+      const h = (Math.ceil(Math.max(...boxes.map((b) => b.maxY))) + 1 - minY) * SCALE;
       const cols = Math.max(1, Math.min(poses.length, Math.floor(MAX_SHEET_W / w)));
       const grid = new PNG({ width: cols * w, height: Math.ceil(poses.length / cols) * h });
       const anims: GenInfo["anims"] = {};
       poses.forEach((p, i) => {
-        // Render with a fixed frame of reference: pad each pose out to the shared box.
-        const shifted = p.parts.map((q) => ({ ...q, m: [q.m[0], q.m[1], q.m[2], q.m[3], q.m[4] - minX, q.m[5] - minY] as DrawPart["m"] }));
+        // Render with a fixed frame of reference: pad each pose out to the shared box (at SCALE× detail).
+        const k = SCALE;
+        const shifted = p.parts.map((q) => ({ ...q, m: [q.m[0] * k, q.m[1] * k, q.m[2] * k, q.m[3] * k, (q.m[4] - minX) * k, (q.m[5] - minY) * k] as DrawPart["m"] }));
         const anchor: DrawPart = { node: "", packerid: "", w: 1, h: 1, m: [1, 0, 0, 1, 0, 0], alpha: 0, tint: [1, 1, 1], blend: "alpha" };
         const corner: DrawPart = { ...anchor, m: [1, 0, 0, 1, w - 1, h - 1] };
         const { png } = renderPose([anchor, corner, ...shifted], sheetOf, undefined, 0);
@@ -173,6 +187,22 @@ for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
   }
   out[name] = { ...info, src: source.src };
 }
+
+if (TRIAL) {
+  // A trial bake: report the sheets' size (raw and gzipped, as the asset pack ships them); leave the game's data alone.
+  const { readdirSync, statSync } = await import("node:fs");
+  const { gzipSync } = await import("node:zlib");
+  let raw = 0;
+  let gz = 0;
+  for (const f of readdirSync(OUT_DIR).filter((x) => x.endsWith(".png"))) {
+    const buf = readFileSync(join(OUT_DIR, f));
+    raw += statSync(join(OUT_DIR, f)).size;
+    gz += gzipSync(buf).length;
+  }
+  console.log(`✓ trial (scale ${SCALE}, every ${STEP} frame${STEP > 1 ? "s" : ""} = ${60 / STEP} fps): ${built.size} sheets, ${(raw / 1e6).toFixed(1)} MB → ${(gz / 1e6).toFixed(1)} MB gz in ${OUT_DIR}`);
+  process.exit(0);
+}
+if (SCALE !== 1) throw new Error("--scale needs --out (the game's sprite data assumes native pixels)");
 
 writeFileSync(
   GEN,

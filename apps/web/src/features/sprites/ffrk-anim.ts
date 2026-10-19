@@ -196,15 +196,35 @@ const mul = (p: M, q: M): M => [p[0] * q[0] + p[2] * q[1], p[1] * q[0] + p[3] * 
  * so the origin is the character's own and the art is at its native pixel size. Verified against FFRK's own
  * composited boss stills (Plant Brain, Gizamaluke, Hades).
  */
-export function poseAt(rig: Rig, frame: number): DrawPart[] {
-  return evalRig(rig, frame).parts.filter((p) => p.packerid);
+export function poseAt(rig: Rig, frame: number, visible?: ReadonlyMap<string, boolean>): DrawPart[] {
+  return evalRig(rig, frame, undefined, visible).parts.filter((p) => p.packerid);
+}
+
+/**
+ * Which nodes the rig's own timeline has switched on or off (`action_setVisible`) by `frame` of `tag`: first the
+ * entrance ("in" — the battle engine plays it when the monster appears, and it hides alternate forms such as Black
+ * Waltz 1's transformed body), then the tag's own switches up to the frame. Pass it to `poseAt` / `evalRig`; nodes it
+ * doesn't name keep their `visible` attribute.
+ */
+export function visibilityAt(rig: Rig, tag: string | null, frame: number): Map<string, boolean> {
+  const vis = new Map<string, boolean>();
+  const acts = (rig.action ?? []).filter((a) => a.actionName === "action_setVisible" && typeof a.node === "string").sort((a, b) => a.frame - b.frame);
+  const apply = (from: number, to: number) => {
+    for (const a of acts) if (a.frame >= from && a.frame <= to) vis.set(a.node as string, String(a.visible) === "true");
+  };
+  const entrance = rig.tag?.in;
+  if (entrance) apply(entrance[0], entrance[1]);
+  const range = tag ? rig.tag?.[tag] : undefined;
+  if (range && tag !== "in") apply(range[0], Math.min(frame, range[1]));
+  return vis;
 }
 
 /**
  * Evaluate every drawable node of the rig at `frame` (see `poseAt` for the conventions). `linked` returns the rig an
- * `abjson` node links to (already loaded); without it, linked rigs aren't drawn.
+ * `abjson` node links to (already loaded); without it, linked rigs aren't drawn. `visible` overrides nodes' visibility
+ * (`visibilityAt`: the switches the rig's timeline has made).
  */
-export function evalRig(rig: Rig, frame: number, linked?: (url: string) => Rig | undefined): RigEval {
+export function evalRig(rig: Rig, frame: number, linked?: (url: string) => Rig | undefined, visible?: ReadonlyMap<string, boolean>): RigEval {
   const out: DrawPart[] = [];
   const sprites: SpriteNode[] = [];
   const emitters: EmitterNode[] = [];
@@ -218,8 +238,10 @@ export function evalRig(rig: Rig, frame: number, linked?: (url: string) => Rig |
       for (const ch of n.children ?? []) walk(ch, parent, alpha, tint, false, f, fps);
       return;
     }
-    // "*visible*" group nodes start hidden and are switched on by the battle engine; everything else obeys.
-    if (a.visible === false && !/visible/.test(n.name)) return;
+    // The rig's timeline switches (entrance, current tag) win; otherwise "*visible*" group nodes start hidden and are
+    // switched on by the battle engine, and everything else obeys its attribute.
+    const switched = visible?.get(n.name);
+    if (switched === false || (switched === undefined && a.visible === false && !/visible/.test(n.name))) return;
     const [fx, fy, w, h] = a.frame ?? [0, 0, 0, 0];
     const x = curveAt(an.posX, frame, fx);
     const y = curveAt(an.posY, frame, fy);
