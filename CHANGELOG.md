@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.54] - 2026-10-19
+
+### Changed
+- **Stage badges are one standard size: 24 px tall** (a tile and a half, `BADGE_HEIGHT`). Each is scaled by what it actually draws, so every stage's badge stands the same height. At their own size (v0.3.52) they were 32–40 px, far too big beside the 12 px markers.
+
 ## [0.3.53] - 2026-10-19
 
 ### Changed

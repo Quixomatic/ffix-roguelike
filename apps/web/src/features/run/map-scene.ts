@@ -77,9 +77,11 @@ const FIGURE_GAP = 3;
 /** The achievement badge atlas (features/hub/badge.tsx: 48 px cells, badge n at frame n − 1; the `badges` pack). */
 const BADGES_KEY = "badges";
 const BADGE_CELL = 48;
+/** How tall (world px) a stage's badge stands: a tile and a half. */
+const BADGE_HEIGHT = 24;
 /**
  * The badge standing over each of these stages (badge numbers, from scripts/badge-catalog.json), all plain ones so
- * they match. Drawn at their own size, standing FIGURE_GAP above the marker.
+ * they match. Each is scaled to BADGE_HEIGHT by what it actually draws, standing FIGURE_GAP above the marker.
  */
 const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 997, // Crossed swords over shield
@@ -515,7 +517,7 @@ export class MapScene extends Phaser.Scene {
 
   /**
    * A stage's badge (`STAGE_BADGES`), its bottom at `y` (above the marker) and centred on `x`, by what the badge
-   * actually draws, at its own size.
+   * actually draws, scaled to BADGE_HEIGHT.
    */
   private placeBadge(x: number, y: number, badge: number, alpha: number) {
     const frame = badge - 1;
@@ -523,6 +525,7 @@ export class MapScene extends Phaser.Scene {
     this.add
       .image(x, y, BADGES_KEY, frame)
       .setOrigin((box.x + box.w / 2) / BADGE_CELL, (box.y + box.h) / BADGE_CELL)
+      .setScale(BADGE_HEIGHT / box.h)
       .setDepth(1.4)
       .setAlpha(alpha);
   }
