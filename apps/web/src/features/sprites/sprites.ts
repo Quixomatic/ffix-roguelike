@@ -4,6 +4,7 @@
  * everything else gets a pixel-art stand-in from `ensurePlaceholder`, so real art drops in by registering a
  * texture with the same key — no game code changes.
  */
+import type { MapTheme } from "@ffix-roguelike/game-core";
 import type Phaser from "phaser";
 
 import { assetUrl } from "@/lib/assets";
@@ -99,7 +100,8 @@ export function ensureHeroAnims(scene: Phaser.Scene, spriteKey: string): boolean
   return true;
 }
 
-const THEMES: Record<string, [number, number, number]> = {
+/** Battle background per area theme: sky, ground, deep ground. */
+export const THEMES: Record<string, [number, number, number]> = {
   grassland: [0x7ec0ee, 0x4f9a3a, 0x2f6a24],
   castle: [0x3a3f6a, 0x6a6a7a, 0x3a3a44],
   ruin: [0x6a2a2a, 0x7a5a3a, 0x3a2a1a],
@@ -107,7 +109,12 @@ const THEMES: Record<string, [number, number, number]> = {
   ice: [0x9ac8e8, 0xc8e0f0, 0x7aa0c0],
   cave: [0x2a2420, 0x5a4a3a, 0x2a2018],
   marsh: [0x6a8a7a, 0x5a7a4a, 0x2a4a3a],
-};
+  desert: [0xf0c878, 0xd8a850, 0x8a6a2a],
+  volcano: [0x5a1a10, 0x6a4a3a, 0x2a1410],
+  coast: [0x8ad0f0, 0xe8d8a0, 0x3a8ab0],
+  town: [0x8ac8f0, 0x6aa84a, 0x8a7a5a],
+  crystal: [0x1a1a3a, 0x7a8ab8, 0x2a2a5a],
+} satisfies Record<MapTheme, [number, number, number]>;
 
 export function drawBattleBackground(scene: Phaser.Scene, theme: string, w: number, h: number) {
   const [sky, ground, deep] = THEMES[theme] ?? THEMES.grassland!;

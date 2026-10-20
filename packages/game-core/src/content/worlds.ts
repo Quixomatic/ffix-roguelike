@@ -2,6 +2,14 @@
  * Areas: one overworld map each — theme, encounter tables, a semi-boss partway along, the end boss, and the loot
  * tier (gear band, FF9 shops, synthesis tier). Journeys (below) say which areas a run visits.
  */
+
+/**
+ * Area themes: the overworld's terrain and colours and the battle background (web `map/terrain.ts`, `map-scene.ts`,
+ * `sprites/sprites.ts` each have a row per theme).
+ */
+export const MAP_THEMES = ["grassland", "forest", "castle", "ice", "cave", "marsh", "ruin", "desert", "volcano", "coast", "town", "crystal"] as const;
+export type MapTheme = (typeof MAP_THEMES)[number];
+
 export interface WorldDef {
   /** Position in WORLDS. */
   index: number;
@@ -14,7 +22,7 @@ export interface WorldDef {
   name: string;
   subtitle: string;
   /** Background/tileset key for the overworld and battles. */
-  theme: string;
+  theme: MapTheme;
   /** Normal encounter groups: enemy ids, or an FF9 battle scene ("@EF_R004") whose spawn pattern is rolled like FF9. */
   encounters: string[][];
   /** Elite ("fortress") encounters. */

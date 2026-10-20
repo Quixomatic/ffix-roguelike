@@ -3,7 +3,7 @@
  * them with the camera zoomed in and following. Layout/routing is pure data from `./map/layout` (derived from
  * the run's WorldMap, which stays untouched); this scene only draws it and handles input.
  */
-import type { MapNode, NodeKind, WorldMap } from "@ffix-roguelike/game-core";
+import type { MapNode, MapTheme, NodeKind, WorldMap } from "@ffix-roguelike/game-core";
 import Phaser from "phaser";
 
 import type { Action } from "@/features/input/actions";
@@ -154,7 +154,12 @@ const THEME_COLORS: Record<string, { ground: number; dark: number; path: number;
   ice: { ground: 0xbcd8e8, dark: 0x8ab0c8, path: 0x6a8aa8, accent: 0x4a6a9a },
   cave: { ground: 0x5a4a3a, dark: 0x3a2e24, path: 0xb89a6a, accent: 0x2a2a3a },
   marsh: { ground: 0x5a7a4a, dark: 0x3a5a3a, path: 0xc8b890, accent: 0x4a8a8a },
-};
+  desert: { ground: 0xe8c060, dark: 0xb08a3a, path: 0x8a5a2a, accent: 0xf0d890 },
+  volcano: { ground: 0x6a6a6a, dark: 0x3a2a2a, path: 0xe8a040, accent: 0xd84a1a },
+  coast: { ground: 0x7ac04a, dark: 0x2a7ab0, path: 0xf0e0a0, accent: 0x3ac0e0 },
+  town: { ground: 0x7ac04a, dark: 0x4a8a3a, path: 0xe0c890, accent: 0xc87a3a },
+  crystal: { ground: 0x6a6a7a, dark: 0x2a2a4a, path: 0xc8e8f8, accent: 0x8a6ad8 },
+} satisfies Record<MapTheme, { ground: number; dark: number; path: number; accent: number }>;
 
 const OPEN_PATH = 0xfff2a8;
 const WALKED_PATH = 0x8a6a3a;

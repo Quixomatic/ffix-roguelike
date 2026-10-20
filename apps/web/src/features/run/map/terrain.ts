@@ -4,6 +4,8 @@
  * stage and road (and a tile around them), so the roads and stages always read. The same map always gets the same
  * scenery (seeded by its stages).
  */
+import type { MapTheme } from "@ffix-roguelike/game-core";
+
 import { autotileShape, FULL_SHAPE, neighboursOf } from "./autotile";
 import type { MapLayout } from "./layout";
 import { autotileBase, type AutotileName } from "./tileset-catalog";
@@ -18,7 +20,7 @@ interface ThemeTerrain {
   scenery: { cover: number; tiles: { tile: AutotileName; weight: number }[] };
 }
 
-/** Per area theme (content/worlds.ts `theme`). */
+/** Per area theme (content/worlds.ts `theme`; every one of `MAP_THEMES` has a row). */
 export const THEME_TERRAIN: Record<string, ThemeTerrain> = {
   grassland: { ground: "grass", water: { tile: "waterGrass", cover: 0.07 }, scenery: { cover: 0.3, tiles: [{ tile: "forestGreen", weight: 3 }, { tile: "forestDense", weight: 1 }] } },
   forest: { ground: "grassDark", water: { tile: "waterGrass", cover: 0.04 }, scenery: { cover: 0.6, tiles: [{ tile: "forestDense", weight: 3 }, { tile: "pines", weight: 1 }] } },
@@ -27,7 +29,17 @@ export const THEME_TERRAIN: Record<string, ThemeTerrain> = {
   cave: { ground: "stone", water: { tile: "lavaPool", cover: 0.05 }, scenery: { cover: 0.3, tiles: [{ tile: "pinesDark", weight: 2 }, { tile: "pinesDead", weight: 1 }] } },
   marsh: { ground: "grassDarker", water: { tile: "waterGrass", cover: 0.2 }, scenery: { cover: 0.3, tiles: [{ tile: "forestDense", weight: 2 }, { tile: "pinesDead", weight: 1 }] } },
   ruin: { ground: "rockySand", water: { tile: "waterSand", cover: 0.04 }, scenery: { cover: 0.22, tiles: [{ tile: "pinesDead", weight: 2 }, { tile: "cactus", weight: 1 }] } },
-};
+  // Plain sand with cactus stands, palm oases by a little water, and rock fields (rocky sand's edges are sand too).
+  desert: { ground: "dirt", water: { tile: "waterSand", cover: 0.03 }, scenery: { cover: 0.25, tiles: [{ tile: "cactus", weight: 3 }, { tile: "rockySand", weight: 2 }, { tile: "palms", weight: 1 }] } },
+  // Grey rock, lava pools, and the burning pines.
+  volcano: { ground: "stone", water: { tile: "lavaPool", cover: 0.12 }, scenery: { cover: 0.35, tiles: [{ tile: "pinesVolcanic", weight: 3 }, { tile: "pinesDark", weight: 1 }] } },
+  // Sea with sandy beaches over light grass, and palms.
+  coast: { ground: "grassLight", water: { tile: "waterSand", cover: 0.35 }, scenery: { cover: 0.2, tiles: [{ tile: "palms", weight: 2 }, { tile: "forestGreen", weight: 1 }] } },
+  // Tended land: light grass, ponds, orchards and autumn trees, thinly.
+  town: { ground: "grassLight", water: { tile: "waterGrass", cover: 0.05 }, scenery: { cover: 0.18, tiles: [{ tile: "forestGreen", weight: 2 }, { tile: "forestAutumn", weight: 1 }, { tile: "forestPink", weight: 1 }] } },
+  // Stone under ice-crystal spires (the frozen pines), blue and purple growth (no crystal tiles in the set: a stand-in).
+  crystal: { ground: "stone", water: { tile: "ice", cover: 0.08 }, scenery: { cover: 0.4, tiles: [{ tile: "pinesFrozen", weight: 2 }, { tile: "forestBlue", weight: 1 }, { tile: "pinesPurple", weight: 1 }] } },
+} satisfies Record<MapTheme, ThemeTerrain>;
 
 /**
  * Smooth seeded value noise (0–1): random values on a lattice every `scale` tiles, blended smoothly between, plus a

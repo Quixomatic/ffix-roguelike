@@ -6,6 +6,8 @@ import { Panel } from "@/features/gear/character-panels";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
+import { ThemePreview } from "./theme-preview";
+
 const ROSTER = [...MAIN_CAST, "beatrix", "blank"];
 
 /** Dev/admin tools (development only): roster unlocks, Completion Points and banked gil on your own profile. */
@@ -96,6 +98,10 @@ export function DevPage() {
           </Panel>
         </div>
         <div className="text-xs opacity-60">Roster changes apply to the next run you start (a run in progress keeps its party).</div>
+      </div>
+
+      <div className="ff-window p-3">
+        <ThemePreview />
       </div>
     </div>
   );

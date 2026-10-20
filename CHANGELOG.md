@@ -2,6 +2,22 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.71] - 2026-10-20
+
+Journeys groundwork, step 7 (`.plans/journeys-full-story.md`): five new area themes for the Disc 2–4 journeys.
+
+### Added
+- **Map themes: desert, volcano, coast, town and crystal**, each with its overworld terrain, map colours and battle background, from tiles already in the `overworld` pack (nothing to upload):
+  - **Desert:** plain sand, cactus stands, rock fields and a few palms, small oases.
+  - **Volcano:** grey stone, lava pools, burning pines.
+  - **Coast:** light grass, sea with sandy beaches, palms.
+  - **Town:** light grass, ponds, orchard and autumn trees, kept sparse.
+  - **Crystal:** stone, ice pools, frozen spires with blue and purple trees. The tileset has no crystal tiles, so this is a stand-in.
+- **Admin → Dev tools → Map themes:** a generated map in any theme ("Another map" for a new layout) and that theme's battle background, to look at a theme before any area uses it.
+
+### Changed
+- **Area themes are a fixed list** (game-core `MAP_THEMES`, `MapTheme`; `WorldDef.theme`). The terrain, map colour and battle background tables must each have a row for every theme, so a misspelt or missing theme fails the type check instead of quietly falling back to grassland.
+
 ## [0.3.70] - 2026-10-19
 
 Journeys groundwork, steps 4–6 (`.plans/journeys-full-story.md`): progression tiers 0–5, gear pools for new areas, separate kill keys.
