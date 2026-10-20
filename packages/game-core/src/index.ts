@@ -21,6 +21,7 @@ export * from "./meta/profile";
 export * from "./run/specials";
 export * from "./meta/achievements";
 export * from "./meta/relics";
+export * from "./meta/expected";
 export * from "./metrics/registry";
 export * from "./metrics/collect";
 export * from "./rewards/upgrade";

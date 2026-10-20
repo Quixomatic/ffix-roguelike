@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.76] - 2026-10-20
+
+Expected gear and abilities for Practice and the sim, so fights and journeys can be judged at a realistic gearing. Until now both used starting gear with nothing learned. FF9's damage is driven by weapon power, not level, so a Lv50 party with its starting Dagger still hit for under 100.
+
+### Added
+- **Expected loadouts** (game-core `meta/expected.ts`):
+  - **Areas reached:** the story areas usually played at or below a level (`areaPartyLevel`: about 1.5× an area's strongest regular monster, at most that + 15, since FF9's monsters sit well below the party). Side journeys don't count: their shops follow the crossovers, not the story's gear curve.
+  - **Expected gear** (`expectedBuild(key, level, { gear })`): every slot open, the best piece per slot from those areas' FF9 shops, picked by the reward cards' role-weighted upgrade score.
+  - **Expected abilities** (`{ abilities }`): everything that gear and the starting gear teach the character is mastered, and support abilities are switched on within the magic-stone budget, the useful ones first (Auto-Haste, Auto-Regen, HP+…).
+  - `withExpectedLoadouts(run, opts)`: a run's party in its expected loadouts.
+  - Neither option: the starting gear, as a fresh run.
+- **Practice → "Expected gear" and "Expected abilities"** switches (on by default, remembered on this device). The fight restarts with the party in the loadout expected at the chosen level.
+- **`pnpm sim battle | balance | run … --gear expected --abilities expected`**: the same for the sim. Runs refresh the loadout at each new map at the party's current level.
+- Tests (`meta/expected.test.ts`): off = starting gear; the pool only grows with level; expected gear is from the pool and no weaker than the starting gear; taught abilities mastered, supports within the stones. Game-core: 490 pass, 0 fail.
+
+### Notes
+- What it changes: Cleyra (journey 8), sim party at start Lv20, 4 runs. Starting gear: lost on the first map every time (still at start Lv26). Expected gear and abilities: won 2 of 4, beating Antlion and Beatrix II.
+- The pool follows the story's areas, so it grows with each new journey's shops.
+
 ## [0.3.75] - 2026-10-20
 
 Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 8, Cleyra; the Journeys page becomes full-width rows; and battles that end with FF9's "the enemy fled" take the fleeing enemies off the field.

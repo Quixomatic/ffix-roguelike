@@ -9,6 +9,10 @@
  *   pnpm sim rewards [--source boss] [--world 4] [--party zidane,vivi,steiner] [--level 8] [--n 200]
  *                    — what reward offers look like (card kinds, rarities, gear quality, boons, fallbacks)
  *
+ * battle / balance / run also take `--gear expected` and `--abilities expected`: the party wears the best gear the story's
+ * shops sell by its level, and has mastered what that gear teaches with supports on (meta/expected.ts), instead of
+ * starting gear with nothing learned. Runs refresh it at each new map.
+ *
  * `battle` is interactive: when a party member is ready you type a command (or pipe/script them):
  *   a <target>                attack            e.g. `a e0`
  *   s <ability> [target|all]  ability by name   e.g. `s fire e1`, `s cure p0`, `s fira all`
@@ -30,7 +34,6 @@ import {
   encounterUnits,
   isSceneRef,
   rollSceneGroup,
-  starterGear,
   TICKS_PER_SECOND,
   availableJourneys,
   JOURNEYS,
@@ -63,7 +66,10 @@ import {
   UNLOCKABLE_SLOTS,
   unlockSlot,
   WORLDS,
+  expectedBuild,
+  withExpectedLoadouts,
   type BattleCommand,
+  type ExpectedOptions,
   type BattleEvent,
   type BattleState,
   type BattleUnit,
@@ -89,6 +95,13 @@ for (let i = 0; i < rest.length; i++) {
   }
 }
 const num = (k: string, d: number) => (args[k] ? Number(args[k]) : d);
+/**
+ * `--gear expected` / `--abilities expected` (battle, balance, run): the party wears and knows what a party at its level
+ * can be expected to (meta/expected.ts) instead of starting gear with nothing learned. Runs refresh it at each new map.
+ */
+const expected: ExpectedOptions = { gear: args.gear === "expected", abilities: args.abilities === "expected" };
+/** A party member at a level, with the expected loadout when asked (else starting gear, as a fresh run). */
+const simBuild = (key: string, level: number) => expectedBuild(key, level, expected);
 const list = (k: string, d: string) => (args[k] ?? d).split(",").map((s) => s.trim()).filter(Boolean);
 
 const c = {
@@ -201,8 +214,7 @@ function parseCommand(e: BattleEngine, actor: BattleUnit, line: string): BattleC
 async function battleCmd() {
   const party = list("party", "zidane:5,vivi:5,steiner:5").map((p, i) => {
     const [key, lv] = p.split(":");
-    const b = newBuild(key!, Number(lv ?? 5));
-    return partyUnit({ ...b, equipment: starterGear(b) }, i);
+    return partyUnit(simBuild(key!, Number(lv ?? 5)), i);
   });
   const world = num("world", 0);
   const enemyIds = list("enemies", WORLDS[world]!.encounters[0]!.join(","));
@@ -298,10 +310,7 @@ function balanceCmd() {
         let wins = 0;
         let secs = 0;
         for (let i = 0; i < n; i++) {
-          const party = keys.map((k, j) => {
-            const b = newBuild(k, lv);
-            return partyUnit({ ...b, equipment: starterGear(b) }, j);
-          });
+          const party = keys.map((k, j) => partyUnit(simBuild(k, lv), j));
           // FF9 scenes roll their group like a real run would (same party-size cap).
           const cap = keys.length <= 1 ? 1 : keys.length + 1;
           const rolled = g.map((t) => (isSceneRef(t) && !t.includes("#") ? rollSceneGroup(Rng.fromSeed(`bal:${i}`), t, kind === "boss" ? 8 : cap) : t));
@@ -369,6 +378,8 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
       case "worldClear":
         say(c.green(`== ${WORLDS[run.world]!.name} cleared ==`));
         run = nextWorld(run);
+        // Expected loadouts follow the party's level into each new map.
+        run = withExpectedLoadouts(run, expected);
         break;
       default:
         run = leave(run);
@@ -383,7 +394,7 @@ function runCmd() {
   const slots = list("slots", "");
   const party = keys.map((k) => ({ ...profile.builds[k]!, level: num("level", 1), unlockedSlots: slots as never }));
   const seed = args.seed ?? `run-${Date.now()}`;
-  const run = playRun(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? JOURNEYS[0]!.id }), seed, true);
+  const run = playRun(withExpectedLoadouts(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? JOURNEYS[0]!.id }), expected), seed, true);
   const won = run.phase.kind === "over" && run.phase.won;
   console.log(c.bold(`\n${won ? "WON" : "LOST"} in ${WORLDS[run.world]!.name} · ${run.stats.battles} wins · levels ${run.party.map((m) => `${m.build.key}:${m.build.level}`).join(" ")}`));
 }

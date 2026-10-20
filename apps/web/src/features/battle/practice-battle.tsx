@@ -2,7 +2,7 @@ import {
   createBattle,
   encounterNames,
   encounterUnits,
-  newBuild,
+  expectedBuild,
   partyUnit,
   relicModifiers,
   synergyModifiers,
@@ -23,6 +23,18 @@ import { FocusItem } from "@/features/input/focus";
 /** Practice's party. */
 const PARTY = ["zidane", "vivi", "steiner", "garnet"] as const;
 
+/** The expected-loadout switches (this device): gear and abilities a party at the chosen level can be expected to have. */
+const EXPECTED_KEY = "ffix-practice-expected";
+function loadExpected(): { gear: boolean; abilities: boolean } {
+  try {
+    const v = JSON.parse(localStorage.getItem(EXPECTED_KEY) ?? "null") as { gear?: boolean; abilities?: boolean } | null;
+    if (v) return { gear: v.gear !== false, abilities: v.abilities !== false };
+  } catch {
+    /* not remembered */
+  }
+  return { gear: true, abilities: true };
+}
+
 interface Props {
   world: number;
   level: number;
@@ -38,6 +50,18 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   /** Relics to try in the fight (any relic, unlocked or not): they apply like a run's, with the party's synergies. */
   const [relics, setRelics] = useState<string[]>([]);
   const [picking, setPicking] = useState(false);
+  /** Expected gear / abilities for the party's level (meta/expected.ts), instead of starting gear and nothing learned. */
+  const [expected, setExpected] = useState(loadExpected);
+  const toggleExpected = (k: "gear" | "abilities") => {
+    const next = { ...expected, [k]: !expected[k] };
+    setExpected(next);
+    try {
+      localStorage.setItem(EXPECTED_KEY, JSON.stringify(next));
+    } catch {
+      /* not remembered */
+    }
+    setResult(null);
+  };
   const w = WORLDS[world] ?? WORLDS[0]!;
   const groups = [...w.encounters, ...w.elites, w.boss];
   const group = groups[encounter % groups.length]!;
@@ -49,7 +73,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
     if (!scriptReady) return null;
     return createBattle({
         seed: Date.now() >>> 0,
-        party: PARTY.map((k, i) => partyUnit(newBuild(k, level), i)),
+        party: PARTY.map((k, i) => partyUnit(expectedBuild(k, level, expected), i)),
         // The picked relics and the party's synergies, as in a run.
         modifiers: [...relicModifiers(relics), ...synergyModifiers([...PARTY])],
         enemies: structuredClone(foes.units),
@@ -67,7 +91,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   },
     // A new round re-rolls the seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [world, level, encounter, round, scriptReady, relics],
+    [world, level, encounter, round, scriptReady, relics, expected],
   );
   const toggleRelic = (id: string) => {
     setResult(null);
@@ -149,6 +173,20 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
               Live boss animation
             </label>
           </FocusItem>
+        {/* What a party at this level can be expected to wear and know (story areas reached by it); off = starting gear,
+            nothing learned. */}
+        <FocusItem>
+          <label className="flex cursor-pointer items-center gap-1.5 text-sm" title="The best gear the story's shops sell by this level, in every slot">
+            <input type="checkbox" checked={expected.gear} onChange={() => toggleExpected("gear")} />
+            Expected gear
+          </label>
+        </FocusItem>
+        <FocusItem>
+          <label className="flex cursor-pointer items-center gap-1.5 text-sm" title="Everything that gear teaches mastered, with support abilities on within the magic stones">
+            <input type="checkbox" checked={expected.abilities} onChange={() => toggleExpected("abilities")} />
+            Expected abilities
+          </label>
+        </FocusItem>
         <FocusItem>
           <button className="ff-option" onClick={() => setPicking(!picking)}>
             Relics{relics.length ? ` (${relics.length})` : ""}
@@ -186,7 +224,7 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
       )}
       <div className="min-h-0 flex-1">
         {initial ? (
-          <BattleView key={`${world}-${level}-${encounter}-${round}-${relics.join(",")}`} initial={initial} theme={w.theme} onEnd={setResult} />
+          <BattleView key={`${world}-${level}-${encounter}-${round}-${relics.join(",")}-${expected.gear}-${expected.abilities}`} initial={initial} theme={w.theme} onEnd={setResult} />
         ) : (
           <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
         )}
