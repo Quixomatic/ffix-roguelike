@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.1] - 2026-10-20
+
+### Added
+- **Settings from anywhere.** A round ⚙ button sits under the menu button on every hub page, runs and battles included (signed in only). It opens Settings as a game dialog over whatever you're doing.
+  - **Same panels as the Settings page:** avatar, controller, battle mode and speed, music and sound volumes, auto battle, live boss animation, fonts. Saving shows in the dialog's header.
+  - **Controls:** the dialog has the keyboard / controller cursor while open. Escape / B, ✕ or clicking outside closes it and hands the controls back to the map or battle.
+  - **`/settings`** still works as a page. Both share one set of panels (`SettingsPanels`, `SettingsDialog` in `features/settings/settings-page.tsx`).
+
+### Notes
+- In Active battle mode, monsters keep acting while the dialog is open, as they do while a command menu is open. In Wait mode, time stops while you choose.
+- Game-core: 987 pass, 0 fail.
+
 ## [0.4.0] - 2026-10-20
 
 Version 0.4: journey groupings (several journeys as one run), challenge runs across whole discs and the whole story, achievement notifications, and more of FF9's own sounds.

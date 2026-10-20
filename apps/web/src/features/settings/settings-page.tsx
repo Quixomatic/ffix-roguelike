@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { GameDialog } from "@/components/game-dialog";
 import { setMusicVolume } from "@/features/audio/music";
 
 import { LIVE_BOSSES_KEY, liveBossesOn } from "@/features/battle/battle-scene";
@@ -16,7 +17,36 @@ import { useSettings, type Settings } from "./use-settings";
 
 /** General settings: menu font, battle presentation, battle mode. Saved to the player's account. */
 export function SettingsPage() {
-  const { settings, update, saving } = useSettings();
+  const { saving } = useSettings();
+  return (
+    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-4">
+      <div className="ff-window flex items-center justify-between p-3">
+        <span className="ff-display text-2xl">Settings</span>
+        <span className="text-sm opacity-70">{saving ? "Saving…" : "Saved to your account"}</span>
+      </div>
+      <div className="ff-window p-3">
+        <SettingsPanels />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Settings from anywhere (the floating ⚙ under the menu button, runs and battles included): the same panels in the
+ * game's dialog window. It takes the controls while open; Escape / B closes it.
+ */
+export function SettingsDialog({ onClose }: { onClose(): void }) {
+  const { saving } = useSettings();
+  return (
+    <GameDialog title="Settings" headerRight={<span className="text-sm opacity-70">{saving ? "Saving…" : "Saved to your account"}</span>} onClose={onClose}>
+      <SettingsPanels />
+    </GameDialog>
+  );
+}
+
+/** Every setting, as panels in a grid (the Settings page and the Settings dialog). */
+function SettingsPanels() {
+  const { settings, update } = useSettings();
   const qc = useQueryClient();
   const profile = useQuery(trpc.profile.get.queryOptions());
   const battleMode = useMutation(
@@ -28,13 +58,7 @@ export function SettingsPage() {
   const mode = profile.data?.battleMode ?? "WAIT";
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-3 p-4">
-      <div className="ff-window flex items-center justify-between p-3">
-        <span className="ff-display text-2xl">Settings</span>
-        <span className="text-sm opacity-70">{saving ? "Saving…" : "Saved to your account"}</span>
-      </div>
-
-      <div className="ff-window grid gap-3 p-3 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         <AvatarPanel />
 
         <ControllerPanel />
@@ -116,7 +140,6 @@ export function SettingsPage() {
           </div>
         </Panel>
       </div>
-    </div>
   );
 }
 

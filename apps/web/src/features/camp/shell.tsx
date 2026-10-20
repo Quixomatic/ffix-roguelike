@@ -14,6 +14,7 @@ import { DEFAULT_FOCUS, FocusItem, FocusSection } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
 import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
+import { SettingsDialog } from "@/features/settings/settings-page";
 import { authClient, isAdminUser } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
@@ -123,6 +124,8 @@ export function HubShell() {
   const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
+  const { data: session } = authClient.useSession();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   // Each page is its own focus section, keyed by path so a new page starts the cursor on its first item.
   const path = useRouterState({ select: (s) => s.location.pathname });
   // Where the cursor lands on arriving: the control the address names (`?focus=`, carried over from the last page — e.g.
@@ -180,6 +183,21 @@ export function HubShell() {
             <Menu className="size-5" />
           </button>
         </FocusItem>
+        {/* Settings from anywhere (runs and battles too): a dialog, under the menu button. Signed in only. */}
+        {session && (
+          <FocusItem>
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Settings"
+              title="Settings"
+              className={`ff-panel ff-lift absolute z-30 flex size-10 items-center justify-center rounded-full ${menuInset ? "left-7 top-[4.75rem]" : "left-3 top-[3.75rem]"}`}
+            >
+              <Settings className="size-5" />
+            </button>
+          </FocusItem>
+        )}
+        {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
         {quickLinks && <QuickLinks />}
         {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
         <FocusSection focusKey={CONTENT_FOCUS} preferredChild={landOn}>
