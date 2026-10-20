@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "check-fast": "bun check",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "bun ../../scripts/dev-server.ts",
-    "start": "bun src/index.ts",
+    "start": "bun run dist/index.mjs",
     "env:generate": "varlock codegen",
     "auth:generate": "varlock run -- pnpm dlx auth@latest generate --config src/services.ts --output ../../packages/db/prisma/schema/auth.prisma --yes"
   },
@@ -31,6 +31,7 @@
     "@ffix-roguelike/config": "workspace:*",
     "@types/bun": "catalog:",
     "tsdown": "^0.23.0",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "unrun": "^0.3.1"
   }
 }

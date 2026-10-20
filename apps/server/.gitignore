@@ -1,5 +1,7 @@
 # prod
 dist/
+# The seed files copied next to the bundle by the build (tsdown.config.ts); the source is packages/db/seed.
+/seed/
 /build
 /out/
 

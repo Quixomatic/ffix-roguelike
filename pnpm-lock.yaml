@@ -6,9 +6,27 @@ settings:
 
 catalogs:
   default:
+    '@trpc/client':
+      specifier: ^11.19.0
+      version: 11.19.0
+    '@trpc/server':
+      specifier: ^11.19.0
+      version: 11.19.0
     '@types/bun':
       specifier: ^1.4.2
       version: 1.4.3
+    better-auth:
+      specifier: 1.7.7
+      version: 1.7.7
+    next-themes:
+      specifier: ^0.4.6
+      version: 0.4.6
+    sonner:
+      specifier: ^2.0.8
+      version: 2.0.8
+    tailwindcss:
+      specifier: ^4.3.3
+      version: 4.3.3
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
@@ -90,10 +108,13 @@ importers:
         version: 1.4.3
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.1(typescript@6.0.3)
+        version: 0.23.1(typescript@6.0.3)(unrun@0.3.1)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+      unrun:
+        specifier: ^0.3.1
+        version: 0.3.1
 
   apps/web:
     dependencies:
@@ -3391,6 +3412,16 @@ packages:
       webpack:
         optional: true
 
+  unrun@0.3.1:
+    resolution: {integrity: sha512-onIck/oNnCaytwths1ZVp1LK2Gq2hPoyFhiHebObuUXqR3S0uHuLLaBK8K6mRRgV7Ptip8AnNvaUsgzwWwBZuA==}
+    engines: {node: ^22.13.0 || >=24.0.0}
+    hasBin: true
+    peerDependencies:
+      synckit: ^0.11.11
+    peerDependenciesMeta:
+      synckit:
+        optional: true
+
   update-browserslist-db@1.3.4:
     resolution: {integrity: sha512-t8wonIOdQyOjtPd2VktlBu6QjTVTks6v8bSi7kd0r2Vll8TK1JYDZtRRdbmCHOAMphkZgrzK+L+vXK4pyZ8t4A==}
     hasBin: true
@@ -6265,7 +6296,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsdown@0.23.1(typescript@6.0.3):
+  tsdown@0.23.1(typescript@6.0.3)(unrun@0.3.1):
     dependencies:
       cac: 7.1.0
       defu: 6.1.7
@@ -6283,6 +6314,7 @@ snapshots:
       verkit: 0.5.0
     optionalDependencies:
       typescript: 6.0.3
+      unrun: 0.3.1
     transitivePeerDependencies:
       - '@typescript/native-preview'
       - '@volar/typescript'
@@ -6338,6 +6370,10 @@ snapshots:
     optionalDependencies:
       rolldown: 1.2.13
       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)
+
+  unrun@0.3.1:
+    dependencies:
+      rolldown: 1.2.13
 
   update-browserslist-db@1.3.4(browserslist@4.29.3):
     dependencies:

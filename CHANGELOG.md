@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.3] - 2026-10-20
+
+### Fixed
+- **The server deploys as a bundle again (like ChannelGuide), with its seed files.** `start` is back to `bun run dist/index.mjs` (v0.4.2 briefly ran the source).
+  - The build (`pnpm --filter server build`, tsdown) never worked: tsdown needs `unrun` to load its TypeScript config, which ChannelGuide has and we didn't. It's a server devDependency now.
+  - **Seeds:** the bundled seeders find the FF9 and reward seed files at `../seed/<table>` from their own file, which in the bundle is `apps/server/seed`. The build now copies `packages/db/seed` there (tsdown `onSuccess`; git-ignored).
+- Railway (server service): build `pnpm --filter @ffix-roguelike/db exec prisma generate && pnpm --filter server build`; pre-deploy `pnpm --filter @ffix-roguelike/db db:migrate:deploy`; start `pnpm --filter server start`.
+
 ## [0.4.2] - 2026-10-20
 
 Accounts get a proper front door: a game-styled login with Google / GitHub, usernames, a Profile page, a 404 in the new layout, and plain localhost in development again.
