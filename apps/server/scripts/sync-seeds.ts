@@ -3,7 +3,7 @@
  * a seed row that changed after it was first inserted (or was edited on the admin page) never reaches it. This
  * inserts or **overwrites** the chosen rows with the seed's version; every other row is left alone.
  *
- * Tables: rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, chapters.
+ * Tables: rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups.
  * A match picks rows by key, character or name, or by the start of the key up to a ":" or "-"
  * (`marcus` → every `marcus:<slot>:<tier>` starter row; `story` → every `story-*` achievement). Case doesn't matter.
  *

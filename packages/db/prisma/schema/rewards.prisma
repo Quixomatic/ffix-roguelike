@@ -112,14 +112,14 @@ model CharacterTag {
   @@map("character_tag")
 }
 
-/// A chapter (.plans/chapters.md): the journeys one run plays, end to end. A one-journey chapter is that journey.
-/// Grouped on the admin page. `data` is game-data's ChapterData.
-model Chapter {
+/// A journey grouping (.plans/journey-groups.md): 2+ journeys played as one run, their maps end to end. Journeys
+/// not in one have no row and play on their own. Set on the admin page. `data` is game-data's JourneyGroupData.
+model JourneyGroup {
   id        String   @id
   sort      Int
   enabled   Boolean  @default(true)
   data      Json
   updatedAt DateTime @updatedAt
 
-  @@map("chapter")
+  @@map("journey_group")
 }

@@ -2,6 +2,32 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.88] - 2026-10-20
+
+Step 1 again (`.plans/journey-groups.md`, renamed from `chapters.md`): "chapters" are now **journey groupings**, and only groupings have rows. The aim: keep the journeys logically separate, but let 2–3 of them play as **one run**, so players aren't facing 21 short runs.
+
+### Changed
+- **A grouping is a row saying "these journeys play as one run"** (2+ journeys, in unlock order, with a name). A journey in no grouping has **no row** and plays on its own, as before; deleting a grouping breaks it back out.
+  - v0.3.87 seeded a row for every journey (29); those are gone, and the seed is empty until the groupings are planned.
+  - What a run plays is a **route**: a grouping or a single journey.
+- **The `chapter` table is now `journey_group`**, and the columns are `player_profile.groupsCleared` and `run.journeyGroup`. Migration `journey_groups`, run by James because it drops the old table.
+  - Reward-table key and seed file: `journeyGroups` / `journey-groups.json`.
+  - game-data `JourneyGroupData`.
+- **game-core `content/journey-groups.ts`:**
+  - `routes()`: the Story page's list, in journey order, with each grouping where its first journey sits and every ungrouped journey on its own.
+  - `challengeRoutes()`, `getRoute`, `routeOf(journey)`.
+  - `routeUnlocked`: a journey inside a grouping is only played through it.
+  - `checkJourneyGroups`, the rules:
+    - ids are unique and never a journey's id;
+    - every grouping has a name and 2+ journeys;
+    - each journey follows the one before it in the unlock chain;
+    - a journey is in at most one story grouping, and a grouping's journeys share a category.
+- `gen-reward-seeds.ts` no longer writes the table.
+- Tests: `content/journey-groups.test.ts` (7). Game-core: 980 pass, 0 fail.
+
+### Notes
+- Restart `pnpm dev` (the migration is applied and the Prisma client regenerated).
+
 ## [0.3.87] - 2026-10-20
 
 Chapters, step 1 (`.plans/chapters.md`): the data. A **chapter** is what a run will play: an ordered list of journeys played as one seamless run, their maps end to end. Journeys keep their clears, recruits, achievements and unlock chain. Groupings are ours, set on the admin page (coming in step 4), never chosen by players. Nothing changes in play yet: every journey is its own chapter.

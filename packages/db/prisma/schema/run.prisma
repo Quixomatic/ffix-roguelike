@@ -9,8 +9,8 @@ model Run {
   seed    String
   /// Journey played (game-core JOURNEYS id).
   journey String    @default("echoes")
-  /// Chapter played (the chapter table; null for runs started before chapters).
-  chapter String?
+  /// Journey grouping played (the journey_group table); null when the run plays one journey.
+  journeyGroup String?
   tier    Int       @default(0)
   status RunStatus @default(ACTIVE)
   /// Current world index (0 = Cornelia, 1 = Baron, 2 = World of Ruin) — denormalized for listings.

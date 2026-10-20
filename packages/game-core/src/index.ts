@@ -10,7 +10,7 @@ export { disassemble, parseScript } from "./battle/ai/disasm";
 export * from "./content/enemies";
 export * from "./content/enemy-actions";
 export * from "./content/worlds";
-export * from "./content/chapters";
+export * from "./content/journey-groups";
 export * from "./content/ff9";
 export * from "./content/ff9-scenes";
 export * from "./run/map";

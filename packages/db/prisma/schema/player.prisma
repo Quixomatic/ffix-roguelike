@@ -39,8 +39,8 @@ model PlayerProfile {
   supplyRanks  Json     @default("{}")
   /// Journeys cleared at least once (each unlocks the next) — game-core JOURNEYS ids.
   journeysCleared String[] @default([])
-  /// Chapters won at least once (challenge achievements; .plans/chapters.md).
-  chaptersCleared String[] @default([])
+  /// Journey groupings won at least once (challenge achievements; .plans/journey-groups.md).
+  groupsCleared String[] @default([])
 
   characters PlayerCharacter[]
   stash      StashItem[]

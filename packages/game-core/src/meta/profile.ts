@@ -61,8 +61,8 @@ export interface Profile {
   relicsUnlocked?: string[];
   /** Journeys cleared at least once (each unlocks the next). */
   journeysCleared?: string[];
-  /** Chapters won at least once (content/chapters.ts; challenge achievements). */
-  chaptersCleared?: string[];
+  /** Journey groupings won at least once (content/journey-groups.ts; challenge achievements). */
+  groupsCleared?: string[];
   stats: ProfileStats;
   /** Highest difficulty tier the player may start (wins unlock the next). */
   maxTier: number;
@@ -129,7 +129,7 @@ export function newProfile(): Profile {
     achievements: [],
     gearUnlocked: [],
     journeysCleared: [],
-    chaptersCleared: [],
+    groupsCleared: [],
     maxTier: 0,
   };
 }

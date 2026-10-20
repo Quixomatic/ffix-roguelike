@@ -10,7 +10,7 @@ import {
   registerRewardTables,
   type AchievementData,
   type RelicData,
-  type ChapterData,
+  type JourneyGroupData,
   type SynergyData,
   type GearAvailability,
   type StarterUpgrade,
@@ -96,7 +96,7 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, chapters] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
@@ -107,7 +107,7 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       db.relic.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.synergy.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.characterTag.findMany({ orderBy: { character: "asc" }, select: { character: true, tags: true } }),
-      db.chapter.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
+      db.journeyGroup.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
     ]);
     if (!gear.length || !rarities.length) throw new Error("Reward tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
@@ -121,7 +121,7 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       relics: rows<RelicData>(relics),
       synergies: rows<SynergyData>(synergies),
       characterTags,
-      chapters: rows<ChapterData>(chapters),
+      journeyGroups: rows<JourneyGroupData>(journeyGroups),
     };
     registerRewardTables(tables);
     return tables;

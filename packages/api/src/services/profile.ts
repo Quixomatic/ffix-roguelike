@@ -74,7 +74,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       relicsUnlocked: row.relicsUnlocked,
       supplyRanks: (row.supplyRanks ?? {}) as Record<number, number>,
       journeysCleared: row.journeysCleared,
-      chaptersCleared: row.chaptersCleared,
+      groupsCleared: row.groupsCleared,
       unlocked: row.characters.filter((c) => c.unlocked).map((c) => c.key),
       builds,
       stash: Object.fromEntries(row.stash.filter((s) => s.count > 0).map((s) => [s.itemId, s.count])),
@@ -143,7 +143,7 @@ export async function saveProfile(tx: Tx, profileId: string, p: Profile) {
       relicsUnlocked: p.relicsUnlocked ?? [],
       supplyRanks: p.supplyRanks ?? {},
       journeysCleared: p.journeysCleared ?? [],
-      chaptersCleared: p.chaptersCleared ?? [],
+      groupsCleared: p.groupsCleared ?? [],
     },
   });
   for (const b of Object.values(p.builds)) {
