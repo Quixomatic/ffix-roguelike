@@ -9,8 +9,9 @@
  * - **cancel** on Escape, on close / back buttons (`aria-label="Close"`), and on the browser's Back (not Forward) —
  *   alone: the page change's cursor tick (the sidebar's highlighted entry moving) is held back;
  * - **buzzer** on pressing a disabled button (can't afford, sold out, not allowed) — browsers send no click there;
- * - an element can ask for another sound with `data-sound="purchase|buzzer|cancel|help|none"`.
- * Purchases play `uiSound("purchase")` when the buy succeeds.
+ * - an element can ask for another sound with `data-sound="purchase|buzzer|cancel|help|stone|none"`.
+ * Purchases play `uiSound("purchase")` when the buy succeeds; switching a support ability on plays "stone", a battle
+ * starting "battle-start", an achievement or unlock "unlock".
  */
 import { useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -19,7 +20,9 @@ import { inputOwner } from "@/features/input/owner";
 
 import { playSfx, warmSfx } from "./music";
 
-export const UI_SOUNDS = ["cursor", "cancel", "buzzer", "purchase", "help"] as const;
+/** stone: equipping a magic stone on a support ability (FF9 107); battle-start: a battle starts (636); unlock: an
+ *  achievement or unlock notification (683). */
+export const UI_SOUNDS = ["cursor", "cancel", "buzzer", "purchase", "help", "stone", "battle-start", "unlock"] as const;
 export type UiSound = (typeof UI_SOUNDS)[number];
 
 const url = (s: UiSound) => `sfx/ui/${s}.ogg`;

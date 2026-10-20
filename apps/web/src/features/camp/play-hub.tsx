@@ -1,12 +1,12 @@
 import { achievements, availableJourneys, gearCatalog, JOURNEYS, routeOf } from "@ffix-roguelike/game-core";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Trophy } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { PixelIcon } from "@/components/pixel-icon";
 import { FocusItem } from "@/features/input/focus";
 import { ItemIcon } from "@/features/items/item-icon";
+import { ANIMATED_FF9_BOSSES, EnemySprite } from "@/features/sprites/enemy-sprite";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
@@ -23,6 +23,8 @@ const GEAR_ICONS = [2, 112];
  */
 export function PlayHub() {
   const profile = useQuery(trpc.profile.get.queryOptions());
+  // The Challenges card's art: a different FF9 boss idling each time the hub opens.
+  const [challengeBoss] = useState(() => ANIMATED_FF9_BOSSES[Math.floor(Math.random() * ANIMATED_FF9_BOSSES.length)] ?? "plant-brain");
   if (!profile.data) return <div className="p-6">Loading…</div>;
   const p = profile.data;
   const open = availableJourneys(p);
@@ -122,9 +124,9 @@ export function PlayHub() {
         <HubCard
           to="/challenges"
           title="Challenges"
-          art={<Trophy className="size-16 text-yellow-200 drop-shadow-[2px_2px_0_#000]" />}
-          lines={[`${challengesDone} of ${challengeDefs.length} challenges done`, "Boss Gauntlet · coming soon"]}
-          blurb="Solo runs, higher tiers and the gauntlet."
+          art={<EnemySprite spriteKey={challengeBoss} size={96} />}
+          lines={[`${challengesDone} of ${challengeDefs.length} challenges done`, "Hidden bosses · the Boss Gauntlet · disc runs"]}
+          blurb="The hidden bosses, the Boss Gauntlet, and whole discs in one run."
         />
       </div>
     </div>

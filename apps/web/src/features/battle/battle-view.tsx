@@ -3,6 +3,7 @@ import type Phaser from "phaser";
 import { useEffect, useRef, useState } from "react";
 
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
+import { uiSound } from "@/features/audio/ui-sounds";
 import type { Action } from "@/features/input/actions";
 import { ButtonHint } from "@/features/input/button-hint";
 import { MENU_EVENT } from "@/features/input/nav";
@@ -66,6 +67,10 @@ export function BattleView({ initial, theme, onEnd, music = MUSIC_SLOTS.battle }
     if (!hostRef.current) return;
     const game: Phaser.Game = createBattleGame(hostRef.current, bridgeRef.current!);
     return () => game.destroy(true);
+  }, []);
+  // FF9's battle-start sound, for a fight that's just begun (not one picked up again mid-way).
+  useEffect(() => {
+    if (initial.tick === 0) uiSound("battle-start");
   }, []);
 
   // Whose turn the menu is showing: the clicked ready member, else the first in line.

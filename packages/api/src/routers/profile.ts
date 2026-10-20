@@ -1,4 +1,4 @@
-import { buyStarterUpgrade, buySupplyRank, campMetrics, lockedCharacters, pickStarterTier, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
+import { awardAchievements, buyStarterUpgrade, buySupplyRank, campMetrics, lockedCharacters, pickStarterTier, raiseStartLevel, setProfileSupports, setRunBattleMode, trainStat, TRAIN_STATS, unlockGear, unlockSlot, type Profile } from "@ffix-roguelike/game-core";
 import type { Database } from "@ffix-roguelike/db";
 import { z } from "zod";
 
@@ -38,6 +38,19 @@ export const profileRouter = router({
       activeRunId: active?.id ?? null,
       locked: lockedCharacters(loaded.profile),
     };
+  }),
+
+  /**
+   * Award any achievement the player now meets (a metric reached mid-run: the 1,000th kill…), with its rewards, and
+   * return the new ids for the client's notification. The web calls it after every run action; achievements a run's
+   * end awards come back in that action's report instead, so this finds nothing new then.
+   */
+  checkAchievements: protectedProcedure.mutation(async ({ ctx }) => {
+    const loaded = await loadProfile(ctx.db, ctx.session.user.id);
+    const next = structuredClone(loaded.profile);
+    const earned = awardAchievements(next);
+    if (earned.length) await saveProfile(ctx.db as never, loaded.id, next);
+    return earned;
   }),
 
   setBattleMode: protectedProcedure.input(z.object({ mode: z.enum(["WAIT", "ACTIVE"]) })).mutation(async ({ ctx, input }) => {

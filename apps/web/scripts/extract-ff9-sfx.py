@@ -20,8 +20,10 @@ SHIP = os.path.join(os.path.dirname(__file__), "..", "public", "sfx", "ui")
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(SHIP, exist_ok=True)
 
-# Our name -> FF9 sound index (FF9Sfx.FF9SFX_Play ids in Memoria's menus).
-UI_SOUNDS = {"cursor": 103, "cancel": 101, "buzzer": 102, "purchase": 1045, "help": 682}
+# Our name -> FF9 sound index (FF9Sfx.FF9SFX_Play ids in Memoria's menus; the last three identified by ear by James
+# from list-ff9-sfx.py's dump: equipping a magic stone on an ability, a battle starting, and our unlock / achievement
+# notification).
+UI_SOUNDS = {"cursor": 103, "cancel": 101, "buzzer": 102, "purchase": 1045, "help": 682, "stone": 107, "battle-start": 636, "unlock": 683}
 
 meta_env = UnityPy.load(os.path.join(GAME, "x64", "FF9_Data", "resources.assets"))
 meta = None

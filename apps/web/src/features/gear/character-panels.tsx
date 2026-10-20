@@ -84,6 +84,8 @@ export function SupportGrid({ build, onToggle }: { build: CharacterBuild; onTogg
           <FocusItem key={a.ref}>
             <button
               disabled={!has || !onToggle}
+              // Switching one on sets a magic stone on it: FF9's stone sound. Off is the usual tick.
+              data-sound={on ? undefined : "stone"}
               onClick={() => onToggle?.(on ? build.supports.filter((x) => x !== id) : [...build.supports, id])}
               className={`flex flex-col gap-0.5 rounded border px-2 py-1 text-left text-sm transition ${
                 on ? "border-yellow-300/80 bg-yellow-300/10" : "border-white/15 bg-black/25"

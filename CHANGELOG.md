@@ -2,6 +2,29 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.0] - 2026-10-20
+
+Version 0.4: journey groupings (several journeys as one run), challenge runs across whole discs and the whole story, achievement notifications, and more of FF9's own sounds.
+
+### Added
+- **Achievement notifications.** Whenever an achievement is earned, a notification appears. It's separate from the regular toasts, in the game's FF window look: the badge, "Achievement unlocked", the name, what it was for and what it pays. It plays FF9's level-up jingle (sound 683), and several arrive staggered.
+  - **At a run's end:** they come back in that action's report.
+  - **During a run:** after every other run action, the web makes one extra call (`profile.checkAchievements`). It awards anything the action's metrics have reached (the 1,000th kill…) with its rewards and returns the new ones, so a metric achievement pops right after the fight that earned it instead of at the run's end. No polling.
+  - **Preview:** Admin → Dev tools → Notifications shows one, or three at once.
+- **FF9 sounds:**
+  - Switching a support ability on plays FF9's magic-stone sound (107); switching it off stays the usual tick.
+  - A fresh battle plays FF9's battle-start sound (636).
+  - Achievements and unlocks play 683.
+  - The `sfx` pack is rebuilt and uploaded to R2.
+- **The Play hub's Challenges card** shows an FF9 boss playing its idle animation, a different one each time the hub opens (37 animated FF9 boss sheets). The card's text is up to date: hidden bosses, the Boss Gauntlet, disc runs.
+- **`EnemySprite`** (`features/sprites/enemy-sprite.tsx`): a monster's FFRK sheet animating outside Phaser, crisp at any size, like `HeroSprite` for heroes.
+- **Tools for FF9's 2,836 sound effects:**
+  - **`apps/web/scripts/list-ff9-sfx.py [--list] [--dump]`** lists FF9's sound table. `--dump` extracts every sound into `.docs/assets/FF9/se/all/`, grouped by what FF9's folders probably hold: 1-menu-and-system, 2-field, 3-events, 4-battle.
+  - **`apps/web/scripts/name-ff9-sfx.ts`** names sounds from where Memoria's source (cloned into `.refs/memoria`) plays them by number. It writes `.docs/assets/FF9/se/names.json` and copies the 20 it identifies into `0-identified/`, named by file and method. Among them: 683 is the level-up jingle, 1043 ability learned, 1047 the shoulder-button tab switch, 1044 switching the active character in battle. Sounds the game triggers from its own data (battle and field scripts) can't be named this way.
+
+### Notes
+- Earlier 0.3.x releases today: journey groupings (0.3.87–0.3.91), challenge achievements (0.3.92), Steiner's Magic Sword (0.3.93–0.3.95).
+
 ## [0.3.95] - 2026-10-20
 
 ### Fixed

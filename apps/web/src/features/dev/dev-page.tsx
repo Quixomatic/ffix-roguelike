@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Panel } from "@/features/gear/character-panels";
+import { showAchievementToasts } from "@/features/hub/achievement-toast";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
@@ -36,6 +37,22 @@ export function DevPage() {
       <div className="ff-window flex items-center justify-between p-3">
         <span className="ff-display text-2xl">Dev tools</span>
         <span className="text-sm text-orange-300">Development only — changes your real profile</span>
+      </div>
+
+      <div className="ff-window p-3">
+        <Panel title="Notifications" right={<span className="opacity-70">preview them (nothing is earned)</span>}>
+          <div className="flex flex-wrap gap-2">
+            <button className="rounded border border-white/25 px-3 py-1 text-sm hover:brightness-125" onClick={() => showAchievementToasts(["challenge-whole-story"])}>
+              Achievement toast
+            </button>
+            <button
+              className="rounded border border-white/25 px-3 py-1 text-sm hover:brightness-125"
+              onClick={() => showAchievementToasts(["story-cleyra", "hidden-boss-gauntlet", "challenge-disc-1"])}
+            >
+              Three at once
+            </button>
+          </div>
+        </Panel>
       </div>
 
       <div className="ff-window grid gap-3 p-3">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { uiSound } from "@/features/audio/ui-sounds";
+import { showAchievementToasts } from "@/features/hub/achievement-toast";
 import { trpc } from "@/utils/trpc";
 
 export interface RunReport {
@@ -35,13 +36,25 @@ export function useRunActions() {
   const qc = useQueryClient();
   const [report, setReport] = useState<RunReport | null>(null);
   const activeKey = trpc.run.active.queryKey();
+  // After every run action: one extra call that awards (and returns) achievements the action's metrics have reached.
+  const checkAchievements = useMutation(
+    trpc.profile.checkAchievements.mutationOptions({
+      onSuccess: (earned) => {
+        if (!earned.length) return;
+        showAchievementToasts(earned);
+        qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() });
+      },
+    }),
+  );
 
   const onSuccess = (data: { state: RunState; report: RunReport | null }) => {
     qc.setQueryData(activeKey, (prev) => (prev ? { ...prev, state: data.state } : prev));
     if (data.report) {
+      // The run's end awards its own achievements; they come back in the report.
       setReport(data.report);
+      showAchievementToasts(data.report.achievements);
       qc.invalidateQueries({ queryKey: trpc.profile.get.queryKey() });
-    }
+    } else checkAchievements.mutate();
   };
   const onError = (e: { message: string }) => toast.error(e.message);
   const opts = { onSuccess, onError };
