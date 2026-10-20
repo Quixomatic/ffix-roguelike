@@ -1,4 +1,4 @@
-import { getJourney, WORLDS, type RunState } from "@ffix-roguelike/game-core";
+import { runAreas, runName, WORLDS, type RunState } from "@ffix-roguelike/game-core";
 import { findItem, getCharacter } from "@ffix-roguelike/game-data";
 import { useEffect, useState } from "react";
 
@@ -188,11 +188,11 @@ function GearBagPanel({ run }: { run: RunState }) {
 
 /** Where the run is and how it's going; abandoning lives here. */
 function RunInfoPanel({ run, actions }: { run: RunState; actions: RunActions }) {
-  const journey = getJourney(run.journey);
+  const areas = runAreas(run);
   const [confirming, setConfirming] = useState(false);
   const rows: [string, string | number][] = [
-    ["Journey", journey.name],
-    ["Area", `${WORLDS[run.world]!.name} (map ${run.stage + 1}/${journey.areas.length})`],
+    ["Journey", runName(run)],
+    ["Area", `${WORLDS[run.world]!.name} (map ${run.stage + 1}/${areas.length})`],
     ["Difficulty", `Tier ${run.tier}`],
     ["Battles won", run.stats.battles],
     ["Bosses", run.stats.bossKills.length],
@@ -211,7 +211,7 @@ function RunInfoPanel({ run, actions }: { run: RunState; actions: RunActions }) 
       </div>
       <div className="flex flex-col gap-0.5 text-sm">
         <span className="ff-title">Route</span>
-        {journey.areas.map((a, i) => {
+        {areas.map((a, i) => {
           const w = WORLDS.find((x) => x.id === a);
           return (
             <span key={a} className={i < run.stage ? "opacity-50 line-through" : i === run.stage ? "text-yellow-200" : ""}>

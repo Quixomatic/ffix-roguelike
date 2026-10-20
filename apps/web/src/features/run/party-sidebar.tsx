@@ -1,4 +1,4 @@
-import { deriveStats, EQUIP_SLOTS, expForLevel, getJourney, WORLDS, type RunMember, type RunState } from "@ffix-roguelike/game-core";
+import { deriveStats, EQUIP_SLOTS, expForLevel, runAreas, runName, WORLDS, type RunMember, type RunState } from "@ffix-roguelike/game-core";
 import { findItem, getCharacter, MAX_LEVEL } from "@ffix-roguelike/game-data";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
 import { ChevronsDownUp, ChevronsUpDown, PanelRight, PanelRightDashed } from "lucide-react";
@@ -68,7 +68,6 @@ export function PartySidebar({
   onLayout(layout: PartyLayout): void;
   className?: string;
 }) {
-  const journey = getJourney(run.journey);
   const floating = layout === "overlay";
   const [mini, setMini] = usePartyMini();
   return (
@@ -87,7 +86,7 @@ export function PartySidebar({
         <div className="min-w-0 flex-1">
           <div className="ff-display truncate text-base">{WORLDS[run.world]!.name}</div>
           <div className="ff-title truncate text-xs">
-            {journey.name} · map {run.stage + 1}/{journey.areas.length}
+            {runName(run)} · map {run.stage + 1}/{runAreas(run).length}
           </div>
         </div>
         <div className="text-right">

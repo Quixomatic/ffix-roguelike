@@ -1,4 +1,4 @@
-import { achievement, bagValue, eventById, getArea, getJourney, JOURNEYS, metricDef, rewardItemIds, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, bagValue, eventById, getArea, getJourney, JOURNEYS, metricDef, rewardItemIds, runAreas, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -253,7 +253,7 @@ export function EventPanel({ run, phase, actions }: { run: RunState; phase: Extr
 }
 
 export function WorldClearPanel({ run, actions }: { run: RunState; actions: RunActions }) {
-  const nextId = getJourney(run.journey).areas[run.stage + 1];
+  const nextId = runAreas(run)[run.stage + 1];
   const next = nextId ? getArea(nextId) : undefined;
   return (
     <Panel title={`${WORLDS[run.world]!.name} cleared!`}>
@@ -292,12 +292,12 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
       {report && (
         <div className="ff-window flex flex-col gap-1 p-4 text-lg">
           <div className="tabular-nums text-yellow-200">+{Math.round(gil)} gil banked</div>
-          {report.journeyCleared && (
-            <div className="ff-pop text-pink-200">
-              {getJourney(report.journeyCleared).name} cleared!
-              {JOURNEYS.filter((j) => j.unlockAfter === report.journeyCleared).map((j) => ` New journey: ${j.name}.`)}
+          {report.journeysCleared.map((id) => (
+            <div key={id} className="ff-pop text-pink-200">
+              {getJourney(id).name} cleared!
+              {JOURNEYS.filter((j) => j.unlockAfter === id).map((j) => ` New journey: ${j.name}.`)}
             </div>
-          )}
+          ))}
           {report.gearUnlocked.length > 0 && (
             <div className="text-base text-green-300">Unlocked for future runs: {report.gearUnlocked.map(itemName).join(", ")}</div>
           )}

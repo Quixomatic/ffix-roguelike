@@ -9,6 +9,7 @@
  */
 import { getItem, itemByName, rewardTables, ROSTER, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
 
+import { challengeRoutes, routes, routeUnlocked } from "../content/journey-groups";
 import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
 import { effectivePrice } from "../run/loot";
 import type { RunOutcome } from "../run/run";
@@ -147,8 +148,8 @@ export interface RunReport {
   achievements: string[];
   /** Gear newly unlocked into the drop pool by winning this run. */
   gearUnlocked: number[];
-  /** Journey cleared for the first time by this run (unlocks the next). */
-  journeyCleared: string | null;
+  /** Journeys cleared for the first time by this run, in order (each unlocks the next). */
+  journeysCleared: string[];
 }
 
 /**
@@ -209,30 +210,62 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   p.stats.bestWorld = Math.max(p.stats.bestWorld, outcome.worldReached);
   for (const id of outcome.stats.bossKills) p.stats.bossKills[id] = (p.stats.bossKills[id] ?? 0) + 1;
   let tierUnlocked: number | null = null;
-  let journeyCleared: string | null = null;
+  // Every journey whose final boss the run beat counts as cleared, won or lost (a grouping's run that falls in its
+  // third journey keeps the first two).
+  const journeysCleared = recordJourneyClears(p, outcome.cleared, outcome.builds.map((b) => b.key));
   if (outcome.won) {
-    if (!(p.journeysCleared ?? []).includes(outcome.journey)) journeyCleared = outcome.journey;
-    p.journeysCleared = [...new Set([...(p.journeysCleared ?? []), outcome.journey])];
+    if (outcome.journeyGroup) p.groupsCleared = [...new Set([...(p.groupsCleared ?? []), outcome.journeyGroup])];
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
-    // Solo wins only count on late-game journeys (final area tier 2+) — the early story is meant to be soloable.
-    const finalArea = getArea(getJourney(outcome.journey).areas.at(-1)!);
-    if (outcome.builds.length === 1 && finalArea.tier >= 2) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
-    // "Terra & Memoria with a hero" (the Legend of <hero> achievements): clearing Memoria, the journey after Terra,
-    // counts for everyone in the party.
-    if (outcome.journey === LEGEND_JOURNEY) p.stats.legendClears = [...new Set([...(p.stats.legendClears ?? []), ...outcome.builds.map((b) => b.key)])];
     if (tier === p.maxTier && p.maxTier < MAX_TIER) {
       p.maxTier++;
       tierUnlocked = p.maxTier;
     }
   }
-  // Story journeys bring characters into the roster on their first clear; milestone rules cover the rest.
-  const fromJourney = journeyCleared ? (getJourney(journeyCleared).unlocks ?? []).filter((k) => !p.unlocked.includes(k)) : [];
+  const newlyUnlocked = unlockCharacters(p, journeysCleared);
+  const achievements = awardAchievements(p);
+  return { profile: p, newlyUnlocked, tierUnlocked, points, achievements, gearUnlocked, journeysCleared };
+}
+
+/**
+ * Record journeys a run cleared (mutates `p`): journeysCleared, solo clears, Legend clears. Returns those cleared for
+ * the first time, in order.
+ */
+export function recordJourneyClears(p: Profile, cleared: readonly string[], party: readonly string[]): string[] {
+  const first: string[] = [];
+  for (const id of cleared) {
+    if (!(p.journeysCleared ?? []).includes(id)) first.push(id);
+    p.journeysCleared = [...new Set([...(p.journeysCleared ?? []), id])];
+    // Solo clears only count on late-game journeys (final area tier 2+): the early story is meant to be soloable.
+    const finalArea = getArea(getJourney(id).areas.at(-1)!);
+    if (party.length === 1 && finalArea.tier >= 2) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), party[0]!])];
+    // "Terra & Memoria with a hero" (the Legend of <hero> achievements): clearing Memoria, the journey after Terra,
+    // counts for everyone in the party.
+    if (id === LEGEND_JOURNEY) p.stats.legendClears = [...new Set([...(p.stats.legendClears ?? []), ...party])];
+  }
+  return first;
+}
+
+/**
+ * Unlock characters for future runs (mutates `p`): story journeys' recruits on their first clear, then the milestone
+ * rules. Returns who was unlocked.
+ */
+export function unlockCharacters(p: Profile, firstCleared: readonly string[]): string[] {
+  const fromJourney = [...new Set(firstCleared.flatMap((id) => getJourney(id).unlocks ?? []))].filter((k) => !p.unlocked.includes(k));
   const fromMilestones = UNLOCKS.filter((u) => !p.unlocked.includes(u.key) && !fromJourney.includes(u.key) && u.check(p)).map((u) => u.key);
   const newlyUnlocked = [...fromJourney, ...fromMilestones];
   p.unlocked.push(...newlyUnlocked);
-  const achievements = awardAchievements(p);
-  return { profile: p, newlyUnlocked, tierUnlocked, points, achievements, gearUnlocked, journeyCleared };
+  return newlyUnlocked;
+}
+
+/**
+ * A run wiped by starting another (`run.start` with `replace`) folds nothing in, except the journeys it cleared:
+ * those are kept, with their recruits and achievements.
+ */
+export function keepWipedClears(profile: Profile, cleared: readonly string[], party: readonly string[]): { profile: Profile; achievements: string[] } {
+  const p = structuredClone(profile);
+  unlockCharacters(p, recordJourneyClears(p, cleared, party));
+  return { profile: p, achievements: awardAchievements(p) };
 }
 
 // ── spending Completion Points ───────────────────────────────────────────────
@@ -499,4 +532,13 @@ export function campSupplies(profile: Profile): Record<number, number> {
 /** Journeys the player can start, in order. */
 export function availableJourneys(profile: Profile): string[] {
   return JOURNEYS.filter((j) => journeyUnlocked(j.id, profile.journeysCleared ?? [])).map((j) => j.id);
+}
+
+/**
+ * What the player can start (journey-groups.ts routes), in order: ungrouped journeys and story groupings whose first
+ * journey is open, then the challenge runs they've opened.
+ */
+export function availableRoutes(profile: Profile): string[] {
+  const cleared = profile.journeysCleared ?? [];
+  return [...routes(), ...challengeRoutes()].filter((r) => routeUnlocked(r.id, cleared)).map((r) => r.id);
 }

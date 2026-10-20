@@ -17,6 +17,7 @@ import { battleMetrics, mergeBags, record, type MetricBag } from "../metrics/col
 const track = (run: RunState, key: string, value: number, o?: { subject?: string | number; character?: string }) => record((run.metrics ??= {}), key, value, o);
 import { enemyGroup, LASTING_STATUSES, partyUnit } from "../battle/units";
 import { encounterEnemies, isSceneRef, killKey, sceneGroup } from "../content/ff9-scenes";
+import { getRoute, isRoute, type RouteDef } from "../content/journey-groups";
 import { getArea, getJourney, JOURNEYS, WORLDS } from "../content/worlds";
 import { Rng } from "../rng";
 import {
@@ -116,15 +117,51 @@ export interface RunStats {
   tonberryKills?: number;
 }
 
+/** One journey of a run's route and the stage (`RunState.stage`) its last map is at. */
+export interface RunLeg {
+  journey: string;
+  last: number;
+}
+
+/** The run's maps in order: its route's, or (older runs) its journey's. */
+export const runAreas = (run: Pick<RunState, "areas" | "journey">): string[] => run.areas ?? getJourney(run.journey).areas;
+
+/** The run's journeys and where each ends. */
+export const runLegs = (run: Pick<RunState, "areas" | "legs" | "journey">): RunLeg[] => run.legs ?? [{ journey: run.journey, last: runAreas(run).length - 1 }];
+
+/** The journey a stage of the run belongs to. */
+export const journeyAtStage = (run: Pick<RunState, "areas" | "legs" | "journey">, stage: number): string =>
+  runLegs(run).find((l) => stage <= l.last)?.journey ?? run.journey;
+
+/** What the run is called: its grouping's name (while it still exists), else its journey's. */
+export const runName = (run: Pick<RunState, "journeyGroup" | "journey">): string =>
+  run.journeyGroup && isRoute(run.journeyGroup) ? getRoute(run.journeyGroup).name : getJourney(run.journey).name;
+
+/** A route's journeys and the stage each ends on. */
+export function routeLegs(route: RouteDef): RunLeg[] {
+  let last = -1;
+  return route.journeys.map((journey) => ({ journey, last: (last += getJourney(journey).areas.length) }));
+}
+
 export interface RunState {
   version: 1;
   seed: string;
   rng: number;
   tier: number;
-  /** Journey being played (content/worlds.ts JOURNEYS). */
+  /** The journey the current map belongs to (content/worlds.ts JOURNEYS). */
   journey: string;
-  /** Position within the journey's areas. */
+  /** Position within the run's maps (`runAreas`): across every journey of a grouping. */
   stage: number;
+  /** Journey grouping played (content/journey-groups.ts), when the run plays one; missing for a single journey. */
+  journeyGroup?: string;
+  /**
+   * The run's maps (area ids) end to end, and its journeys with the stage each one ends on: snapshotted at the start,
+   * so regrouping journeys never changes a run in progress. Missing (older runs): the journey's own maps.
+   */
+  areas?: string[];
+  legs?: RunLeg[];
+  /** Journeys whose final boss this run has beaten, in order. They count as cleared when the run ends, won or lost. */
+  cleared?: string[];
   /** Current area index into WORLDS (also the loot tier). */
   world: number;
   map: WorldMap;
@@ -169,7 +206,10 @@ export interface StartRunInput {
   supplies?: Record<number, number>;
   /** Gear unlocked into the drop pool (camp catalog, achievements, won runs). */
   unlockedGear?: number[];
-  /** Journey to play (default: the first one). */
+  /**
+   * What to play (content/journey-groups.ts): a journey grouping's id, or a journey's (default: the first journey).
+   * A journey id plays that journey alone, even if it's in a grouping (tests, the sim's single-journey reads).
+   */
   journey?: string;
   /** Wait or Active battles (default wait). */
   battleMode?: "wait" | "active";
@@ -255,8 +295,9 @@ export function startRun(input: StartRunInput): RunState {
     const st = deriveStats(build);
     return { build, hp: st.maxHp, mp: st.maxMp };
   });
-  const journey = getJourney(input.journey ?? JOURNEYS[0]!.id);
-  const firstArea = getArea(journey.areas[0]!).index;
+  const route = getRoute(input.journey ?? JOURNEYS[0]!.id);
+  const legs = routeLegs(route);
+  const firstArea = getArea(route.areas[0]!).index;
   const map = generateWorldMap(rng.fork("map0"), firstArea);
   const unlockedRelics = [...(input.unlockedRelics ?? [])];
   if (input.relic && (!unlockedRelics.includes(input.relic) || !relicById(input.relic)?.starter)) throw new RunError("That relic can't start a run");
@@ -265,8 +306,12 @@ export function startRun(input: StartRunInput): RunState {
     seed: input.seed,
     rng: rng.state,
     tier: input.tier,
-    journey: journey.id,
+    journey: legs[0]!.journey,
     stage: 0,
+    ...(route.grouped ? { journeyGroup: route.id } : {}),
+    areas: route.areas,
+    legs,
+    cleared: [],
     world: firstArea,
     map,
     position: map.startId,
@@ -579,8 +624,11 @@ export function claimReward(run: RunState, choice: number | null, replace?: stri
   }
   if (p.kind === "treasure") next.gil += p.gil;
   if (p.kind === "rewards" && p.boss) {
-    // The last area's boss ends the journey; otherwise travel on to its next area.
-    if (next.stage >= getJourney(next.journey).areas.length - 1) next.phase = { kind: "over", won: true };
+    // A journey's final boss clears it (counted when the run ends, won or lost). The run's last map's boss wins the
+    // run; otherwise travel on to the next map, in this journey or the next journey of the grouping.
+    const leg = runLegs(next).find((l) => l.last === next.stage);
+    if (leg && !(next.cleared ?? []).includes(leg.journey)) next.cleared = [...(next.cleared ?? []), leg.journey];
+    if (next.stage >= runAreas(next).length - 1) next.phase = { kind: "over", won: true };
     else next.phase = { kind: "worldClear", cleared: next.world };
   } else next.phase = { kind: "map" };
   return next;
@@ -665,7 +713,8 @@ export function nextWorld(run: RunState): RunState {
   if (run.phase.kind !== "worldClear") throw new RunError("The world isn't cleared yet");
   const next = structuredClone(run);
   next.stage++;
-  next.world = getArea(getJourney(next.journey).areas[next.stage]!).index;
+  next.journey = journeyAtStage(next, next.stage);
+  next.world = getArea(runAreas(next)[next.stage]!).index;
   next.map = generateWorldMap(rngOf(next).fork(`map${next.stage}`), next.world);
   next.position = next.map.startId;
   next.visited = [next.map.startId];
@@ -968,7 +1017,12 @@ export interface RunOutcome {
   gilEarned: number;
   stats: RunStats;
   worldReached: number;
+  /** The journey the run ended in. */
   journey: string;
+  /** The journey grouping played, if any (a won run records it in `groupsCleared`). */
+  journeyGroup?: string;
+  /** Journeys whose final boss the run beat, won or lost: each counts as cleared. */
+  cleared: string[];
 }
 
 /** What the player keeps when the run ends. */
@@ -992,6 +1046,9 @@ export function runOutcome(run: RunState): RunOutcome {
     stats: run.stats,
     worldReached: WORLDS[run.world]?.tier ?? 0,
     journey: run.journey,
+    ...(run.journeyGroup ? { journeyGroup: run.journeyGroup } : {}),
+    // A won run has cleared the journey it ended in (runs from before groupings record only that).
+    cleared: [...new Set([...(run.cleared ?? []), ...(won ? [run.journey] : [])])],
   };
 }
 
@@ -1011,6 +1068,8 @@ export function upgradeRunState(run: RunState): RunState {
     next.rng = rng.state;
     return upgradeRunState(next);
   }
+  // A run with its route snapshotted (journey groupings) keeps it as it was: regrouping never moves a run.
+  if (run.areas) return run;
   const known = JOURNEYS.some((j) => j.id === run.journey);
   if (known && run.stage != null && run.unlockedGear) {
     // A journey that gained a map since the run started (Disc 1's third maps): its stage follows the area it's in.

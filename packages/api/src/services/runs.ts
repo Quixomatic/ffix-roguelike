@@ -5,7 +5,8 @@
  */
 import {
   applyRunOutcome,
-  availableJourneys,
+  availableRoutes,
+  keepWipedClears,
   bagDelta,
   mergeBags,
   record,
@@ -49,7 +50,7 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   if (new Set(partyKeys).size !== partyKeys.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Duplicate party member" });
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
   if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
-  if (!availableJourneys(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
+  if (!availableRoutes(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
 
   const seed = crypto.randomUUID();
   // The run starts with the starter kit plus the permanent supply ranks; one-off supplies still in the stash (bought
@@ -74,12 +75,15 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   } catch (e) {
     toTrpcError(e);
   }
-  const stash = Object.fromEntries(Object.entries(profile.stash).filter(([id]) => !(id in packed)));
+  // A wiped run folds nothing in except the journeys it cleared (a grouping's run can clear some before it ends).
+  const wiped = current ? upgradeRunState(current.state as unknown as RunState) : null;
+  const kept = wiped?.cleared?.length ? keepWipedClears(profile, wiped.cleared, wiped.party.map((m) => m.build.key)).profile : profile;
+  const stash = Object.fromEntries(Object.entries(kept.stash).filter(([id]) => !(id in packed)));
   return db.$transaction(async (tx) => {
     if (current) await tx.run.update({ where: { id: current.id }, data: { status: "ABANDONED", endedAt: new Date() } });
-    if (Object.keys(packed).length) await saveProfile(tx, profileId, { ...profile, stash });
+    if (Object.keys(packed).length || kept !== profile) await saveProfile(tx, profileId, { ...kept, stash });
     return tx.run.create({
-      data: { profileId, seed, journey, tier, party: partyKeys, world: state.world, state: state as object },
+      data: { profileId, seed, journey: state.journey, journeyGroup: state.journeyGroup ?? null, tier, party: partyKeys, world: state.world, state: state as object },
     });
   });
 }
@@ -110,7 +114,7 @@ export async function act(
   if (over) {
     const outcome = runOutcome(after);
     const end = runEndMetrics({
-      journey: after.journey,
+      journey: after.journeyGroup ?? after.journey,
       won,
       tier: row.tier,
       gilEarned: outcome.gilEarned,
@@ -185,6 +189,6 @@ async function finalize(tx: Database, userId: string, runId: string, run: RunSta
     points: report.points,
     achievements: report.achievements,
     gearUnlocked: report.gearUnlocked,
-    journeyCleared: report.journeyCleared,
+    journeysCleared: report.journeysCleared,
   };
 }

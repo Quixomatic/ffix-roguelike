@@ -4,7 +4,10 @@
  *
  *   pnpm sim battle  --party zidane:5,vivi:5 --enemies goblin,wolf [--world 0] [--seed 1] [--auto] [--script cmds.txt]
  *   pnpm sim balance [--world 0] [--levels 2,4,7] [--party zidane,vivi,steiner] [--n 40]
- *   pnpm sim run     [--journey evil-forest] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
+ *   pnpm sim run     [--route evil-forest] [--seed s] [--party zidane] [--level 1] [--slots armor,head]
+ *                    --route: a journey or a journey grouping (journey-groups.json; --journey works too).
+ *                    --group a,b,c: play these journeys as one grouping for this sim run (try a grouping before
+ *                    setting it on the admin page).
  *   pnpm sim runs    [--count 20] [--seed meta]
  *   pnpm sim rewards [--source boss] [--world 4] [--party zidane,vivi,steiner] [--level 8] [--n 200]
  *                    — what reward offers look like (card kinds, rarities, gear quality, boons, fallbacks)
@@ -25,7 +28,7 @@
  */
 import { createInterface } from "node:readline";
 
-import { findItem, getItem, itemByName, items, type EquipSlot, type RewardSourceId } from "@ffix-roguelike/game-data";
+import { findItem, getItem, itemByName, items, registerRewardTables, rewardTables, type EquipSlot, type RewardSourceId } from "@ffix-roguelike/game-data";
 import { loadBattleScriptCache, loadFf9Cache } from "@ffix-roguelike/game-data/cache";
 
 import {
@@ -36,8 +39,12 @@ import {
   isSceneRef,
   rollSceneGroup,
   TICKS_PER_SECOND,
-  availableJourneys,
+  availableRoutes,
+  checkJourneyGroups,
+  getJourney,
+  getRoute,
   JOURNEYS,
+  runAreas,
   autoBattle,
   autoCommand,
   BattleEngine,
@@ -335,7 +342,9 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
   let run = start;
   const rng = Rng.fromSeed(`choices:${seed}`);
   const say = (s: string) => log && console.log(s);
-  for (let step = 0; step < 600 && run.phase.kind !== "over"; step++) {
+  // About 30 steps a map (stages, battles, rewards), with room to spare.
+  const maxSteps = 80 * runAreas(start).length;
+  for (let step = 0; step < maxSteps && run.phase.kind !== "over"; step++) {
     const p = run.phase;
     switch (p.kind) {
       case "map": {
@@ -387,7 +396,11 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
         break;
       case "worldClear":
         say(c.green(`== ${WORLDS[run.world]!.name} cleared ==`));
-        run = nextWorld(run);
+        {
+          const was = run.journey;
+          run = nextWorld(run);
+          if (run.journey !== was) say(c.green(`== ${getJourney(was).name} cleared · on to ${getJourney(run.journey).name} ==`));
+        }
         // Expected loadouts follow the party's level into each new map.
         run = withExpectedLoadouts(run, expected);
         break;
@@ -404,9 +417,26 @@ function runCmd() {
   const slots = list("slots", "");
   const party = keys.map((k) => ({ ...profile.builds[k]!, level: num("level", 1), unlockedSlots: slots as never }));
   const seed = args.seed ?? `run-${Date.now()}`;
-  const run = playRun(withExpectedLoadouts(startRun({ seed, tier: num("tier", 0), party, journey: args.journey ?? JOURNEYS[0]!.id }), expected), seed, true);
+  let route = args.route ?? args.journey ?? JOURNEYS[0]!.id;
+  // --group a,b,c: these journeys as one grouping, for this sim run only.
+  const group = list("group", "");
+  if (group.length) {
+    const sim = { id: "sim-group", name: `Grouping: ${group.map((j) => getJourney(j).name).join(" + ")}`, journeys: group, sort: 0, enabled: true };
+    const others = (rewardTables().journeyGroups ?? []).filter((g) => g.category === "challenge" || !g.journeys.some((j) => group.includes(j)));
+    const problems = checkJourneyGroups([...others, sim]);
+    if (problems.length) {
+      for (const p of problems) console.log(c.red(`✗ ${p}`));
+      process.exit(1);
+    }
+    registerRewardTables({ ...rewardTables(), journeyGroups: [...others, sim] });
+    route = sim.id;
+  }
+  const r = getRoute(route);
+  console.log(c.bold(`${r.name}: ${r.areas.length} maps (${r.journeys.map((j) => getJourney(j).name).join(" → ")})`));
+  const run = playRun(withExpectedLoadouts(startRun({ seed, tier: num("tier", 0), party, journey: route }), expected), seed, true);
   const won = run.phase.kind === "over" && run.phase.won;
-  console.log(c.bold(`\n${won ? "WON" : "LOST"} in ${WORLDS[run.world]!.name} · ${run.stats.battles} wins · levels ${run.party.map((m) => `${m.build.key}:${m.build.level}`).join(" ")}`));
+  console.log(c.bold(`\n${won ? "WON" : "LOST"} in ${WORLDS[run.world]!.name} (map ${run.stage + 1}/${runAreas(run).length}) · ${run.stats.battles} wins · levels ${run.party.map((m) => `${m.build.key}:${m.build.level}`).join(" ")}`));
+  if (run.cleared?.length) console.log(c.green(`journeys cleared: ${run.cleared.map((j) => getJourney(j).name).join(", ")}`));
 }
 
 /** Simple CP strategy: unlock Body first, then alternate start level / slots. */
@@ -439,10 +469,10 @@ function runsCmd() {
     profile = spendCp(profile);
     const keys = profile.unlocked.slice(0, 4);
     const seed = `${base}-${i}`;
-    // Next uncleared story journey first, then any uncleared one, else the latest.
-    const open = availableJourneys(profile);
-    const fresh = open.filter((id) => !(profile.journeysCleared ?? []).includes(id));
-    const journey = fresh.find((id) => JOURNEYS.find((j) => j.id === id)?.category === "story") ?? fresh[0] ?? open.at(-1)!;
+    // Next route (journey or grouping) with an uncleared story journey first, then any uncleared one, else the latest.
+    const open = availableRoutes(profile);
+    const fresh = open.filter((id) => getRoute(id).journeys.some((j) => !(profile.journeysCleared ?? []).includes(j)));
+    const journey = fresh.find((id) => getRoute(id).category === "story") ?? fresh[0] ?? open.at(-1)!;
     const run = playRun(startRun({ seed, tier: 0, party: keys.map((k) => profile.builds[k]!), unlockedGear: profile.gearUnlocked, journey }), seed, false);
     const startLv = keys.map((k) => profile.builds[k]!.level).join("/");
     const peak = Math.max(...run.party.map((m) => m.build.level));

@@ -2,7 +2,9 @@ import { describe, expect, test } from "bun:test";
 
 import { autoBattle } from "../battle/autoplay";
 import { BattleEngine } from "../battle/engine";
-import { applyRunOutcome, newProfile } from "../meta/profile";
+import { registerRewardTables, rewardTables } from "@ffix-roguelike/game-data";
+
+import { applyRunOutcome, availableRoutes, keepWipedClears, newProfile } from "../meta/profile";
 import { Rng } from "../rng";
 import { generateWorldMap, getNode, MAP_COLUMNS, MAP_SHAPE } from "./map";
 import { optimizeParty } from "./optimize";
@@ -315,17 +317,98 @@ describe("journeys", () => {
     run = claimReward(run, null);
     expect(run.phase).toEqual({ kind: "over", won: true });
     const report = applyRunOutcome(profile, runOutcome(run), 0);
-    expect(report.journeyCleared).toBe("echoes");
+    expect(report.journeysCleared).toEqual(["echoes"]);
   });
 });
 
 describe("journeys that gain a map", () => {
   test("a run saved before its journey gained a map follows the area it's in", () => {
     const p = newProfile();
-    // Saved on Evil Forest as stage 1, when journey 1 was Alexandria → Evil Forest (it's stage 2 now).
-    const run: RunState = { ...startRun({ seed: "realign", tier: 0, party: [p.builds.zidane!], journey: "evil-forest" }), world: getArea("evil-forest").index, stage: 1 };
+    // Saved on Evil Forest as stage 1, when journey 1 was Alexandria → Evil Forest (it's stage 2 now). Runs from then
+    // had no route snapshot (areas / legs / cleared).
+    const { areas: _a, legs: _l, cleared: _c, ...fresh } = startRun({ seed: "realign", tier: 0, party: [p.builds.zidane!], journey: "evil-forest" });
+    const run: RunState = { ...fresh, world: getArea("evil-forest").index, stage: 1 };
     expect(upgradeRunState(run).stage).toBe(2);
     // A run whose stage already matches is left alone.
     expect(upgradeRunState({ ...run, stage: 2 })).toEqual({ ...run, stage: 2 });
+  });
+});
+
+describe("journey groupings", () => {
+  const seeded = rewardTables();
+  const escape = { id: "escape", name: "Escape from Alexandria", journeys: ["return-to-alexandria", "fossil-roo"], sort: 1, enabled: true };
+  const bossWin = { kind: "rewards" as const, summary: { exp: 0, gil: 0, ap: 0, items: [], levelUps: [], mastered: [], members: [] }, gearChoices: [], boss: true };
+  /** Beat the current map's boss and claim its rewards. */
+  const beatBoss = (run: RunState) => claimReward({ ...run, phase: bossWin }, null);
+  /** A profile that can start the grouping (Cleyra cleared). */
+  const ready = () => ({ ...newProfile(), journeysCleared: ["evil-forest", "ice-cavern", "dali", "lindblum", "gizamaluke", "burmecia", "treno", "cleyra"] });
+  const start = () => startRun({ seed: "group", tier: 0, party: [newProfile().builds.zidane!], journey: "escape" });
+
+  test("a grouping plays as one run: a journey's boss gives its rewards, then the next journey's first map", () => {
+    registerRewardTables({ ...seeded, journeyGroups: [escape] });
+    try {
+      expect(availableRoutes(ready())).toContain("escape");
+      expect(availableRoutes(ready())).not.toContain("return-to-alexandria");
+      let run = start();
+      expect(run.journeyGroup).toBe("escape");
+      expect(run.areas).toHaveLength(6);
+      expect(run.journey).toBe("return-to-alexandria");
+      // Maps 1–2: on through Return to Alexandria.
+      for (let i = 0; i < 2; i++) run = nextWorld(beatBoss(run));
+      // Map 3's boss ends Return to Alexandria: rewards as any boss, then on to Fossil Roo's first map.
+      run = beatBoss(run);
+      expect(run.phase.kind).toBe("worldClear");
+      expect(run.cleared).toEqual(["return-to-alexandria"]);
+      run = nextWorld(run);
+      expect([run.stage, run.journey, run.world]).toEqual([3, "fossil-roo", getArea("pinnacle-rocks").index]);
+      for (let i = 0; i < 2; i++) run = nextWorld(beatBoss(run));
+      run = beatBoss(run);
+      expect(run.phase).toEqual({ kind: "over", won: true });
+      expect(run.cleared).toEqual(["return-to-alexandria", "fossil-roo"]);
+      const report = applyRunOutcome(ready(), runOutcome(run), 0);
+      expect(report.journeysCleared).toEqual(["return-to-alexandria", "fossil-roo"]);
+      expect(report.profile.groupsCleared).toEqual(["escape"]);
+    } finally {
+      registerRewardTables(seeded);
+    }
+  });
+
+  test("falling in the second journey keeps the first one's clear", () => {
+    registerRewardTables({ ...seeded, journeyGroups: [escape] });
+    try {
+      let run = start();
+      // Through Return to Alexandria's three maps, onto Fossil Roo's first.
+      for (let i = 0; i < 3; i++) run = nextWorld(beatBoss(run));
+      expect([run.journey, run.cleared]).toEqual(["fossil-roo", ["return-to-alexandria"]]);
+      run = { ...run, phase: { kind: "over", won: false } };
+      const report = applyRunOutcome(ready(), runOutcome(run), 0);
+      expect(report.journeysCleared).toEqual(["return-to-alexandria"]);
+      expect(report.profile.journeysCleared).not.toContain("fossil-roo");
+      expect(report.profile.groupsCleared ?? []).toEqual([]);
+    } finally {
+      registerRewardTables(seeded);
+    }
+  });
+
+  test("regrouping mid-run leaves the run alone", () => {
+    registerRewardTables({ ...seeded, journeyGroups: [escape] });
+    let run: RunState;
+    try {
+      run = nextWorld(beatBoss(start()));
+    } finally {
+      registerRewardTables(seeded);
+    }
+    // The grouping is gone (broken back out); the run still has its six maps and goes on into Fossil Roo.
+    expect(upgradeRunState(run)).toEqual(run);
+    run = nextWorld(beatBoss(run));
+    run = nextWorld(beatBoss(run));
+    expect([run.stage, run.journey]).toEqual([3, "fossil-roo"]);
+  });
+
+  test("a wiped run keeps the journeys it cleared, with their recruits", () => {
+    const before = { ...newProfile(), journeysCleared: ["evil-forest", "ice-cavern", "dali", "lindblum", "gizamaluke"] };
+    const { profile } = keepWipedClears(before, ["burmecia"], ["zidane"]);
+    expect(profile.journeysCleared).toContain("burmecia");
+    expect(profile.unlocked).toContain("eiko");
   });
 });

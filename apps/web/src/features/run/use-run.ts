@@ -17,7 +17,7 @@ export interface RunReport {
   /** Gear newly unlocked by winning. */
   gearUnlocked: number[];
   /** Journey cleared for the first time (unlocks the next). */
-  journeyCleared: string | null;
+  journeysCleared: string[];
   won: boolean;
   /** Completion Points earned per character. */
   points: Record<string, number>;

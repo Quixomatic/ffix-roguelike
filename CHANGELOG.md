@@ -2,6 +2,43 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.89] - 2026-10-20
+
+Journey groupings, step 2 (`.plans/journey-groups.md`): **a run can span several journeys.** A grouping plays as one seamless run, its journeys' maps end to end. No groupings exist yet (they get planned next), so nothing changes in play today.
+
+### Added
+- **Runs across journeys** (game-core `run/run.ts`):
+  - **Maps and progress:** a run plays its route's maps end to end, and progress counts across the whole run ("map 5 / 6").
+  - **Journey bosses:** a journey's final boss gives its rewards like any boss. The run then goes on to the next journey's first map, and the last map's boss wins the run.
+  - **New `RunState` fields:**
+    - `journeyGroup` (the grouping played);
+    - `areas` and `legs` (the run's maps, and where each journey ends), both **snapshotted at the start**, so regrouping journeys on the admin page never changes a run in progress;
+    - `cleared` (journeys whose final boss the run beat).
+  - `stage` counts across the whole run, and `journey` is the journey the current map belongs to.
+  - Helpers: `runAreas`, `runLegs`, `journeyAtStage`, `runName`, `routeLegs`.
+- **Journeys cleared in a run count when it ends, won or lost.** A run that falls in its second journey keeps the first one's clear, recruit and achievement.
+  - A run wiped by starting another keeps them too (`keepWipedClears`).
+  - Recruits are only unlocked for future runs, never added to the run in progress.
+  - A won grouping goes into `groupsCleared`.
+  - `applyRunOutcome` now uses `recordJourneyClears` and `unlockCharacters`, and the run report lists `journeysCleared` (every first clear, in order).
+- **API:** `run.start` takes a route, which is a journey or a grouping (`availableRoutes`). The `run` row records `journeyGroup`, and the run's end metrics count the grouping.
+- **Sim:**
+  - **`pnpm sim run --route <journey|grouping>`.**
+  - **`--group a,b,c`** plays any chain of journeys as one grouping for that sim run, to try groupings before setting them; it's checked against the grouping rules first.
+  - **Output:** each journey handover is logged ("Return to Alexandria cleared · on to Fossil Roo"), and so are the journeys a run cleared.
+  - **`sim runs`** follows routes, and the step cap scales with the run's length.
+- **Run screens:** the sidebar and the Run panel show the run's name and the map count across the whole run. The between-maps panel names the next map in the route, and the run-over screen lists every journey the run cleared. (The visual pass is step 3.)
+- Tests (`run/run.test.ts`):
+  - a two-journey grouping end to end;
+  - falling in the second journey keeps the first's clear;
+  - regrouping mid-run leaves the run alone;
+  - a wiped run keeps its clears and recruits.
+
+  Game-core: 984 pass, 0 fail.
+
+### Notes
+- Sim check: `pnpm sim run --group return-to-alexandria,fossil-roo,outer-continent --party zidane,vivi,steiner,garnet --level 28 --gear expected --abilities expected` won all 9 maps as one run and cleared all three journeys.
+
 ## [0.3.88] - 2026-10-20
 
 Step 1 again (`.plans/journey-groups.md`, renamed from `chapters.md`): "chapters" are now **journey groupings**, and only groupings have rows. The aim: keep the journeys logically separate, but let 2–3 of them play as **one run**, so players aren't facing 21 short runs.
