@@ -2,6 +2,20 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.72] - 2026-10-20
+
+Journeys groundwork, step 8 (`.plans/journeys-full-story.md`): one command checks an area is ready. That finishes Phase 0.
+
+### Added
+- **`apps/server/scripts/probe-areas.ts [area|journey …] [--no-fights]`**, a permanent read-only inspector like the other probes. For every area (or only the named areas, or the areas of the named journeys) it shows the area's journeys, theme and tier, then:
+  - **music:** its own FF9 theme, or a note that it plays the world map theme; a mapped track that isn't built is a problem;
+  - **shops:** its FF9 equipment shops and item stores, with their stock counts;
+  - **gear pools:** how many pieces drop there. It's a problem if nothing drops there, or if the seed file has more than the database (restart `pnpm dev` to merge);
+  - **sprites:** every monster in its fights has FFRK art, else it lists the placeholders;
+  - **fights:** every spawn pattern of its battles, elites, semi-boss and boss is played on auto, as the encounter test does, and must end in a real win or loss. No 15-minute stall, no stall watchdog, and no "victory" with a monster standing, except the scripted wins.
+  - Problems are marked ✗, and the script exits 1 if there are any.
+- **Today's areas:** all 295 fights play out, and every area has shops and gear pools. The only problems are 6 monsters still drawn as placeholders: Gigas Worm (Cornelia), Zuu and Golbez (Baron), Dullahan (World of Ruin), Axe Beak and Trick Sparrow (Lindblum Fields, Festival of the Hunt). The three Echoes areas have no music of their own.
+
 ## [0.3.71] - 2026-10-20
 
 Journeys groundwork, step 7 (`.plans/journeys-full-story.md`): five new area themes for the Disc 2–4 journeys.
