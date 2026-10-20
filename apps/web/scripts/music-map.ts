@@ -89,6 +89,11 @@ export const AREA_MUSIC: Record<string, string> = {
   "gauntlet-waltzes": "music017", // Sword of Fury
   "gauntlet-guardians": "music017",
   "gauntlet-end": "music017",
+  "alexandria-outskirts": "music045", // Crossing those Hills
+  "ice-cavern-entrance": "music031", // Ice Cavern
+  "dali-fields": "music002", // Dali Village
+  "cargo-ship": "music023", // Zidane's Theme (boarding the cargo ship)
+  "lindblum-plateau": "music047", // Lindblum Theme
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

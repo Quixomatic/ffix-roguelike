@@ -2,6 +2,30 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.79] - 2026-10-20
+
+Journeys Phase 5 (`.plans/journeys-full-story.md`): Disc 1's journeys get a third map each, from FF9 fights they didn't use. With this every journey in the plan is built.
+
+### Added
+- **A third map in each of journeys 1–5:**
+
+  | Journey | New map (where) | Fights | Boss |
+  |---|---|---|---|
+  | 1 · The Evil Forest | **Alexandria Outskirts** (between Alexandria and the forest) | Goblins and Pythons, Mu | Mu trio |
+  | 2 · The Ice Cavern | **Ice Cavern Entrance** (before the cavern) | Flans and Cave Imps, Mu | Wyerd pair |
+  | 3 · Dali | **The Fields of Dali** (before the village) | Vice and Hedgehog Pie; Serpion elites | Mandragora trio |
+  | 4 · Lindblum | **The Cargo Ship** (first: out of Dali, as in FF9) | Carve Spiders and Trick Sparrows, Ghosts | **Black Waltz 3** |
+  | 5 · Gizamaluke's Grotto | **The Lindblum Plateau** (first) | Lizard Men and Axe Beaks, Vice and Hedgehog Pie; Serpion elites | Lizard Men & Skeletons |
+
+  Each has its FF9 music (Crossing those Hills, Ice Cavern, Dali Village, Zidane's Theme for the cargo ship, Lindblum), its part of the story's shops, and gear pools in the seed.
+
+### Changed
+- **A run saved before its journey gained a map follows the area it's in** (`upgradeRunState`): its stage is set to where that area now sits in the journey, so a run in progress carries on into the right next map. The new areas are appended to `WORLDS`, so no existing area's index moved. Test in `run/run.test.ts`.
+
+### Notes
+- `probe-areas` on journeys 1–5: every fight plays out and every monster has art; the new maps' gear pools merge into the database on the next server start. Game-core: 967 pass, 0 fail.
+- Restart `pnpm dev` (gear pools).
+
 ## [0.3.78] - 2026-10-20
 
 Journeys 15–21 and the hidden journeys (`.plans/journeys-full-story.md` Phases 3–4): the rest of FF9's story to Necron, the six hidden bosses, and the Boss Gauntlet. All fights are FF9's own.

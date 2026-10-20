@@ -17,9 +17,11 @@ import {
   runOutcome,
   setRunBattleMode,
   startRun,
+  upgradeRunState,
   useConsumable,
   type RunState,
 } from "./run";
+import { getArea } from "../content/worlds";
 
 describe("map", () => {
   test("every stage is reachable and leads to the boss", () => {
@@ -314,5 +316,16 @@ describe("journeys", () => {
     expect(run.phase).toEqual({ kind: "over", won: true });
     const report = applyRunOutcome(profile, runOutcome(run), 0);
     expect(report.journeyCleared).toBe("echoes");
+  });
+});
+
+describe("journeys that gain a map", () => {
+  test("a run saved before its journey gained a map follows the area it's in", () => {
+    const p = newProfile();
+    // Saved on Evil Forest as stage 1, when journey 1 was Alexandria → Evil Forest (it's stage 2 now).
+    const run: RunState = { ...startRun({ seed: "realign", tier: 0, party: [p.builds.zidane!], journey: "evil-forest" }), world: getArea("evil-forest").index, stage: 1 };
+    expect(upgradeRunState(run).stage).toBe(2);
+    // A run whose stage already matches is left alone.
+    expect(upgradeRunState({ ...run, stage: 2 })).toEqual({ ...run, stage: 2 });
   });
 });

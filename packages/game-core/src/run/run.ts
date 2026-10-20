@@ -1012,7 +1012,11 @@ export function upgradeRunState(run: RunState): RunState {
     return upgradeRunState(next);
   }
   const known = JOURNEYS.some((j) => j.id === run.journey);
-  if (known && run.stage != null && run.unlockedGear) return run;
+  if (known && run.stage != null && run.unlockedGear) {
+    // A journey that gained a map since the run started (Disc 1's third maps): its stage follows the area it's in.
+    const at = getJourney(run.journey).areas.indexOf(WORLDS[run.world]?.id ?? "");
+    return at >= 0 && at !== run.stage ? { ...run, stage: at } : run;
+  }
   // Unknown/missing journey (older saves): the journey that contains the current area, at that area's stage.
   const area = WORLDS[run.world];
   const journey = known ? getJourney(run.journey) : (JOURNEYS.find((j) => area && j.areas.includes(area.id)) ?? JOURNEYS[0]!);

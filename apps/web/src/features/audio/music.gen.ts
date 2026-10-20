@@ -55,6 +55,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 8.486145124716554,
   "loopEnd": 40.4871201814059
  },
+ "music023": {
+  "url": "/music/music023.ogg",
+  "name": "Zidane's Theme (Provocative Zidane - boarding the Cargo Ship) Disc 1",
+  "loopStart": 4.029251700680272,
+  "loopEnd": 150.3667573696145
+ },
  "music024": {
   "url": "/music/music024.ogg",
   "name": "Boss Battle Theme",
@@ -365,7 +371,12 @@ export const AREA_MUSIC: Record<string, string> = {
  "hades-workshop": "music093",
  "gauntlet-waltzes": "music017",
  "gauntlet-guardians": "music017",
- "gauntlet-end": "music017"
+ "gauntlet-end": "music017",
+ "alexandria-outskirts": "music045",
+ "ice-cavern-entrance": "music031",
+ "dali-fields": "music002",
+ "cargo-ship": "music023",
+ "lindblum-plateau": "music047"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

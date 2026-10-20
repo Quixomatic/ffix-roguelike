@@ -102,6 +102,21 @@
       },
       {
         "area": "pandemonium"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -215,6 +230,21 @@
       },
       {
         "area": "pandemonium"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -328,6 +358,18 @@
       },
       {
         "area": "pandemonium"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -618,6 +660,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -671,6 +722,21 @@
       },
       {
         "area": "earth-shrine"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -1051,6 +1117,18 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -1933,6 +2011,21 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -2434,6 +2527,15 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -2949,6 +3051,18 @@
       },
       {
         "area": "memoria-lost-hall"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -3011,6 +3125,9 @@
       },
       {
         "area": "earth-shrine"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -3352,6 +3469,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -3429,6 +3555,21 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -3521,6 +3662,18 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4158,6 +4311,21 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4193,6 +4361,18 @@
       },
       {
         "area": "south-gate"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4282,6 +4462,9 @@
       },
       {
         "area": "esto-gaza"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4538,6 +4721,15 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -4586,6 +4778,15 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -4639,6 +4840,18 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4710,6 +4923,18 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -4787,6 +5012,9 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -5756,6 +5984,15 @@
       },
       {
         "area": "south-gate"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -5785,6 +6022,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -5820,6 +6066,18 @@
       },
       {
         "area": "south-gate"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -5876,6 +6134,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -6223,6 +6484,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -6288,6 +6558,15 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -6356,6 +6635,18 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -6424,6 +6715,9 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
@@ -7237,6 +7531,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "alexandria-outskirts"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
       }
     ],
     "catalog": false,
@@ -7299,6 +7602,18 @@
       },
       {
         "area": "forgotten-continent"
+      },
+      {
+        "area": "ice-cavern-entrance"
+      },
+      {
+        "area": "dali-fields"
+      },
+      {
+        "area": "cargo-ship"
+      },
+      {
+        "area": "lindblum-plateau"
       }
     ],
     "catalog": false,
