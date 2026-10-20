@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.93] - 2026-10-20
+
+### Fixed
+- **Steiner's Swd Mag (Magic Sword) list was always empty**, with Vivi in the party or not, in runs and in Practice at any level.
+  - **Cause:** the battle filtered it like his other ability lists, by what he's learned. Steiner never learns these: no gear teaches him a sword, so nothing ever showed.
+  - **FF9's rule, now ours:** each sword is there when the party's Vivi knows its spell:
+    - Fire Sword needs Fire, Fira Sword needs Fira, and so on through Bio, Water, Flare and Doomsday Sword;
+    - "knows" means mastered, or taught by gear Vivi is wearing;
+    - without Vivi there are none.
+  - A sword is usable on a turn when Vivi can act (not KO'd, Silenced, asleep, confused…), as before.
+  - `battle/magic-sword.ts`: the swords are set once at battle start (`limitMagicSwords` in `createBattle`).
+- Tests: `battle/magic-sword.test.ts` (each sword's spell; with Vivi, only the swords for spells he knows; without him, none; usable while he can act). Game-core: 987 pass, 0 fail.
+
 ## [0.3.92] - 2026-10-20
 
 ### Added

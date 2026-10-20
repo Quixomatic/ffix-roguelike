@@ -13,6 +13,7 @@ import { enemyAction } from "../content/enemy-actions";
 import { getScene } from "../content/ff9-scenes";
 import { Rng } from "../rng";
 import { C, Calc, CAT, F, itemAction, PHANTOMS, performScript, REMOVE_ON_MAGICAL, REMOVE_ON_PHYSICAL, SA, type CalcCommand } from "./calc";
+import { limitMagicSwords } from "./magic-sword";
 import { supportImmunities } from "./units";
 import { BattleAi, commandIds } from "./ai/vm";
 import {
@@ -122,6 +123,8 @@ export interface CreateBattleOptions {
 export function createBattle(opts: CreateBattleOptions): BattleState {
   const rng = new Rng(opts.seed);
   const units = [...opts.party, ...opts.enemies].map((u) => structuredClone(u));
+  // Steiner's Magic Sword list: the swords whose spell this party's Vivi knows.
+  limitMagicSwords(units);
   // Battle start (FF9: preemptive 16/256, Initiative 85/256; back attack 24/256, Alert prevents it).
   let start: "normal" | "preemptive" | "back" = "normal";
   if (!opts.noSurprise) {

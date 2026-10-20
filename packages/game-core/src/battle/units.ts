@@ -5,6 +5,7 @@ import { baseStats, enemyItemId, getEnemy, type EnemyDef } from "../content/enem
 import { ff9 } from "../content/enemy-actions";
 import { ff9AttackPower } from "../content/ff9";
 import { activeSupports, availableActions, deriveStats, type CharacterBuild } from "../stats";
+import { isMagicSword } from "./magic-sword";
 import { atbMaxFor, ENEMY_CATEGORY, type BattleUnit, type CommandDef, type EnemyFamily } from "./types";
 
 /** HP/MP and lasting statuses a party member carries between battles. */
@@ -45,8 +46,9 @@ export function partyUnit(build: CharacterBuild, slot: number, vitals?: Vitals):
       .map((c) => ({
         id: c.id,
         name: c.name,
-        // Single-ability commands like Steal / Eat / Jump / Throw are innate; ability lists are filtered.
-        actionIds: c.actionIds.length <= 1 ? c.actionIds : c.actionIds.filter((id) => known.has(id)),
+        // Single-ability commands like Steal / Eat / Jump / Throw are innate; ability lists are filtered. Magic Sword
+        // isn't learned: the battle keeps the swords whose spell the party's Vivi knows (magic-sword.ts).
+        actionIds: c.actionIds.length <= 1 || c.actionIds.every(isMagicSword) ? c.actionIds : c.actionIds.filter((id) => known.has(id)),
       }));
   const statuses: BattleUnit["statuses"] = {};
   for (const s of vitals?.statuses ?? []) if (LASTING_STATUSES.includes(s)) statuses[s] = {};
