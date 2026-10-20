@@ -40,9 +40,9 @@ export const MAX_TICKS = 15 * 900;
 /**
  * Battle rules version, stored in every battle. A fight saved under older rules can't be replayed exactly, so
  * the run restarts it (upgradeRunState). 2: FF9 targeting ignores "disappear", script pauses play out instantly,
- * the stall watchdog.
+ * the stall watchdog. 3: Steiner's Magic Sword list follows the spells the party's Vivi knows (set at battle start).
  */
-export const BATTLE_RULES = 2;
+export const BATTLE_RULES = 3;
 /** No command for this long (and no one waiting for the player) = the fight is stuck on something that can't happen. */
 export const STALL_TICKS = 15 * 45;
 /** VM frames a script pause may run within one tick when nothing is animating. */

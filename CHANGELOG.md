@@ -2,6 +2,16 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.95] - 2026-10-20
+
+### Fixed
+- **A fight already in progress kept Steiner's empty Swd Mag list after v0.3.93.** A battle's units are saved when it starts, so the fix only reached new fights.
+  - The battle rules version is now 3 (`BATTLE_RULES`). A fight saved under the old rules is restarted, same enemies, the next time the run loads (`upgradeRunState`), so it picks up the swords.
+- Game-core: 987 pass, 0 fail.
+
+### Notes
+- Reload the run page: the fight in progress starts over with Steiner's swords.
+
 ## [0.3.94] - 2026-10-20
 
 ### Fixed
