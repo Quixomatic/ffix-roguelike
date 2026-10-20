@@ -2,6 +2,17 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.5] - 2026-10-20
+
+### Added
+- **Umami analytics** (ChannelGuide's self-hosted instance and setup): privacy-friendly, cookieless and with no personal data, so no consent banner is needed.
+  - **Config:** only env, both optional in the web `.env.schema`: `VITE_UMAMI_SRC` (the tracker script, `https://umami.turboforge.io/script.js`) and `VITE_UMAMI_WEBSITE_ID`.
+  - **When it loads:** only in production builds with both set, so local dev doesn't count against the stats. It's added after the app starts, deferred, never blocking the page (`lib/analytics.ts`, called from `main.tsx`).
+  - **Page views:** Umami follows the router's history changes itself, so every page is counted without per-route calls.
+
+### Notes
+- Railway (web service): set `VITE_UMAMI_SRC` and `VITE_UMAMI_WEBSITE_ID`, then redeploy (Vite bakes them in at build time).
+
 ## [0.4.4] - 2026-10-20
 
 ### Added
