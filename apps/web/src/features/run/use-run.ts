@@ -55,6 +55,7 @@ export function useRunActions() {
     finishBattle: useMutation(trpc.run.finishBattle.mutationOptions(opts)),
     claim: useMutation(trpc.run.claim.mutationOptions(opts)),
     buy: useMutation(trpc.run.buy.mutationOptions(purchase)),
+    buyWare: useMutation(trpc.run.buyWare.mutationOptions(purchase)),
     synthesize: useMutation(trpc.run.synthesize.mutationOptions(purchase)),
     sell: useMutation(trpc.run.sell.mutationOptions(opts)),
     buyOffer: useMutation(trpc.run.buyOffer.mutationOptions(purchase)),

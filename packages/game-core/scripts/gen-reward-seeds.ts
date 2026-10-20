@@ -73,6 +73,8 @@ const sources: RewardSource[] = [
   { id: "treasure", cards: 2, rarityWeights: rarityWeights(55, 28, 12, 4, 1), typeWeights: { gear: 3, boon: 2, ap: 1, supplies: 2, gil: 1 }, upgradeThreshold: 1.5, guarantee: "none", minRarity: "common", skipGil: 80 },
   { id: "semiboss", cards: 3, rarityWeights: rarityWeights(0, 0, 70, 25, 5), typeWeights: { gear: 1, boon: 0, ap: 0, supplies: 0, gil: 0 }, upgradeThreshold: 4, guarantee: "allGear", minRarity: "rare", skipGil: 200 },
   { id: "boss", cards: 3, rarityWeights: rarityWeights(0, 0, 60, 32, 8), typeWeights: { gear: 1, boon: 0, ap: 0, supplies: 0, gil: 0 }, upgradeThreshold: 5, guarantee: "allGear", minRarity: "rare", skipGil: 300 },
+  // The shop node's wares: bought, not picked (no skip); its shelf sells the consumables, so no supplies / gil cards.
+  { id: "shop", cards: 6, rarityWeights: rarityWeights(40, 32, 18, 8, 2), typeWeights: { gear: 5, boon: 3, ap: 2, supplies: 0, gil: 0 }, upgradeThreshold: 2, guarantee: "oneGear", minRarity: "common", skipGil: 0, relicChance: 15 },
 ];
 
 const boon = (id: string, name: string, description: string, stat: RewardBoon["stat"], a: Partial<Record<RarityId, number>>, extra: Partial<RewardBoon> = {}): RewardBoon => ({

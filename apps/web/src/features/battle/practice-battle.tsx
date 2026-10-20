@@ -1,11 +1,27 @@
-import { createBattle, encounterNames, encounterUnits, newBuild, partyUnit, TICKS_PER_SECOND, WORLDS, type BattleState } from "@ffix-roguelike/game-core";
-import { itemByName } from "@ffix-roguelike/game-data";
+import {
+  createBattle,
+  encounterNames,
+  encounterUnits,
+  newBuild,
+  partyUnit,
+  relicModifiers,
+  synergyModifiers,
+  TICKS_PER_SECOND,
+  WORLDS,
+  type BattleState,
+} from "@ffix-roguelike/game-core";
+import { itemByName, relicTable } from "@ffix-roguelike/game-data";
 import { useMemo, useState } from "react";
 
 import { LIVE_BOSSES_KEY, liveBossesOn } from "./battle-scene";
 import { BattleView } from "./battle-view";
 import { useBattleScript } from "./use-battle-script";
+import { Badge } from "@/features/hub/badge";
+import { RelicPopover } from "@/features/hub/relic-popover";
 import { FocusItem } from "@/features/input/focus";
+
+/** Practice's party. */
+const PARTY = ["zidane", "vivi", "steiner", "garnet"] as const;
 
 interface Props {
   world: number;
@@ -19,6 +35,9 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   const [round, setRound] = useState(0);
   const [result, setResult] = useState<BattleState | null>(null);
   const [live, setLive] = useState(liveBossesOn);
+  /** Relics to try in the fight (any relic, unlocked or not): they apply like a run's, with the party's synergies. */
+  const [relics, setRelics] = useState<string[]>([]);
+  const [picking, setPicking] = useState(false);
   const w = WORLDS[world] ?? WORLDS[0]!;
   const groups = [...w.encounters, ...w.elites, w.boss];
   const group = groups[encounter % groups.length]!;
@@ -30,7 +49,9 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
     if (!scriptReady) return null;
     return createBattle({
         seed: Date.now() >>> 0,
-        party: ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(newBuild(k, level), i)),
+        party: PARTY.map((k, i) => partyUnit(newBuild(k, level), i)),
+        // The picked relics and the party's synergies, as in a run.
+        modifiers: [...relicModifiers(relics), ...synergyModifiers([...PARTY])],
         enemies: structuredClone(foes.units),
         ...(foes.scene ? { scene: foes.scene } : {}),
         // The world's boss pick is a boss fight (the boss frame shows).
@@ -46,8 +67,12 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
   },
     // A new round re-rolls the seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [world, level, encounter, round, scriptReady],
+    [world, level, encounter, round, scriptReady, relics],
   );
+  const toggleRelic = (id: string) => {
+    setResult(null);
+    setRelics((rs) => (rs.includes(id) ? rs.filter((x) => x !== id) : [...rs, id]));
+  };
 
   return (
     // In the hub layout like the run: the window's full height with an even margin; the controls leave room for the
@@ -124,6 +149,11 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
               Live boss animation
             </label>
           </FocusItem>
+        <FocusItem>
+          <button className="ff-option" onClick={() => setPicking(!picking)}>
+            Relics{relics.length ? ` (${relics.length})` : ""}
+          </button>
+        </FocusItem>
         {result && (
           <span className="text-yellow-200">
             {result.outcome} in {Math.round(result.tick / TICKS_PER_SECOND)}s
@@ -131,9 +161,32 @@ export function PracticeBattle({ world, level, encounter, onChange }: Props) {
           </span>
         )}
       </div>
+      {/* Try any relic: toggling one restarts the fight with it. Hover a badge for its card. */}
+      {picking && (
+        <div className="ff-window ml-12 flex flex-wrap items-center gap-1 px-3 py-2">
+          {relicTable().map((r) => (
+            <RelicPopover key={r.id} relicId={r.id} side="bottom">
+              <button
+                className={`rounded p-0.5 ${relics.includes(r.id) ? "bg-yellow-300/25 ring-1 ring-yellow-300" : "opacity-60 hover:opacity-100"}`}
+                aria-label={r.name}
+                onClick={() => toggleRelic(r.id)}
+              >
+                <Badge id={r.badge ?? 1} scale={1} />
+              </button>
+            </RelicPopover>
+          ))}
+          {relics.length > 0 && (
+            <FocusItem>
+              <button className="ff-option ml-2 text-sm" onClick={() => (setResult(null), setRelics([]))}>
+                Clear
+              </button>
+            </FocusItem>
+          )}
+        </div>
+      )}
       <div className="min-h-0 flex-1">
         {initial ? (
-          <BattleView key={`${world}-${level}-${encounter}-${round}`} initial={initial} theme={w.theme} onEnd={setResult} />
+          <BattleView key={`${world}-${level}-${encounter}-${round}-${relics.join(",")}`} initial={initial} theme={w.theme} onEnd={setResult} />
         ) : (
           <div className="ff-window mx-auto px-4 py-1">Loading battle…</div>
         )}

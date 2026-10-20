@@ -5,12 +5,29 @@
  * - `enemy`: an FFRK enemy sheet (`.docs/assets/FFRK-data/_raw/enemies/<id>`, one pose + white/thunder frames).
  * - `boss`: an FFRK boss rig (`_raw/bosses/<id>` sheet + `.anim.json`): animated idle/attack/damage/death.
  * - `player`: an FFRK party sheet (`_raw/characters/<id>`) for story characters fought as enemies.
+ * - `crop`: frames cut from a local image (a Spriters Resource rip under `.docs/assets`), looping as the idle, its
+ *   flat background colour made see-through; `flip` mirrors them so they face right like the FFRK sheets.
  *
  * `src` says where the art comes from. Names were matched to sheets pixel-for-pixel (`pnpm -F web ffrk:names`)
  * unless noted "identified by eye"; "stand-in" means FFRK never drew this FF9 monster and another game's
  * look-alike is used (James OK'd reuse). Unmapped monsters keep the placeholder — see /bestiary.
  */
-export type EnemySpriteSource = ({ enemy: number } | { boss: number } | { player: number }) & { src: string };
+export interface CropFrames {
+  /** Under `.docs/assets`. */
+  file: string;
+  /** The first frame's cell, and how far apart the rest are (frames in a row). */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  step: number;
+  count: number;
+  fps: number;
+  /** The sheet's background colour (r, g, b), made see-through. */
+  key?: [number, number, number];
+  flip?: boolean;
+}
+export type EnemySpriteSource = ({ enemy: number } | { boss: number } | { player: number } | { crop: CropFrames }) & { src: string };
 
 export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   "abadon": { boss: 209058, src: "Abadon (FF9)" },
@@ -144,5 +161,9 @@ export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   // Not monsters: the overworld's stage figures (Moogle, Stiltzkin and Chocobo stages), keyed "npc-…".
   "npc-moogle": { player: 106005, src: "Mog (FFRK party sheet, FF6)" },
   "npc-stiltzkin": { player: 150013, src: "stand-in: Montblanc (FFRK party sheet, FFT) — FFRK never drew Stiltzkin" },
-  "npc-chocobo": { boss: 390001, src: "Fat Chocobo (FFRK boss rig)" },
+  "npc-chocobo": {
+    // Its side-on walk (row 3: ten frames on a 30 px grid), facing left on the sheet.
+    crop: { file: "FFRK/Game Boy Advance - Chocobo Land_ A Game of Dice - Playable Characters - Chocobo.png", x: 3, y: 92, w: 26, h: 27, step: 30, count: 10, fps: 8, key: [248, 248, 248], flip: true },
+    src: "Chocobo (Chocobo Land: A Game of Dice, GBA)",
+  },
 };

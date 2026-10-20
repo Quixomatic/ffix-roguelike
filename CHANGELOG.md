@@ -2,6 +2,52 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.65] - 2026-10-19
+
+The shop sells targeted wares, relics get an admin page and 42 more of them, and the map's synthesis badge and chocobo change.
+
+### Added
+- **Shop wares** (`.plans/shop-wares.md`). The shop node is now a counter with two parts:
+  - **Six wares:** reward cards for sale, each for one party member and saying exactly what it does (stat changes, "Teaches…", "Stops learning…").
+    - Buying one applies it at once, like taking a reward: gear is equipped on that member and bound to them (their old piece goes to the bag); boons and AP surges land immediately.
+    - Each ware sells once, and you can buy as many as your gil allows.
+    - A relic can be among them; with a full rack it asks which relic to give up.
+  - **Supplies:** the area's consumables, unlimited, at FF9 prices. The long list of FF9 shop gear is gone.
+  - Selling is unchanged.
+  - **Prices:** gear costs its FF9 price × a markup by rarity (×1.0 common to ×1.5 legendary). Boons, AP surges and relics cost a per-rarity shop price (150 / 300 / 600 / 1,200 / 2,500) × (tier + 1).
+  - Wares are rolled from a new **`shop` reward source** (6 cards, mostly gear, then boons and AP; no supplies or gil cards; at least one gear upgrade).
+  - Game-core `buyWare`, `warePrice`, `ShopWares`; API `run.buyWare`. Shops entered before this keep their old list until left.
+- **Relic chance per reward source** (Admin → Sources, 0–100, 0 = never). It replaces the fixed boss 100% / fortress 50%, which stay the defaults; the shop starts at 15%.
+- **Shop prices per rarity** (Admin → Rarities): "Shop: gear × FF9 price" and "Shop: other cards (× tier)".
+- **Admin → Relics** (relics plan phase 5):
+  - every relic with search and filters (starter, cursed, disabled);
+  - an editor for name, rarity, description, flavour, collection number, minimum tier, offer weight, enabled / starter / cursed, the unlocking achievement (or free), and the badge;
+  - an **effects editor:** stat ±%, start-of-battle status, Trance head start, steal %, MP discount, or HP / MP on a kill, each for the party, a synergy tag or one character, with a plain-English line under each;
+  - New relic and Delete.
+  - The server checks the achievement, tags and characters exist.
+- **Admin → Synergies:** edit each synergy (name, tag, colour, badge, tiers and their effects), add new ones, and set each character's synergy tags.
+- **Practice → Relics:** toggle any relic into the practice fight (with the party's synergies, as in a run); the fight restarts with it.
+- **42 new relics** (`.plans/relics-content.md` part A), each with a badge and flavour line:
+  - **Story and bosses:** Plant Brain Spore, Frozen Bell, Mist Lantern, Lindblum Crest, Gizamaluke's Bell, Garland's Visor, Golbez's Gauntlet, Kefka's Plume.
+  - **Superbosses:** Soulcage Root, Deathguise Scythe, Hades' Hammer, Ozma Shard, Necron's Eye, Memoria Fragment.
+  - **One per solo challenge,** for that character only.
+  - **One per synergy.**
+  - **Milestone and tier relics.**
+  - **Four new starters:** Prima Vista Ticket, Fang Necklace, Old Map, Mist Charm.
+  - **Cursed:** Kefka's Plume, Necron's Eye, Berserker's Mask, Glass Heart, Phantom Veil, Heavy Gauntlets.
+- **13 new achievements** that unlock them, all metric thresholds: Seasoned Traveller, Explorer, Wanderer, Professional, Better Luck Next Time, Inner Power, Field Medic, Spellslinger, Heavyweight, Glass Cannon, Ten Thousand, Untouchable, Again and Again. Each has a badge.
+- **Sprite build: `crop` sources** (`enemy-sprite-map.ts`). Frames are cut from a local rip in a row, the flat background colour is keyed out, they can be mirrored, and they play as a looping idle. Rips with bytes after the PNG's end are read up to IEND.
+
+### Changed
+- **The Chocobo stage's chocobo** is the Chocobo Land (GBA) chocobo: its 10-frame side walk, about 20 px. It was the Fat Chocobo rig. The `enemies` pack is rebuilt and uploaded to R2.
+- **Stage characters animate only when reachable:** the Moogle, Stiltzkin and Chocobo figures play their idle animation (and bob) only on stages the party can go to next.
+- **Synthesis stages' badge:** iron anvil (853).
+- The admin page's shared form pieces moved to `admin/admin-fields.tsx`; the new tabs are in `admin/relics-admin.tsx`.
+- Tests: 5 for the shop wares (shelf and wares, prices, buying, sold-out, gil, relic chance per source). Game-core: 340 pass, 0 fail.
+
+### Notes
+- Restart `pnpm dev` so the server reloads the reward tables (the new relics, achievements and `shop` source are already in the dev database).
+
 ## [0.3.64] - 2026-10-19
 
 ### Changed

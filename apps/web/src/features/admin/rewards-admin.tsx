@@ -11,8 +11,11 @@ import {
   items,
   MAIN_CAST,
   RARITIES,
+  relicChanceOf,
   REWARD_SOURCES,
   ROLE_STATS,
+  shopMarkupOf,
+  shopPriceOf,
   type AchievementCategory,
   type AchievementCondition,
   type AchievementData,
@@ -27,27 +30,31 @@ import {
   type RewardTables,
   type StarterUpgrade,
 } from "@ffix-roguelike/game-data";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { Badge, useBadgeCatalog } from "@/features/hub/badge";
 import { FocusItem } from "@/features/input/focus";
 import { ItemIcon } from "@/features/items/item-icon";
 import { KIND_LABEL } from "@/features/run/item-info";
 import { boonText } from "@/features/run/reward-cards";
 import { trpc } from "@/utils/trpc";
 
+import { BadgePicker, Check, Field, inputCls, Num, SaveButton, Select, Text, useSaved } from "./admin-fields";
+import { RelicsTab, SynergiesTab } from "./relics-admin";
+
 /**
  * Admin: the reward and gear-availability tables (`.plans/rewards.md` §4) — what drops where, the gear catalog, the
  * reward cards' rules, the boons, the rarities, and what each character values. Every save goes live at once (the
  * next offer, drop pool and catalog use it). Export writes the tables into the repo's seed files to commit them.
  */
-type Tab = "gear" | "starter" | "achievements" | "boons" | "sources" | "rarities" | "roles" | "preview";
+type Tab = "gear" | "starter" | "achievements" | "relics" | "synergies" | "boons" | "sources" | "rarities" | "roles" | "preview";
 const TABS: { id: Tab; label: string }[] = [
   { id: "gear", label: "Gear availability" },
   { id: "starter", label: "Starter gear" },
   { id: "achievements", label: "Achievements" },
+  { id: "relics", label: "Relics" },
+  { id: "synergies", label: "Synergies" },
   { id: "boons", label: "Boons" },
   { id: "sources", label: "Sources" },
   { id: "rarities", label: "Rarities" },
@@ -98,6 +105,10 @@ export function RewardsAdminPage() {
         <StarterTab tables={tables.data} />
       ) : tab === "achievements" ? (
         <AchievementsTab tables={tables.data} />
+      ) : tab === "relics" ? (
+        <RelicsTab tables={tables.data} />
+      ) : tab === "synergies" ? (
+        <SynergiesTab tables={tables.data} />
       ) : tab === "boons" ? (
         <BoonsTab tables={tables.data} />
       ) : tab === "sources" ? (
@@ -113,77 +124,6 @@ export function RewardsAdminPage() {
   );
 }
 
-// ── shared bits ────────────────────────────────────────────────────────────────────────────────────────────────────
-
-/** After a save: the admin view and the game's own copy of the tables. */
-function useSaved(label: string) {
-  const qc = useQueryClient();
-  return {
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: trpc.admin.rewardTables.queryKey() });
-      void qc.invalidateQueries({ queryKey: trpc.content.rewards.queryKey() });
-      toast.success(`${label} saved`);
-    },
-    onError: (e: { message: string }) => toast.error(e.message),
-  };
-}
-
-function Field({ label, children, wide }: { label: string; children: ReactNode; wide?: boolean }) {
-  return (
-    <label className={`flex flex-col gap-0.5 text-xs ${wide ? "col-span-full" : ""}`}>
-      <span className="opacity-70">{label}</span>
-      {children}
-    </label>
-  );
-}
-const inputCls = "rounded border border-white/20 bg-black/30 px-2 py-1 text-sm";
-
-function Num({ value, onChange, step = 1 }: { value: number | null | undefined; onChange(v: number | null): void; step?: number }) {
-  return (
-    <FocusItem>
-      <input type="number" step={step} className={`${inputCls} w-full`} value={value ?? ""} onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))} />
-    </FocusItem>
-  );
-}
-function Text({ value, onChange }: { value: string | undefined; onChange(v: string): void }) {
-  return (
-    <FocusItem>
-      <input className={`${inputCls} w-full`} value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
-    </FocusItem>
-  );
-}
-function Check({ label, checked, onChange }: { label: string; checked: boolean; onChange(v: boolean): void }) {
-  return (
-    <FocusItem>
-      <label className="flex cursor-pointer items-center gap-1.5 text-sm">
-        <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-        {label}
-      </label>
-    </FocusItem>
-  );
-}
-function Select<T extends string>({ value, options, onChange }: { value: T; options: readonly T[]; onChange(v: T): void }) {
-  return (
-    <FocusItem>
-      <select className={`${inputCls} w-full`} value={value} onChange={(e) => onChange(e.target.value as T)}>
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-    </FocusItem>
-  );
-}
-function SaveButton({ pending, onClick, label = "Save" }: { pending: boolean; onClick(): void; label?: string }) {
-  return (
-    <FocusItem>
-      <button className="ff-panel ff-btn ff-lift px-4 py-1 text-sm" disabled={pending} onClick={onClick}>
-        {pending ? "Saving…" : label}
-      </button>
-    </FocusItem>
-  );
-}
 
 // ── gear availability ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -438,8 +378,13 @@ function SourceEditor({ source }: { source: RewardSource }) {
       <Field label="Upgrade threshold">
         <Num value={d.upgradeThreshold} step={0.5} onChange={(v) => setD({ ...d, upgradeThreshold: v ?? 0 })} />
       </Field>
-      <Field label="Skip gil (× tier)">
-        <Num value={d.skipGil} onChange={(v) => setD({ ...d, skipGil: v ?? 0 })} />
+      {source.id !== "shop" && (
+        <Field label="Skip gil (× tier)">
+          <Num value={d.skipGil} onChange={(v) => setD({ ...d, skipGil: v ?? 0 })} />
+        </Field>
+      )}
+      <Field label="Relic chance % (0 = never)">
+        <Num value={relicChanceOf(d)} step={1} onChange={(v) => setD({ ...d, relicChance: v ?? 0 })} />
       </Field>
       {source.id === "surprise" && (
         <Field label="Chance % (plain battles)">
@@ -483,7 +428,7 @@ function RarityEditor({ rarity }: { rarity: RewardRarity }) {
   const [d, setD] = useState<RewardRarity>(rarity);
   const save = useMutation(trpc.admin.saveRarity.mutationOptions(useSaved(rarity.name)));
   return (
-    <div className="ff-window grid grid-cols-2 items-end gap-2 p-3 sm:grid-cols-9" style={{ borderColor: d.color }}>
+    <div className="ff-window grid grid-cols-2 items-end gap-2 p-3 sm:grid-cols-11" style={{ borderColor: d.color }}>
       <Field label="Name">
         <Text value={d.name} onChange={(name) => setD({ ...d, name })} />
       </Field>
@@ -506,6 +451,12 @@ function RarityEditor({ rarity }: { rarity: RewardRarity }) {
       </Field>
       <Field label="Areas up">
         <Num value={d.bandSteps ?? bandStepsOf(d)} onChange={(v) => setD({ ...d, bandSteps: v ?? 0 })} />
+      </Field>
+      <Field label="Shop: gear × FF9 price">
+        <Num value={shopMarkupOf(d)} step={0.05} onChange={(v) => setD({ ...d, shopMarkup: v ?? 1 })} />
+      </Field>
+      <Field label="Shop: other cards (× tier)">
+        <Num value={shopPriceOf(d)} onChange={(v) => setD({ ...d, shopPrice: v ?? 0 })} />
       </Field>
       <Field label="Sort">
         <Num value={d.sort} onChange={(v) => setD({ ...d, sort: v ?? 0 })} />
@@ -1050,61 +1001,6 @@ function AchievementsTab({ tables }: { tables: RewardTables }) {
         <AchievementEditor key={selected || "new"} achievement={editing} isNew={selected === ""} onSaved={setSelected} onDeleted={() => setSelected(null)} />
       ) : (
         <div className="ff-window p-4 text-sm opacity-70">Pick an achievement to edit, or add a new one.</div>
-      )}
-    </div>
-  );
-}
-
-/** At most this many badges in the picker grid at once (the search narrows the rest). */
-const BADGE_PICKER_MAX = 240;
-
-/** An achievement's badge: the current one, and a grid of the badge set to pick from, searchable by name and tags. */
-function BadgePicker({ value, onChange }: { value?: number; onChange(badge: number | undefined): void }) {
-  const [open, setOpen] = useState(false);
-  const [q, setQ] = useState("");
-  const catalog = useBadgeCatalog();
-  const info = catalog.data?.find((b) => b.id === value);
-  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
-  const matches = (catalog.data ?? []).filter((b) => {
-    const text = `${b.id} ${b.name ?? ""} ${(b.tags ?? []).join(" ")}`.toLowerCase();
-    return words.every((w) => text.includes(w));
-  });
-  return (
-    <div className="flex flex-col gap-2 rounded border border-white/10 p-2">
-      <div className="flex items-center gap-3">
-        {value ? <Badge id={value} /> : <span className="flex h-20 w-20 items-center justify-center text-xs opacity-60">No badge</span>}
-        <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
-          <span className="ff-title text-sm">Badge</span>
-          <span className="truncate">{value ? `#${value}${info?.name ? ` · ${info.name}` : ""}` : "None yet"}</span>
-          <div className="flex gap-2">
-            <SaveButton pending={false} label={open ? "Close" : "Choose…"} onClick={() => setOpen(!open)} />
-            {value && <SaveButton pending={false} label="Clear" onClick={() => onChange(undefined)} />}
-          </div>
-        </div>
-      </div>
-      {open && (
-        <>
-          <Field label={`Search badges (${matches.length} of ${catalog.data?.length ?? 0}): name, tags or number`}>
-            <Text value={q} onChange={setQ} />
-          </Field>
-          <div className="grid max-h-80 grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1 overflow-y-auto pr-1">
-            {matches.slice(0, BADGE_PICKER_MAX).map((b) => (
-              <FocusItem key={b.id}>
-                <button
-                  title={`#${b.id} ${b.name ?? ""}${b.tags?.length ? ` (${b.tags.join(", ")})` : ""}`}
-                  className={`flex items-center justify-center rounded p-0.5 hover:bg-white/15 ${b.id === value ? "bg-yellow-300/20 ring-1 ring-yellow-300" : "bg-black/20"}`}
-                  onClick={() => {
-                    onChange(b.id);
-                    setOpen(false);
-                  }}
-                >
-                  <Badge id={b.id} scale={1} />
-                </button>
-              </FocusItem>
-            ))}
-          </div>
-          {matches.length > BADGE_PICKER_MAX && <div className="text-xs opacity-70">Showing {BADGE_PICKER_MAX}; search to narrow it down.</div>}
-        </>
       )}
     </div>
   );

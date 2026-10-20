@@ -12,7 +12,8 @@ export type RarityId = (typeof RARITIES)[number];
 export const CARD_TYPES = ["gear", "boon", "ap", "supplies", "gil"] as const;
 export type CardType = (typeof CARD_TYPES)[number];
 
-export const REWARD_SOURCES = ["surprise", "elite", "treasure", "semiboss", "boss"] as const;
+/** Where reward cards come from: the reward screens, and the shop node's wares (`shop`, bought rather than picked). */
+export const REWARD_SOURCES = ["surprise", "elite", "treasure", "semiboss", "boss", "shop"] as const;
 export type RewardSourceId = (typeof REWARD_SOURCES)[number];
 
 /** Stats a role weighs when judging gear (the same names as game-core's compared stats). */
@@ -39,11 +40,21 @@ export interface RewardRarity {
   nextBand: number;
   /** How many areas up that higher band is (unset: common 0, uncommon / rare 1, epic 2, legendary 3). */
   bandSteps?: number;
+  /** Shop wares: a gear card's price is its FF9 price × this (unset: `DEFAULT_SHOP_MARKUP`). */
+  shopMarkup?: number;
+  /** Shop wares: a boon / AP surge / relic card's price, per tier + 1 (unset: `DEFAULT_SHOP_PRICE`). */
+  shopPrice?: number;
 }
 
 const DEFAULT_BAND_STEPS: Record<RarityId, number> = { common: 0, uncommon: 1, rare: 1, epic: 2, legendary: 3 };
 /** How many area bands up a gear card of this rarity can reach. */
 export const bandStepsOf = (r: RewardRarity) => r.bandSteps ?? DEFAULT_BAND_STEPS[r.id];
+
+export const DEFAULT_SHOP_MARKUP: Record<RarityId, number> = { common: 1, uncommon: 1.1, rare: 1.2, epic: 1.35, legendary: 1.5 };
+export const DEFAULT_SHOP_PRICE: Record<RarityId, number> = { common: 150, uncommon: 300, rare: 600, epic: 1200, legendary: 2500 };
+/** A rarity's shop-ware gear markup and flat price (with their defaults for rows saved before they existed). */
+export const shopMarkupOf = (r: RewardRarity) => r.shopMarkup ?? DEFAULT_SHOP_MARKUP[r.id];
+export const shopPriceOf = (r: RewardRarity) => r.shopPrice ?? DEFAULT_SHOP_PRICE[r.id];
 
 /** What a character values (per character key), for judging which gear is an upgrade for them. */
 export interface RewardRole {
@@ -71,9 +82,18 @@ export interface RewardSource {
   minRarity: RarityId;
   /** Surprise only: chance (0–100) after a plain battle. */
   chance?: number;
-  /** Gil for skipping, per tier + 1. */
+  /** Gil for skipping, per tier + 1 (the shop has no skip). */
   skipGil: number;
+  /**
+   * Chance (0–100; 0 = never) the offer includes a relic card, in place of its last card. Unset: the defaults
+   * (`DEFAULT_RELIC_CHANCE`: boss 100, fortress 50, shop 15, others 0).
+   */
+  relicChance?: number;
 }
+
+export const DEFAULT_RELIC_CHANCE: Record<RewardSourceId, number> = { surprise: 0, elite: 0, treasure: 0, semiboss: 50, boss: 100, shop: 15 };
+/** A source's relic chance (with its default for rows saved before it existed). */
+export const relicChanceOf = (s: RewardSource) => s.relicChance ?? DEFAULT_RELIC_CHANCE[s.id];
 
 export interface RewardBoon {
   id: string;

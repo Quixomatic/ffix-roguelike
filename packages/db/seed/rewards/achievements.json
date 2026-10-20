@@ -783,5 +783,18 @@
     "secret": true,
     "sort": 43,
     "enabled": true
-  }
+  },
+  { "id": "seasoned", "name": "Seasoned Traveller", "description": "Finish 5 runs", "category": "milestone", "condition": { "kind": "metric", "metric": "runs.finished", "min": 5 }, "reward": { "gil": 2000 }, "sort": 15, "enabled": true },
+  { "id": "explorer", "name": "Explorer", "description": "Enter 50 stages", "category": "milestone", "condition": { "kind": "metric", "metric": "stages.entered", "min": 50 }, "reward": { "gil": 2000 }, "sort": 16, "enabled": true },
+  { "id": "wanderer", "name": "Wanderer", "description": "Enter 200 stages", "category": "milestone", "condition": { "kind": "metric", "metric": "stages.entered", "min": 200 }, "reward": { "gil": 6000 }, "sort": 17, "enabled": true },
+  { "id": "pro-thief", "name": "Professional", "description": "Steal 100 items", "category": "milestone", "condition": { "kind": "metric", "metric": "steals.succeeded", "min": 100 }, "reward": { "gil": 8000 }, "sort": 18, "enabled": true },
+  { "id": "better-luck", "name": "Better Luck Next Time", "description": "Come away empty-handed from 50 steals", "category": "milestone", "condition": { "kind": "metric", "metric": "steals.failed", "min": 50 }, "reward": { "gil": 2000 }, "sort": 19, "enabled": true },
+  { "id": "inner-power", "name": "Inner Power", "description": "Enter Trance 25 times", "category": "milestone", "condition": { "kind": "metric", "metric": "trances", "min": 25 }, "reward": { "gil": 5000 }, "sort": 20, "enabled": true },
+  { "id": "field-medic", "name": "Field Medic", "description": "Restore 20,000 HP to allies", "category": "milestone", "condition": { "kind": "metric", "metric": "healing.done", "min": 20000 }, "reward": { "gil": 5000 }, "sort": 21, "enabled": true },
+  { "id": "spellslinger", "name": "Spellslinger", "description": "Use 500 abilities", "category": "milestone", "condition": { "kind": "metric", "metric": "abilities.used", "min": 500 }, "reward": { "gil": 6000 }, "sort": 22, "enabled": true },
+  { "id": "heavyweight", "name": "Heavyweight", "description": "Deal 100,000 damage", "category": "milestone", "condition": { "kind": "metric", "metric": "damage.dealt", "min": 100000 }, "reward": { "gil": 6000 }, "sort": 23, "enabled": true },
+  { "id": "glass-cannon", "name": "Glass Cannon", "description": "Land a hit of 3,000 damage", "category": "challenge", "condition": { "kind": "metric", "metric": "damage.best_hit", "min": 3000 }, "reward": { "gil": 4000 }, "sort": 29, "enabled": true },
+  { "id": "ten-thousand", "name": "Ten Thousand", "description": "Land a hit of 9,999 damage", "category": "challenge", "condition": { "kind": "metric", "metric": "damage.best_hit", "min": 9999 }, "reward": { "gil": 10000 }, "sort": 30, "enabled": true },
+  { "id": "untouchable", "name": "Untouchable", "description": "Win 25 battles without anyone being KO'd", "category": "challenge", "condition": { "kind": "metric", "metric": "battles.flawless", "min": 25 }, "reward": { "gil": 6000 }, "sort": 31, "enabled": true },
+  { "id": "again-again", "name": "Again and Again", "description": "Get knocked out 25 times", "category": "challenge", "condition": { "kind": "metric", "metric": "kos.suffered", "min": 25 }, "reward": { "gil": 1500 }, "sort": 32, "enabled": true }
 ]

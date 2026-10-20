@@ -9,11 +9,15 @@
 import {
   bandStepsOf,
   getCharacter,
+  getItem,
   itemByName,
   rarityOf,
   RARITIES,
   relicById,
+  relicChanceOf,
   rewardTables,
+  shopMarkupOf,
+  shopPriceOf,
   sourceOf,
   type AbilityRef,
   type BoonStat,
@@ -26,7 +30,7 @@ import {
 
 import { WORLDS } from "../content/worlds";
 import type { Rng } from "../rng";
-import { baseGear, gearPool, nextTierArea } from "../run/loot";
+import { baseGear, effectivePrice, gearPool, nextTierArea } from "../run/loot";
 import type { RunMember, RunState } from "../run/run";
 import { apCost, gearAbilities, isMastered, type CharacterBuild } from "../stats";
 import { upgradesFor, type UpgradeEval } from "./upgrade";
@@ -48,9 +52,6 @@ export type RewardCard =
   | { kind: "gil"; rarity: RarityId; amount: number }
   /** A relic for the run's rack (its rarity is the relic's own). */
   | { kind: "relic"; rarity: RarityId; relicId: string; name: string };
-
-/** Chance (percent) a boss / fortress (semi-boss) reward offer includes a relic card, when there's a relic to offer. */
-export const RELIC_CARD_CHANCE: Partial<Record<RewardSourceId, number>> = { boss: 100, semiboss: 50 };
 
 /**
  * A relic the run could be offered: unlocked (the run's snapshot), not already held, in tier for this area, weighted
@@ -195,8 +196,9 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     }
     cards.push(card ?? gilCard(rarity));
   }
-  // Bosses (always) and fortresses (sometimes) offer a relic too: it takes the last card's place.
-  if (cards.length && rng.chance(RELIC_CARD_CHANCE[source] ?? 0)) {
+  // A relic too, by the source's relic chance (bosses always, fortresses half the time, the shop now and then; 0 =
+  // never): it takes the last card's place.
+  if (cards.length && rng.chance(relicChanceOf(src))) {
     const relic = rollRelicCard(run, rng);
     if (relic) cards[cards.length - 1] = relic;
   }
@@ -205,3 +207,13 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
 
 /** The rarer cards first is how they read best; keep the roll order (the offer shows them as rolled). */
 export const cardRarityRank = (c: RewardCard) => rarityRank(c.rarity);
+
+/**
+ * What a card costs as one of the shop's wares: gear at its FF9 price × its rarity's shop markup; anything else
+ * (boons, AP surges, relics, supplies, gil) at its rarity's shop price × (run tier + 1).
+ */
+export function warePrice(card: RewardCard, runTier: number): number {
+  const r = rarityOf(card.rarity);
+  if (card.kind === "gear") return Math.round((effectivePrice(getItem(card.itemId)) * shopMarkupOf(r)) / 10) * 10;
+  return shopPriceOf(r) * (runTier + 1);
+}

@@ -14,10 +14,12 @@ import {
   CARD_TYPES,
   characters,
   items,
+  MODIFIER_STATS,
   RARITIES,
   rewardTables,
   REWARD_SOURCES,
   ROLE_STATS,
+  STATUSES,
 } from "@ffix-roguelike/game-data";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -40,6 +42,8 @@ export const rarityInput = z.object({
   supplies: z.number().int().min(0).max(99),
   nextBand: z.number().min(0).max(100),
   bandSteps: z.number().int().min(0).max(10).optional(),
+  shopMarkup: z.number().min(0).max(10).optional(),
+  shopPrice: z.number().int().min(0).max(1_000_000).optional(),
 });
 
 export const roleInput = z.object({
@@ -60,6 +64,7 @@ export const sourceInput = z.object({
   minRarity: rarity,
   chance: z.number().min(0).max(100).optional(),
   skipGil: z.number().int().min(0).max(100_000),
+  relicChance: z.number().min(0).max(100).optional(),
 });
 
 export const boonInput = z.object({
@@ -101,6 +106,65 @@ export const starterInput = z.object({
 });
 
 const bad = (message: string) => new TRPCError({ code: "BAD_REQUEST", message });
+
+// ── relics, synergies, character tags (`.plans/relics-and-synergies.md` phase 5) ──
+const scope = z
+  .discriminatedUnion("kind", [
+    z.object({ kind: z.literal("party") }),
+    z.object({ kind: z.literal("tag"), tag: z.string().min(1).max(30) }),
+    z.object({ kind: z.literal("character"), character: z.string().min(1).max(20) }),
+  ])
+  .optional();
+const pct = z.number().min(-100).max(500);
+/** One relic / synergy effect: the primitives the engine knows (game-data `ModifierEffect`). */
+export const effectInput = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("stat"), stat: z.enum(MODIFIER_STATS), pct, scope }),
+  z.object({ kind: z.literal("startStatus"), status: z.enum(STATUSES), scope }),
+  z.object({ kind: z.literal("trance"), startPct: z.number().min(0).max(100), scope }),
+  z.object({ kind: z.literal("steal"), ratePct: z.number().min(0).max(1000), scope }),
+  z.object({ kind: z.literal("mpDiscount"), pct: z.number().min(0).max(90), scope }),
+  z.object({ kind: z.literal("onKill"), hpPct: z.number().min(0).max(100).optional(), mpPct: z.number().min(0).max(100).optional(), scope }),
+]);
+
+export const relicInput = z.object({
+  id: z.string().regex(/^[a-z0-9-]{1,60}$/),
+  name: z.string().min(1).max(60),
+  description: z.string().max(300),
+  flavor: z.string().max(300).optional(),
+  rarity,
+  cursed: z.boolean().optional(),
+  starter: z.boolean().optional(),
+  free: z.boolean().optional(),
+  unlockedBy: z.string().max(60).optional(),
+  badge: z.number().int().min(1).max(BADGE_COUNT).optional(),
+  effects: z.array(effectInput).max(8),
+  weight: z.number().min(0).max(1000),
+  minTier: z.number().int().min(0).max(9),
+  sort: z.number().int().min(0).max(9999),
+  enabled: z.boolean(),
+  notes: z.string().max(500).optional(),
+});
+
+export const synergyInput = z.object({
+  id: z.string().regex(/^[a-z0-9-]{1,40}$/),
+  name: z.string().min(1).max(40),
+  tag: z.string().regex(/^[a-z0-9-]{1,30}$/),
+  description: z.string().max(300).optional(),
+  badge: z.number().int().min(1).max(BADGE_COUNT).optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  tiers: z.array(z.object({ count: z.number().int().min(1).max(4), text: z.string().max(200), effects: z.array(effectInput).max(8) })).min(1).max(4),
+  enabled: z.boolean(),
+});
+
+/** Check what an effect names exists: a synergy tag in use, a character. */
+function checkScopes(effects: z.infer<typeof effectInput>[], tags: Set<string>) {
+  for (const e of effects) {
+    const s = e.scope;
+    if (s?.kind === "tag" && !tags.has(s.tag)) throw bad(`Unknown synergy tag ${s.tag}`);
+    if (s?.kind === "character" && !characters.some((c) => c.key === s.character)) throw bad(`Unknown character ${s.character}`);
+  }
+}
+const knownTags = () => new Set((rewardTables().synergies ?? []).map((s) => s.tag));
 
 const key = z.string().min(1).max(40);
 export const achievementInput = z.object({
@@ -244,6 +308,50 @@ export const adminRouter = router({
     await ctx.db.achievement.delete({ where: { id: input.id } });
     return reloadRewardContent(ctx.db);
   }),
+
+  /**
+   * Save a relic (new or edited). Its unlocking achievement must exist, and its effects' tags / characters too. Edits
+   * reach new battles at once; battles already started keep the effects they began with (`BattleState.modifiers`).
+   */
+  saveRelic: adminProcedure.input(relicInput).mutation(async ({ ctx, input }) => {
+    if (input.unlockedBy && !(rewardTables().achievements ?? []).some((a) => a.id === input.unlockedBy)) throw bad(`Unknown achievement ${input.unlockedBy}`);
+    checkScopes(input.effects, knownTags());
+    // Drop empty optional fields, so the record stays tidy.
+    const data = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined && v !== ""));
+    await ctx.db.relic.upsert({
+      where: { id: input.id },
+      create: { id: input.id, sort: input.sort, enabled: input.enabled, data },
+      update: { sort: input.sort, enabled: input.enabled, data },
+    });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Delete a relic. Runs holding it simply lose its effects; players' collections keep the id (unlisted). */
+  deleteRelic: adminProcedure.input(z.object({ id: z.string().max(60) })).mutation(async ({ ctx, input }) => {
+    await ctx.db.relic.delete({ where: { id: input.id } });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Save a synergy (new or edited): its tiers rise in member count; the tiers' effects' scopes must exist. */
+  saveSynergy: adminProcedure.input(synergyInput).mutation(async ({ ctx, input }) => {
+    const counts = input.tiers.map((t) => t.count);
+    if (counts.some((c, i) => i > 0 && c <= counts[i - 1]!)) throw bad("Tiers must need more members as they go up");
+    const tags = knownTags().add(input.tag);
+    for (const t of input.tiers) checkScopes(t.effects, tags);
+    const data = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined && v !== ""));
+    await ctx.db.synergy.upsert({ where: { id: input.id }, create: { id: input.id, enabled: input.enabled, data }, update: { enabled: input.enabled, data } });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Set a character's synergy tags (each must be a synergy's tag). */
+  saveCharacterTags: adminProcedure
+    .input(z.object({ character: z.string().max(20), tags: z.array(z.string().max(30)).max(6) }))
+    .mutation(async ({ ctx, input }) => {
+      if (!characters.some((c) => c.key === input.character)) throw bad(`Unknown character ${input.character}`);
+      const tags = knownTags();
+      const unknown = input.tags.find((t) => !tags.has(t));
+      if (unknown) throw bad(`Unknown synergy tag ${unknown}`);
+      const unique = [...new Set(input.tags)];
+      await ctx.db.characterTag.upsert({ where: { character: input.character }, create: { character: input.character, tags: unique }, update: { tags: unique } });
+      return reloadRewardContent(ctx.db);
+    }),
 
   // ── metrics ──
   /** Every player with a profile (for the metrics browser). */

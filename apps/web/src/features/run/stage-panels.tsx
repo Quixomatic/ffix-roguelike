@@ -8,7 +8,7 @@ import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { FocusItem } from "@/features/input/focus";
 
 import { ItemCard, itemName } from "./item-info";
-import { RewardOfferView } from "./reward-cards";
+import { RewardOfferView, ShopWaresView } from "./reward-cards";
 import type { RunActions, RunReport } from "./use-run";
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -85,9 +85,20 @@ export function TreasurePanel({ run, phase, actions }: { run: RunState; phase: E
   );
 }
 
+/**
+ * The shop: its wares (reward cards for sale, `ShopWaresView`), then the shelf (consumables, unlimited), then selling.
+ * Shops entered before wares existed list their old stock (gear too) on the shelf instead.
+ */
 export function ShopPanel({ run, phase, actions }: { run: RunState; phase: Extract<RunPhase, { kind: "shop" }>; actions: RunActions }) {
   return (
     <Panel title={`${phase.name} — ${run.gil} gil`}>
+      {phase.wares && (
+        <>
+          <div className="ff-title text-base">Wares</div>
+          <ShopWaresView run={run} wares={phase.wares} actions={actions} />
+          <div className="ff-title text-base">Supplies</div>
+        </>
+      )}
       <div className="grid gap-3 sm:grid-cols-2">
         {phase.stock.map((entry, i) => {
           const sold = phase.sold.includes(i);

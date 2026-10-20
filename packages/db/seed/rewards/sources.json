@@ -109,5 +109,28 @@
     "guarantee": "allGear",
     "minRarity": "rare",
     "skipGil": 300
+  },
+  {
+    "id": "shop",
+    "cards": 6,
+    "rarityWeights": {
+      "common": 40,
+      "uncommon": 32,
+      "rare": 18,
+      "epic": 8,
+      "legendary": 2
+    },
+    "typeWeights": {
+      "gear": 5,
+      "boon": 3,
+      "ap": 2,
+      "supplies": 0,
+      "gil": 0
+    },
+    "upgradeThreshold": 2,
+    "guarantee": "oneGear",
+    "minRarity": "common",
+    "skipGil": 0,
+    "relicChance": 15
   }
 ]

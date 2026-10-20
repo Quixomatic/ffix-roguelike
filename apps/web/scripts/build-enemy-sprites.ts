@@ -8,6 +8,7 @@
  *   (`src/features/sprites/ffrk-anim.ts`), into a frame grid: idle (loop), attack, damage, dead. The battle scene
  *   plays them as ordinary sprite animations.
  * - FFRK party sheets (story characters fought as enemies) → idle, white, damage cells, flipped to face right.
+ * - Crops (frames cut from a local rip) → a looping idle strip, background keyed out.
  *
  * Writes `public/sprites/enemies/<file>.png` and `src/features/sprites/enemy-sprites.gen.ts`.
  *
@@ -24,7 +25,8 @@ import { ENEMY_SPRITE_MAP } from "./enemy-sprite-map";
 import { renderPose, type Atlas, type SheetLookup } from "./lib/render-rig";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const RAW = join(HERE, "..", "..", "..", ".docs", "assets", "FFRK-data", "_raw");
+const ASSETS = join(HERE, "..", "..", "..", ".docs", "assets");
+const RAW = join(ASSETS, "FFRK-data", "_raw");
 const GEN = join(HERE, "..", "src", "features", "sprites", "enemy-sprites.gen.ts");
 
 /**
@@ -104,6 +106,32 @@ const built = new Map<string, GenInfo>();
 const out: Record<string, GenInfo & { src: string }> = {};
 
 for (const [name, source] of Object.entries(ENEMY_SPRITE_MAP)) {
+  if ("crop" in source) {
+    const c = source.crop;
+    const path = join(ASSETS, c.file);
+    if (!existsSync(path)) {
+      console.warn(`skip ${name}: no image ${c.file}`);
+      continue;
+    }
+    // Some rips carry bytes after the PNG's end marker (pngjs refuses them): read up to IEND.
+    const bytes = readFileSync(path);
+    const sheet = PNG.sync.read(bytes.subarray(0, bytes.lastIndexOf("IEND") + 8));
+    const file = `crop-${name}`;
+    const png = new PNG({ width: c.w * c.count, height: c.h });
+    for (let i = 0; i < c.count; i++)
+      for (let y = 0; y < c.h; y++)
+        for (let x = 0; x < c.w; x++) {
+          const s = ((c.y + y) * sheet.width + c.x + i * c.step + x) * 4;
+          const [r, g, b, a] = [sheet.data[s]!, sheet.data[s + 1]!, sheet.data[s + 2]!, sheet.data[s + 3]!];
+          if (!a || (c.key && r === c.key[0] && g === c.key[1] && b === c.key[2])) continue;
+          const o = (y * png.width + i * c.w + (c.flip ? c.w - 1 - x : x)) * 4;
+          sheet.data.copy(png.data, o, s, s + 4);
+        }
+    writeFileSync(join(OUT_DIR, `${file}.png`), PNG.sync.write(png));
+    const frames = Array.from({ length: c.count }, (_, i) => i);
+    out[name] = { url: `/sprites/enemies/${file}.png`, w: c.w, h: c.h, originX: c.w / 2, originY: c.h, anims: { idle: { frames, fps: c.fps, repeat: true } }, src: source.src };
+    continue;
+  }
   const kind = "enemy" in source ? "enemy" : "boss" in source ? "boss" : "player";
   const id = "enemy" in source ? source.enemy : "boss" in source ? source.boss : source.player;
   const file = `${kind}-${id}`;

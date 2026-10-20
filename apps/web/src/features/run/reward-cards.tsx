@@ -1,4 +1,4 @@
-import { apCost, gearChange, type RewardCard, type RewardOffer, type RunState } from "@ffix-roguelike/game-core";
+import { apCost, gearChange, type RewardCard, type RewardOffer, type RunState, type ShopWares } from "@ffix-roguelike/game-core";
 import { abilityName, BASE_RELIC_SLOTS, getCharacter, getItem, RARITIES, rarityOf, relicById, type RarityId } from "@ffix-roguelike/game-data";
 import { useState } from "react";
 
@@ -72,40 +72,8 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
     if (offer.cards[i]?.kind === "relic" && rackFull) setSwapFor(i);
     else actions.claim.mutate({ choice: i });
   };
-  if (swapFor != null) {
-    const incoming = offer.cards[swapFor];
-    return (
-      <div className="flex flex-col gap-3">
-        <div className="ff-title text-center text-base">Your relics are full: give one up for {incoming?.kind === "relic" ? incoming.name : "it"}</div>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {(run.relics ?? []).map((id) => {
-            const r = relicById(id);
-            return (
-              <RelicPopover key={id} relicId={id} side="top">
-                <button
-                  className="ff-window ff-lift flex items-center gap-2 p-2 text-left disabled:opacity-60"
-                  disabled={pending}
-                  data-sound="purchase"
-                  onClick={() => actions.claim.mutate({ choice: swapFor, replace: id })}
-                >
-                  <Badge id={r?.badge ?? 1} scale={1} />
-                  <span className="min-w-0">
-                    <span className="block truncate">{r?.name ?? id}</span>
-                    <span className="block text-xs opacity-70">{r?.effects.map(effectText).join(" · ")}</span>
-                  </span>
-                </button>
-              </RelicPopover>
-            );
-          })}
-        </div>
-        <FocusItem>
-          <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => setSwapFor(null)}>
-            Back to the cards
-          </button>
-        </FocusItem>
-      </div>
-    );
-  }
+  if (swapFor != null)
+    return <RelicSwap run={run} incoming={offer.cards[swapFor]} pending={pending} onPick={(id) => actions.claim.mutate({ choice: swapFor, replace: id })} onBack={() => setSwapFor(null)} />;
   return (
     <div className="flex flex-col gap-3">
       <div className="ff-title text-center text-base">Choose one</div>
@@ -129,6 +97,86 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
           Skip <span className="text-yellow-200">+{offer.skipGil} gil</span>
         </button>
       </FocusItem>
+    </div>
+  );
+}
+
+/** A relic card taken (or bought) while the rack is full: which held relic to give up for it (swap only). */
+function RelicSwap({ run, incoming, pending, onPick, onBack }: { run: RunState; incoming: RewardCard | undefined; pending: boolean; onPick(id: string): void; onBack(): void }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="ff-title text-center text-base">Your relics are full: give one up for {incoming?.kind === "relic" ? incoming.name : "it"}</div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {(run.relics ?? []).map((id) => {
+          const r = relicById(id);
+          return (
+            <RelicPopover key={id} relicId={id} side="top">
+              <button className="ff-window ff-lift flex items-center gap-2 p-2 text-left disabled:opacity-60" disabled={pending} data-sound="purchase" onClick={() => onPick(id)}>
+                <Badge id={r?.badge ?? 1} scale={1} />
+                <span className="min-w-0">
+                  <span className="block truncate">{r?.name ?? id}</span>
+                  <span className="block text-xs opacity-70">{r?.effects.map(effectText).join(" · ")}</span>
+                </span>
+              </button>
+            </RelicPopover>
+          );
+        })}
+      </div>
+      <FocusItem>
+        <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={onBack}>
+          Back to the cards
+        </button>
+      </FocusItem>
+    </div>
+  );
+}
+
+/**
+ * The shop's wares (`.plans/shop-wares.md`): reward cards for sale, each for someone and saying exactly what it does,
+ * with its price. Buying one applies it at once, like taking a reward (gear is equipped on its member); each sells once,
+ * and any number can be bought while the gil lasts.
+ */
+export function ShopWaresView({ run, wares, actions }: { run: RunState; wares: ShopWares; actions: RunActions }) {
+  const pending = actions.buyWare.isPending;
+  const [swapFor, setSwapFor] = useState<number | null>(null);
+  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? BASE_RELIC_SLOTS);
+  const buy = (i: number) => {
+    if (wares.cards[i]?.kind === "relic" && rackFull) setSwapFor(i);
+    else actions.buyWare.mutate({ index: i });
+  };
+  if (swapFor != null)
+    return (
+      <RelicSwap
+        run={run}
+        incoming={wares.cards[swapFor]}
+        pending={pending}
+        onPick={(id) => actions.buyWare.mutate({ index: swapFor, replace: id }, { onSuccess: () => setSwapFor(null) })}
+        onBack={() => setSwapFor(null)}
+      />
+    );
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {wares.cards.map((card, i) => {
+        const sold = wares.bought.includes(i);
+        const price = wares.prices[i] ?? 0;
+        const afford = run.gil >= price;
+        return (
+          <FocusItem key={i}>
+            <button
+              className="ff-window ff-lift flex flex-col gap-2 border-2 p-3 text-left disabled:opacity-50"
+              style={{ borderColor: rarityOf(card.rarity).color }}
+              disabled={pending || sold}
+              data-sound={afford ? "none" : "buzzer"}
+              onClick={() => afford && buy(i)}
+            >
+              <CardBody run={run} card={card} />
+              <div className={`mt-auto border-t border-white/15 pt-1 text-right ${sold ? "text-white/60" : afford ? "text-yellow-200" : "text-red-300"}`}>
+                {sold ? "Sold" : `${price.toLocaleString()} gil`}
+              </div>
+            </button>
+          </FocusItem>
+        );
+      })}
     </div>
   );
 }

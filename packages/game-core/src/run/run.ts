@@ -36,7 +36,7 @@ import {
 import { EVENTS, eventById, type EventOutcome } from "./events";
 import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
-import { rollOffer, type RewardCard, type RewardOffer } from "../rewards/cards";
+import { rollOffer, warePrice, type RewardCard, type RewardOffer } from "../rewards/cards";
 import { CHOCOBO_DIGS, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
 export class RunError extends Error {}
@@ -80,13 +80,24 @@ export interface MemberProgress {
   ap: { ref: AbilityRef; before: number; after: number; cost: number }[];
 }
 
+/** The shop's wares: reward cards for sale (`warePrice` each, fixed when the shop is entered), and which are bought. */
+export interface ShopWares {
+  cards: RewardCard[];
+  prices: number[];
+  bought: number[];
+}
+
 export type RunPhase =
   | { kind: "map" }
   | { kind: "battle"; nodeId: string; nodeKind: BattleNodeKind; enemies: string[]; battle: BattleState }
   /** `offer`: the reward cards (pick one). `gearChoices`: the old pick-a-gear rewards (saved runs from before cards). */
   | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean; offer?: RewardOffer }
   | { kind: "treasure"; gearChoices: number[]; gil: number; offer?: RewardOffer }
-  | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[] }
+  /**
+   * `stock`: the shelf (consumables; gear too in shops entered before wares). `wares`: reward cards for sale, each
+   * once (unset in shops entered before wares).
+   */
+  | { kind: "shop"; name: string; stock: ShopEntry[]; sold: number[]; wares?: ShopWares }
   | { kind: "synth"; name: string; recipes: number[] }
   | { kind: "stiltzkin"; offers: StiltzkinOffer[]; bought: number[] }
   | { kind: "chocobo"; spots: ChocoboSpot[]; digsLeft: number; dug: number[] }
@@ -325,8 +336,17 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
       run.phase = { kind: "treasure", gearChoices: [], gil: rng.int(80, 160) * (tierOf(run) + 1), offer: rollOffer(run, "treasure", rng) };
       return;
     case "shop": {
+      // The shelf: the area's consumables (unlimited). The rest of the counter is six wares: reward cards for one
+      // member each, bought rather than picked (`buyWare`).
       const visit = shopStock(rng, run.world, partyKeys(run));
-      run.phase = { kind: "shop", name: visit.name, stock: visit.stock, sold: [] };
+      const offer = rollOffer(run, "shop", rng);
+      run.phase = {
+        kind: "shop",
+        name: visit.name,
+        stock: visit.stock.filter((e) => isConsumable(e.itemId)),
+        sold: [],
+        wares: { cards: offer.cards, prices: offer.cards.map((c) => warePrice(c, run.tier)), bought: [] },
+      };
       return;
     }
     case "synth":
@@ -655,11 +675,14 @@ export function nextWorld(run: RunState): RunState {
 }
 
 // ── shops, events, moogles ───────────────────────────────────────────────────
+/** A consumable (it has a use effect): what a shop's shelf sells, without limit. */
+const isConsumable = (itemId: number) => !!(findItem(itemId)?.effect && findItem(itemId)?.kind === "item");
+
 export function buy(run: RunState, index: number): RunState {
   if (run.phase.kind !== "shop") throw new RunError("Not in a shop");
   const entry = run.phase.stock[index];
   if (!entry) throw new RunError("No such item");
-  const isGearEntry = !(findItem(entry.itemId)?.effect && findItem(entry.itemId)?.kind === "item");
+  const isGearEntry = !isConsumable(entry.itemId);
   if (isGearEntry && run.phase.sold.includes(index)) throw new RunError("Sold out");
   if (run.gil < entry.price) throw new RunError("Not enough gil");
   const next = structuredClone(run);
@@ -668,6 +691,29 @@ export function buy(run: RunState, index: number): RunState {
   track(next, "shop.gil_spent", entry.price);
   addLoot(next, entry.itemId);
   if (isGearEntry && next.phase.kind === "shop") next.phase.sold.push(index);
+  return next;
+}
+
+/**
+ * Buy one of the shop's wares: pay its price and apply the card as if taken from a reward (gear is equipped on and
+ * bound to its member, boons and AP surges land at once, a relic goes on the rack, `replace` naming the relic to give
+ * up when the rack is full). Each ware sells once; buy as many as the gil allows.
+ */
+export function buyWare(run: RunState, index: number, replace?: string): RunState {
+  if (run.phase.kind !== "shop" || !run.phase.wares) throw new RunError("Not in a shop");
+  const wares = run.phase.wares;
+  const card = wares.cards[index];
+  const price = wares.prices[index];
+  if (!card || price == null) throw new RunError("No such ware");
+  if (wares.bought.includes(index)) throw new RunError("Sold out");
+  if (run.gil < price) throw new RunError("Not enough gil");
+  let next = structuredClone(run);
+  next.gil -= price;
+  track(next, "shop.purchases", 1);
+  track(next, "shop.gil_spent", price);
+  track(next, "rewards.taken", 1, { subject: card.kind });
+  next = applyCard(next, card, replace);
+  if (next.phase.kind === "shop" && next.phase.wares) next.phase.wares.bought.push(index);
   return next;
 }
 

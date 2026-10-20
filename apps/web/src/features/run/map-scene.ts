@@ -72,7 +72,7 @@ const FIGURE_SIZE = 16;
  * Characters drawn at a fixed scale instead: the moogles' party sheets are small already (about 16×23 px), so they
  * stand a little under their own size, a touch bigger than the rest.
  */
-const FIGURE_SCALE: Record<string, number> = { "enemy/npc-moogle": 0.85, "enemy/npc-stiltzkin": 0.85 };
+const FIGURE_SCALE: Record<string, number> = { "enemy/npc-moogle": 0.85, "enemy/npc-stiltzkin": 0.85, "enemy/npc-chocobo": 0.85 };
 /** Where a stage character's feet rest: this far (world px) below its dot's centre. */
 const FIGURE_FEET = 3;
 /** Each sheet frame's figure box (`MapScene.figureBounds`), measured once per page. */
@@ -96,7 +96,7 @@ const STAGE_BADGES: Partial<Record<NodeKind, number>> = {
   battle: 997, // Crossed swords over shield
   elite: 254, // horned demon head
   shop: 989, // Dollar money bag
-  synth: 499, // anvil and hammer
+  synth: 853, // Iron anvil
   treasure: 210, // treasure chest
 };
 
@@ -548,7 +548,7 @@ export class MapScene extends Phaser.Scene {
    * A stage's own character (`MapBridge.previews`: the Moogle, Stiltzkin and Chocobo stages' FFRK sheets) floating right
    * on its marker like the badges: its feet (the bottom of what it actually draws, `figureBounds`) FIGURE_FEET below the dot's centre,
    * centred across, its longer side FIGURE_SIZE,
-   * idling, bobbing when the party can go there (`live`), and turned to face left (the sheets face right).
+   * idling and bobbing only when the party can go there (`live`), and turned to face left (the sheets face right).
    */
   private placeFigure(x: number, y: number, key: string, alpha: number, live: boolean) {
     const ffrk = ensureEnemyAnims(this, key);
@@ -562,9 +562,12 @@ export class MapScene extends Phaser.Scene {
       .setFlipX(true)
       .setScale(FIGURE_SCALE[key] ?? FIGURE_SIZE / Math.max(box.w, box.h))
       .setDepth(3)
-      .setAlpha(alpha)
-      .play(enemyAnimKey(info, "idle"));
-    if (live) this.hover(sprite, x, y);
+      .setAlpha(alpha);
+    // Only the stages the party can go to next come alive (idling and bobbing); the rest hold their first frame.
+    if (live) {
+      sprite.play(enemyAnimKey(info, "idle"));
+      this.hover(sprite, x, y);
+    }
   }
 
   /** What a sheet's frame actually draws (its opaque pixels' box, in frame px), measured once per frame. */

@@ -5771,11 +5771,11 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "src": "stand-in: Montblanc (FFRK party sheet, FFT) — FFRK never drew Stiltzkin"
  },
  "npc-chocobo": {
-  "url": "/sprites/enemies/boss-390001.png",
-  "w": 70,
-  "h": 76,
-  "originX": 34,
-  "originY": 68,
+  "url": "/sprites/enemies/crop-npc-chocobo.png",
+  "w": 26,
+  "h": 27,
+  "originX": 13,
+  "originY": 27,
   "anims": {
    "idle": {
     "frames": [
@@ -5788,71 +5788,12 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
      6,
      7,
      8,
-     9,
-     10,
-     11,
-     12,
-     13,
-     14,
-     15,
-     16,
-     17,
-     18,
-     19,
-     20,
-     21,
-     22,
-     23,
-     24,
-     25,
-     26,
-     27,
-     28,
-     29,
-     30,
-     31,
-     32,
-     33
+     9
     ],
-    "fps": 20,
+    "fps": 8,
     "repeat": true
-   },
-   "attack": {
-    "frames": [
-     34,
-     35,
-     36,
-     37,
-     38,
-     39,
-     40
-    ],
-    "fps": 20,
-    "repeat": false
-   },
-   "damage": {
-    "frames": [
-     41,
-     42,
-     43,
-     44,
-     45
-    ],
-    "fps": 20,
-    "repeat": false
-   },
-   "dead": {
-    "frames": [
-     46,
-     47,
-     48,
-     49
-    ],
-    "fps": 20,
-    "repeat": false
    }
   },
-  "rig": 390001,
-  "src": "Fat Chocobo (FFRK boss rig)"
+  "src": "Chocobo (Chocobo Land: A Game of Dice, GBA)"
  }
 };
