@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.74] - 2026-10-20
+
+Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 7, Treno and the Roo.
+
+### Added
+- **Journey 7 · Treno and the Roo** (story; opens once The Fall of Burmecia is cleared). It's tier 2, the start of FF9's Disc 2. All its fights are FF9's own:
+
+  | Map | Theme · music | Fights | Elites | Boss |
+  |---|---|---|---|---|
+  | Southern Plains | desert · Crossing those Hills | Sand Scorpion / Axe Beak / Skeleton, Nymph pairs | Abomination | Abomination pair |
+  | Treno | town · Dark City Treno | Hedgehog Pie / Vice, Bandersnatch | Bandersnatch pair | **Griffin** (the arena) |
+  | Gargan Roo | cave · Gargan Roo | Dragonfly, Crawler | Crawler pair | **Ralvurahva** |
+
+  - Gear: Treno's Disc 2 weapon and armour shop and its item shop; recipes up to Treno's synthesis shop. Map pools in the gear seed (`--add-pools`).
+  - **Left out:** the lone Nymphs (WM_0510/0511/0517), FF9's friendly Nymph, who hands over an item and leaves.
+- **Achievement "Dark City"** (`story-treno`): clear the journey for 6,000 gil and 3 CP; chalice badge.
+- **Griffin has FFRK art:** FF3's Griffon boss rig (FFRK's spelling). The `enemies` and `bosses` packs are rebuilt and uploaded to R2.
+
+### Changed
+- **Ralvurahva is a scripted win** (`SCRIPTED_WIN_SCENES`). Once beaten, his script has him use Escape on himself and flee at full HP, as in FF9 (he returns as Ralvuimago). The fight ends on FF9's "the enemy fled" ending and pays no EXP (FF9 gives none for him). It counts as a victory.
+- The scripted-win test plays each scene at the fair test level (strongest monster + 10, at least Lv40), like the area test. At a fixed Lv30, the auto party lost to Ralvurahva's Night and Devil's Kiss.
+
+### Notes
+- `probe-areas.ts treno`: all 55 fights play out and every monster has art. Game-core: 441 pass, 0 fail. Restart `pnpm dev` (achievement seed).
+
 ## [0.3.73] - 2026-10-20
 
 Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 6, The Fall of Burmecia, and FFRK art for seven monsters that were placeholders.

@@ -48,6 +48,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -95,6 +104,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -133,6 +151,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -358,6 +385,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -558,6 +594,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -816,6 +861,15 @@
       },
       {
         "area": "south-gate"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -945,6 +999,15 @@
       },
       {
         "area": "south-gate"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1143,6 +1206,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1160,6 +1232,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1177,6 +1258,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1284,6 +1374,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1319,6 +1418,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1488,6 +1596,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1538,6 +1655,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1555,6 +1681,15 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -1807,6 +1942,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2099,6 +2243,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2113,6 +2266,15 @@
     "mapPools": [
       {
         "area": "baron"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2486,6 +2648,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2664,6 +2835,15 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2699,6 +2879,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2734,6 +2923,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -2748,6 +2946,15 @@
     "mapPools": [
       {
         "area": "baron"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -3114,6 +3321,15 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,
@@ -3128,6 +3344,15 @@
     "mapPools": [
       {
         "area": "baron"
+      },
+      {
+        "area": "southern-plains"
+      },
+      {
+        "area": "treno"
+      },
+      {
+        "area": "gargan-roo"
       }
     ],
     "catalog": false,

@@ -83,6 +83,7 @@ export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   "golbez": { boss: 204022, src: "Golbez & Shadow Dragon (FF4)" },
   "grand-dragon": { enemy: 104150, src: "stand-in: Blue Dragon FFIV" },
   "grenade": { enemy: 109113, src: "Grenade FFIX" },
+  "griffin": { boss: 203033, src: "Griffon III (FF3; FF9's Griffin under FFRK's spelling)" },
   "haagen": { enemy: 109007, src: "FF9 knight (Pluto Knight sheet, identified by eye)" },
   "hades": { boss: 209035, src: "Hades (FF9)" },
   "hecteyes": { enemy: 109128, src: "Hecteyes FFIX" },

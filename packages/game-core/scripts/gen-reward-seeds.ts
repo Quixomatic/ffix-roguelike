@@ -131,6 +131,7 @@ const achievementList: Ach[] = [
   ach("story-lindblum", "Hunter's Chance", "Clear Lindblum", "story", { kind: "journey", journey: "lindblum" }, { gil: 3000, supplies: ["Ether"] }),
   ach("story-gizamaluke", "The Bell Tolls", "Clear Gizamaluke's Grotto", "story", { kind: "journey", journey: "gizamaluke" }, { gil: 4000, cp: 3 }),
   ach("story-burmecia", "The Kingdom of Rain", "Clear The Fall of Burmecia", "story", { kind: "journey", journey: "burmecia" }, { gil: 5000, cp: 3 }),
+  ach("story-treno", "Dark City", "Clear Treno and the Roo", "story", { kind: "journey", journey: "treno" }, { gil: 6000, cp: 3 }),
   // milestones
   ach("first-victory", "First Blood", "Win a battle", "milestone", { kind: "stat", stat: "battles", min: 1 }, { gil: 300 }),
   ach("first-run", "The Journey Begins", "Finish a run", "milestone", { kind: "stat", stat: "runs", min: 1 }, { gil: 500, cp: 2 }),

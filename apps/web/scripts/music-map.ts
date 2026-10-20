@@ -30,6 +30,9 @@ export const AREA_MUSIC: Record<string, string> = {
   "south-gate": "music079", // South Border Crossing
   "burmecian-plains": "music045", // Crossing those Hills
   burmecia: "music044", // Burmecia
+  "southern-plains": "music045", // Crossing those Hills
+  treno: "music057", // Dark City Treno
+  "gargan-roo": "music063", // Gargan Roo
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

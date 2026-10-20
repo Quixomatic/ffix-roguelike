@@ -107,6 +107,22 @@
     "enabled": true
   },
   {
+    "id": "story-treno",
+    "name": "Dark City",
+    "description": "Clear Treno and the Roo",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "treno"
+    },
+    "reward": {
+      "gil": 6000,
+      "cp": 3
+    },
+    "sort": 6,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

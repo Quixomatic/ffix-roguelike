@@ -2300,6 +2300,91 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "Grenade FFIX"
  },
+ "griffin": {
+  "url": "/sprites/enemies/boss-203033.png",
+  "w": 56,
+  "h": 53,
+  "originX": 27,
+  "originY": 48,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 203033,
+  "src": "Griffon III (FF3; FF9's Griffin under FFRK's spelling)"
+ },
  "haagen": {
   "url": "/sprites/enemies/enemy-109007.png",
   "w": 46,

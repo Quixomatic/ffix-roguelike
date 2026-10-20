@@ -52,15 +52,15 @@ describe("area encounters", () => {
 });
 
 describe("scripted wins", () => {
-  test.each([...SCRIPTED_WIN_SCENES])("%s ends in a victory, the boss withdrawing", (scene) => {
+  test.each([...SCRIPTED_WIN_SCENES])("%s ends in a victory, the boss withdrawing or fleeing", (scene) => {
     const enc = encounterUnits([`@${scene}`], 0);
-    const e = new BattleEngine(createBattle({ seed: 7, party: party(30), enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
+    const e = new BattleEngine(createBattle({ seed: 42, party: party(testLevel(enc.units)), enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
     const messages: string[] = [];
     for (let i = 0; i < 200_000 && !e.state.outcome; i++) {
       for (const u of e.readyUnits()) if (!e.submit(autoCommand(e, u)).ok) e.submit({ actorId: u.id, kind: "defend", targetIds: [] });
       for (const ev of e.step()) if (ev.type === "message") messages.push(ev.text);
     }
     expect(e.state.outcome).toBe("victory");
-    expect(messages.some((m) => m.endsWith("withdraws"))).toBe(true);
+    expect(messages.some((m) => m.endsWith("withdraws") || m === "The enemy fled")).toBe(true);
   });
 });

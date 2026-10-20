@@ -329,6 +329,53 @@ export const WORLDS: WorldDef[] = [
     itemStores: [26, 27],
     synthTier: 33,
   },
+  // ── Journey 7, Treno and the Roo (start of FF9's Disc 2) ──
+  {
+    index: 16,
+    id: "southern-plains",
+    tier: 2,
+    name: "Southern Plains",
+    subtitle: "Dry country on the road to Treno",
+    theme: "desert",
+    // The lone Nymphs (WM_0510/0511/0517) are out: FF9's friendly Nymph hands over an item and leaves.
+    encounters: [["@WM_0503"],["@WM_0504"],["@WM_0508"],["@WM_0509"],["@WM_0515"],["@WM_0516"]],
+    elites: [["@WM_0911"]],
+    boss: ["@WM_0910"],
+    gearPrice: [1200, 5000],
+    shops: [4],
+    itemStores: [28],
+    synthTier: 33,
+  },
+  {
+    index: 17,
+    id: "treno",
+    tier: 2,
+    name: "Treno",
+    subtitle: "The city of nobles and thieves, and its arena",
+    theme: "town",
+    encounters: [["@WM_0904"],["@WM_0905"],["@WM_0800"],["@WM_0803"]],
+    elites: [["@WM_0801"]],
+    boss: ["@TR_E074A"],
+    gearPrice: [1300, 5500],
+    shops: [4],
+    itemStores: [28],
+    synthTier: 33,
+  },
+  {
+    index: 18,
+    id: "gargan-roo",
+    tier: 2,
+    name: "Gargan Roo",
+    subtitle: "The old tunnels under Treno",
+    theme: "cave",
+    encounters: [["@GR_R002"],["@GR_R000"]],
+    elites: [["@GR_R001"]],
+    boss: ["@GR_E017"],
+    gearPrice: [1300, 5500],
+    shops: [4],
+    itemStores: [28],
+    synthTier: 33,
+  },
 ];
 
 export function getArea(id: string): WorldDef {
@@ -410,6 +457,14 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["south-gate", "burmecian-plains", "burmecia"],
     unlockAfter: "gizamaluke",
+  },
+  {
+    id: "treno",
+    name: "7 · Treno and the Roo",
+    subtitle: "South to the city of thieves, its arena, and the tunnels beneath.",
+    category: "story",
+    areas: ["southern-plains", "treno", "gargan-roo"],
+    unlockAfter: "burmecia",
   },
   // ── Echoes: crossover side journey ──
   {

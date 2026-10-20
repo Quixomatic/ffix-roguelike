@@ -97,6 +97,18 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.7003174603174603,
   "loopEnd": 113.64197278911564
  },
+ "music057": {
+  "url": "/music/music057.ogg",
+  "name": "Dark City Treno",
+  "loopStart": 9.599274376417233,
+  "loopEnd": 153.59934240362813
+ },
+ "music063": {
+  "url": "/music/music063.ogg",
+  "name": "Gargant Roo",
+  "loopStart": 0.006031746031746032,
+  "loopEnd": 43.99390022675737
+ },
  "music079": {
   "url": "/music/music079.ogg",
   "name": "South Border Crossing (South Gate)",
@@ -150,7 +162,10 @@ export const AREA_MUSIC: Record<string, string> = {
  "gizamaluke-grotto": "music011",
  "south-gate": "music079",
  "burmecian-plains": "music045",
- "burmecia": "music044"
+ "burmecia": "music044",
+ "southern-plains": "music045",
+ "treno": "music057",
+ "gargan-roo": "music063"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

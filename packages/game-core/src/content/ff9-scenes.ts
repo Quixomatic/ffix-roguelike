@@ -34,9 +34,10 @@ export function getScene(id: string): FF9Scene {
 
 /**
  * Boss fights FF9's own script ends with the boss still standing: survive it and it counts as a win (the boss
- * withdraws). Beatrix's three duels end by script after about a minute, whatever her HP.
+ * withdraws). Beatrix's three duels end by script after about a minute, whatever her HP. Ralvurahva (Gargan Roo)
+ * uses Escape once beaten and flees (he's back as Ralvuimago): FF9's "the enemy fled" ending, with him at full HP.
  */
-export const SCRIPTED_WIN_SCENES: ReadonlySet<string> = new Set(["BU_E015", "CY_E022", "AC_E077"]);
+export const SCRIPTED_WIN_SCENES: ReadonlySet<string> = new Set(["BU_E015", "CY_E022", "AC_E077", "GR_E017"]);
 
 export const ff9EnemyId = (uid: number) => `ff9-${uid}`;
 export const isSceneRef = (token: string) => token.startsWith("@");
