@@ -2,6 +2,21 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.80] - 2026-10-20
+
+A smarter auto-battle, and expected loadouts that grow the way FF9's characters do. Both make the sim's difficulty reads (and Practice) closer to real play.
+
+### Changed
+- **Auto-battle picks better** (`battle/autoplay.ts`; the same AI players get with Auto on):
+  - **Elements:** it scores each damaging ability against each foe and picks the best pair. It never uses an element the target absorbs or ignores, or Earth at something floating. It prefers weaknesses (×1.5) and avoids resistances (×½). An all-target spell counts every foe it would hurt. Before, it always cast its highest-power spell at the foe with the least HP.
+  - **Healing:** with two or more allies under 60% HP it uses a party-wide cure (Curaga, Healing Wind…) when it has one. A single badly hurt ally gets the strongest cure, else the strongest healing item in the bag (a Hi-Potion before a Potion; it used to take the first it found).
+- **Expected gear also grows the character the way FF9 does on the way to that level** (`meta/expected.ts`): the growth pool from every level-up (Str / Mag +3, Spirit +1, stones +5, plus the stat bonuses of the gear worn for each stretch of levels). A late character's HP and Strength depend heavily on it: an expected Lv80 Zidane has 5,920 HP (was 4,758) and Strength 58 (was about 45). It's only added to a build that hasn't grown yet, so a run's own growth is never counted twice.
+
+### Notes
+- Sim reads (expected gear and abilities, 3 runs each): Cleyra 3/3 (was 2/4), Mount Gulug 2/3 (was 0/3), Oeilvert 1/3 (was 0/3). Terra, Memoria and the Crystal World still lose every run. Their deaths are the Bran Bal map, the Chaos guardians, and attrition between fights (late HP pools around 6,000, but only items and Moogles heal between fights). That's for the tuning pass.
+- The sim's "Potion" uses in these fights are the Auto-Potion support ability, and Confused party members pick their own actions; neither is the auto AI's choice.
+- Game-core: 967 pass, 0 fail.
+
 ## [0.3.79] - 2026-10-20
 
 Journeys Phase 5 (`.plans/journeys-full-story.md`): Disc 1's journeys get a third map each, from FF9 fights they didn't use. With this every journey in the plan is built.

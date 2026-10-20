@@ -15,7 +15,7 @@ import { JOURNEYS, WORLDS, type WorldDef } from "../content/worlds";
 import { upgradeScore } from "../rewards/upgrade";
 import { isGear } from "../run/loot";
 import { encounterUnits, type RunState } from "../run/run";
-import { deriveStats, EQUIP_SLOTS, gemsMax, newBuild, starterGear, type CharacterBuild } from "../stats";
+import { accrueGrowth, deriveStats, EQUIP_SLOTS, gemsMax, newBuild, starterGear, type CharacterBuild } from "../stats";
 
 export interface ExpectedOptions {
   /** Wear the best gear the areas reached by this level sell. */
@@ -77,6 +77,26 @@ const SUPPORT_PRIORITY = [
   "Man Eater", "Long Reach", "Master Thief", "Bandit", "Initiative", "Alert", "Distract", "Add Status", "Gamble Defence",
 ];
 
+/** The best piece per slot from `pool` for this build: greedy by the upgrade score, a few passes so each slot settles. */
+function bestGear(base: CharacterBuild, pool: number[]): CharacterBuild["equipment"] {
+  const b: CharacterBuild = { ...base, equipment: { ...base.equipment } };
+  for (let pass = 0; pass < 3; pass++) {
+    let changed = false;
+    for (const id of pool) {
+      const e = upgradeScore(b, id);
+      if (e && e.score > 0) {
+        b.equipment = { ...b.equipment, [e.change.slot]: id };
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  return b.equipment;
+}
+
+/** Whether a build's growth pool has anything in it (a run's level-ups, or a profile's carried growth). */
+const hasGrown = (b: CharacterBuild) => !!b.growth && Object.values(b.growth).some((v) => v > 0);
+
 /**
  * A character at `level` with the expected gear and / or abilities (`base`: a build to start from, e.g. one with
  * training; else a fresh one). Without either option it's the base build in its starting gear.
@@ -98,18 +118,19 @@ export function expectedBuild(key: string, level: number, opts: ExpectedOptions 
   }
 
   if (opts.gear) {
-    // Greedy by the upgrade score, a few passes so each slot settles on its best piece.
-    for (let pass = 0; pass < 3; pass++) {
-      let changed = false;
-      for (const id of pool) {
-        const e = upgradeScore(b, id);
-        if (e && e.score > 0) {
-          b.equipment = { ...b.equipment, [e.change.slot]: id };
-          changed = true;
-        }
+    // FF9's growth pool: every level-up adds Str/Mag +3, Spirit +1, stones +5 and the worn gear's stat bonuses
+    // (accrueGrowth), a large part of a late character's HP and Strength. Grown here as a character reaching this
+    // level would have, wearing each stretch's expected gear; only for a build that hasn't grown yet (a run's own
+    // growth is never counted twice).
+    if (!hasGrown(b)) {
+      const STEP = 5;
+      for (let lv = 1; lv < level; lv += STEP) {
+        const stage: CharacterBuild = { ...b, level: Math.min(level, lv + STEP), equipment: bestGear(b, expectedGearPool(lv).filter((id) => getItem(id).equippableBy.includes(key))) };
+        accrueGrowth(stage, lv);
+        b.growth = stage.growth;
       }
-      if (!changed) break;
     }
+    b.equipment = bestGear(b, pool);
   }
 
   if (opts.abilities) {
