@@ -2,6 +2,36 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.85] - 2026-10-20
+
+### Added
+- **Starting-gear upgrade chains for Marcus and Kuja** (they had none; v0.3.83 added them to the roster without running the chain step). Three tiers per slot, cheapest first; each piece's cost follows the usual defaults (3× its FF9 price, 5 / 10 / 20 CP, start Lv 5 / 10 / 15).
+
+  **Kuja** (teaches in every slot):
+
+  | Slot | Tiers (what each teaches) |
+  |---|---|
+  | Weapon | Stardust Rod (Ability Up) → Lightning Staff (Thundara) → Cypress Pile (Demi, Comet) |
+  | Head | Bandana (Insomniac) → Mantra Band (Antibody) → Dark Hat (High Tide, Jelly) |
+  | Wrist | Glass Armlet (Antibody) → Magic Armlet (Clear Headed) → Egoist's Armlet (Level Up) |
+  | Armour | Silk Shirt (Thunder) → Bronze Vest (Jelly) → Magician Cloak (Insomniac) |
+  | Accessory | Opal (Shiva) → Topaz (Ifrit) → Peridot (Ramuh, Thundara): his summons start here |
+
+  **Marcus** (he learns only Sword Arts, from his swords; the other slots are stat steps, like Blank's):
+
+  | Slot | Tiers |
+  |---|---|
+  | Weapon | Iron Sword (Minus Strike) → Mythril Sword (Armour Break) → Blood Sword (Darkside) |
+  | Head | Headgear → Bandana → Ritual Hat |
+  | Wrist | Leather Wrist → Bone Wrist → Mythril Armlet |
+  | Armour | Leather Plate → Bronze Vest → Chain Plate |
+  | Accessory | Glass Buckle → Yellow Scarf |
+
+  Written in `gen-reward-seeds.ts` `CHAINS` and regenerated into `starter-upgrades.json` (insertions only: the 128 existing rows are unchanged). The seed inserts missing rows on server start, so tuning edited on the admin page stays.
+
+### Notes
+- Restart `pnpm dev` to seed the new tiers.
+
 ## [0.3.84] - 2026-10-20
 
 ### Added

@@ -300,6 +300,22 @@ const CHAINS: Record<string, Partial<Record<StarterUpgrade["slot"], string[]>>> 
     armor: ["Leather Plate", "Bronze Vest", "Chain Plate"],
     accessory: ["Glass Buckle", "Yellow Scarf"],
   },
+  // Marcus learns only Sword Arts (his swords teach them); the rest are stat steps, like Blank's.
+  marcus: {
+    weapon: ["Iron Sword", "Mythril Sword", "Blood Sword"],
+    head: ["Headgear", "Bandana", "Ritual Hat"],
+    wrist: ["Leather Wrist", "Bone Wrist", "Mythril Armlet"],
+    armor: ["Leather Plate", "Bronze Vest", "Chain Plate"],
+    accessory: ["Glass Buckle", "Yellow Scarf"],
+  },
+  // Kuja wears Vivi's and Garnet's mage gear; the gems start his summons.
+  kuja: {
+    weapon: ["Stardust Rod", "Lightning Staff", "Cypress Pile"],
+    head: ["Bandana", "Mantra Band", "Dark Hat"],
+    wrist: ["Glass Armlet", "Magic Armlet", "Egoist's Armlet"],
+    armor: ["Silk Shirt", "Bronze Vest", "Magician Cloak"],
+    accessory: ["Opal", "Topaz", "Peridot"],
+  },
 };
 const TIER_CP = [5, 10, 20];
 const TIER_LEVEL = [5, 10, 15];
