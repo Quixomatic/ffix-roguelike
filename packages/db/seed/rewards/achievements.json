@@ -375,6 +375,61 @@
     "enabled": true
   },
   {
+    "id": "challenge-disc-1",
+    "name": "Disc One",
+    "description": "Win the Disc 1 challenge: journeys 1–6 in one run",
+    "category": "challenge",
+    "condition": { "kind": "group", "group": "c-disc-1" },
+    "reward": {},
+    "badge": 109,
+    "sort": 47,
+    "enabled": true
+  },
+  {
+    "id": "challenge-disc-2",
+    "name": "Disc Two",
+    "description": "Win the Disc 2 challenge: journeys 7–14 in one run",
+    "category": "challenge",
+    "condition": { "kind": "group", "group": "c-disc-2" },
+    "reward": {},
+    "badge": 435,
+    "sort": 48,
+    "enabled": true
+  },
+  {
+    "id": "challenge-disc-3",
+    "name": "Disc Three",
+    "description": "Win the Disc 3 challenge: journeys 15–18 in one run",
+    "category": "challenge",
+    "condition": { "kind": "group", "group": "c-disc-3" },
+    "reward": {},
+    "badge": 360,
+    "sort": 49,
+    "enabled": true
+  },
+  {
+    "id": "challenge-disc-4",
+    "name": "Disc Four",
+    "description": "Win the Disc 4 challenge: journeys 19–21 in one run",
+    "category": "challenge",
+    "condition": { "kind": "group", "group": "c-disc-4" },
+    "reward": {},
+    "badge": 509,
+    "sort": 50,
+    "enabled": true
+  },
+  {
+    "id": "challenge-whole-story",
+    "name": "The Whole Story",
+    "description": "Win The Whole Story: every journey, Alexandria to the Crystal World, in one run",
+    "category": "challenge",
+    "condition": { "kind": "group", "group": "c-whole-story" },
+    "reward": {},
+    "badge": 278,
+    "sort": 51,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

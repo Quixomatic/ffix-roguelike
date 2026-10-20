@@ -189,6 +189,7 @@ export const achievementInput = z.object({
   condition: z.discriminatedUnion("kind", [
     z.object({ kind: z.literal("stat"), stat: z.enum(ACHIEVEMENT_STATS), min: z.number().int().min(1).max(10_000_000) }),
     z.object({ kind: z.literal("journey"), journey: key }),
+    z.object({ kind: z.literal("group"), group: key }),
     z.object({ kind: z.literal("bosses"), bosses: z.array(key).min(1).max(30) }),
     z.object({ kind: z.literal("roster"), min: z.number().int().min(1).max(20) }),
     z.object({ kind: z.literal("heroes"), heroes: z.array(key).min(1).max(20) }),
@@ -306,6 +307,7 @@ export const adminRouter = router({
     const c = input.condition;
     const hero = (k: string) => characters.some((ch) => ch.key === k);
     if (c.kind === "journey" && !JOURNEYS.some((j) => j.id === c.journey)) throw bad(`Unknown journey ${c.journey}`);
+    if (c.kind === "group" && !(rewardTables().journeyGroups ?? []).some((g) => g.id === c.group)) throw bad(`Unknown journey grouping ${c.group}`);
     if (c.kind === "heroes" && !c.heroes.every(hero)) throw bad("Unknown character in the condition");
     if ((c.kind === "solo" || c.kind === "legendClear") && !hero(c.hero)) throw bad(`Unknown character ${c.hero}`);
     if (c.kind === "metric") {

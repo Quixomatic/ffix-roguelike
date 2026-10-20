@@ -173,6 +173,8 @@ export type AchievementCondition =
   | { kind: "stat"; stat: AchievementStat; min: number }
   /** A journey cleared. */
   | { kind: "journey"; journey: string }
+  /** A journey grouping won in one run (a challenge run: Disc 1, The Whole Story…; the journey_group table). */
+  | { kind: "group"; group: string }
   /** Every one of these bosses defeated (bestiary / boss ids, as recorded in the profile's boss kills). */
   | { kind: "bosses"; bosses: string[] }
   /** At least `min` characters on the roster. */
@@ -190,7 +192,7 @@ export type AchievementCondition =
    * character (`"any"`), or a given one; overall, or for one `subject` (an enemy id, item id…).
    */
   | { kind: "metric"; metric: string; subject?: string; character?: string; min: number };
-export const ACHIEVEMENT_CONDITIONS = ["metric", "stat", "journey", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
+export const ACHIEVEMENT_CONDITIONS = ["metric", "stat", "journey", "group", "bosses", "roster", "heroes", "mastered", "solo", "legendClear"] as const;
 
 /** How many badges the achievement badge set has (`.docs/assets/achievement-badges`, built by web `sprites:badges`). */
 export const BADGE_COUNT = 1015;

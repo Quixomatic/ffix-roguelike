@@ -58,6 +58,8 @@ export function achievementMet(a: AchievementDef, p: Profile): boolean {
       return (p.stats[c.stat] ?? 0) >= c.min;
     case "journey":
       return p.journeysCleared?.includes(c.journey) ?? false;
+    case "group":
+      return p.groupsCleared?.includes(c.group) ?? false;
     case "bosses":
       return c.bosses.length > 0 && c.bosses.every((b) => kills(p, b));
     case "roster":

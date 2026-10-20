@@ -1,4 +1,4 @@
-import { achievements, effectivePrice, JOURNEYS, METRICS, metricDef, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
+import { achievements, challengeRoutes, effectivePrice, getRoute, isRoute, JOURNEYS, METRICS, metricDef, WORLDS, type RewardCard, type RewardOffer } from "@ffix-roguelike/game-core";
 import {
   ACHIEVEMENT_CATEGORIES,
   ACHIEVEMENT_CONDITIONS,
@@ -821,6 +821,7 @@ const CONDITION_LABEL: Record<AchievementCondition["kind"], string> = {
   metric: "A lifetime metric reaches… (any of the tracked metrics)",
   stat: "A lifetime stat reaches…",
   journey: "Clear a journey",
+  group: "Win a journey grouping (a challenge run) in one run",
   bosses: "Defeat bosses (all of them)",
   roster: "Roster size",
   heroes: "Recruit characters (all of them)",
@@ -844,6 +845,8 @@ const blankCondition = (kind: AchievementCondition["kind"]): AchievementConditio
     ? { kind, stat: "battles", min: 10 }
     : kind === "journey"
       ? { kind, journey: JOURNEYS[0]!.id }
+      : kind === "group"
+        ? { kind, group: challengeRoutes()[0]?.id ?? "" }
       : kind === "bosses"
         ? { kind, bosses: [] }
         : kind === "heroes"
@@ -862,6 +865,8 @@ function conditionText(c: AchievementCondition): string {
       return `${STAT_LABEL[c.stat]} ≥ ${c.min}`;
     case "journey":
       return `Clear ${JOURNEYS.find((j) => j.id === c.journey)?.name ?? c.journey}`;
+    case "group":
+      return `Win ${isRoute(c.group) ? getRoute(c.group).name : c.group} in one run`;
     case "bosses":
       return `Defeat ${c.bosses.join(", ") || "—"}`;
     case "roster":
@@ -1106,6 +1111,11 @@ function AchievementEditor({
         {c.kind === "journey" && (
           <Field label="Journey">
             <Select value={c.journey} options={JOURNEYS.map((j) => j.id)} onChange={(journey) => setC({ ...c, journey })} />
+          </Field>
+        )}
+        {c.kind === "group" && (
+          <Field label="Journey grouping (won in one run)">
+            <Select value={c.group} options={challengeRoutes().map((g) => g.id)} onChange={(group) => setC({ ...c, group })} />
           </Field>
         )}
         {c.kind === "bosses" && (

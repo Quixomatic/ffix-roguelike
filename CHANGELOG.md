@@ -2,6 +2,26 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.92] - 2026-10-20
+
+### Added
+- **Achievements for the challenge runs** (Challenges category). No rewards yet; those are still to be decided:
+
+  | Achievement | Win in one run | Badge |
+  |---|---|---|
+  | Disc One | the Disc 1 challenge (journeys 1–6) | brown book |
+  | Disc Two | the Disc 2 challenge (journeys 7–14) | blue spellbook |
+  | Disc Three | the Disc 3 challenge (journeys 15–18) | green rune spellbook |
+  | Disc Four | the Disc 4 challenge (journeys 19–21) | fire spellbook |
+  | The Whole Story | every journey, Alexandria to the Crystal World | jeweled crown |
+
+- **A new achievement condition, "win a journey grouping in one run"** (`{ kind: "group" }`, met by `groupsCleared`).
+  - The admin page's achievement editor offers it, with a picker of the challenge runs.
+  - The server checks that the grouping exists.
+
+### Notes
+- The achievements are in the dev database (`sync-seeds achievements challenge --apply`). Restart `pnpm dev`.
+
 ## [0.3.91] - 2026-10-20
 
 Journey groupings, steps 3–4 (`.plans/journey-groups.md`): groupings are playable from the Story page, managed on an admin tab, and seeded. Hidden bosses and challenges move to the Challenges page, which gains the disc runs and The Whole Story.
