@@ -4,6 +4,7 @@
  * runtime registry: the server registers them from the DB, the web app from `content.rewards`, tests and the sim
  * from the seed files (`loadRewardCache` in ./cache). Never read at module load.
  */
+import type { ChapterData } from "./chapters";
 import type { CharacterTags, RelicData, SynergyData } from "./relics";
 
 export const RARITIES = ["common", "uncommon", "rare", "epic", "legendary"] as const;
@@ -239,6 +240,8 @@ export interface RewardTables {
   relics?: RelicData[];
   synergies?: SynergyData[];
   characterTags?: CharacterTags[];
+  /** Chapters: which journeys each run plays (chapters.ts). */
+  chapters?: ChapterData[];
 }
 
 let tables: RewardTables | null = null;

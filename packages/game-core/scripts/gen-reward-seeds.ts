@@ -5,7 +5,7 @@
  * nothing in game. Rarities, roles, sources and boons are first guesses (see .plans/rewards.md).
  *
  * Refuses to overwrite an existing file unless --force (the files may hold tuning exported from the admin page).
- * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]
+ * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]   (file: rarities, … chapters)
  *   (files: rarities roles sources boons gear starter achievements)
  * New areas: bun packages/game-core/scripts/gen-reward-seeds.ts --add-pools (adds their map pools to the gear seed)
  */
@@ -28,6 +28,7 @@ import type {
 import { characters, items, MAIN_CAST } from "@ffix-roguelike/game-data";
 
 import { rewardItemIds } from "../src/meta/achievements";
+import { singleChapters } from "../src/content/chapters";
 import { WORLDS } from "../src/content/worlds";
 import { effectivePrice, isGear } from "../src/run/loot";
 import { shops } from "@ffix-roguelike/game-data";
@@ -362,8 +363,10 @@ if (args.includes("--add-pools")) {
   process.exit(0);
 }
 
-// Relics, synergies and character tags are written by hand (packages/db/seed/rewards), not generated.
-const files: Partial<Record<keyof typeof REWARD_SEED_FILES, unknown>> = { rarities, roles, sources, boons, gear, starter, achievements };
+// Relics, synergies and character tags are written by hand (packages/db/seed/rewards), not generated. Chapters start
+// as one per journey; groupings are set on the admin page (exported back into the seed).
+const chapters = singleChapters();
+const files: Partial<Record<keyof typeof REWARD_SEED_FILES, unknown>> = { rarities, roles, sources, boons, gear, starter, achievements, chapters };
 mkdirSync(REWARD_CACHE_DIR, { recursive: true });
 for (const [k, data] of Object.entries(files) as [keyof typeof REWARD_SEED_FILES, unknown][]) {
   if (only.length && !only.includes(k)) continue;
