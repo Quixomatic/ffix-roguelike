@@ -172,8 +172,15 @@ export function rollSceneGroup(rng: Rng, sceneRef: string, cap: number, trim = t
 export function killKey(id: string): string {
   if (!id.startsWith("ff9-")) return id;
   const m = bestiary.enemies[Number(id.slice(4))];
-  return m ? m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : id;
+  if (!m) return id;
+  const slug = m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  // An FF9 boss named like a crossover boss (FF9's Garland in Pandemonium vs FF1's in Echoes) is kept apart, so
+  // their kills (and the achievements on them) don't mix: "garland-ff9".
+  return CROSSOVER_BOSSES.has(slug) ? `${slug}-ff9` : slug;
 }
+
+/** Kill keys of the crossover bosses (other Final Fantasy games' bosses, content/enemies.ts). */
+const CROSSOVER_BOSSES: ReadonlySet<string> = new Set(["garland", "golbez", "kefka"]);
 
 /** Display names for an encounter ("Plant Brain", "Goblin & Fang"). */
 export function encounterNames(group: string[]): string[] {

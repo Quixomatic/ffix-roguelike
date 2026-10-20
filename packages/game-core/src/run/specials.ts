@@ -17,8 +17,10 @@ const many = (name: string, n: number) => Array.from({ length: n }, () => itemBy
 /** Three deals: a supply bundle, a restorative pack, and one rare piece of gear from the next world's band. */
 export function stiltzkinOffers(rng: Rng, world: number, partyKeys: string[], unlocked: readonly number[] = []): StiltzkinOffer[] {
   const tier = WORLDS[world]?.tier ?? 0;
-  const bundle = tier === 0 ? [...many("Potion", 4), ...many("Phoenix Down", 1)] : [...many("Hi-Potion", 3), ...many("Phoenix Down", 2)];
-  const pack = tier === 0 ? [...many("Antidote", 2), ...many("Eye Drops", 2), ...many("Echo Screen", 1)] : [...many("Ether", 2), ...many("Remedy", 1)];
+  // Early, mid, and late (tier 3+: Disc 3 onward) bundles.
+  const bundle =
+    tier === 0 ? [...many("Potion", 4), ...many("Phoenix Down", 1)] : tier < 3 ? [...many("Hi-Potion", 3), ...many("Phoenix Down", 2)] : [...many("Hi-Potion", 4), ...many("Phoenix Pinion", 1), ...many("Elixir", 1)];
+  const pack = tier === 0 ? [...many("Antidote", 2), ...many("Eye Drops", 2), ...many("Echo Screen", 1)] : tier < 3 ? [...many("Ether", 2), ...many("Remedy", 1)] : [...many("Ether", 3), ...many("Remedy", 2)];
   const offers: StiltzkinOffer[] = [
     { label: "Traveler's bundle", items: bundle, price: Math.round(priceOf(bundle) * 0.7) },
     { label: tier === 0 ? "Remedy kit" : "Mage's pack", items: pack, price: Math.round(priceOf(pack) * 0.7) },
@@ -36,7 +38,8 @@ export const CHOCOBO_DIGS = 3;
 export function chocoboSpots(rng: Rng, world: number, partyKeys: string[], unlocked: readonly number[] = []): ChocoboSpot[] {
   const tier = WORLDS[world]?.tier ?? 0;
   const scale = tier + 1;
-  const consumables = tier === 0 ? ["Potion", "Antidote", "Phoenix Down", "Ether"] : ["Hi-Potion", "Ether", "Phoenix Down", "Remedy", "Elixir"];
+  const consumables =
+    tier === 0 ? ["Potion", "Antidote", "Phoenix Down", "Ether"] : tier < 3 ? ["Hi-Potion", "Ether", "Phoenix Down", "Remedy", "Elixir"] : ["Hi-Potion", "Ether", "Phoenix Pinion", "Remedy", "Elixir"];
   const gear = rollGear(rng, world, partyKeys, 1, 30, unlocked)[0];
   const spots: ChocoboSpot[] = [
     gear != null ? { type: "item", itemId: gear } : { type: "gil", amount: 300 * scale },

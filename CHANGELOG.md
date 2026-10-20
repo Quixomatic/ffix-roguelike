@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.70] - 2026-10-19
+
+Journeys groundwork, steps 4–6 (`.plans/journeys-full-story.md`): progression tiers 0–5, gear pools for new areas, separate kill keys.
+
+### Changed
+- **Progression tiers run 0–5** (0 Disc 1 early, 1 Disc 1 late, 2 Disc 2, 3 Disc 3, 4 Disc 4, 5 post-game; `WorldDef.tier`). Tables keyed by tier treat their last row as "and later":
+  - **Events:** an event's highest listed tier now reaches every later tier (`eventAt`). Before, a tier-3+ area would have had no events at all.
+  - **Supply reward cards:** a tier-3+ row (Hi-Potion, Phoenix Pinion, Ether, Elixir, Remedy).
+  - **Stiltzkin:** late bundles (Hi-Potion ×4, Phoenix Pinion, Elixir; Ether ×3, Remedy ×2).
+  - **Chocobo digs:** Phoenix Pinion joins the late finds.
+- **FF9's Garland records his kills as `garland-ff9`**, apart from FF1's Garland (the Echoes boss, still `garland`), so their kill counts and any achievements on them don't mix. It applies to FF9 bosses named like a crossover boss (Garland, Golbez, Kefka); every other kill key is unchanged.
+
+### Added
+- **Gear map pools reach new areas** without regenerating the gear seed (which may hold tuning exported from the admin page):
+  - `bun packages/game-core/scripts/gen-reward-seeds.ts --add-pools` adds each piece's pools for any area whose FF9 shops sell it.
+  - On every seed (server start), existing `gear_availability` rows gain the seeded areas they're missing, like the synergy-tag fill.
+- Tests (`content/kill-keys.test.ts`): kill keys, and events at every tier 0–5. Game-core: 347 pass, 0 fail.
+
 ## [0.3.69] - 2026-10-19
 
 Journeys groundwork, step 3 (`.plans/journeys-full-story.md`): FF9's battle-scene flags. Read from Memoria's source (`BattleHUD`, `BattleCalculator.PenaltyReverseAttack`).

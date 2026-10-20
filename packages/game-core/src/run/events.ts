@@ -21,10 +21,13 @@ export interface EventDef {
   id: string;
   title: string;
   text: string;
-  /** Progression tiers (area.tier) this event can appear in. */
+  /** Progression tiers (area.tier) this event can appear in; its highest one counts for every tier above too. */
   worlds: number[];
   choices: EventChoice[];
 }
+
+/** Whether an event can appear at a progression tier (its highest listed tier reaches every later tier). */
+export const eventAt = (e: EventDef, tier: number) => e.worlds.includes(tier) || tier > Math.max(...e.worlds);
 
 export const EVENTS: EventDef[] = [
   {

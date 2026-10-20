@@ -7,8 +7,9 @@
  * Refuses to overwrite an existing file unless --force (the files may hold tuning exported from the admin page).
  * Run: bun packages/game-core/scripts/gen-reward-seeds.ts [--force] [file…]
  *   (files: rarities roles sources boons gear starter achievements)
+ * New areas: bun packages/game-core/scripts/gen-reward-seeds.ts --add-pools (adds their map pools to the gear seed)
  */
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { REWARD_CACHE_DIR, REWARD_SEED_FILES, loadGameDataCache } from "@ffix-roguelike/game-data/cache";
@@ -301,6 +302,23 @@ for (const [key, slots] of Object.entries(CHAINS)) {
       });
     });
   }
+}
+
+// --add-pools: new areas (journeys) join the gear seed without regenerating it (it may hold tuning exported from the
+// admin page). Each piece gains a map pool for every area whose FF9 shops sell it and that it doesn't list yet.
+if (args.includes("--add-pools")) {
+  const path = join(REWARD_CACHE_DIR, REWARD_SEED_FILES.gear);
+  const existing = JSON.parse(readFileSync(path, "utf8")) as GearAvailability[];
+  let added = 0;
+  for (const g of existing)
+    for (const area of poolsOf.get(g.itemId) ?? [])
+      if (!g.mapPools.some((p) => p.area === area)) {
+        g.mapPools.push({ area });
+        added++;
+      }
+  writeFileSync(path, `${JSON.stringify(existing, null, 2)}\n`);
+  console.log(`added ${added} map pools to ${REWARD_SEED_FILES.gear}`);
+  process.exit(0);
 }
 
 // Relics, synergies and character tags are written by hand (packages/db/seed/rewards), not generated.

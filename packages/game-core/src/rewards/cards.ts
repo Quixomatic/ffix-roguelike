@@ -78,11 +78,12 @@ export interface RewardOffer {
 
 const rarityRank = (r: RarityId) => RARITIES.indexOf(r);
 
-/** Consumables a supplies card can give, by the area's progression tier. */
+/** Consumables a supplies card can give, by the area's progression tier (0–5; tiers past the list use its last row). */
 const SUPPLIES: string[][] = [
   ["Potion", "Phoenix Down", "Antidote", "Eye Drops", "Echo Screen"],
   ["Hi-Potion", "Phoenix Down", "Ether", "Soft", "Remedy"],
   ["Hi-Potion", "Phoenix Down", "Ether", "Elixir", "Remedy"],
+  ["Hi-Potion", "Phoenix Pinion", "Ether", "Elixir", "Remedy"],
 ];
 
 /** Abilities a member's equipped gear is teaching them, not yet mastered (what an AP surge can feed). */

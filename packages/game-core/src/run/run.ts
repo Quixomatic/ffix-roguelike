@@ -33,7 +33,7 @@ import {
   starterGear,
   type CharacterBuild,
 } from "../stats";
-import { EVENTS, eventById, type EventOutcome } from "./events";
+import { EVENTS, eventAt, eventById, type EventOutcome } from "./events";
 import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
 import { rollOffer, warePrice, type RewardCard, type RewardOffer } from "../rewards/cards";
@@ -363,7 +363,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
       run.phase = { kind: "moogle" };
       return;
     case "event": {
-      const pool = EVENTS.filter((e) => e.worlds.includes(tierOf(run)));
+      const pool = EVENTS.filter((e) => eventAt(e, tierOf(run)));
       run.phase = { kind: "event", eventId: rng.pick(pool).id, result: null };
       return;
     }

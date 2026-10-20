@@ -87,6 +87,16 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     const colors = coloured.map((r) => String(r.color));
     await db.$executeRaw`UPDATE synergy s SET data = jsonb_set(s.data, '{color}', to_jsonb(c.color)) FROM unnest(${ids}::text[], ${colors}::text[]) AS c(id, color) WHERE s.id = c.id AND s.data->'color' IS NULL`;
   }
+  // Gear map pools added to the seed after the rows existed (new areas, `gen-reward-seeds --add-pools`): each piece
+  // gains the seeded areas it doesn't list yet. Pools removed on the admin page come back unless exported (as tags).
+  const seededPools = new Map(gear.map((r) => [Number(r.itemId), ((r.mapPools as { area: string; bossOnly?: boolean }[]) ?? [])]));
+  const rows = await db.gearAvailability.findMany({ select: { itemId: true, data: true } });
+  for (const row of rows) {
+    const d = row.data as { mapPools?: { area: string; bossOnly?: boolean }[] };
+    const have = d.mapPools ?? [];
+    const missing = (seededPools.get(row.itemId) ?? []).filter((p) => !have.some((h) => h.area === p.area));
+    if (missing.length) await db.gearAvailability.update({ where: { itemId: row.itemId }, data: { data: { ...d, mapPools: [...have, ...missing] } } });
+  }
   // Characters' synergy tags added to the seed after their rows existed (a new synergy): each character gains the
   // seeded tags it's missing, after the ones it has. Removing a seeded tag for good means exporting from the admin
   // page (so the seed drops it too), or it comes back on the next start.

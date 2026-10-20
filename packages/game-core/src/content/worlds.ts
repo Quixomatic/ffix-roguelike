@@ -6,7 +6,10 @@ export interface WorldDef {
   /** Position in WORLDS. */
   index: number;
   id: string;
-  /** Progression tier (0 early, 1 mid, 2 late) — gates the camp catalog and supplies, not loot. */
+  /**
+   * Progression tier, 0–5 (0 Disc 1 early, 1 Disc 1 late, 2 Disc 2, 3 Disc 3, 4 Disc 4, 5 post-game) — gates the camp
+   * catalog, supplies, events and specials, not loot. Tables keyed by it treat their last row as "and later".
+   */
   tier: number;
   name: string;
   subtitle: string;
