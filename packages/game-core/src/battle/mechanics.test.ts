@@ -311,9 +311,16 @@ describe("trance & character specials", () => {
   test("Steiner's Magic Sword needs Vivi", () => {
     const s = hero("steiner", 30);
     s.commands = s.commands.map((c) => (c.id === 31 ? { ...c, actionIds: [id("Fire Sword")] } : c));
-    const e = battle([s], [enemy()]);
+    // No Vivi in the party: the battle drops the sword from his list.
+    const alone = battle([s], [enemy()]);
+    alone.state.ready = ["p0"];
+    expect(alone.validate({ actorId: "p0", kind: "ability", actionId: id("Fire Sword"), targetIds: ["e0"] })).toBe("Ability not available");
+    // Vivi there but silenced: the sword is on the list, and he can't help this turn.
+    const e = battle([s, hero("vivi", 30)], [enemy()]);
     e.state.ready = ["p0"];
-    expect(e.validate({ actorId: "p0", kind: "ability", actionId: id("Fire Sword"), targetIds: ["e0"] })).toContain("Vivi");
+    e.state.units.find((u) => u.key === "vivi")!.statuses.silence = {};
+    const target = e.state.units.find((u) => u.side === "enemy")!.id;
+    expect(e.validate({ actorId: "p0", kind: "ability", actionId: id("Fire Sword"), targetIds: [target] })).toContain("Vivi");
   });
 
   test("ATB: full gauge = (60 − Speed) × 160", () => {

@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.94] - 2026-10-20
+
+### Fixed
+- **v0.3.93 went out with a failing test** (the release didn't wait for the test run to finish). The test was out of date, not the engine.
+  - `battle/mechanics.test.ts` "Steiner's Magic Sword needs Vivi" put Fire Sword on Steiner's list by hand and expected "Vivi can't help" with no Vivi in the party.
+  - Under v0.3.93's rule the battle drops that sword at the start ("Ability not available").
+  - The test now checks both cases: without Vivi the sword isn't available; with Vivi silenced it's on the list but "Vivi can't help".
+- Game-core: 987 pass, 0 fail.
+
 ## [0.3.93] - 2026-10-20
 
 ### Fixed
