@@ -19,6 +19,12 @@ const party = (level: number) =>
     return partyUnit({ ...b, equipment: starterGear(b) }, i);
   });
 
+/**
+ * The party's level for a fight: ten above its strongest monster (as the sweep script plays it), at least 40, so a
+ * late-game boss is fought at a fair level rather than by a party it can only outlast.
+ */
+const testLevel = (units: { level: number }[]) => Math.min(99, Math.max(40, Math.max(...units.map((u) => u.level)) + 10));
+
 describe("area encounters", () => {
   const tokens = new Set<string>();
   for (const w of WORLDS)
@@ -28,7 +34,7 @@ describe("area encounters", () => {
   test.each([...tokens])("%s is a real fight", (token) => {
     const enc = encounterUnits([token], 0);
     if (!enc.units.some((u) => !u.untargetable)) return; // empty pattern (FF9 rate 0)
-    const e = new BattleEngine(createBattle({ seed: 42, party: party(40), enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
+    const e = new BattleEngine(createBattle({ seed: 42, party: party(testLevel(enc.units)), enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
     let watchdog = false;
     for (let i = 0; i < 200_000 && !e.state.outcome; i++) {
       for (const u of e.readyUnits()) if (!e.submit(autoCommand(e, u)).ok) e.submit({ actorId: u.id, kind: "defend", targetIds: [] });

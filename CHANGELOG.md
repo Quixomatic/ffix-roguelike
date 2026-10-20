@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.68] - 2026-10-19
+
+Journeys groundwork, step 2 (`.plans/journeys-full-story.md`): fair test levels.
+
+### Changed
+- **The encounter test fights each fight at a level that fits it:** ten above its strongest monster, never below Lv40 (`testLevel` in `content/encounters.test.ts`, the same rule the sweep script uses). Before, every fight was played by a fixed Lv40 party. Today's areas are tested exactly as before (none goes above Lv30). Disc 3 and 4 bosses (Lv60–98) will be fought at a fair level, instead of by a party that could only outlast them up to the 15-minute cap.
+
 ## [0.3.67] - 2026-10-19
 
 Journeys groundwork, step 1 (`.plans/journeys-full-story.md`): scripted wins.
