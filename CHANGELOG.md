@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.86] - 2026-10-20
+
+### Added
+- **`apps/server/scripts/sync-seeds.ts [table] [match…] [--all] [--apply]`** forces reward-table seed rows into the database. The server's boot seed only inserts rows the database lacks, so a seed row changed after it was first inserted never reaches the database. This **inserts or overwrites** the chosen rows with the seed's version and leaves every other row alone (unlike `db:seed:rewards --reset`, which reseeds a whole table).
+  - **Tables:** rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags.
+  - **Matches** pick rows by key, character or name, or by the start of the key up to `:` or `-`. For example, `marcus` picks every `marcus:<slot>:<tier>` starter row, and `story` picks every `story-*` achievement.
+  - **Dry run by default:** each row is shown as insert, overwrite (naming the fields that differ) or unchanged. `--apply` writes, and syncing a whole table also needs `--all`.
+  - **With no table,** it shows how far each table's database rows are from its seed file.
+  - An overwritten achievement keeps its seeded badge from `achievement-badges.json`.
+  - Example: `bun scripts/sync-seeds.ts starter marcus kuja --apply`.
+- `syncRewardRows` in `packages/db/src/seed-rewards.ts`. The seeder and the sync now share one table of row mappings (`SPECS`); seeding itself is unchanged.
+
+### Notes
+- **Dev DB today:**
+  - Marcus's and Kuja's 29 starter tiers are already in and match the seed.
+  - Two achievements differ, both badges: The Kingdom of Rain (592 in the DB, 158 in the seed) and Legend of Eiko. Neither was changed.
+- After `--apply`, restart `pnpm dev` (or save anything on the admin page) so the server reloads the tables.
+- Game-core: 973 pass, 0 fail.
+
 ## [0.3.85] - 2026-10-20
 
 ### Added

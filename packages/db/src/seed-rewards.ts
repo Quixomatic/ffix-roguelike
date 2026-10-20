@@ -31,11 +31,59 @@ const FILES = {
 const BADGES_FILE = "achievement-badges.json";
 
 type Row = Record<string, unknown>;
+type Table = keyof typeof FILES;
 const read = (f: string) => JSON.parse(readFileSync(join(REWARD_SEED_DIR, f), "utf8")) as Row[];
 const data = (r: Row) => r as object;
 
+/**
+ * Each table's primary key column and how a seed row becomes a database row. Shared by `seedRewards` (insert
+ * missing) and `syncRewardRows` (insert or overwrite chosen rows).
+ */
+const SPECS: Record<Table, { key: string; record: (r: Row) => Row }> = {
+  rarities: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), data: data(r) }) },
+  roles: { key: "key", record: (r) => ({ key: String(r.key), data: data(r) }) },
+  sources: { key: "id", record: (r) => ({ id: String(r.id), data: data(r) }) },
+  boons: { key: "id", record: (r) => ({ id: String(r.id), name: String(r.name), enabled: r.enabled !== false, data: data(r) }) },
+  gear: { key: "itemId", record: (r) => ({ itemId: Number(r.itemId), name: String(r.name), enabled: r.enabled !== false, data: data(r) }) },
+  starter: {
+    key: "id",
+    record: (r) => ({ id: String(r.id), character: String(r.character), slot: String(r.slot), tier: Number(r.tier), enabled: r.enabled !== false, data: data(r) }),
+  },
+  achievements: { key: "id", record: (r) => ({ id: String(r.id), category: String(r.category), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
+  relics: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
+  synergies: { key: "id", record: (r) => ({ id: String(r.id), enabled: r.enabled !== false, data: data(r) }) },
+  characterTags: { key: "character", record: (r) => ({ character: String(r.character), tags: (r.tags as string[]) ?? [] }) },
+};
+
+/** The Prisma model behind each table, loosely typed so the sync can treat them alike. */
+type Model = {
+  findMany(args: object): Promise<Row[]>;
+  upsert(args: object): Promise<unknown>;
+};
+const model = (db: Database, table: Table): Model =>
+  ({
+    rarities: db.rewardRarity,
+    roles: db.rewardRole,
+    sources: db.rewardSource,
+    boons: db.rewardBoon,
+    gear: db.gearAvailability,
+    starter: db.starterUpgrade,
+    achievements: db.achievement,
+    relics: db.relic,
+    synergies: db.synergy,
+    characterTags: db.characterTag,
+  })[table] as unknown as Model;
+
+/** Achievement id → badge number: achievement-badges.json, then any `badge` in achievements.json. */
+function achievementBadges(achievements: Row[]): Record<string, number> {
+  const badgeFile = join(REWARD_SEED_DIR, BADGES_FILE);
+  const badgeMap: Record<string, number> = existsSync(badgeFile) ? JSON.parse(readFileSync(badgeFile, "utf8")) : {};
+  for (const r of achievements) if (typeof r.badge === "number") badgeMap[String(r.id)] = r.badge;
+  return badgeMap;
+}
+
 /** Returns how many rows were inserted per table. */
-export async function seedRewards(db: Database): Promise<Record<keyof typeof FILES, number>> {
+export async function seedRewards(db: Database): Promise<Record<Table, number>> {
   const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags] = [
     read(FILES.rarities),
     read(FILES.roles),
@@ -48,32 +96,22 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     read(FILES.synergies),
     read(FILES.characterTags),
   ];
+  const rec = (t: Table, rows: Row[]) => rows.map(SPECS[t].record) as never;
   const results = await db.$transaction([
-    db.rewardRarity.createMany({ data: rarities.map((r) => ({ id: String(r.id), sort: Number(r.sort), data: data(r) })), skipDuplicates: true }),
-    db.rewardRole.createMany({ data: roles.map((r) => ({ key: String(r.key), data: data(r) })), skipDuplicates: true }),
-    db.rewardSource.createMany({ data: sources.map((r) => ({ id: String(r.id), data: data(r) })), skipDuplicates: true }),
-    db.rewardBoon.createMany({ data: boons.map((r) => ({ id: String(r.id), name: String(r.name), enabled: r.enabled !== false, data: data(r) })), skipDuplicates: true }),
-    db.gearAvailability.createMany({
-      data: gear.map((r) => ({ itemId: Number(r.itemId), name: String(r.name), enabled: r.enabled !== false, data: data(r) })),
-      skipDuplicates: true,
-    }),
-    db.starterUpgrade.createMany({
-      data: starter.map((r) => ({ id: String(r.id), character: String(r.character), slot: String(r.slot), tier: Number(r.tier), enabled: r.enabled !== false, data: data(r) })),
-      skipDuplicates: true,
-    }),
-    db.achievement.createMany({
-      data: achievements.map((r) => ({ id: String(r.id), category: String(r.category), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) })),
-      skipDuplicates: true,
-    }),
-    db.relic.createMany({ data: relics.map((r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) })), skipDuplicates: true }),
-    db.synergy.createMany({ data: synergies.map((r) => ({ id: String(r.id), enabled: r.enabled !== false, data: data(r) })), skipDuplicates: true }),
-    db.characterTag.createMany({ data: characterTags.map((r) => ({ character: String(r.character), tags: (r.tags as string[]) ?? [] })), skipDuplicates: true }),
+    db.rewardRarity.createMany({ data: rec("rarities", rarities), skipDuplicates: true }),
+    db.rewardRole.createMany({ data: rec("roles", roles), skipDuplicates: true }),
+    db.rewardSource.createMany({ data: rec("sources", sources), skipDuplicates: true }),
+    db.rewardBoon.createMany({ data: rec("boons", boons), skipDuplicates: true }),
+    db.gearAvailability.createMany({ data: rec("gear", gear), skipDuplicates: true }),
+    db.starterUpgrade.createMany({ data: rec("starter", starter), skipDuplicates: true }),
+    db.achievement.createMany({ data: rec("achievements", achievements), skipDuplicates: true }),
+    db.relic.createMany({ data: rec("relics", relics), skipDuplicates: true }),
+    db.synergy.createMany({ data: rec("synergies", synergies), skipDuplicates: true }),
+    db.characterTag.createMany({ data: rec("characterTags", characterTags), skipDuplicates: true }),
   ]);
   // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
   // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
-  const badgeFile = join(REWARD_SEED_DIR, BADGES_FILE);
-  const badgeMap: Record<string, number> = existsSync(badgeFile) ? JSON.parse(readFileSync(badgeFile, "utf8")) : {};
-  for (const r of achievements) if (typeof r.badge === "number") badgeMap[String(r.id)] = r.badge;
+  const badgeMap = achievementBadges(achievements);
   const badged = Object.entries(badgeMap);
   if (badged.length) {
     const ids = badged.map(([id]) => id);
@@ -119,10 +157,75 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
   };
 }
 
-export const REWARD_TABLES = Object.keys(FILES) as (keyof typeof FILES)[];
+export const REWARD_TABLES = Object.keys(FILES) as Table[];
+
+export type SyncAction = "insert" | "overwrite" | "same";
+export interface SyncRow {
+  key: string;
+  /** The row's name when it has one, else its key. */
+  label: string;
+  action: SyncAction;
+  /** Fields whose value in the database differs from the seed (overwrite only). */
+  changed: string[];
+}
+
+/** JSON with object keys sorted, so Postgres's jsonb key order doesn't count as a change. */
+const stable = (v: unknown): string =>
+  JSON.stringify(v, (_k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => a.localeCompare(b))) : x));
+
+/**
+ * Whether a seed row is picked by one of the tokens (case-insensitive): its key, its character, or its name exactly,
+ * or the start of its key up to a `:` or `-` (`marcus` → `marcus:weapon:1`, `story` → `story-burmecia`). No tokens
+ * picks every row.
+ */
+function picked(r: Row, key: string, tokens: string[]): boolean {
+  if (!tokens.length) return true;
+  const k = key.toLowerCase();
+  const names = [r.character, r.name].filter((x) => x != null).map((x) => String(x).toLowerCase());
+  return tokens.some((t) => k === t || k.startsWith(`${t}:`) || k.startsWith(`${t}-`) || names.includes(t));
+}
+
+/**
+ * Force chosen seed rows into the database: rows the database lacks are inserted, and rows it has are **overwritten**
+ * with the seed's version, discarding edits made on the admin page. The rest of the table is left alone (unlike
+ * `resetRewardTable`, which reseeds all of it). Returns what happened, or would happen without `apply`, per row.
+ */
+export async function syncRewardRows(db: Database, table: Table, tokens: string[], { apply = false } = {}): Promise<SyncRow[]> {
+  const spec = SPECS[table];
+  const seed = read(FILES[table]);
+  const badges = table === "achievements" ? achievementBadges(seed) : {};
+  const wanted = seed
+    .filter((r) => picked(r, String(r[spec.key]), tokens.map((t) => t.toLowerCase())))
+    // An achievement's seeded badge may live in achievement-badges.json; keep it when overwriting.
+    .map((r) => (table === "achievements" && r.badge == null && badges[String(r.id)] != null ? { ...r, badge: badges[String(r.id)] } : r))
+    .map(spec.record);
+  if (!wanted.length) return [];
+  const m = model(db, table);
+  const existing = await m.findMany({ where: { [spec.key]: { in: wanted.map((w) => w[spec.key]) } } });
+  const byKey = new Map(existing.map((e) => [String(e[spec.key]), e]));
+  const out: SyncRow[] = [];
+  for (const w of wanted) {
+    const key = String(w[spec.key]);
+    const have = byKey.get(key);
+    const label = String((w.data as Row | undefined)?.name ?? key);
+    let changed: string[] = [];
+    if (have) {
+      if (table === "characterTags") changed = stable(have.tags) === stable(w.tags) ? [] : ["tags"];
+      else {
+        const a = (have.data ?? {}) as Row;
+        const b = w.data as Row;
+        changed = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((f) => stable(a[f]) !== stable(b[f])).sort();
+      }
+    }
+    const action: SyncAction = !have ? "insert" : changed.length ? "overwrite" : "same";
+    out.push({ key, label, action, changed });
+    if (apply && action !== "same") await m.upsert({ where: { [spec.key]: w[spec.key] }, create: w, update: w });
+  }
+  return out;
+}
 
 /** Throw away one table's rows and seed it again from its file (discards the admin page's edits to it). */
-export async function resetRewardTable(db: Database, table: keyof typeof FILES): Promise<number> {
+export async function resetRewardTable(db: Database, table: Table): Promise<number> {
   const del = {
     rarities: () => db.rewardRarity.deleteMany(),
     roles: () => db.rewardRole.deleteMany(),
