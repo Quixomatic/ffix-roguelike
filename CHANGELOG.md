@@ -2,6 +2,40 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.75] - 2026-10-20
+
+Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 8, Cleyra; the Journeys page becomes full-width rows; and battles that end with FF9's "the enemy fled" take the fleeing enemies off the field.
+
+### Added
+- **Journey 8 · Cleyra** (story; opens once Treno and the Roo is cleared; tier 2). All its fights are FF9's own:
+
+  | Map | Theme · music | Fights | Elites | Boss |
+  |---|---|---|---|---|
+  | Cleyra's Trunk | desert · Cleyra's Trunk | Dragonfly packs, Sand Scorpions (always a back attack), Zuu | Sand Golem + Core | two Sand Golems + Cores |
+  | Trunk Heights | forest · Cleyra's Trunk | Dragonflies, Carrion Worm packs, Zuu | Sand Golems | **Antlion** |
+  | Cleyra | town · Cleyra Settlement | Carrion Worms, Zuu, Alexandrian soldiers | soldier squad, Sand Golems | **Beatrix II** (scripted win) |
+
+  - Gear: Cleyra's Soldier Dan's Shop and Treno's item shop. Map pools in the gear seed (`--add-pools`).
+  - **Left out:** soldier set piece `GT_E019A`. Its lone-soldier pattern, which FF9 never uses, ends with him standing.
+- **Achievement "The Harp Falls Silent"** (`story-cleyra`): clear the journey for 7,000 gil and 3 CP; harp badge.
+- **Core** (the Sand Golem's orb) has art: a glowing orb from FF3 (sheet 103004), since FFRK never drew it. The `enemies` pack is rebuilt and uploaded to R2.
+- **`.ff-panel-side`**: the card footer turned on its side, a section down a card's right edge with the window's border down its left and its gradient starting over; `data-on="true"` makes it green.
+
+### Changed
+- **The Journeys page is full-width cards, one journey per row**, in sections: The story, Side journeys (and Challenges when there are any).
+  - Left: the hero the journey recruits (a silhouette until they join, then the green check), or the journey's number when it recruits nobody.
+  - Middle: the name with "Recruits …" / "Joined: …", the subtitle, and **the route**: every map as a chip with the boss at its end ("South Gate · Black Waltz 3 → Burmecian Plains · Type A → Burmecia · Beatrix"), the final one in red.
+  - Right: a green side section with the highest tier cleared and Choose.
+  - Locked journeys keep the padlock, blur and "Clear … to unlock" on hover; their names, route and bosses are ???.
+
+### Fixed
+- **Battles that FF9 ends with "the enemy fled"** (end code 7) now take the enemies still standing off the field: they ran, and give no EXP. Cleyra's soldiers retreat once hurt, and the last one going ended the fight with him still counted as standing (the encounter test and `probe-areas` rejected it). Ralvurahva's Escape is the same ending.
+
+### Notes
+- `probe-areas.ts` passes for every area in the game: every fight plays out and no monster is a placeholder any more.
+- The sim's starter-gear party can no longer judge Disc 2 difficulty (it dies on Cleyra's first map even at start Lv26). Gear levels for the sim and Practice come after the journeys.
+- Game-core: 486 pass, 0 fail. Restart `pnpm dev` (achievement seed).
+
 ## [0.3.74] - 2026-10-20
 
 Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 7, Treno and the Roo.

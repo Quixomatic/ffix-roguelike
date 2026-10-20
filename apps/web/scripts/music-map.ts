@@ -33,6 +33,9 @@ export const AREA_MUSIC: Record<string, string> = {
   "southern-plains": "music045", // Crossing those Hills
   treno: "music057", // Dark City Treno
   "gargan-roo": "music063", // Gargan Roo
+  "cleyra-trunk": "music064", // Cleyra's Trunk
+  "trunk-heights": "music064", // Cleyra's Trunk
+  cleyra: "music049", // Cleyra Settlement
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

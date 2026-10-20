@@ -48,71 +48,104 @@ export function StoryPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Story" }]} title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
-      {/* Cards line up row by row: each spans four rows of this grid (JOURNEY_CELL) and lays its lines into them (subgrid). */}
-      <div className="grid gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-3">
-        {JOURNEYS.map((j) => (
-          <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} best={bestTierCleared(p, j.id)} />
-        ))}
-      </div>
+      {/* Full-width cards, one journey per row, in sections: the story in order, then the side journeys. */}
+      {JOURNEY_SECTIONS.map(({ label, category }) => {
+        const list = JOURNEYS.filter((j) => j.category === category);
+        if (!list.length) return null;
+        return (
+          <section key={category} className="flex flex-col gap-3">
+            <h2 className="ff-display text-xl text-[#c8d0ff]">{label}</h2>
+            {list.map((j) => (
+              <JourneyCard key={j.id} journey={j} unlocked={open.includes(j.id)} best={bestTierCleared(p, j.id)} />
+            ))}
+          </section>
+        );
+      })}
     </div>
   );
 }
 
-/**
- * A journey card's four rows — title + subtitle, maps + boss, the hero it recruits, footer — shared across a row of cards
- * (CSS subgrid), so matching lines sit at the same height in every card however long each one's text is.
- */
-const JOURNEY_CELL = "row-span-4 mb-1 grid grid-rows-subgrid gap-y-3 p-4";
+const JOURNEY_SECTIONS: { label: string; category: JourneyDef["category"] }[] = [
+  { label: "The story", category: "story" },
+  { label: "Side journeys", category: "echoes" },
+  { label: "Challenges", category: "challenge" },
+];
 
-/** A journey as a card: the whole card opens the embark page (with the cards' lift); locked ones are plain. */
+/** A journey card's layout: the hero (or number) column, the journey and its route, then the status / Choose column. */
+const JOURNEY_ROW = "flex min-h-28 items-stretch gap-4 p-3 pr-0";
+
+/**
+ * A journey as a full-width card: on the left the hero it recruits (or the journey's number), then its name, subtitle
+ * and route (each map with its boss), and on the right its highest tier cleared and Choose. The whole card opens the
+ * embark page (with the cards' lift); locked ones are plain.
+ */
 function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlocked: boolean; best: number | null }) {
-  const boss = encounterNames(getArea(j.areas[j.areas.length - 1]!).boss).join(" & ");
   const cleared = best != null;
+  const number = j.name.includes(" · ") ? j.name.split(" · ")[0] : null;
+  const title = j.name.includes(" · ") ? j.name.split(" · ").slice(1).join(" · ") : j.name;
   const body = (
     <>
-      <div>
-        <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
-        <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
-      </div>
-      <div className="text-sm">
-        {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
-      </div>
-      {/* Every card keeps the recruit row (empty when it recruits nobody), so the footers line up. */}
-      {!j.unlocks?.length ? (
-        <div />
-      ) : (
-        <div className="flex items-center gap-3">
-          {j.unlocks.map((k) => (
-            // The hero this journey recruits, large; a silhouette until they've joined, then the green check over them.
-            // The box is the sprite's whole drawn cell (3 × its 32 px art), so nothing spills out of it.
+      {/* The hero this journey recruits, large: a silhouette until they've joined, then the green check over them (the
+          box is the sprite's whole drawn cell, 3 × its 32 px art). A journey that recruits nobody shows its number. */}
+      <div className="flex w-24 shrink-0 items-center justify-center">
+        {j.unlocks?.length ? (
+          j.unlocks.map((k) => (
             <span key={k} className="relative flex h-24 w-24 shrink-0 items-end justify-center">
               <HeroSprite heroKey={k} size={72} silhouette={!cleared} />
               {cleared && <PixelIcon name="check" size={32} label={`${getCharacter(k).name} joined`} className="absolute bottom-0 right-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]" />}
             </span>
-          ))}
-          <span className="text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? "Clear to recruit" : "???"}</span>
+          ))
+        ) : number ? (
+          <span className="ff-display text-5xl text-white/30 [text-shadow:3px_3px_0_#000]">{number}</span>
+        ) : (
+          <PixelIcon name="star" size={48} className="opacity-40" />
+        )}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 py-1">
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <span className="ff-display text-2xl">{unlocked ? (number ? `${number} · ${title}` : title) : "???"}</span>
+          {j.unlocks?.length ? (
+            <span className="text-sm text-pink-200">{cleared ? `Joined: ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : unlocked ? `Recruits ${j.unlocks.map((k) => getCharacter(k).name).join(", ")}` : "Recruits ???"}</span>
+          ) : null}
         </div>
-      )}
-      {/* The footer is its own section of the card: the window's border across it, its gradient starting over. Locked
-          journeys have none (their last row stays empty, so the subgrid rows still line up). */}
-      {unlocked ? (
-        <div className="ff-panel-footer -mx-[14px] -mb-[14px] mt-1 flex items-center gap-2 px-4 py-2.5">
-          <span className="flex-1 text-sm">
-            {cleared ? (
-              <>
-                Highest tier cleared: <span className="text-yellow-200">{tierLabel(best)}</span>
-              </>
-            ) : (
-              <span className="opacity-60">Not cleared yet</span>
-            )}
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-lg text-yellow-200">
-            Choose <PixelIcon name="arrow-right" />
-          </span>
+        <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
+        {/* The route: each map with the boss at its end; the last one's is the journey's final boss. */}
+        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm">
+          {j.areas.map((id, i) => {
+            const area = getArea(id);
+            const last = i === j.areas.length - 1;
+            return (
+              <span key={id} className="inline-flex items-center gap-1.5">
+                {i > 0 && <PixelIcon name="arrow-right" size={16} className="opacity-50" />}
+                <span className={`rounded border px-2 py-0.5 ${last ? "border-red-300/40 bg-red-900/20" : "border-white/15 bg-black/20"}`}>
+                  {unlocked ? area.name : "???"}
+                  <span className={last ? "text-red-200" : "text-white/60"}> · {unlocked ? encounterNames(area.boss).join(" & ") : "???"}</span>
+                </span>
+              </span>
+            );
+          })}
         </div>
-      ) : (
-        <div />
-      )}
+      </div>
+      {/* The status column: the window's footer turned on its side (.ff-panel-side: its border down the left, its gradient
+          starting over), reaching the card's inner edges. Locked journeys keep the space empty. */}
+      <div data-on={unlocked} className={`-my-[10px] mr-[2px] flex w-44 shrink-0 flex-col items-end justify-center gap-1 px-4 text-right ${unlocked ? "ff-panel-side" : ""}`}>
+        {unlocked && (
+          <>
+            <span className="text-sm">
+              {cleared ? (
+                <>
+                  Cleared: <span className="text-yellow-200">{tierLabel(best)}</span>
+                </>
+              ) : (
+                <span className="opacity-60">Not cleared yet</span>
+              )}
+            </span>
+            <span className="inline-flex items-center gap-1.5 text-lg text-yellow-200">
+              Choose <PixelIcon name="arrow-right" />
+            </span>
+          </>
+        )}
+      </div>
     </>
   );
   // Locked: the card dimmed, with a big padlock centred over it. Hovering blurs the card, raises the padlock and
@@ -120,8 +153,8 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
   if (!unlocked) {
     const why = `Clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"} to unlock`;
     return (
-      <div className={`group ff-panel relative ${JOURNEY_CELL}`}>
-        {/* `contents` keeps the rows direct children of the card (its subgrid); they're dimmed one by one. */}
+      <div className={`group ff-panel relative ${JOURNEY_ROW}`}>
+        {/* `contents` keeps the columns direct children of the card's row; they're dimmed one by one. */}
         <div className="contents [&>*]:opacity-60">{body}</div>
         <div className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100" />
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
@@ -140,7 +173,7 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
   }
   return (
     <FocusItem>
-      <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_CELL}`}>
+      <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_ROW}`}>
         {body}
       </Link>
     </FocusItem>

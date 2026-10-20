@@ -222,6 +222,22 @@
     0 -2px 0 #0c1238,
     inset 0 2px 0 #0c1238;
 }
+/* The footer turned on its side: a section down a card's right edge (the journey cards' status column), the window's
+   border down its left and its gradient starting over. Reach the card's inner edges with negative margins, as the footer
+   does (stopping 2px short, inside the window's dark inner line). */
+.ff-panel-side {
+  background: linear-gradient(180deg, #3a4fb0 0%, #24317a 45%, #141b52 100%);
+  border-left: 2px solid #e8e8f4;
+  border-radius: 0 3px 3px 0;
+  box-shadow:
+    -2px 0 0 #0c1238,
+    inset 2px 0 0 #0c1238;
+}
+/* A side section that's an action (the journey cards' Choose): the green "go" look of the run buttons. */
+.ff-panel-side[data-on="true"] {
+  background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 45%, #1c401c 100%);
+  border-left-color: #c8f0c8;
+}
 .ff-panel[data-on="true"] {
   background: linear-gradient(180deg, #4a8a4a 0%, #2a5a2a 100%);
   border-color: #c8f0c8;

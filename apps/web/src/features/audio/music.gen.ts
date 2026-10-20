@@ -97,6 +97,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.7003174603174603,
   "loopEnd": 113.64197278911564
  },
+ "music049": {
+  "url": "/music/music049.ogg",
+  "name": "Cleyra Settlement",
+  "loopStart": 4.503968253968254,
+  "loopEnd": 60.752539682539684
+ },
  "music057": {
   "url": "/music/music057.ogg",
   "name": "Dark City Treno",
@@ -108,6 +114,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "name": "Gargant Roo",
   "loopStart": 0.006031746031746032,
   "loopEnd": 43.99390022675737
+ },
+ "music064": {
+  "url": "/music/music064.ogg",
+  "name": "Cleyra's Trunk",
+  "loopStart": 0.08532879818594104,
+  "loopEnd": 144.06854875283446
  },
  "music079": {
   "url": "/music/music079.ogg",
@@ -165,7 +177,10 @@ export const AREA_MUSIC: Record<string, string> = {
  "burmecia": "music044",
  "southern-plains": "music045",
  "treno": "music057",
- "gargan-roo": "music063"
+ "gargan-roo": "music063",
+ "cleyra-trunk": "music064",
+ "trunk-heights": "music064",
+ "cleyra": "music049"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

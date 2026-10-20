@@ -1432,6 +1432,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "Coeurl FFIV"
  },
+ "core": {
+  "url": "/sprites/enemies/enemy-103004.png",
+  "w": 46,
+  "h": 46,
+  "originX": 23,
+  "originY": 46,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: glowing orb FFIII (unnamed sheet, by eye: FFRK never drew the Sand Golem's Core)"
+ },
  "crawler": {
   "url": "/sprites/enemies/enemy-111004.png",
   "w": 35,

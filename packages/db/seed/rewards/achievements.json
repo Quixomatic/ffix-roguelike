@@ -123,6 +123,22 @@
     "enabled": true
   },
   {
+    "id": "story-cleyra",
+    "name": "The Harp Falls Silent",
+    "description": "Clear Cleyra",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "cleyra"
+    },
+    "reward": {
+      "gil": 7000,
+      "cp": 3
+    },
+    "sort": 7,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

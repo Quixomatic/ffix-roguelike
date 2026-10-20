@@ -376,6 +376,53 @@ export const WORLDS: WorldDef[] = [
     itemStores: [28],
     synthTier: 33,
   },
+  // ── Journey 8, Cleyra (Disc 2) ──
+  {
+    index: 19,
+    id: "cleyra-trunk",
+    tier: 2,
+    name: "Cleyra's Trunk",
+    subtitle: "Up the giant tree, through the sandstorm",
+    theme: "desert",
+    encounters: [["@GT_R008"],["@GT_R009"],["@GT_R010"],["@GT_E082"],["@GT_R000"]],
+    elites: [["@GT_R004"],["@GT_R007"]],
+    boss: ["@GT_R006"],
+    gearPrice: [1400, 6000],
+    shops: [5],
+    itemStores: [28],
+    synthTier: 33,
+  },
+  {
+    index: 20,
+    id: "trunk-heights",
+    tier: 2,
+    name: "Trunk Heights",
+    subtitle: "Where the sand pours down into a waiting maw",
+    theme: "forest",
+    encounters: [["@GT_R011"],["@GT_R012"],["@GT_R017"],["@GT_R018"],["@GT_R002"],["@GT_R003"]],
+    elites: [["@GT_R004"],["@GT_R006"]],
+    boss: ["@CY_E018"],
+    gearPrice: [1400, 6000],
+    shops: [5],
+    itemStores: [28],
+    synthTier: 33,
+  },
+  {
+    index: 21,
+    id: "cleyra",
+    tier: 2,
+    name: "Cleyra",
+    subtitle: "The settlement in the sandstorm, and Alexandria at its gates",
+    theme: "town",
+    // The soldier set piece GT_E019A is out (its lone-soldier pattern, rate 0 in FF9, ends with him standing).
+    encounters: [["@GT_R018"],["@GT_R003"],["@CY_E021A"],["@CY_E021B"]],
+    elites: [["@CY_E021A"],["@GT_R006"]],
+    boss: ["@CY_E022"],
+    gearPrice: [1500, 6500],
+    shops: [5],
+    itemStores: [28],
+    synthTier: 33,
+  },
 ];
 
 export function getArea(id: string): WorldDef {
@@ -465,6 +512,14 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["southern-plains", "treno", "gargan-roo"],
     unlockAfter: "burmecia",
+  },
+  {
+    id: "cleyra",
+    name: "8 · Cleyra",
+    subtitle: "Up the great tree to the city in the sandstorm, and Beatrix again.",
+    category: "story",
+    areas: ["cleyra-trunk", "trunk-heights", "cleyra"],
+    unlockAfter: "treno",
   },
   // ── Echoes: crossover side journey ──
   {

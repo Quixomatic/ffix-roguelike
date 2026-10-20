@@ -62,6 +62,7 @@ export const ENEMY_SPRITE_MAP: Record<string, EnemySpriteSource> = {
   "clipper": { enemy: 105003, src: "stand-in: Devil Crab FFV" },
   "cockatrice": { enemy: 104031, src: "Cockatrice FFIV" },
   "coeurl": { enemy: 104091, src: "Coeurl FFIV" },
+  "core": { enemy: 103004, src: "stand-in: glowing orb FFIII (unnamed sheet, by eye: FFRK never drew the Sand Golem's Core)" },
   "crawler": { enemy: 111004, src: "Crawler FFXI" },
   "deathguise": { boss: 209036, src: "Deathguise (FF9)" },
   "dendrobium": { enemy: 109018, src: "Dendrobium FFIX (identified by eye)" },

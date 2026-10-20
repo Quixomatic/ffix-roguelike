@@ -859,7 +859,12 @@ export class BattleAi {
       case 33: // End battle
         if (s.phase === PHASE.EVENT) {
           const outcome: BattleOutcome = val === 4 ? "fled" : val === 0 || val === 3 || val === 6 ? "defeat" : "victory";
-          if (val === 7) eng.emit({ type: "message", text: "The enemy fled" });
+          if (val === 7) {
+            // FF9's "the enemy fled" ending (Cleyra's soldiers retreating, Ralvurahva's Escape): whoever's still on
+            // the field has run off, so they leave it (no EXP: they weren't defeated).
+            for (const u of eng.state.units) if (u.side === "enemy" && eng.isAlive(u)) u.removed = true;
+            eng.emit({ type: "message", text: "The enemy fled" });
+          }
           // A scripted win (Beatrix's duels): the boss is still standing, and withdraws.
           else if (outcome === "victory" && eng.state.scene && SCRIPTED_WIN_SCENES.has(eng.state.scene)) {
             const standing = eng.state.units.filter((u) => u.side === "enemy" && eng.isTargetable(u));
