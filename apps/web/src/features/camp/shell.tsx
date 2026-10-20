@@ -36,8 +36,8 @@ const GAME_NAV: NavItem[] = [
 ];
 const MORE_NAV: NavItem[] = [
   { to: "/items", label: "Items", icon: Package },
-  { to: "/achievements", label: "Achievements", icon: Trophy },
   { to: "/relics", label: "Relics", icon: Gem },
+  { to: "/achievements", label: "Achievements", icon: Trophy },
   { to: "/stats", label: "Stats", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },
 ];

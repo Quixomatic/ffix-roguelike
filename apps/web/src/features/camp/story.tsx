@@ -70,19 +70,9 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
   const cleared = best != null;
   const body = (
     <>
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
-          <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
-        </div>
-        {cleared ? (
-          <span className="ff-chip shrink-0 gap-1 px-2 py-0 text-xs">
-            <PixelIcon name="check" />
-            Cleared
-          </span>
-        ) : (
-          !unlocked && <PixelIcon name="lock" size={32} label="Locked" className="shrink-0 opacity-90" />
-        )}
+      <div>
+        <div className="ff-display text-2xl">{unlocked ? j.name : "???"}</div>
+        <div className="text-sm text-[#c8d0ff]">{unlocked ? j.subtitle : `Unlock: clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"}`}</div>
       </div>
       <div className="text-sm">
         {j.areas.length} map{j.areas.length === 1 ? "" : "s"} · Final boss: {unlocked ? boss : "???"}
@@ -125,7 +115,29 @@ function JourneyCard({ journey: j, unlocked, best }: { journey: JourneyDef; unlo
       )}
     </>
   );
-  if (!unlocked) return <div className={`ff-panel opacity-75 ${JOURNEY_CELL}`}>{body}</div>;
+  // Locked: the card dimmed, with a big padlock centred over it. Hovering blurs the card, raises the padlock and
+  // brings in why it's locked beneath it.
+  if (!unlocked) {
+    const why = `Clear ${JOURNEYS.find((x) => x.id === j.unlockAfter)?.name ?? "the previous journey"} to unlock`;
+    return (
+      <div className={`group ff-panel relative ${JOURNEY_CELL}`}>
+        {/* `contents` keeps the rows direct children of the card (its subgrid); they're dimmed one by one. */}
+        <div className="contents [&>*]:opacity-60">{body}</div>
+        <div className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+          <PixelIcon
+            name="lock"
+            size={64}
+            label="Locked"
+            className="translate-y-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:-translate-y-1"
+          />
+          <span className="ff-display translate-y-3 px-4 text-center text-lg text-white opacity-0 transition duration-300 [text-shadow:2px_2px_0_#000] group-hover:translate-y-0 group-hover:opacity-100">
+            {why}
+          </span>
+        </div>
+      </div>
+    );
+  }
   return (
     <FocusItem>
       <Link to="/story/$journey" params={{ journey: j.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_CELL}`}>

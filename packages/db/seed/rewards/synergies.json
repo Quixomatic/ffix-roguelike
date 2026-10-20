@@ -70,5 +70,44 @@
     "color": "#5aa86a",
     "tiers": [{ "count": 2, "text": "Defeating an enemy restores 3% max HP", "effects": [{ "kind": "onKill", "hpPct": 3 }] }],
     "enabled": true
+  },
+  {
+    "id": "thief",
+    "name": "Thieves",
+    "tag": "thief",
+    "description": "Quick hands, quicker feet.",
+    "badge": 623,
+    "color": "#3fb8a8",
+    "tiers": [
+      { "count": 2, "text": "Thieves: Speed +10%", "effects": [{ "kind": "stat", "stat": "speed", "pct": 10, "scope": { "kind": "tag", "tag": "thief" } }] },
+      {
+        "count": 3,
+        "text": "Thieves: Speed +15%, Evade +10%",
+        "effects": [
+          { "kind": "stat", "stat": "speed", "pct": 15, "scope": { "kind": "tag", "tag": "thief" } },
+          { "kind": "stat", "stat": "evade", "pct": 10, "scope": { "kind": "tag", "tag": "thief" } }
+        ]
+      }
+    ],
+    "enabled": true
+  },
+  {
+    "id": "qu",
+    "name": "Raised by Qu",
+    "tag": "qu",
+    "description": "Quan raised Vivi in the marshes like one of the clan: you eat, you grow.",
+    "badge": 852,
+    "color": "#8fbf4a",
+    "tiers": [
+      {
+        "count": 2,
+        "text": "Raised by Qu: Magic +10%; a killing blow restores 5% MP",
+        "effects": [
+          { "kind": "stat", "stat": "magic", "pct": 10, "scope": { "kind": "tag", "tag": "qu" } },
+          { "kind": "onKill", "mpPct": 5, "scope": { "kind": "tag", "tag": "qu" } }
+        ]
+      }
+    ],
+    "enabled": true
   }
 ]

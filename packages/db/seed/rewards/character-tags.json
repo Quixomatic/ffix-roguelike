@@ -1,12 +1,12 @@
 [
-  { "character": "zidane", "tags": ["tantalus", "outsider"] },
-  { "character": "blank", "tags": ["tantalus"] },
+  { "character": "zidane", "tags": ["tantalus", "outsider", "thief"] },
+  { "character": "blank", "tags": ["tantalus", "thief"] },
   { "character": "garnet", "tags": ["summoner", "alexandria", "mage"] },
   { "character": "eiko", "tags": ["summoner", "mage"] },
-  { "character": "vivi", "tags": ["mage"] },
+  { "character": "vivi", "tags": ["mage", "qu"] },
   { "character": "steiner", "tags": ["alexandria", "knight"] },
   { "character": "beatrix", "tags": ["alexandria", "knight"] },
   { "character": "freya", "tags": ["knight", "outsider"] },
-  { "character": "amarant", "tags": ["outsider"] },
-  { "character": "quina", "tags": ["mage", "outsider"] }
+  { "character": "amarant", "tags": ["outsider", "thief"] },
+  { "character": "quina", "tags": ["mage", "outsider", "qu"] }
 ]

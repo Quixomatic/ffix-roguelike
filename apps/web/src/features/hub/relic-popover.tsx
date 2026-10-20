@@ -1,6 +1,6 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
 import { characterTags, getCharacter, rarityOf, relicById, synergyTable, type SynergyData } from "@ffix-roguelike/game-data";
-import type { ReactElement, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 
 import { FocusItem } from "@/features/input/focus";
 
@@ -195,16 +195,58 @@ export function SynergyChip({
  * cursor stop, so the chips are hover only).
  */
 export function SynergyTags({ character, party, side = "top" }: { character: string; party?: string[]; side?: Side }) {
-  const tags = characterTags(character);
-  if (!tags.length) return null;
+  const synergies = characterTags(character).flatMap((tag) => synergyTable().find((x) => x.tag === tag) ?? []);
+  const countOf = (s: SynergyData) => (party ? party.filter((k) => characterTags(k).includes(s.tag)).length : undefined);
+  const chip = (s: SynergyData) => <SynergyChip key={s.id} synergy={s} count={countOf(s)} party={party} side={side} cursor={false} showCount={false} />;
+  // One line only: as many chips as fit, then "+N" for the rest (hover it for them all). An invisible copy of the full
+  // row is measured against the space, on every resize.
+  const rowRef = useRef<HTMLSpanElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const [shown, setShown] = useState(synergies.length);
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    const measure = measureRef.current;
+    if (!row || !measure) return;
+    const fit = () => {
+      const room = row.clientWidth;
+      const chips = [...measure.children] as HTMLElement[];
+      const right = (i: number) => chips[i]!.offsetLeft + chips[i]!.offsetWidth;
+      if (!chips.length || right(chips.length - 1) <= room) return setShown(chips.length);
+      // Leave room for the "+N" chip.
+      let n = chips.length - 1;
+      while (n > 0 && right(n - 1) > room - MORE_CHIP_ROOM) n--;
+      setShown(Math.max(1, n));
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(row);
+    return () => ro.disconnect();
+  }, [synergies.length]);
+  if (!synergies.length) return null;
+  const hidden = synergies.length - shown;
   return (
-    <span className="flex flex-wrap gap-1">
-      {tags.map((tag) => {
-        const s = synergyTable().find((x) => x.tag === tag);
-        if (!s) return null;
-        const count = party ? party.filter((k) => characterTags(k).includes(tag)).length : undefined;
-        return <SynergyChip key={tag} synergy={s} count={count} party={party} side={side} cursor={false} showCount={false} />;
-      })}
+    // No width of its own (w-0 grow): it takes the footer's width rather than pushing the card wider to fit every chip.
+    <span ref={rowRef} className="relative flex w-0 min-w-0 grow flex-nowrap gap-1 overflow-hidden">
+      <span ref={measureRef} aria-hidden className="pointer-events-none invisible absolute left-0 top-0 flex flex-nowrap gap-1">
+        {synergies.map(chip)}
+      </span>
+      {synergies.slice(0, shown).map(chip)}
+      {hidden > 0 && (
+        <Pop
+          side={side}
+          cursor={false}
+          content={synergies.map((s) => (
+            <div key={s.id} className="flex flex-col gap-2 border-b border-white/10 pb-2 last:border-0 last:pb-0">
+              <SynergyDetails synergy={s} count={countOf(s)} party={party} />
+            </div>
+          ))}
+        >
+          <span className="inline-flex shrink-0 cursor-help items-center rounded border border-white/25 bg-black/30 px-1.5 py-0.5 text-xs">+{hidden}</span>
+        </Pop>
+      )}
     </span>
   );
 }
+
+/** Width (px) kept free for the "+N" chip when a character's synergy chips overflow their line. */
+const MORE_CHIP_ROOM = 32;

@@ -87,6 +87,14 @@ export async function seedRewards(db: Database): Promise<Record<keyof typeof FIL
     const colors = coloured.map((r) => String(r.color));
     await db.$executeRaw`UPDATE synergy s SET data = jsonb_set(s.data, '{color}', to_jsonb(c.color)) FROM unnest(${ids}::text[], ${colors}::text[]) AS c(id, color) WHERE s.id = c.id AND s.data->'color' IS NULL`;
   }
+  // Characters' synergy tags added to the seed after their rows existed (a new synergy): each character gains the
+  // seeded tags it's missing, after the ones it has. Removing a seeded tag for good means exporting from the admin
+  // page (so the seed drops it too), or it comes back on the next start.
+  for (const r of characterTags) {
+    const seeded = ((r.tags as string[]) ?? []).map(String);
+    if (!seeded.length) continue;
+    await db.$executeRaw`UPDATE character_tag SET tags = tags || ARRAY(SELECT t FROM unnest(${seeded}::text[]) AS t WHERE t <> ALL(tags)) WHERE "character" = ${String(r.character)} AND NOT (tags @> ${seeded}::text[])`;
+  }
   return {
     rarities: results[0].count,
     roles: results[1].count,

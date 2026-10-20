@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.66] - 2026-10-19
+
+### Added
+- **Two synergies:**
+  - **Thieves** (Zidane, Amarant, Blank; dagger badge, teal). 2 members: thieves get Speed +10%. 3 members: thieves get Speed +15% and Evade +10%.
+  - **Raised by Qu** (Vivi and Quina: Quan raised Vivi as one of the clan; cooking-pot badge, frog green). With both in the party: Magic +10% for each, and a killing blow restores 5% MP to the one who dealt it.
+- **Seeded synergy tags reach existing characters.** On every seed (server start), each character gains the default tags it's missing, kept after the ones it has, like the achievement-badge and synergy-colour fills. Removing a default tag for good means exporting from the admin page, so the seed drops it too.
+
+### Changed
+- **Locked journey cards:** a big padlock (64 px) centred over the dimmed card. On hover the card blurs, the padlock rises, and why it's locked ("Clear … to unlock") slides up and fades in beneath it.
+- **Journey cards drop the "Cleared" chip.** The footer's "Highest tier cleared" and the recruit's check still show it.
+- **Character card synergy chips stay on one line.** As many as fit show, then a **+N** chip whose popover lists all of that character's synergies (tiers, the one reached, who carries the tag). The row is measured against the footer's width and re-measured on resize.
+- **Sidebar:** Relics sits above Achievements.
+
+### Notes
+- The dev database's synergies table was reloaded from the seed files (the Thieves badge).
+- The plan for the rest of FF9's story is in `.plans/journeys-full-story.md`.
+
 ## [0.3.65] - 2026-10-19
 
 The shop sells targeted wares, relics get an admin page and 42 more of them, and the map's synthesis badge and chocobo change.
