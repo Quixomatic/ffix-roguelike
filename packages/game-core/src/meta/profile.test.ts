@@ -171,10 +171,10 @@ describe("FF9 growth (ff9level.cs)", () => {
 });
 
 describe("locked roster", () => {
-  test("lists story recruits in journey order: the core party in the first seven journeys, then Beatrix and Blank", () => {
+  test("lists story recruits in journey order: the core party in the first seven journeys, then the late joiners", () => {
     const p = newProfile();
     const locked = lockedCharacters(p);
-    expect(locked.map((l) => l.key)).toEqual(["vivi", "steiner", "garnet", "freya", "quina", "eiko", "amarant", "beatrix", "blank"]);
+    expect(locked.map((l) => l.key)).toEqual(["vivi", "steiner", "garnet", "freya", "quina", "eiko", "amarant", "beatrix", "blank", "marcus", "kuja"]);
     expect(locked[0]!.hint).toBe('Clear the journey "The Evil Forest"');
     expect(locked.find((l) => l.key === "blank")!.hint).toBe('Clear the journey "Mount Gulug"');
     expect(locked.map((l) => l.key)).not.toContain("zidane");

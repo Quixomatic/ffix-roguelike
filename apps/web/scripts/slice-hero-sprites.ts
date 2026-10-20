@@ -46,6 +46,7 @@ const HEROES: Record<string, { sheet: number; weapon: number }> = {
   beatrix: { sheet: 109009, weapon: 100003 }, // long sword
   marcus: { sheet: 109015, weapon: 100002 },
   blank: { sheet: 109066, weapon: 100002 },
+  kuja: { sheet: 109010, weapon: 100009 }, // (staff: he wears Vivi's mage gear)
 };
 
 /**

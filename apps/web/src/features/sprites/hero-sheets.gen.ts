@@ -303,6 +303,31 @@ export const HERO_SHEETS: Record<string, HeroSheetInfo> = {
     rig: [null, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 11, hand: [19.5, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
     weapon: 100002,
   },
+  kuja: {
+    frames: 33,
+    anims: {
+      idle: { frames: [0], frameRate: 1, repeat: -1 },
+      ready: { frames: [1], frameRate: 1, repeat: -1 },
+      walk: { frames: [2, 0], frameRate: 6, repeat: -1 },
+      attack: { frames: [2, 3, 3, 4, 4, 4, 1], frameRate: 10, repeat: 0 },
+      chant: { frames: [5, 6], frameRate: 4, repeat: -1 },
+      cast: { frames: [5, 6, 5, 6, 7, 7, 7], frameRate: 8, repeat: 0 },
+      item: { frames: [1, 7, 7, 7], frameRate: 6, repeat: 0 },
+      defend: { frames: [1], frameRate: 1, repeat: -1 },
+      hurt: { frames: [8, 8, 8], frameRate: 6, repeat: 0 },
+      dying: { frames: [9], frameRate: 1, repeat: -1 },
+      ko: { frames: [10], frameRate: 1, repeat: 0 },
+      victory: { frames: [7, 0], frameRate: 2, repeat: -1 },
+      evade: { frames: [2, 2, 0], frameRate: 8, repeat: 0 },
+    },
+    variants: {
+      blind: { idle: [13], ready: [14], walk: [15, 13], attack: [15, 16, 16, 17, 17, 17, 14], chant: [18, 19], cast: [18, 19, 18, 19, 20, 20, 20], item: [14, 20, 20, 20], defend: [14], hurt: [21, 21, 21], dying: [22], ko: [23], victory: [20, 13], evade: [15, 15, 13] },
+      mini: { idle: [24], ready: [25], walk: [26, 24], attack: [26, 27, 27, 27, 27, 27, 25], chant: [25, 25], cast: [25, 25, 25, 25, 25, 25, 25], item: [25, 25, 25, 25], defend: [25], hurt: [28, 28, 28], dying: [29], ko: [30], victory: [25, 24], evade: [26, 26, 24] },
+    },
+    poses: { sleep: 31, stone: 32 },
+    rig: [null, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 11, hand: [20, 5.5], angle: 90 }, { arm: 12, hand: [10.5, 20], angle: 0 }, { arm: 12, hand: [10.5, 20], angle: -90 }, { arm: 12, hand: [10.5, 20], angle: -90 }, null],
+    weapon: 100009,
+  },
 };
 
 /** Weapon sprite id → grip point in its 32×32 cell (sprites are drawn tip up-left). */

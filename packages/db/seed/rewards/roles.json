@@ -194,5 +194,22 @@
     "abilityWeight": 6,
     "preferredAbilities": [],
     "notes": "Fighter"
+  },
+  {
+    "key": "kuja",
+    "weights": {
+      "magic": 4,
+      "spirit": 2,
+      "speed": 2,
+      "magicDefence": 2,
+      "magicEvade": 1.5,
+      "defence": 1,
+      "maxMp": 0.15,
+      "maxHp": 0.05,
+      "gemsMax": 0.5
+    },
+    "abilityWeight": 8,
+    "preferredAbilities": [],
+    "notes": "Sorcerer and summoner (Playable Character Pack kit): magic first, like Vivi"
   }
 ]

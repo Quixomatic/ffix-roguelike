@@ -65,6 +65,7 @@ const roles: RewardRole[] = [
   { key: "blank", weights: { ...fighter, speed: 3 }, abilityWeight: 6, preferredAbilities: [], notes: "Thief / fighter" },
   { key: "marcus", weights: fighter, abilityWeight: 6, preferredAbilities: [], notes: "Fighter" },
   { key: "cinna", weights: fighter, abilityWeight: 6, preferredAbilities: [], notes: "Fighter" },
+  { key: "kuja", weights: mage, abilityWeight: 8, preferredAbilities: [], notes: "Sorcerer and summoner (Playable Character Pack kit): magic first, like Vivi" },
 ];
 
 const rarityWeights = amounts;

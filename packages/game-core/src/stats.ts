@@ -277,11 +277,12 @@ export function isMastered(build: CharacterBuild, ref: AbilityRef): boolean {
   return cost > 0 && (build.ap[ref] ?? 0) >= cost;
 }
 
-/** Every ability usable right now: mastered ones plus those on equipped gear. */
+/** Every ability usable right now: mastered ones, those on equipped gear, and the character's innate ones. */
 export function availableAbilities(build: CharacterBuild): AbilityRef[] {
   const character = getCharacter(build.key);
   const gear = new Set(gearAbilities(build));
-  return character.abilities.map((a) => a.ref).filter((ref) => gear.has(ref) || isMastered(build, ref));
+  const learned = character.abilities.map((a) => a.ref).filter((ref) => gear.has(ref) || isMastered(build, ref));
+  return [...new Set([...learned, ...(character.innate ?? [])])];
 }
 
 export function availableActions(build: CharacterBuild): number[] {

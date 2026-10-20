@@ -134,6 +134,11 @@ export interface CharacterData {
   commands: [CommandData, CommandData];
   trance: [CommandData, CommandData];
   abilities: LearnableAbility[];
+  /**
+   * Abilities always usable, without learning: a mod-imported kit's abilities that no item the character can wear
+   * teaches (as FF9 treats a guest's fixed abilities). Usually absent.
+   */
+  innate?: AbilityRef[];
   defaultEquipment: Equipment;
 }
 

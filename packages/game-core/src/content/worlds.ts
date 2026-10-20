@@ -1511,6 +1511,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["memoria", "memoria-fire", "memoria-water", "memoria-wind"],
     unlockAfter: "terra",
+    unlocks: ["marcus"],
   },
   {
     id: "crystal-world",
@@ -1519,6 +1520,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["memorias-end", "the-crystal", "the-end"],
     unlockAfter: "memoria",
+    unlocks: ["kuja"],
   },
   // ── Hidden bosses: optional journeys, each opening once its part of the story is cleared ──
   {

@@ -63,8 +63,8 @@ function decodeLine(bytes: Uint8Array): string {
   }
 }
 
-function readLines(rel: string): string[] {
-  const buf = readFileSync(join(DATA, rel));
+function readLines(rel: string, dir = DATA): string[] {
+  const buf = readFileSync(join(dir, rel));
   const lines: string[] = [];
   let start = 0;
   for (let i = 0; i <= buf.length; i++) {
@@ -79,9 +79,9 @@ function readLines(rel: string): string[] {
 const tidy = (s: string) => s.replace(/[\u2018\u2019]/g, "'").trim();
 
 /** Data rows (comment lines skipped), each split on `;` with the trailing `# comment` field split off. */
-function rows(rel: string): { cells: string[]; comment: string }[] {
+function rows(rel: string, dir = DATA): { cells: string[]; comment: string }[] {
   const out: { cells: string[]; comment: string }[] = [];
-  for (const line of readLines(rel)) {
+  for (const line of readLines(rel, dir)) {
     if (!line.trim() || line.trimStart().startsWith("#")) continue;
     const cells = line.split(";").map(tidy);
     let comment = "";
@@ -150,7 +150,7 @@ const statusSets = new Map<number, Status[]>();
 for (const r of rows("Battle/StatusSets.csv")) statusSets.set(int(r.cells[1]), statusList(r.cells[2] ?? ""));
 
 // ── actions (active abilities, spells, enemy-usable skills) ──────────────────
-const actions: ActionData[] = rows("Battle/Actions.csv").map((r) => {
+const toAction = (r: { cells: string[] }, sets: Map<number, Status[]>): ActionData => {
   const c = r.cells;
   return {
     id: int(c[1]),
@@ -163,12 +163,13 @@ const actions: ActionData[] = rows("Battle/Actions.csv").map((r) => {
     elements: elementsOf(int(c[12])),
     rate: int(c[13]),
     category: int(c[14]),
-    statuses: statusSets.get(int(c[15])) ?? [],
+    statuses: sets.get(int(c[15])) ?? [],
     mp: int(c[16]),
     type: int(c[17]),
     vfx: int(c[8]),
   };
-});
+};
+const actions: ActionData[] = rows("Battle/Actions.csv").map((r) => toAction(r, statusSets));
 const actionById = new Map(actions.map((a) => [a.id, a]));
 
 const supportAbilities: SupportAbilityData[] = rows("Characters/Abilities/AbilityGems.csv").map((r) => ({
@@ -376,6 +377,118 @@ const characters: CharacterData[] = rows("Characters/BaseStats.csv").map((r) => 
     defaultEquipment: defaultEquip.get(int(p[5])) ?? { weapon: null, head: null, wrist: null, armor: null, accessory: null },
   };
 });
+
+// ── characters from mods ─────────────────────────────────────────────────────
+// Kits for the late joiners FF9 itself leaves as guests, from Memoria mods installed beside the game (their folders
+// sit in the FF9 root, next to StreamingAssets):
+//   - Kuja: the Playable Character Pack (stats, commands, abilities, default gear; its custom actions).
+//   - Beatrix: Alternate Fantasy's ability list (FF9's own actions, so her base Seiken / White Magic commands carry it).
+//   - Marcus: neither mod gives him a kit, so ours: Steal plus Steiner's Sword Art, learned from the swords he shares
+//     with Steiner (his FF9 data already lets him wear them).
+// Custom mod actions are numbered from 10000; the engine reads 2000+ as monster attacks, so they're renumbered to
+// 1000+ (MOD_ACTION_BASE). Abilities no item the character can wear teaches are innate (always usable).
+const FF9_ROOT = join(DATA, "..", "..");
+const PCP = join(FF9_ROOT, "PlayableCharacterPack", "StreamingAssets", "Data");
+const AF = join(FF9_ROOT, "AlternateFantasy", "StreamingAssets", "Data");
+const MOD_ACTION_BASE = 1000;
+const modAction = (id: number) => (id >= 10000 ? MOD_ACTION_BASE + (id - 10000) : id);
+const modRef = (ref: string): AbilityRef => {
+  const [kind, n] = ref.split(":");
+  return `${kind}:${kind === "AA" ? modAction(int(n)) : int(n)}` as AbilityRef;
+};
+const supportIds = new Set(supportAbilities.map((s) => s.id));
+/** A kit's ability list (`AA:n;AP` rows): known actions / supports only, mod actions renumbered. */
+const kitAbilities = (rel: string, dir: string) =>
+  rows(rel, dir)
+    .map((a) => ({ ref: modRef(a.cells[0] ?? ""), ap: int(a.cells[1]) }))
+    .filter((a) => /^(AA|SA):\d+$/.test(a.ref) && a.ap > 0)
+    .filter((a) => (a.ref.startsWith("SA:") ? supportIds.has(int(a.ref.slice(3))) : true));
+/**
+ * A mod kit's innate abilities: those none of the items this character can wear teaches, and (as in FF9) any action
+ * its commands offer that isn't on its learnable list at all (Kuja's Trance spells: Ultima, Quarter…).
+ */
+const innateOf = (key: string, abilities: { ref: AbilityRef }[], commandSets: CommandData[]): AbilityRef[] => {
+  const taught = new Set(items.filter((i) => i.equippableBy.includes(key)).flatMap((i) => i.abilities));
+  const listed = new Set(abilities.map((a) => a.ref));
+  const unlisted = commandSets.flatMap((c) => (c.actionIds.length > 1 ? c.actionIds : [])).map((id) => `AA:${id}` as AbilityRef).filter((ref) => !listed.has(ref));
+  return [...new Set([...abilities.map((a) => a.ref).filter((ref) => !taught.has(ref)), ...unlisted])];
+};
+
+if (existsSync(PCP)) {
+  // Kuja wears mage gear (Vivi's and Garnet's: his default kit is Vivi's, and Garnet's gear teaches the summons).
+  for (const i of items) if ((i.equippableBy.includes("vivi") || i.equippableBy.includes("garnet")) && !i.equippableBy.includes("kuja")) i.equippableBy.push("kuja");
+  const pcpSets = new Map<number, Status[]>();
+  for (const r of rows("Battle/StatusSets.csv", PCP)) pcpSets.set(int(r.cells[1]), statusList(r.cells[2] ?? ""));
+  const pcpActions = new Map(rows("Battle/Actions.csv", PCP).map((r) => [int(r.cells[1]), r]));
+  const pcpCommands = new Map(rows("Characters/Commands.csv", PCP).map((r) => [int(r.cells[0]), r]));
+  /** A mod command, its custom actions brought in (renumbered) the first time they're used. */
+  const pcpCommand = (id: number): CommandData => {
+    const r = pcpCommands.get(id);
+    if (!r) return cmd(id);
+    const ids = list(r.cells[3]).length ? list(r.cells[3]) : int(r.cells[2]) ? [int(r.cells[2])] : [];
+    for (const a of ids) {
+      if (a < 10000 || actionById.has(modAction(a))) continue;
+      const row = pcpActions.get(a);
+      if (!row) continue;
+      const action = { ...toAction(row, pcpSets), id: modAction(a) };
+      actions.push(action);
+      actionById.set(action.id, action);
+    }
+    // Kuja's Summon is FF9's Summon (Garnet's command 16), so the engine treats it as one.
+    const name = r.comment || `Command ${id}`;
+    return { id: name === "Summon" ? 16 : id, name, actionIds: ids.map(modAction) };
+  };
+  const kujaStats = rows("Characters/BaseStats.csv", PCP).find((r) => r.cells[0] === "Kuja");
+  const kujaParams = rows("Characters/CharacterParameters.csv", PCP).find((r) => r.cells[0] === "12")?.cells;
+  if (kujaStats && kujaParams) {
+    const setId = int(kujaParams[4]);
+    // The pack's command sets are short: Regular 1; Regular 2; Trance 1; Trance 2.
+    const set = rows("Characters/CommandSets.csv", PCP).find((r) => int(r.cells[0]) === setId)?.cells.slice(1).map(int) ?? [];
+    const equip = rows("Characters/DefaultEquipment.csv", PCP).find((r) => int(r.cells[1]) === int(kujaParams[5]))?.cells;
+    const v = (s: string | undefined) => (int(s) >= 0 ? int(s) : null);
+    const abilities = kitAbilities(`Characters/Abilities/${setId}.csv`, PCP);
+    const commands: [CommandData, CommandData] = [pcpCommand(set[0]!), pcpCommand(set[1]!)];
+    const trance: [CommandData, CommandData] = [pcpCommand(set[2]!), pcpCommand(set[3]!)];
+    characters.push({
+      id: 12,
+      key: "kuja",
+      name: "Kuja",
+      base: { speed: int(kujaStats.cells[2]), strength: int(kujaStats.cells[3]), magic: int(kujaStats.cells[4]), spirit: int(kujaStats.cells[5]), gems: int(kujaStats.cells[6]) },
+      backRow: kujaParams[1] === "0",
+      category: int(kujaParams[3]),
+      commands,
+      trance,
+      abilities,
+      innate: innateOf("kuja", abilities, [...commands, ...trance]),
+      defaultEquipment: equip
+        ? { weapon: v(equip[2]), head: v(equip[3]), wrist: v(equip[4]), armor: v(equip[5]), accessory: v(equip[6]) }
+        : { weapon: null, head: null, wrist: null, armor: null, accessory: null },
+    });
+  }
+} else console.warn(`! Playable Character Pack not found (${PCP}): Kuja is left out`);
+
+if (existsSync(AF)) {
+  const beatrix = characters.find((c) => c.key === "beatrix");
+  if (beatrix) {
+    beatrix.abilities = kitAbilities("Characters/Abilities/Beatrix1.csv", AF);
+    beatrix.innate = innateOf("beatrix", beatrix.abilities, [...beatrix.commands, ...beatrix.trance]);
+  }
+} else console.warn(`! Alternate Fantasy not found (${AF}): Beatrix keeps FF9's empty ability list`);
+
+// Marcus (ours): Steal + Sword Art, Steiner's arts at Steiner's AP costs, only those a sword Marcus can wear teaches
+// (nothing innate: the arts only Steiner's best swords teach stay his).
+{
+  const marcus = characters.find((c) => c.key === "marcus");
+  const steiner = characters.find((c) => c.key === "steiner");
+  if (marcus && steiner) {
+    const taught = new Set(items.filter((i) => i.equippableBy.includes("marcus")).flatMap((i) => i.abilities));
+    const arts = steiner.abilities.filter((a) => a.ref.startsWith("AA:") && taught.has(a.ref) && (steiner.commands.find((c) => c.name === "Swd Art")?.actionIds ?? []).includes(int(a.ref.slice(3))));
+    const swordArt: CommandData = { id: 30, name: "Swd Art", actionIds: arts.map((a) => int(a.ref.slice(3))) };
+    marcus.commands = [cmd(2), swordArt];
+    marcus.trance = [cmd(2), swordArt];
+    marcus.abilities = arts;
+  }
+}
 
 // Sanity: every learnable active ability must exist.
 for (const ch of characters) {

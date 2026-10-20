@@ -1,5 +1,5 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/ui/components/hover-card";
-import { characterTags, getCharacter, rarityOf, relicById, synergyTable, type SynergyData } from "@ffix-roguelike/game-data";
+import { characterTags, getCharacter, rarityOf, relicById, ROSTER, synergyTable, type SynergyData } from "@ffix-roguelike/game-data";
 import { useLayoutEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 
 import { FocusItem } from "@/features/input/focus";
@@ -8,7 +8,6 @@ import { Badge } from "./badge";
 import { effectText, synergyChipStyle, synergyColor } from "./relic-text";
 
 /** The roster characters (for who carries a synergy's tag). */
-const ROSTER = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant", "beatrix", "blank"];
 
 type Side = "top" | "right" | "bottom" | "left";
 

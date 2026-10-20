@@ -1,5 +1,5 @@
 import { METRICS, metricDef } from "@ffix-roguelike/game-core";
-import { getCharacter, MAIN_CAST } from "@ffix-roguelike/game-data";
+import { getCharacter, ROSTER } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -7,7 +7,7 @@ import { FocusItem } from "@/features/input/focus";
 import { formatMetric, MetricsOverview } from "@/features/hub/stats-page";
 import { trpc } from "@/utils/trpc";
 
-const CHARACTERS = [...MAIN_CAST, "beatrix", "blank"];
+const CHARACTERS = [...ROSTER];
 const inputCls = "rounded border border-white/20 bg-black/30 px-2 py-1 text-sm";
 
 /**

@@ -2,6 +2,36 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.83] - 2026-10-20
+
+Marcus and Kuja join the roster, the last two unlocks of the story, with full kits taken from two Memoria mods. Beatrix gets her real abilities.
+
+### Added
+- **Kuja** (joins after **21 · The Crystal World**): his kit is the **Playable Character Pack** mod's.
+  - **Sorcery:** Cura, Thunder → Thundaga, Demi, Comet, Flare, **Flare Star**.
+  - **Summon:** Shiva → Ark.
+  - **Trance:** Sorcery adds Curaga, Holy, Quarter, Meteor and **Ultima**.
+  - His stats, back row and default gear (Mage Staff, Leather Hat, Leather Shirt) are the pack's. He wears Vivi's and Garnet's mage gear, and Garnet's teaches the summons.
+  - Synergies: Mages, Summoners, Outsiders. Mage role weights (like Vivi's). Hero strip from his FFRK party sheet (109010).
+- **Marcus** (joins after **20 · Memoria**): **Steal** plus **Sword Art**. Neither mod gives him a kit, so this one is ours: Steiner's Sword Arts at Steiner's AP costs, but only those a sword Marcus can wear teaches (Darkside → Thunder Slash). Nothing comes free. Synergies: Tantalus, Thieves.
+- `ROSTER` (game-data): everyone recruitable, in order. The admin pages, dev tools, Items page and synergy popovers read it instead of six copies of "main cast + Beatrix + Blank".
+- **Innate abilities** (`CharacterData.innate`): always usable without learning. A mod kit's abilities that no item the character can wear teaches are innate, as are actions its commands offer that aren't on its learnable list at all (as FF9 does for guests).
+- Test: `content/late-joiners.test.ts`.
+
+### Changed
+- **`import:memoria` reads the two mods** when they're installed beside the game (their folders in the FF9 root):
+  - Kuja from the Playable Character Pack (its short 5-column command sets, its own commands and abilities). Its custom actions (Quarter, Flare Star, Ultima) are renumbered from 10008–10010 to 1008–1010, because the engine reads 2000+ as monster attacks.
+  - Beatrix's ability list from Alternate Fantasy (FF9's own actions, so her base Seiken / White Magic commands carry it; two mod-only supports dropped). Nothing else of Alternate Fantasy's rebalance is taken.
+  - Without the mods it warns and leaves those kits as FF9 has them.
+
+### Fixed
+- **Beatrix had no usable abilities in battle:** FF9 gives her no learnable list, so her Seiken and White Magic menus were empty. They're her Alternate Fantasy kit now, with what her gear can't teach innate.
+
+### Notes
+- The FF9 seed tables changed (characters, actions, items); the server re-seeds them on start. Restart `pnpm dev`; existing profiles get Marcus and Kuja automatically.
+- The `heroes` pack is rebuilt and uploaded to R2. Game-core: 971 pass, 0 fail.
+- The Playable Character Pack has 12 more characters (Fratley, Lani, Haagen, Kohel, Aria, Ophelia, Dan, Jeame, Puck, Mikoto, Gerome, Ruby, Baku) if we ever want more.
+
 ## [0.3.82] - 2026-10-20
 
 ### Fixed

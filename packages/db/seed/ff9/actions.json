@@ -3458,5 +3458,53 @@
   "type": 0,
   "vfx": 224,
   "help": "Strike the enemy with Doomsday Sword."
+ },
+ {
+  "id": 1009,
+  "name": "Flare Star",
+  "targets": "all",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 126,
+  "elements": [],
+  "rate": 0,
+  "category": 18,
+  "statuses": [],
+  "mp": 52,
+  "type": 0,
+  "vfx": 436
+ },
+ {
+  "id": 1008,
+  "name": "Quarter",
+  "targets": "manyAny",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 17,
+  "power": 60,
+  "elements": [],
+  "rate": 70,
+  "category": 19,
+  "statuses": [],
+  "mp": 20,
+  "type": 0,
+  "vfx": 99
+ },
+ {
+  "id": 1010,
+  "name": "Ultima",
+  "targets": "all",
+  "defaultAlly": false,
+  "forDead": false,
+  "scriptId": 9,
+  "power": 255,
+  "elements": [],
+  "rate": 0,
+  "category": 18,
+  "statuses": [],
+  "mp": 100,
+  "type": 0,
+  "vfx": 492
  }
 ]

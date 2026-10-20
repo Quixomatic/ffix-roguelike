@@ -1,5 +1,5 @@
 import { rosterAtStart, type Profile } from "@ffix-roguelike/game-core";
-import { getCharacter, items, type ItemData } from "@ffix-roguelike/game-data";
+import { getCharacter, items, ROSTER, type ItemData } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { memo, useDeferredValue, useMemo, useState } from "react";
 
@@ -28,7 +28,6 @@ const SHOWING = [
   { id: "locked", label: "Locked" },
 ] as const;
 
-const CAST = ["zidane", "vivi", "garnet", "steiner", "freya", "quina", "eiko", "amarant", "beatrix", "blank"];
 const SIZES = [32, 48, 64, 96];
 const SIZE_KEY = "ffix-items-size";
 
@@ -135,7 +134,7 @@ export function ItemGallery() {
           <FocusItem>
             <select className="ff-window px-2 py-0.5 text-sm" value={who} onChange={(e) => setWho(e.target.value)}>
               <option value="">Anyone</option>
-              {CAST.map((k) => (
+              {ROSTER.map((k) => (
                 <option key={k} value={k}>
                   {getCharacter(k).name}
                 </option>

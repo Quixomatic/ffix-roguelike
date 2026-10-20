@@ -8,5 +8,7 @@
   { "character": "beatrix", "tags": ["alexandria", "knight"] },
   { "character": "freya", "tags": ["knight", "outsider"] },
   { "character": "amarant", "tags": ["outsider", "thief"] },
-  { "character": "quina", "tags": ["mage", "outsider", "qu"] }
+  { "character": "quina", "tags": ["mage", "outsider", "qu"] },
+  { "character": "marcus", "tags": ["tantalus", "thief"] },
+  { "character": "kuja", "tags": ["mage", "summoner", "outsider"] }
 ]

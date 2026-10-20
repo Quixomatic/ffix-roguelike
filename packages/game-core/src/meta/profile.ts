@@ -7,7 +7,7 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, MAIN_CAST, rewardTables, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, rewardTables, ROSTER, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
 
 import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
 import { effectivePrice } from "../run/loot";
@@ -116,7 +116,7 @@ export function lockedCharacters(p: Profile): { key: string; hint: string }[] {
 
 export function newProfile(): Profile {
   const builds: Record<string, CharacterBuild> = {};
-  for (const key of [...MAIN_CAST, "beatrix", "blank"]) builds[key] = newBuild(key, 1);
+  for (const key of ROSTER) builds[key] = newBuild(key, 1);
   return {
     gil: 0,
     unlocked: [...STARTING_CAST],

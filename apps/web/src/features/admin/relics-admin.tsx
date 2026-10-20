@@ -17,7 +17,7 @@ import {
   type RewardTables,
   type SynergyData,
 } from "@ffix-roguelike/game-data";
-import { MAIN_CAST } from "@ffix-roguelike/game-data";
+import { ROSTER } from "@ffix-roguelike/game-data";
 import { useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
@@ -28,7 +28,7 @@ import { trpc } from "@/utils/trpc";
 
 import { BadgePicker, Check, Field, Num, SaveButton, Select, Text, useSaved } from "./admin-fields";
 
-const CHARACTERS = [...MAIN_CAST, "beatrix", "blank"];
+const CHARACTERS = [...ROSTER];
 
 const KIND_LABEL: Record<ModifierKind, string> = {
   stat: "Stat ±%",

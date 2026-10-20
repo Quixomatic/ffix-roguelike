@@ -9,7 +9,7 @@ import {
   getCharacter,
   getItem,
   items,
-  MAIN_CAST,
+  ROSTER,
   RARITIES,
   relicChanceOf,
   REWARD_SOURCES,
@@ -61,7 +61,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "roles", label: "Roles" },
   { id: "preview", label: "Preview" },
 ];
-const CHARACTERS = [...MAIN_CAST, "beatrix", "blank"];
+const CHARACTERS = [...ROSTER];
 
 export function RewardsAdminPage() {
   const [tab, setTab] = useState<Tab>("gear");

@@ -1,4 +1,4 @@
-import { getCharacter, MAIN_CAST } from "@ffix-roguelike/game-data";
+import { getCharacter, ROSTER } from "@ffix-roguelike/game-data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -7,8 +7,6 @@ import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { trpc } from "@/utils/trpc";
 
 import { ThemePreview } from "./theme-preview";
-
-const ROSTER = [...MAIN_CAST, "beatrix", "blank"];
 
 /** Dev/admin tools (development only): roster unlocks, Completion Points and banked gil on your own profile. */
 export function DevPage() {

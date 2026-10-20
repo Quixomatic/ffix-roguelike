@@ -158,3 +158,8 @@ export function actionByName(name: string): ActionData {
 /** The eight main party members, in the order they can be unlocked. */
 export const MAIN_CAST = ["zidane", "vivi", "steiner", "garnet", "freya", "quina", "eiko", "amarant"] as const;
 export type MainCastKey = (typeof MAIN_CAST)[number];
+/**
+ * Everyone a player can recruit, in roster order: the main cast, then the late joiners (Beatrix and Blank from FF9,
+ * Marcus and Kuja with kits from the Playable Character Pack / Alternate Fantasy mods, `import:memoria`).
+ */
+export const ROSTER = [...MAIN_CAST, "beatrix", "blank", "marcus", "kuja"] as const;
