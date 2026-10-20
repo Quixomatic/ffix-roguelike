@@ -2,6 +2,14 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.84] - 2026-10-20
+
+### Added
+- **`ffrk-contact.ts --characters`**: contact sheets of FFRK's party sheets (each sheet's `base_idle` frame), to find a hero's sheet. Used to confirm that FFRK has no Blank party sheet: the sheet his strip uses, 109066, is Amarant's alternate outfit (a stand-in from early on).
+
+### Notes
+- Blank still uses that stand-in. FFRK never made him a playable character. His sprite is on The Spriters Resource's FFRK "Non-Playable Characters" sheet (asset 203459), which can't be downloaded from here (403), and it isn't under the FFRK server's party, boss, enemy or buddy paths.
+
 ## [0.3.83] - 2026-10-20
 
 Marcus and Kuja join the roster, the last two unlocks of the story, with full kits taken from two Memoria mods. Beatrix gets her real abilities.

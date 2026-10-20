@@ -4,6 +4,7 @@
  *
  * Run: bun scripts/ffrk-contact.ts [--bosses] [--unnamed | --named | --match <text> | id…] [--out <dir>] [--per <n>]
  *   --bosses    boss rigs instead of enemy sheets, each drawn in its idle pose
+ *   --characters  FFRK party sheets (their idle frame) instead
  *   --unnamed   only the sheets `ffrk:names` couldn't name (the ones a name search can't find)
  *   --named     only the named ones
  *   --match     named sheets whose name or series contains the text ("bird", "FFV")
@@ -23,7 +24,9 @@ import { renderPose, type Atlas, type SheetLookup } from "./lib/render-rig";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".docs", "assets", "FFRK-data");
 /** `--bosses`: boss rigs instead of enemy sheets, each drawn in its idle pose. */
 const BOSSES = process.argv.includes("--bosses");
-const SHEETS = join(ROOT, "_raw", BOSSES ? "bosses" : "enemies");
+/** `--characters`: FFRK party sheets (their `base_idle` frame), e.g. to find a hero's sheet. */
+const CHARACTERS = process.argv.includes("--characters");
+const SHEETS = join(ROOT, "_raw", BOSSES ? "bosses" : CHARACTERS ? "characters" : "enemies");
 const names = JSON.parse(readFileSync(join(ROOT, "enemy-names.json"), "utf8")) as Record<string, { name: string; series: string }>;
 
 const args = process.argv.slice(2);
@@ -99,7 +102,7 @@ function basePose(id: string): PNG {
   const bytes = readFileSync(join(SHEETS, `${id}.png`));
   const sheet = PNG.sync.read(bytes.subarray(0, bytes.lastIndexOf("IEND") + 8));
   const atlasFile = join(SHEETS, `${id}.json`);
-  const f = existsSync(atlasFile) ? (JSON.parse(readFileSync(atlasFile, "utf8")).frames?.[`${id}_base.png`]?.frame as { x: number; y: number; w: number; h: number } | undefined) : undefined;
+  const f = existsSync(atlasFile) ? (JSON.parse(readFileSync(atlasFile, "utf8")).frames?.[CHARACTERS ? "base_idle.png" : `${id}_base.png`]?.frame as { x: number; y: number; w: number; h: number } | undefined) : undefined;
   if (!f) return sheet;
   const pose = new PNG({ width: f.w, height: f.h });
   PNG.bitblt(sheet, pose, f.x, f.y, f.w, f.h, 0, 0);
