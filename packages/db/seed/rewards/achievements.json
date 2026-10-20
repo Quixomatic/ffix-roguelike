@@ -91,6 +91,22 @@
     "enabled": true
   },
   {
+    "id": "story-burmecia",
+    "name": "The Kingdom of Rain",
+    "description": "Clear The Fall of Burmecia",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "burmecia"
+    },
+    "reward": {
+      "gil": 5000,
+      "cp": 3
+    },
+    "sort": 5,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

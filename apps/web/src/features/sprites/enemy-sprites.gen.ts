@@ -531,6 +531,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "stand-in: Armor Construct FFIV"
  },
+ "axe-beak": {
+  "url": "/sprites/enemies/enemy-101054.png",
+  "w": 43,
+  "h": 51,
+  "originX": 21.5,
+  "originY": 51,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: red hawk FFI (unnamed sheet, by eye: FFRK never drew Axe Beak)"
+ },
  "axolotl": {
   "url": "/sprites/enemies/enemy-105026.png",
   "w": 56,
@@ -1580,6 +1599,74 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "Dragonfly FFIX"
  },
+ "dullahan": {
+  "url": "/sprites/enemies/boss-206051.png",
+  "w": 116,
+  "h": 70,
+  "originX": 64,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     24,
+     25,
+     26,
+     27,
+     28
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     29,
+     30,
+     31,
+     32
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 206051,
+  "src": "Dullahan VI (FF6)"
+ },
  "earth-guardian": {
   "url": "/sprites/enemies/boss-209024.png",
   "w": 98,
@@ -1948,6 +2035,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "stand-in: Poison Toad FFII"
  },
+ "gigas-worm": {
+  "url": "/sprites/enemies/enemy-101057.png",
+  "w": 61,
+  "h": 62,
+  "originX": 30.5,
+  "originY": 62,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Lava Worm FFI (FF1's Gigas Worm is its recolour; FFRK has no Gigas Worm)"
+ },
  "gizamaluke": {
   "url": "/sprites/enemies/boss-209006.png",
   "w": 119,
@@ -2070,6 +2176,91 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "white": 1,
   "thunder": 2,
   "src": "stand-in: Goblin Captain FFII"
+ },
+ "golbez": {
+  "url": "/sprites/enemies/boss-204022.png",
+  "w": 71,
+  "h": 100,
+  "originX": 36,
+  "originY": 94,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 204022,
+  "src": "Golbez & Shadow Dragon (FF4)"
  },
  "grand-dragon": {
   "url": "/sprites/enemies/enemy-104150.png",
@@ -2495,6 +2686,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   },
   "rig": 207134,
   "src": "Iron Man (FF7)"
+ },
+ "ironite": {
+  "url": "/sprites/enemies/enemy-106217.png",
+  "w": 51,
+  "h": 65,
+  "originX": 25.5,
+  "originY": 65,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Weredragon FFVI (FFRK never drew Ironite)"
  },
  "kefka": {
   "url": "/sprites/enemies/boss-206010.png",
@@ -5014,6 +5224,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "stand-in: Coeurl FFIV"
  },
+ "trick-sparrow": {
+  "url": "/sprites/enemies/enemy-103020.png",
+  "w": 72,
+  "h": 72,
+  "originX": 36,
+  "originY": 72,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: small bird FFIII (unnamed sheet, by eye: FFRK never drew Trick Sparrow)"
+ },
  "troll": {
   "url": "/sprites/enemies/boss-209074.png",
   "w": 80,
@@ -5497,6 +5726,94 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   },
   "rig": 209084,
   "src": "Zaghnol (FF9)"
+ },
+ "zuu": {
+  "url": "/sprites/enemies/boss-204102.png",
+  "w": 111,
+  "h": 59,
+  "originX": 55,
+  "originY": 65,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     44,
+     45,
+     46,
+     47,
+     48
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     49,
+     50,
+     51,
+     52
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 204102,
+  "src": "Zu (FF4)"
  },
  "zombie": {
   "url": "/sprites/enemies/enemy-109081.png",

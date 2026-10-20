@@ -27,6 +27,9 @@ export const AREA_MUSIC: Record<string, string> = {
   "festival-of-the-hunt": "music082", // Hunter's Chance
   "qus-marsh": "music032", // Qu's Marsh
   "gizamaluke-grotto": "music011", // Freya's Theme (Gizamaluke's Grotto)
+  "south-gate": "music079", // South Border Crossing
+  "burmecian-plains": "music045", // Crossing those Hills
+  burmecia: "music044", // Burmecia
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

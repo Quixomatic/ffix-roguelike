@@ -813,6 +813,9 @@
       },
       {
         "area": "baron"
+      },
+      {
+        "area": "south-gate"
       }
     ],
     "catalog": false,
@@ -939,6 +942,9 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "south-gate"
       }
     ],
     "catalog": false,
@@ -1307,6 +1313,12 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -1517,6 +1529,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -1745,6 +1766,9 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "south-gate"
       }
     ],
     "catalog": false,
@@ -1774,6 +1798,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -1975,6 +2008,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -2013,6 +2055,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -2039,6 +2090,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -2321,6 +2381,9 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "south-gate"
       }
     ],
     "catalog": false,
@@ -2382,6 +2445,9 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "south-gate"
       }
     ],
     "catalog": false,
@@ -2411,6 +2477,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -2650,6 +2725,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,
@@ -3021,6 +3105,15 @@
       },
       {
         "area": "gizamaluke-grotto"
+      },
+      {
+        "area": "south-gate"
+      },
+      {
+        "area": "burmecian-plains"
+      },
+      {
+        "area": "burmecia"
       }
     ],
     "catalog": false,

@@ -280,6 +280,55 @@ export const WORLDS: WorldDef[] = [
     itemStores: [27],
     synthTier: 33,
   },
+  // ── Journey 6, The Fall of Burmecia (end of FF9's Disc 1) ──
+  {
+    index: 13,
+    id: "south-gate",
+    tier: 1,
+    name: "South Gate",
+    subtitle: "The border pass, and a black mage on the line",
+    theme: "castle",
+    encounters: [["@WM_0604"],["@WM_0605"],["@WM_0606"]],
+    elites: [["@WM_0601"]],
+    boss: ["@SG_E016"],
+    gearPrice: [900, 4000],
+    shops: [3],
+    itemStores: [26],
+    synthTier: 33,
+  },
+  {
+    index: 14,
+    id: "burmecian-plains",
+    tier: 1,
+    name: "Burmecian Plains",
+    subtitle: "Rain over the road to the city",
+    theme: "grassland",
+    // Vices first; Ironite last (the strongest). The Magic Vice pairs (BU_R015–17) are out: a Vice runs off, ending the
+    // fight with it standing. The Serpions (WM_0711/0716) are an elite, not a regular fight: their Poison Counter venoms
+    // whoever hits them, and a party all on Venom is a game over (the sim's auto party lost to them even at Lv16).
+    encounters: [["@WM_0720"],["@WM_0721"],["@WM_0700"],["@WM_0704"]],
+    elites: [["@BU_R010"],["@WM_0711"]],
+    boss: ["@BU_E072"],
+    gearPrice: [1000, 4200],
+    shops: [2],
+    itemStores: [26],
+    synthTier: 33,
+  },
+  {
+    index: 15,
+    id: "burmecia",
+    tier: 1,
+    name: "Burmecia",
+    subtitle: "The kingdom of rain, fallen to Alexandria",
+    theme: "ruin",
+    encounters: [["@BU_R011"],["@BU_R013"],["@BU_R014"],["@BU_R005"],["@BU_R008"]],
+    elites: [["@BU_R002"],["@BU_R004"],["@BU_R006"]],
+    boss: ["@BU_E015"],
+    gearPrice: [1100, 4500],
+    shops: [2],
+    itemStores: [26, 27],
+    synthTier: 33,
+  },
 ];
 
 export function getArea(id: string): WorldDef {
@@ -353,6 +402,14 @@ export const JOURNEYS: JourneyDef[] = [
     areas: ["qus-marsh", "gizamaluke-grotto"],
     unlockAfter: "lindblum",
     unlocks: ["quina"],
+  },
+  {
+    id: "burmecia",
+    name: "6 · The Fall of Burmecia",
+    subtitle: "Through South Gate to the kingdom of rain, and Alexandria's general.",
+    category: "story",
+    areas: ["south-gate", "burmecian-plains", "burmecia"],
+    unlockAfter: "gizamaluke",
   },
   // ── Echoes: crossover side journey ──
   {

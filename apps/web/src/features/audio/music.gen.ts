@@ -79,6 +79,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.006825396825396826,
   "loopEnd": 90.66099773242631
  },
+ "music044": {
+  "url": "/music/music044.ogg",
+  "name": "Burmecia",
+  "loopStart": 4.534943310657597,
+  "loopEnd": 220.53374149659865
+ },
  "music045": {
   "url": "/music/music045.ogg",
   "name": "Crossing those Hills (World Map Theme)",
@@ -90,6 +96,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "name": "Lindblum Theme (Town areas)",
   "loopStart": 0.7003174603174603,
   "loopEnd": 113.64197278911564
+ },
+ "music079": {
+  "url": "/music/music079.ogg",
+  "name": "South Border Crossing (South Gate)",
+  "loopStart": 0.018412698412698412,
+  "loopEnd": 157.35585034013604
  },
  "music082": {
   "url": "/music/music082.ogg",
@@ -135,7 +147,10 @@ export const AREA_MUSIC: Record<string, string> = {
  "lindblum-fields": "music047",
  "festival-of-the-hunt": "music082",
  "qus-marsh": "music032",
- "gizamaluke-grotto": "music011"
+ "gizamaluke-grotto": "music011",
+ "south-gate": "music079",
+ "burmecian-plains": "music045",
+ "burmecia": "music044"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

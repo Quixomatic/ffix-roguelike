@@ -2,6 +2,35 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.73] - 2026-10-20
+
+Journeys, Phase 1 (`.plans/journeys-full-story.md`): journey 6, The Fall of Burmecia, and FFRK art for seven monsters that were placeholders.
+
+### Added
+- **Journey 6 · The Fall of Burmecia** (story; opens once Gizamaluke's Grotto is cleared). It's tier 1, since FF9 has it at the end of Disc 1. All its fights are FF9's own:
+
+  | Map | Theme · music | Fights | Elites | Boss |
+  |---|---|---|---|---|
+  | South Gate | castle · South Border Crossing | Carve Spider / Axe Beak | Bomb pair | Black Waltz 3 |
+  | Burmecian Plains | grassland · Crossing those Hills | Vice, Ironite | Basilisk pack, Serpion pair | Type A ×2 |
+  | Burmecia | ruin · Burmecia | Basilisk packs, Ironite | Mimic + Magic Vices, Ironite | **Beatrix** (withdraws after about a minute) |
+
+  - Gear: FF9's shops from that part of the story (Summit Station, Burmecia's Atla Mogshop, the South Gate store). Their map pools are in the gear seed (`--add-pools`) and reach the database on the next server start.
+  - **Left out:** the Magic Vice pairs (a Vice runs off, ending the fight with it standing). The Serpions are an elite rather than a regular fight: their Poison Counter venoms whoever hits them, and a party all on Venom is a game over.
+  - Three maps for now. FF9 has too few fights in this stretch for more without repeats, so crossover monsters will fill out a fourth and fifth later.
+- **Achievement "The Kingdom of Rain"** (`story-burmecia`): clear the journey for 5,000 gil and 3 CP; spear badge.
+- **`apps/web/scripts/ffrk-contact.ts`** (`bun scripts/ffrk-contact.ts [--unnamed | --named | --match <text> | id…]`): contact sheets of FFRK's enemy sheets, each numbered with its sheet id, for picking stand-ins. `--unnamed` covers the 555 sheets no name was matched to.
+
+### Changed
+- **FFRK art for seven monsters that were placeholders.** Same name first; a look-alike only where FFRK never drew the monster in any game (checked against the named sheets, the boss rigs and the wiki's ~22,000 FFRK images):
+  - Their own art: **Golbez** (FF4, the Golbez & Shadow Dragon rig), **Zuu** (FF4's Zu), **Dullahan** (FF6).
+  - Look-alikes: **Gigas Worm** → FF1's Lava Worm (the same sprite in other colours), **Ironite** → Weredragon (FF6), **Axe Beak** → a red hawk (FF1), **Trick Sparrow** → a small bird (FF3).
+  - The `enemies`, `bosses` and `music` packs are rebuilt and uploaded to R2.
+
+### Notes
+- `probe-areas.ts burmecia`: all 45 fights play out and every monster has art. A sim run (starter-gear auto party, start Lv12) beat Beatrix in 1 of 4 runs.
+- Game-core: 385 pass, 0 fail. Restart `pnpm dev` (gear pools and the achievement seed).
+
 ## [0.3.72] - 2026-10-20
 
 Journeys groundwork, step 8 (`.plans/journeys-full-story.md`): one command checks an area is ready. That finishes Phase 0.
