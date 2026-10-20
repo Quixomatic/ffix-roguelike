@@ -2,6 +2,15 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.90] - 2026-10-20
+
+### Changed
+- **`pnpm test` (game-core) takes about 6 seconds again** (it was about 107).
+  - **Why it had grown:** almost all the time went on one test, the area-encounter sweep (`content/encounters.test.ts`). It plays every spawn pattern of every fight in every area to the end (824 fights since journeys 6–21 came in), in expected gear against late-game bosses.
+  - **What changed:** the sweep is skipped by default and runs with **`pnpm -F @ffix-roguelike/game-core test:encounters`** (`scripts/test-encounters.ts`, which sets `ENCOUNTERS=all`).
+  - **When to run it:** after changing fights, areas or the battle engine. `probe-areas` checks a journey's fights the same way.
+  - The scripted-win tests still run every time.
+
 ## [0.3.89] - 2026-10-20
 
 Journey groupings, step 2 (`.plans/journey-groups.md`): **a run can span several journeys.** A grouping plays as one seamless run, its journeys' maps end to end. No groupings exist yet (they get planned next), so nothing changes in play today.

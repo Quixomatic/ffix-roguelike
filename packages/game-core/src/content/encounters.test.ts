@@ -4,6 +4,9 @@
  * escapes), and it never needs the engine's stall watchdog. Checked with a strong full party on the auto AI, in the gear
  * and abilities a party at that level can be expected to have (meta/expected.ts): in starting gear, late fights only
  * stall because the party can't hurt anything.
+ *
+ * This sweep takes minutes, so `pnpm test` skips it; `pnpm test:encounters` (ENCOUNTERS=all) runs it. Run it after
+ * changing fights, areas or the battle engine (`probe-areas` checks a journey's fights the same way).
  */
 import { describe, expect, test } from "bun:test";
 
@@ -23,7 +26,10 @@ const party = (level: number) => ["zidane", "vivi", "steiner", "garnet"].map((k,
  */
 const testLevel = (units: { level: number }[]) => Math.min(99, Math.max(40, Math.max(...units.map((u) => u.level)) + 10));
 
-describe("area encounters", () => {
+/** The full sweep runs only when asked for (`pnpm test:encounters`). */
+const SWEEP = process.env.ENCOUNTERS === "all";
+
+describe.skipIf(!SWEEP)("area encounters", () => {
   const tokens = new Set<string>();
   for (const w of WORLDS)
     for (const g of [...w.encounters, ...w.elites, w.boss])

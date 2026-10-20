@@ -9,6 +9,7 @@
     "check-types": "tsc --noEmit",
     "check-fast": "bun check",
     "test": "bun test",
+    "test:encounters": "bun scripts/test-encounters.ts",
     "sim": "bun scripts/sim.ts",
     "sweep": "bun scripts/sweep-scenes.ts"
   },
