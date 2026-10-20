@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.82] - 2026-10-20
+
+### Fixed
+- **"TypeError: Failed to fetch" in the routes' sign-in guards after a code change** (`route.tsx` `beforeLoad`). In development the API restarts whenever a workspace package changes; a page hot-reloading meanwhile asked it for the session, got no answer, and nothing caught the error until a manual reload.
+  - The guards (`_hub/_member`, `_auth`) now use `getSessionRetrying()` (`lib/auth-client.ts`). It retries network failures for about 8 seconds (0.25 / 0.5 / 1 / 2 / 4 s), then throws as before.
+  - A real answer, signed in or not, still returns at once, so signed-out players are redirected to sign in as before.
+
 ## [0.3.81] - 2026-10-20
 
 The core party joins in the first seven journeys; Beatrix and Blank join on separate late journeys.
