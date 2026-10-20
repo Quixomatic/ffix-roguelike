@@ -1395,6 +1395,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["south-gate", "burmecian-plains", "burmecia"],
     unlockAfter: "gizamaluke",
+    unlocks: ["eiko"],
   },
   {
     id: "treno",
@@ -1403,6 +1404,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["southern-plains", "treno", "gargan-roo"],
     unlockAfter: "burmecia",
+    unlocks: ["amarant"],
   },
   {
     id: "cleyra",
@@ -1435,7 +1437,6 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["outer-continent", "mountain-path", "mountain-summit"],
     unlockAfter: "fossil-roo",
-    unlocks: ["eiko"],
   },
   {
     id: "madain-sari",
@@ -1444,7 +1445,6 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["black-mage-forest", "outer-wilds", "madain-sari"],
     unlockAfter: "outer-continent",
-    unlocks: ["amarant"],
   },
   {
     id: "iifa-tree",
@@ -1461,7 +1461,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["mist-continent", "alexandria-town", "besieged-castle"],
     unlockAfter: "iifa-tree",
-    unlocks: ["beatrix", "blank"],
+    unlocks: ["beatrix"],
   },
   {
     id: "oeilvert",
@@ -1486,6 +1486,7 @@ export const JOURNEYS: JourneyDef[] = [
     category: "story",
     areas: ["esto-gaza", "mount-gulug", "gulug-well"],
     unlockAfter: "desert-palace",
+    unlocks: ["blank"],
   },
   {
     id: "ipsens-castle",

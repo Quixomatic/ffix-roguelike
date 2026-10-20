@@ -2,6 +2,24 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.81] - 2026-10-20
+
+The core party joins in the first seven journeys; Beatrix and Blank join on separate late journeys.
+
+### Changed
+- **Who each story journey recruits:**
+
+  | Character | Joins in |
+  |---|---|
+  | Vivi, Steiner, Garnet, Freya, Quina | journeys 1–5 (unchanged) |
+  | **Eiko** | **6 · The Fall of Burmecia** (was 11) |
+  | **Amarant** | **7 · Treno and the Roo** (was 12) |
+  | **Beatrix** | **14 · Alexandria Besieged**, her defence of the city (alone now) |
+  | **Blank** | **17 · Mount Gulug** (was 14; in FF9 Tantalus returns right after it) |
+
+  Journeys 11 and 12 recruit nobody now. The roster's hints and the Journeys page follow.
+- Test: the locked roster lists the recruits in exactly this order. Game-core: 967 pass, 0 fail.
+
 ## [0.3.80] - 2026-10-20
 
 A smarter auto-battle, and expected loadouts that grow the way FF9's characters do. Both make the sim's difficulty reads (and Practice) closer to real play.
