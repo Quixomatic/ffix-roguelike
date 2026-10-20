@@ -1,5 +1,5 @@
 import { appRouter } from "@ffix-roguelike/api/routers/index";
-import { socialProviders } from "@ffix-roguelike/auth";
+import { allowedOrigins, socialProviders } from "@ffix-roguelike/auth";
 import { seedFf9 } from "@ffix-roguelike/db/seed-ff9";
 import { seedRewards } from "@ffix-roguelike/db/seed-rewards";
 import { trpcServer } from "@hono/trpc-server";
@@ -18,7 +18,8 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: ENV.CORS_ORIGIN,
+    // CORS_ORIGIN plus any EXTRA_CORS_ORIGINS (e.g. the www address alongside the bare domain).
+    origin: allowedOrigins(ENV),
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,

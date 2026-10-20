@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.4] - 2026-10-20
+
+### Added
+- **`EXTRA_CORS_ORIGINS`** (ChannelGuide's): more web origins allowed to call the API, as a comma-separated list on top of `CORS_ORIGIN`. Both are used for CORS and for better-auth's trusted origins (`allowedOrigins` in `packages/auth`).
+  - Use it when the site answers at more than one address, e.g. `CORS_ORIGIN=https://ff-like.xyz` plus `EXTRA_CORS_ORIGINS=https://www.ff-like.xyz`.
+  - Optional in `.env.schema`.
+
 ## [0.4.3] - 2026-10-20
 
 ### Fixed

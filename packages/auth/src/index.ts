@@ -7,6 +7,8 @@ export type AuthConfig = {
   BETTER_AUTH_URL: string;
   BETTER_AUTH_SECRET: string;
   CORS_ORIGIN: string;
+  /** More allowed web origins, comma-separated (ChannelGuide's EXTRA_CORS_ORIGINS). */
+  EXTRA_CORS_ORIGINS?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   GITHUB_CLIENT_ID?: string;
@@ -14,6 +16,15 @@ export type AuthConfig = {
 };
 
 export type SocialProvider = "google" | "github";
+
+/** Every web origin allowed to call the API with cookies: CORS_ORIGIN, then EXTRA_CORS_ORIGINS (comma-separated). */
+export function allowedOrigins(env: Pick<AuthConfig, "CORS_ORIGIN" | "EXTRA_CORS_ORIGINS">): string[] {
+  const extra = (env.EXTRA_CORS_ORIGINS ?? "")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+  return [env.CORS_ORIGIN, ...extra];
+}
 
 /**
  * The social sign-in providers this server has (ChannelGuide's pattern): each one only when both its id and secret
@@ -60,7 +71,7 @@ export function createAuth(
     database: prismaAdapter(database, {
       provider: "postgresql",
     }),
-    trustedOrigins: [env.CORS_ORIGIN, ...desktopOrigins],
+    trustedOrigins: [...allowedOrigins(env), ...desktopOrigins],
     emailAndPassword: { enabled: true },
     ...(Object.keys(social).length > 0 && { socialProviders: social }),
     account: {
