@@ -315,6 +315,26 @@ export class BattleEngine {
     return (action.category & CAT.silenceable) !== 0;
   }
 
+  /** The FF9 battle scene has this flag (`NoMagical`: Oeilvert; `ReverseAtk`: Ipsen's Castle). Unknown scenes: none. */
+  sceneHas(flag: string): boolean {
+    if (!this.state.scene) return false;
+    try {
+      return getScene(this.state.scene).flags.includes(flag);
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Why a unit can't cast magic right now, or null: Silence, or — the party only, as FF9's menu does — a scene
+   * where magic can't be used (Oeilvert).
+   */
+  magicBlocked(u: BattleUnit): string | null {
+    if (this.has(u, "silence")) return "Silenced";
+    if (u.side === "party" && this.sceneHas("NoMagical")) return "Magic can't be used here";
+    return null;
+  }
+
   gil() {
     return Math.max(0, this.state.gil - this.state.gilSpent);
   }
@@ -448,7 +468,7 @@ export class BattleEngine {
     if (!this.commandOf(actor, actionId)) return "Ability not available";
     const action = getBattleAction(actionId);
     if (actor.mp < this.mpCost(actor, action)) return "Not enough MP";
-    if (this.isMagical(action) && this.has(actor, "silence")) return "Silenced";
+    if (this.isMagical(action) && this.magicBlocked(actor)) return this.magicBlocked(actor);
     if (action.scriptId === 63 && !this.magicSwordReady(actor)) return "Vivi can't help right now";
     return this.validateTargets(actor, action.targets, action.forDead, targetIds);
   }

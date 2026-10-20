@@ -19,7 +19,7 @@ export function autoCommand(e: BattleEngine, u: BattleUnit): BattleCommand {
   const hurt = allies.filter((x) => e.isTargetable(x) && x.hp < x.maxHp * 0.4).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
   const downed = allies.find((x) => !e.isAlive(x));
   const abilities = e.commandsOf(u).flatMap((c) => c.actionIds).map(getBattleAction);
-  const affordable = abilities.filter((a) => a.mp <= u.mp && !(e.isMagical(a) && e.has(u, "silence")));
+  const affordable = abilities.filter((a) => a.mp <= u.mp && !(e.isMagical(a) && e.magicBlocked(u)));
 
   if (downed) {
     const life = affordable.find((a) => a.scriptId === 13);

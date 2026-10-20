@@ -2,6 +2,19 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.69] - 2026-10-19
+
+Journeys groundwork, step 3 (`.plans/journeys-full-story.md`): FF9's battle-scene flags. Read from Memoria's source (`BattleHUD`, `BattleCalculator.PenaltyReverseAttack`).
+
+### Added
+- **`NoMagical` (Oeilvert):** in these scenes the party can't use magic. As in FF9's battle menu, every magic ability is disabled, the same as Silence; monsters can still cast.
+  - It covers Oeilvert's fights (`UV_*`), including Ark, and `AC_E085B`.
+  - The menu greys them out, the engine refuses them ("Magic can't be used here"), and auto-battle skips them.
+  - Engine: `magicBlocked(unit)` (Silence or this) and `sceneHas(flag)`.
+- **`ReverseAtk` (Ipsen's Castle):** weapons hit for 60 − their power (at least 1), so weak weapons hit hard and strong ones barely scratch.
+  - It applies to the Attack command (every weapon script, Blood Sword included), as FF9 does, in Ipsen's fights (`IP_*`), including Taharka.
+- Tests: `battle/scene-flags.test.ts` (magic blocked only for the party and only in flagged scenes; power reversed and floored only in Ipsen's). Game-core: 345 pass, 0 fail.
+
 ## [0.3.68] - 2026-10-19
 
 Journeys groundwork, step 2 (`.plans/journeys-full-story.md`): fair test levels.

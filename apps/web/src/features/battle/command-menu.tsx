@@ -174,7 +174,8 @@ export function CommandMenu({ engine, actor, onSubmit, onTargeting, onNextActor,
       out.push({
         label: cmd.name,
         run: () => {
-          const silenced = actor.statuses.silence !== undefined;
+          // Silence, or a scene where magic can't be used (Oeilvert).
+          const silenced = !!engine.magicBlocked(actor);
           const options: ListOption[] = cmd.actionIds.map((id) => {
             const a = getBattleAction(id);
             const mp = engine.mpCost(actor, a);

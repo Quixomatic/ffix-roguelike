@@ -578,6 +578,10 @@ export class Calc {
     this.saCalcDamage();
     this.mpDamage = this.attackPower * this.attack;
   }
+  /** PenaltyReverseAttack — Ipsen's Castle (`ReverseAtk`): weapons hit for 60 − their power, so weak ones hit hard. */
+  penaltyReverseAttack() {
+    if (this.e.sceneHas("ReverseAtk")) this.attackPower = Math.max(1, 60 - this.attackPower);
+  }
   tryCriticalHit() {
     if (this.targetFlags & C.crit) return;
     const quarterWill = this.caster.spirit >> 2;
@@ -1449,6 +1453,7 @@ function weaponAttack(v: Calc) {
     if (!v.isCasterNotTarget() || !v.canBeAttacked()) return;
     v.penaltyLongDistance();
     v.tryCriticalHit();
+    v.penaltyReverseAttack();
     v.prepareHpDraining();
     v.calcPhysicalHpDamage();
     v.casterHp = v.hpDamage;
@@ -1459,6 +1464,7 @@ function weaponAttack(v: Calc) {
   v.bonusWeaponElement();
   if (v.canAttackWeaponElement()) {
     v.tryCriticalHit();
+    v.penaltyReverseAttack();
     v.calcPhysicalHpDamage();
   }
 }
