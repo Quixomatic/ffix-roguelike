@@ -1,23 +1,21 @@
 /**
  * Every fight an area can throw at you must be a real fight under FF9's scripts: it can't stall (story set
  * pieces that wait for a cutscene cue), it can't end itself without anyone dying (friendly encounters, scripted
- * escapes), and it never needs the engine's stall watchdog. Checked with a strong full party on the auto AI.
+ * escapes), and it never needs the engine's stall watchdog. Checked with a strong full party on the auto AI, in the gear
+ * and abilities a party at that level can be expected to have (meta/expected.ts): in starting gear, late fights only
+ * stall because the party can't hurt anything.
  */
 import { describe, expect, test } from "bun:test";
 
 import { autoCommand } from "../battle/autoplay";
 import { BattleEngine, createBattle, MAX_TICKS } from "../battle/engine";
 import { partyUnit } from "../battle/units";
+import { expectedBuild } from "../meta/expected";
 import { encounterUnits } from "../run/run";
-import { newBuild, starterGear } from "../stats";
 import { getScene, isSceneRef, SCRIPTED_WIN_SCENES } from "./ff9-scenes";
 import { WORLDS } from "./worlds";
 
-const party = (level: number) =>
-  ["zidane", "vivi", "steiner", "garnet"].map((k, i) => {
-    const b = newBuild(k, level);
-    return partyUnit({ ...b, equipment: starterGear(b) }, i);
-  });
+const party = (level: number) => ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(expectedBuild(k, level, { gear: true, abilities: true }), i));
 
 /**
  * The party's level for a fight: ten above its strongest monster (as the sweep script plays it), at least 40, so a

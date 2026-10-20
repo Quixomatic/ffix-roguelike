@@ -57,6 +57,39 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
       }
     ],
     "catalog": false,
@@ -113,6 +146,42 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
       }
     ],
     "catalog": false,
@@ -160,6 +229,51 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -177,6 +291,33 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -421,6 +562,33 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -629,6 +797,33 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -643,6 +838,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -733,6 +937,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -750,6 +963,39 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -905,6 +1151,48 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
       }
     ],
     "catalog": false,
@@ -1052,6 +1340,48 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1066,6 +1396,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1118,6 +1457,21 @@
     "mapPools": [
       {
         "area": "baron"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
       }
     ],
     "catalog": false,
@@ -1132,6 +1486,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1216,6 +1579,12 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -1251,6 +1620,48 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1286,6 +1697,48 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1312,6 +1765,48 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1329,6 +1824,30 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1498,6 +2017,21 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -1553,6 +2087,30 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1659,6 +2217,30 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -1718,6 +2300,39 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1753,6 +2368,39 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1779,6 +2427,48 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -1796,6 +2486,42 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2032,6 +2758,33 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2058,6 +2811,33 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2162,6 +2942,12 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2204,6 +2990,12 @@
       },
       {
         "area": "eunorus-plains"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2251,6 +3043,12 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2298,6 +3096,30 @@
       },
       {
         "area": "burmecia"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2351,6 +3173,30 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2383,6 +3229,30 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2409,6 +3279,30 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -2426,6 +3320,42 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2443,6 +3373,42 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2457,6 +3423,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2774,6 +3749,15 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2800,6 +3784,33 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2814,6 +3825,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -2970,6 +3990,30 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -3014,6 +4058,30 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -3058,6 +4126,30 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -3090,6 +4182,30 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -3116,6 +4232,30 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
       }
     ],
     "catalog": false,
@@ -3130,6 +4270,51 @@
     "mapPools": [
       {
         "area": "baron"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
       }
     ],
     "catalog": false,
@@ -3147,6 +4332,42 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "outer-continent"
+      },
+      {
+        "area": "mountain-path"
+      },
+      {
+        "area": "mountain-summit"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -3164,6 +4385,33 @@
       },
       {
         "area": "ruin"
+      },
+      {
+        "area": "black-mage-forest"
+      },
+      {
+        "area": "outer-wilds"
+      },
+      {
+        "area": "madain-sari"
+      },
+      {
+        "area": "iifa-roots"
+      },
+      {
+        "area": "iifa-depths"
+      },
+      {
+        "area": "iifa-heart"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -3178,6 +4426,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -3506,6 +4763,24 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
       }
     ],
     "catalog": false,
@@ -3532,6 +4807,33 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "alexandria-castle"
+      },
+      {
+        "area": "castle-tower"
+      },
+      {
+        "area": "roo-escape"
+      },
+      {
+        "area": "pinnacle-rocks"
+      },
+      {
+        "area": "fossil-roo"
+      },
+      {
+        "area": "fossil-roo-depths"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,
@@ -3546,6 +4848,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mist-continent"
+      },
+      {
+        "area": "alexandria-town"
+      },
+      {
+        "area": "besieged-castle"
       }
     ],
     "catalog": false,

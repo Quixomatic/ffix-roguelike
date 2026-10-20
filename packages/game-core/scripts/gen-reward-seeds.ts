@@ -133,6 +133,12 @@ const achievementList: Ach[] = [
   ach("story-burmecia", "The Kingdom of Rain", "Clear The Fall of Burmecia", "story", { kind: "journey", journey: "burmecia" }, { gil: 5000, cp: 3 }),
   ach("story-treno", "Dark City", "Clear Treno and the Roo", "story", { kind: "journey", journey: "treno" }, { gil: 6000, cp: 3 }),
   ach("story-cleyra", "The Harp Falls Silent", "Clear Cleyra", "story", { kind: "journey", journey: "cleyra" }, { gil: 7000, cp: 3 }),
+  ach("story-return-to-alexandria", "The Princess in the Tower", "Clear Return to Alexandria", "story", { kind: "journey", journey: "return-to-alexandria" }, { gil: 8000, cp: 3 }),
+  ach("story-fossil-roo", "Through the Roo", "Clear Fossil Roo", "story", { kind: "journey", journey: "fossil-roo" }, { gil: 9000, cp: 3 }),
+  ach("story-outer-continent", "The Summoner's Horn", "Clear The Outer Continent", "story", { kind: "journey", journey: "outer-continent" }, { gil: 10000, cp: 3 }),
+  ach("story-madain-sari", "The Eidolon Wall", "Clear Madain Sari", "story", { kind: "journey", journey: "madain-sari" }, { gil: 11000, cp: 3 }),
+  ach("story-iifa-tree", "Root of the Mist", "Clear The Iifa Tree", "story", { kind: "journey", journey: "iifa-tree" }, { gil: 12000, cp: 3 }),
+  ach("story-alexandria-besieged", "The General's Stand", "Clear Alexandria Besieged", "story", { kind: "journey", journey: "alexandria-besieged" }, { gil: 13000, cp: 5 }),
   // milestones
   ach("first-victory", "First Blood", "Win a battle", "milestone", { kind: "stat", stat: "battles", min: 1 }, { gil: 300 }),
   ach("first-run", "The Journey Begins", "Finish a run", "milestone", { kind: "stat", stat: "runs", min: 1 }, { gil: 500, cp: 2 }),

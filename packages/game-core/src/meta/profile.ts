@@ -86,12 +86,12 @@ export interface UnlockRule {
  * Milestone unlocks — INTERIM, for characters whose story journey doesn't exist yet. Vivi, Steiner, Garnet, Freya
  * and Quina join by clearing FF9 story journeys 1–5 (JourneyDef.unlocks).
  */
-export const UNLOCKS: UnlockRule[] = [
-  { key: "amarant", hint: "Steal 15 items", check: (p) => p.stats.steals >= 15 },
-  { key: "eiko", hint: "Defeat Golbez", check: (p) => (p.stats.bossKills.golbez ?? 0) > 0 },
-  { key: "beatrix", hint: "Defeat Kefka", check: (p) => (p.stats.bossKills.kefka ?? 0) > 0 },
-  { key: "blank", hint: "Win a run on Tier 1 or higher", check: (p) => p.stats.highestTierWon >= 1 },
-];
+/**
+ * Milestone unlocks for characters no journey recruits. Empty since every character joins through the story (Eiko in
+ * journey 11, Amarant in 12, Beatrix and Blank in 14); the interim ones (steal 15 items, defeat Golbez / Kefka, win
+ * on Tier 1) are retired, and players who unlocked a character that way keep them.
+ */
+export const UNLOCKS: UnlockRule[] = [];
 
 /** Unlocked characters as they start a run (starter gear in their open slots) — what found gear compares against. */
 export function rosterAtStart(p: Pick<Profile, "unlocked" | "builds">): CharacterBuild[] {

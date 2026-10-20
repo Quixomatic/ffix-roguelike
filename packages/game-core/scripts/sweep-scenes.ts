@@ -10,7 +10,7 @@
 import { bestiary } from "@ffix-roguelike/game-data";
 import { loadBattleScriptCache, loadFf9Cache } from "@ffix-roguelike/game-data/cache";
 
-import { autoCommand, BattleEngine, createBattle, encounterUnits, newBuild, partyUnit, registerBattleScripts, SCRIPTED_WIN_SCENES, starterGear, TICKS_PER_SECOND } from "../src/index";
+import { autoCommand, BattleEngine, createBattle, encounterUnits, expectedBuild, partyUnit, registerBattleScripts, SCRIPTED_WIN_SCENES, TICKS_PER_SECOND } from "../src/index";
 
 loadFf9Cache();
 registerBattleScripts(loadBattleScriptCache());
@@ -63,10 +63,8 @@ for (const sc of scenes) {
     if (!enc.units.some((u) => !u.untargetable)) continue;
     const maxLv = Math.max(...enc.units.map((u) => u.level));
     const level = fixedLevel ?? Math.min(99, Math.max(10, maxLv + 10));
-    const party = ["zidane", "vivi", "steiner", "garnet"].map((k, i) => {
-      const b = newBuild(k, level);
-      return partyUnit({ ...b, equipment: starterGear(b) }, i);
-    });
+    // In the gear and abilities a party at that level can be expected to have (meta/expected.ts), as the encounter test.
+    const party = ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(expectedBuild(k, level, { gear: true, abilities: true }), i));
     const e = new BattleEngine(createBattle({ seed: 42, party, enemies: enc.units, inventory: [{ itemId: 236, count: 20 }], scene: enc.scene, noSurprise: true, canFlee: false }));
     let last = 0;
     let idle = 0;

@@ -2,7 +2,8 @@
  * Contact sheets of FFRK's enemy sheets, for picking stand-ins (`enemy-sprite-map.ts`): each sheet's normal pose in a
  * numbered cell, labelled with its sheet id (and its name, in the index, when `ffrk:names` matched one).
  *
- * Run: bun scripts/ffrk-contact.ts [--unnamed | --named | --match <text> | id…] [--out <dir>] [--per <n>]
+ * Run: bun scripts/ffrk-contact.ts [--bosses] [--unnamed | --named | --match <text> | id…] [--out <dir>] [--per <n>]
+ *   --bosses    boss rigs instead of enemy sheets, each drawn in its idle pose
  *   --unnamed   only the sheets `ffrk:names` couldn't name (the ones a name search can't find)
  *   --named     only the named ones
  *   --match     named sheets whose name or series contains the text ("bird", "FFV")
@@ -16,8 +17,13 @@ import { fileURLToPath } from "node:url";
 
 import { PNG } from "pngjs";
 
+import { poseAt, visibilityAt, type Rig } from "../src/features/sprites/ffrk-anim";
+import { renderPose, type Atlas, type SheetLookup } from "./lib/render-rig";
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "..", ".docs", "assets", "FFRK-data");
-const SHEETS = join(ROOT, "_raw", "enemies");
+/** `--bosses`: boss rigs instead of enemy sheets, each drawn in its idle pose. */
+const BOSSES = process.argv.includes("--bosses");
+const SHEETS = join(ROOT, "_raw", BOSSES ? "bosses" : "enemies");
 const names = JSON.parse(readFileSync(join(ROOT, "enemy-names.json"), "utf8")) as Record<string, { name: string; series: string }>;
 
 const args = process.argv.slice(2);
@@ -65,8 +71,31 @@ function drawText(img: PNG, text: string, x0: number, y0: number, scale = 2) {
   }
 }
 
-/** The sheet's normal pose (`<id>_base.png` in its atlas), or the whole sheet. */
+/** A boss rig's idle pose, drawn the way the sprite build draws it (its first idle frame, with its visibility switches). */
+function bossIdle(id: string): PNG | null {
+  const base = join(SHEETS, id);
+  if (!existsSync(`${base}.anim.json`)) return null;
+  const rig = JSON.parse(readFileSync(`${base}.anim.json`, "utf8")) as Rig;
+  const main = { sheet: PNG.sync.read(readFileSync(`${base}.png`)), atlas: JSON.parse(readFileSync(`${base}.json`, "utf8")) as Atlas };
+  const sheetOf: SheetLookup = (p) => {
+    const file = p.url?.split("/").pop();
+    if (!file || file === `img_${id}.png`) return main;
+    if (!new RegExp(`^img_${id}_\\d+\\.png$`).test(file)) return undefined;
+    const extra = join(SHEETS, `${id}~${file}`);
+    return existsSync(extra) ? { sheet: PNG.sync.read(readFileSync(extra)), atlas: JSON.parse(readFileSync(extra.replace(/\.png$/, ".json"), "utf8")) as Atlas } : main;
+  };
+  const tagName = ["idle", ...Object.keys(rig.tag)].find((t) => rig.tag[t]);
+  if (!tagName) return null;
+  const f = rig.tag[tagName]![0];
+  return renderPose(poseAt(rig, f, visibilityAt(rig, tagName, f)), sheetOf).png;
+}
+
+/** The sheet's normal pose (`<id>_base.png` in its atlas; a boss rig's idle pose), or the whole sheet. */
 function basePose(id: string): PNG {
+  if (BOSSES) {
+    const idle = bossIdle(id);
+    if (idle) return idle;
+  }
   const bytes = readFileSync(join(SHEETS, `${id}.png`));
   const sheet = PNG.sync.read(bytes.subarray(0, bytes.lastIndexOf("IEND") + 8));
   const atlasFile = join(SHEETS, `${id}.json`);
@@ -97,10 +126,12 @@ for (let page = 0; page * per < pick.length; page++) {
     const cx = (i % COLS) * CELL;
     const cy = Math.floor(i / COLS) * CELL;
     const pose = basePose(id);
-    // Whole-number scale (nearest neighbour) to fit above the label.
-    const s = Math.max(1, Math.min(3, Math.floor(Math.min((CELL - 4) / pose.width, (CELL - LABEL - 4) / pose.height))));
-    const w = Math.min(pose.width * s, CELL - 2);
-    const h = Math.min(pose.height * s, CELL - LABEL - 2);
+    // Nearest-neighbour scale to fit above the label: whole numbers up to 3× for small sheets, shrunk for big ones (boss
+    // atlases).
+    const fit = Math.min((CELL - 4) / pose.width, (CELL - LABEL - 4) / pose.height);
+    const s = fit >= 1 ? Math.min(3, Math.floor(fit)) : fit;
+    const w = Math.min(Math.floor(pose.width * s), CELL - 2);
+    const h = Math.min(Math.floor(pose.height * s), CELL - LABEL - 2);
     const ox = cx + Math.floor((CELL - w) / 2);
     const oy = cy + Math.floor((CELL - LABEL - h) / 2);
     for (let y = 0; y < h; y++)

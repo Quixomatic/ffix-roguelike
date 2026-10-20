@@ -36,6 +36,24 @@ export const AREA_MUSIC: Record<string, string> = {
   "cleyra-trunk": "music064", // Cleyra's Trunk
   "trunk-heights": "music064", // Cleyra's Trunk
   cleyra: "music049", // Cleyra Settlement
+  "alexandria-castle": "music020", // Queen of the Abyss
+  "castle-tower": "music020", // Queen of the Abyss
+  "roo-escape": "music063", // Gargan Roo
+  "pinnacle-rocks": "music045", // Crossing those Hills
+  "fossil-roo": "music048", // Fossil Roo
+  "fossil-roo-depths": "music048", // Fossil Roo
+  "outer-continent": "music045", // Crossing those Hills
+  "mountain-path": "music062", // Conde Petie
+  "mountain-summit": "music062", // Conde Petie
+  "black-mage-forest": "music054", // Black Mage Village
+  "outer-wilds": "music045", // Crossing those Hills
+  "madain-sari": "music094", // Madain Sari
+  "iifa-roots": "music080", // Iifa Tree
+  "iifa-depths": "music080", // Iifa Tree
+  "iifa-heart": "music080", // Iifa Tree
+  "mist-continent": "music045", // Crossing those Hills
+  "alexandria-town": "music051", // Unfathomed Reminisce (Alexandria, later discs)
+  "besieged-castle": "music051", // Unfathomed Reminisce
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

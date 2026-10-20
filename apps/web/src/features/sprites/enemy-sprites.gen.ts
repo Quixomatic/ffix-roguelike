@@ -1072,6 +1072,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "rig": 227035,
   "src": "Black Widow (FF7)"
  },
+ "blazer-beetle": {
+  "url": "/sprites/enemies/enemy-109080.png",
+  "w": 96,
+  "h": 96,
+  "originX": 48,
+  "originY": 96,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Blazer Beetle FFIX (unnamed sheet; matched by eye to the wiki's FFRK_Blazer_Beetle_FFIX)"
+ },
  "bomb": {
   "url": "/sprites/enemies/enemy-109010.png",
   "w": 64,
@@ -1433,11 +1452,11 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "src": "Coeurl FFIV"
  },
  "core": {
-  "url": "/sprites/enemies/enemy-103004.png",
-  "w": 46,
-  "h": 46,
-  "originX": 23,
-  "originY": 46,
+  "url": "/sprites/enemies/enemy-109129.png",
+  "w": 8,
+  "h": 8,
+  "originX": 4,
+  "originY": 8,
   "anims": {
    "idle": {
     "frames": [
@@ -1449,7 +1468,7 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   },
   "white": 1,
   "thunder": 2,
-  "src": "stand-in: glowing orb FFIII (unnamed sheet, by eye: FFRK never drew the Sand Golem's Core)"
+  "src": "Core FFIX (unnamed FF9 sheet, the Sand Golem's red orb; identified by eye)"
  },
  "crawler": {
   "url": "/sprites/enemies/enemy-111004.png",
@@ -1795,6 +1814,44 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "white": 1,
   "thunder": 2,
   "src": "Fang FFIX (identified by eye)"
+ },
+ "feather-circle": {
+  "url": "/sprites/enemies/enemy-103019.png",
+  "w": 64,
+  "h": 64,
+  "originX": 32,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: small bird FFIII (unnamed sheet, by eye: FFRK never drew Feather Circle)"
+ },
+ "gnoll": {
+  "url": "/sprites/enemies/enemy-109077.png",
+  "w": 90,
+  "h": 90,
+  "originX": 45,
+  "originY": 90,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Gnoll FFIX (unnamed sheet; matched by eye to the wiki's FFRK_Gnoll_FFIX)"
  },
  "flan": {
   "url": "/sprites/enemies/enemy-106089.png",
@@ -4645,6 +4702,97 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "thunder": 2,
   "src": "stand-in: Scorpion FFXI"
  },
+ "scarlet-hair": {
+  "url": "/sprites/enemies/boss-209062.png",
+  "w": 98,
+  "h": 107,
+  "originX": 54,
+  "originY": 110,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     47,
+     48,
+     49,
+     50,
+     51
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     52,
+     53,
+     54,
+     55
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209062,
+  "src": "Scarlet Hair (FF9; unnamed rig, matched by eye to the wiki's FFRK_Lani_&_Scarlet_Hair_FFIX)"
+ },
  "sealion": {
   "url": "/sprites/enemies/boss-209003.png",
   "w": 102,
@@ -5198,6 +5346,188 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   },
   "rig": 209023,
   "src": "Taharka (FF9)"
+ },
+ "tantarian": {
+  "url": "/sprites/enemies/boss-209011.png",
+  "w": 88,
+  "h": 90,
+  "originX": 73,
+  "originY": 107,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     47,
+     48,
+     49,
+     50,
+     51
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     52,
+     53,
+     54,
+     55
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209011,
+  "src": "Tantarian (FF9; unnamed rig, matched by eye to the wiki's FFRK_Tantarian_FFIX)"
+ },
+ "thorn": {
+  "url": "/sprites/enemies/boss-209037.png",
+  "w": 43,
+  "h": 61,
+  "originX": 21,
+  "originY": 63,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     47,
+     48,
+     49,
+     50,
+     51
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     52,
+     53,
+     54,
+     55
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209037,
+  "src": "Thorn (FF9; unnamed rig, the red jester of the wiki's FFRK_Thorn_&_Zorn_FFIX)"
  },
  "tiamat": {
   "url": "/sprites/enemies/boss-209032.png",
@@ -5919,6 +6249,25 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "rig": 204102,
   "src": "Zu (FF4)"
  },
+ "zemzelett": {
+  "url": "/sprites/enemies/enemy-103058.png",
+  "w": 64,
+  "h": 64,
+  "originX": 32,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: small green winged beast FFIII (unnamed sheet, by eye: FFRK never drew Zemzelett)"
+ },
  "zombie": {
   "url": "/sprites/enemies/enemy-109081.png",
   "w": 81,
@@ -5937,6 +6286,91 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "white": 1,
   "thunder": 2,
   "src": "Zombie FFIX"
+ },
+ "zorn": {
+  "url": "/sprites/enemies/boss-209091.png",
+  "w": 42,
+  "h": 57,
+  "originX": 21,
+  "originY": 52,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209091,
+  "src": "Zorn (FF9; unnamed rig, the blue jester of the wiki's FFRK_Thorn_&_Zorn_FFIX)"
  },
  "baku": {
   "url": "/sprites/enemies/enemy-109001.png",

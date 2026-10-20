@@ -2,6 +2,36 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.77] - 2026-10-20
+
+Journeys 9–14 (`.plans/journeys-full-story.md` Phases 1–2): the rest of FF9's Disc 2. Eiko, Amarant, Beatrix and Blank now join through the story; their interim milestone unlocks are retired. All fights are FF9's own.
+
+### Added
+- **Six story journeys, each opening when the one before is cleared:**
+
+  | # | Journey | Maps → bosses | Recruits |
+  |---|---|---|---|
+  | 9 | Return to Alexandria | Alexandria Castle → **Beatrix III** · The Castle Tower → **Zorn & Thorn** · Gargan Roo Escape → **Ralvuimago** | |
+  | 10 | Fossil Roo | Pinnacle Rocks → **Zaghnol** · Fossil Roo → **Armodullahan** · Fossil Roo Depths → **Lani** | |
+  | 11 | The Outer Continent | The Outer Continent → Dracozombie · Conde Petie Mountain Path → Griffins · The Mountain Summit → **Hilgigars** | **Eiko** |
+  | 12 | Madain Sari | The Black Mage Forest → Dracozombie · The Outer Wilds → Blazer Beetle & Troll · Madain Sari → **Scarlet Hair** | **Amarant** |
+  | 13 | The Iifa Tree | The Iifa Roots → Dracozombie · The Iifa Depths → Mistodons · The Heart of the Tree → **Soulcage** | |
+  | 14 | Alexandria Besieged | The Mist Continent → Mistodons · Alexandria Besieged → Garudas · The Besieged Castle → **Tantarian** | **Beatrix**, **Blank** |
+
+  - Each area has its FF9 music (Queen of the Abyss, Fossil Roo, Conde Petie, Black Mage Village, Madain Sari, Iifa Tree, Unfathomed Reminisce…), its part of the story's shops (Lindblum Disc 2, Conde Petie, the Black Mage Village, Madain Sari, Alexandria) and synthesis, and gear pools in the seed (`--add-pools`).
+- **Six achievements**, one per journey, 8,000–13,000 gil and 3 CP (5 for Alexandria Besieged): The Princess in the Tower, Through the Roo, The Summoner's Horn, The Eidolon Wall, Root of the Mist, The General's Stand.
+- **FFRK art for ten more monsters.** Six are FFRK's own FF9 art that the name matcher had missed (identified against the wiki's FFIX images): **Zorn**, **Thorn**, **Gnoll**, **Blazer Beetle**, **Scarlet Hair**, **Tantarian**. **Core** swaps its FF3 stand-in for its real FF9 sheet. Look-alikes, for monsters FFRK never drew: **Feather Circle** (a small FF3 bird), **Zemzelett** (a small green winged beast, FF3). The `enemies`, `bosses` and `music` packs are rebuilt and uploaded to R2.
+- `ffrk-contact.ts --bosses`: contact sheets of boss rigs, each drawn in its idle pose (the sprite build's own renderer). Big sheets are shrunk to fit.
+
+### Changed
+- **Eiko, Amarant, Beatrix and Blank join through journeys 11, 12 and 14.** The interim milestones (steal 15 items, defeat Golbez, defeat Kefka, win on Tier 1) are retired (`UNLOCKS` is empty). Players who already have them keep them, and the roster's hints name the journey.
+- **The encounter test, `probe-areas` and the sweep play every fight in the expected gear and abilities** for their test level (`meta/expected.ts`), not starting gear. In starting gear, late fights only "stalled" because the party couldn't hurt anything (the sweep had Zorn & Thorn hitting the 15-minute cap; with expected gear it ends cleanly).
+
+### Notes
+- `probe-areas` on journeys 9–14: every fight plays out and every monster has art. Game-core: 656 pass, 0 fail.
+- Sim read (expected gear and abilities, 3 runs each, start level about the area's): Return to Alexandria 3/3, Fossil Roo 2/3, Outer Continent 2/3, Madain Sari 1/3, Iifa Tree 0/3 (Soulcage's map), Alexandria Besieged 0/3. The last two are the hardest so far and are on the tuning list (Soulcage is undead: Phoenix Down / Life finish it in FF9, which the auto AI doesn't do).
+- Restart `pnpm dev` (achievement seeds, gear pools).
+
 ## [0.3.76] - 2026-10-20
 
 Expected gear and abilities for Practice and the sim, so fights and journeys can be judged at a realistic gearing. Until now both used starting gear with nothing learned. FF9's damage is driven by weapon power, not level, so a Lv50 party with its starting Dagger still hit for under 100.

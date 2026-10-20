@@ -97,17 +97,41 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.7003174603174603,
   "loopEnd": 113.64197278911564
  },
+ "music048": {
+  "url": "/music/music048.ogg",
+  "name": "Fossil Roo",
+  "loopStart": 3.2180045351473923,
+  "loopEnd": 69.68467120181406
+ },
  "music049": {
   "url": "/music/music049.ogg",
   "name": "Cleyra Settlement",
   "loopStart": 4.503968253968254,
   "loopEnd": 60.752539682539684
  },
+ "music051": {
+  "url": "/music/music051.ogg",
+  "name": "Unfathomed Reminisce (Alexandria's Theme Disc 3-4)",
+  "loopStart": 0.8081859410430839,
+  "loopEnd": 103.20326530612245
+ },
+ "music054": {
+  "url": "/music/music054.ogg",
+  "name": "Black Mage Village",
+  "loopStart": 21.876961451247166,
+  "loopEnd": 110.81448979591836
+ },
  "music057": {
   "url": "/music/music057.ogg",
   "name": "Dark City Treno",
   "loopStart": 9.599274376417233,
   "loopEnd": 153.59934240362813
+ },
+ "music062": {
+  "url": "/music/music062.ogg",
+  "name": "Conde Petie",
+  "loopStart": 32.14274376417234,
+  "loopEnd": 131.6554648526077
  },
  "music063": {
   "url": "/music/music063.ogg",
@@ -127,6 +151,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.018412698412698412,
   "loopEnd": 157.35585034013604
  },
+ "music080": {
+  "url": "/music/music080.ogg",
+  "name": "Iifa Tree",
+  "loopStart": 4.003854875283447,
+  "loopEnd": 134.00385487528345
+ },
  "music082": {
   "url": "/music/music082.ogg",
   "name": "Hunter's Chance (Festival of the hunt)",
@@ -138,6 +168,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "name": "Mystery sword (Battle with Beatrix)",
   "loopStart": 33.23512471655329,
   "loopEnd": 121.85328798185941
+ },
+ "music094": {
+  "url": "/music/music094.ogg",
+  "name": "Madian Sari Theme",
+  "loopStart": 0.7933333333333333,
+  "loopEnd": 104.7933560090703
  },
  "music098": {
   "url": "/music/music098.ogg",
@@ -180,7 +216,25 @@ export const AREA_MUSIC: Record<string, string> = {
  "gargan-roo": "music063",
  "cleyra-trunk": "music064",
  "trunk-heights": "music064",
- "cleyra": "music049"
+ "cleyra": "music049",
+ "alexandria-castle": "music020",
+ "castle-tower": "music020",
+ "roo-escape": "music063",
+ "pinnacle-rocks": "music045",
+ "fossil-roo": "music048",
+ "fossil-roo-depths": "music048",
+ "outer-continent": "music045",
+ "mountain-path": "music062",
+ "mountain-summit": "music062",
+ "black-mage-forest": "music054",
+ "outer-wilds": "music045",
+ "madain-sari": "music094",
+ "iifa-roots": "music080",
+ "iifa-depths": "music080",
+ "iifa-heart": "music080",
+ "mist-continent": "music045",
+ "alexandria-town": "music051",
+ "besieged-castle": "music051"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

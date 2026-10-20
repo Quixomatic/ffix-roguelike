@@ -139,6 +139,102 @@
     "enabled": true
   },
   {
+    "id": "story-return-to-alexandria",
+    "name": "The Princess in the Tower",
+    "description": "Clear Return to Alexandria",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "return-to-alexandria"
+    },
+    "reward": {
+      "gil": 8000,
+      "cp": 3
+    },
+    "sort": 8,
+    "enabled": true
+  },
+  {
+    "id": "story-fossil-roo",
+    "name": "Through the Roo",
+    "description": "Clear Fossil Roo",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "fossil-roo"
+    },
+    "reward": {
+      "gil": 9000,
+      "cp": 3
+    },
+    "sort": 9,
+    "enabled": true
+  },
+  {
+    "id": "story-outer-continent",
+    "name": "The Summoner's Horn",
+    "description": "Clear The Outer Continent",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "outer-continent"
+    },
+    "reward": {
+      "gil": 10000,
+      "cp": 3
+    },
+    "sort": 10,
+    "enabled": true
+  },
+  {
+    "id": "story-madain-sari",
+    "name": "The Eidolon Wall",
+    "description": "Clear Madain Sari",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "madain-sari"
+    },
+    "reward": {
+      "gil": 11000,
+      "cp": 3
+    },
+    "sort": 11,
+    "enabled": true
+  },
+  {
+    "id": "story-iifa-tree",
+    "name": "Root of the Mist",
+    "description": "Clear The Iifa Tree",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "iifa-tree"
+    },
+    "reward": {
+      "gil": 12000,
+      "cp": 3
+    },
+    "sort": 12,
+    "enabled": true
+  },
+  {
+    "id": "story-alexandria-besieged",
+    "name": "The General's Stand",
+    "description": "Clear Alexandria Besieged",
+    "category": "story",
+    "condition": {
+      "kind": "journey",
+      "journey": "alexandria-besieged"
+    },
+    "reward": {
+      "gil": 13000,
+      "cp": 5
+    },
+    "sort": 13,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

@@ -30,10 +30,9 @@ import {
   isSceneRef,
   JOURNEYS,
   MAX_TICKS,
-  newBuild,
+  expectedBuild,
   partyUnit,
   SCRIPTED_WIN_SCENES,
-  starterGear,
   WORLDS,
   type WorldDef,
 } from "@ffix-roguelike/game-core";
@@ -99,10 +98,8 @@ function playFight(group: string[]): string | null {
   const enc = encounterUnits(group, 0);
   if (!enc.units.some((u) => !u.untargetable)) return null; // an empty pattern (FF9 rate 0)
   const level = Math.min(99, Math.max(40, Math.max(...enc.units.map((u) => u.level)) + 10));
-  const party = ["zidane", "vivi", "steiner", "garnet"].map((k, i) => {
-    const b = newBuild(k, level);
-    return partyUnit({ ...b, equipment: starterGear(b) }, i);
-  });
+  // In the gear and abilities a party at that level can be expected to have (meta/expected.ts), as the encounter test.
+  const party = ["zidane", "vivi", "steiner", "garnet"].map((k, i) => partyUnit(expectedBuild(k, level, { gear: true, abilities: true }), i));
   const e = new BattleEngine(createBattle({ seed: 42, party, enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
   let watchdog = false;
   for (let i = 0; i < 200_000 && !e.state.outcome; i++) {
