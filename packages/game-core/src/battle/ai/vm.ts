@@ -44,7 +44,7 @@
  */
 import { type FF9Scene } from "@ffix-roguelike/game-data";
 
-import { getScene } from "../../content/ff9-scenes";
+import { getScene, SCRIPTED_WIN_SCENES } from "../../content/ff9-scenes";
 import { FF9_ACTION_BASE } from "../../content/ff9";
 import type { BattleEngine } from "../engine";
 import type { BattleCommand, BattleOutcome, BattleUnit, CommandSource } from "../types";
@@ -860,6 +860,11 @@ export class BattleAi {
         if (s.phase === PHASE.EVENT) {
           const outcome: BattleOutcome = val === 4 ? "fled" : val === 0 || val === 3 || val === 6 ? "defeat" : "victory";
           if (val === 7) eng.emit({ type: "message", text: "The enemy fled" });
+          // A scripted win (Beatrix's duels): the boss is still standing, and withdraws.
+          else if (outcome === "victory" && eng.state.scene && SCRIPTED_WIN_SCENES.has(eng.state.scene)) {
+            const standing = eng.state.units.filter((u) => u.side === "enemy" && eng.isTargetable(u));
+            if (standing.length) eng.emit({ type: "message", text: `${standing[0]!.name} withdraws` });
+          }
           eng.finish(outcome);
         }
         return;

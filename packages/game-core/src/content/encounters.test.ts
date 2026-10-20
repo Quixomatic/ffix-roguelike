@@ -10,7 +10,7 @@ import { BattleEngine, createBattle, MAX_TICKS } from "../battle/engine";
 import { partyUnit } from "../battle/units";
 import { encounterUnits } from "../run/run";
 import { newBuild, starterGear } from "../stats";
-import { getScene, isSceneRef } from "./ff9-scenes";
+import { getScene, isSceneRef, SCRIPTED_WIN_SCENES } from "./ff9-scenes";
 import { WORLDS } from "./worlds";
 
 const party = (level: number) =>
@@ -37,8 +37,24 @@ describe("area encounters", () => {
     const st = e.state;
     expect(st.outcome).not.toBeNull();
     expect(watchdog).toBe(false);
-    // Stalled = hit the 15-minute cap; self-ended = "victory" with a monster still standing.
+    // Stalled = hit the 15-minute cap; self-ended = "victory" with a monster still standing (allowed only for the
+    // scripted wins: bosses FF9's script sends away, like Beatrix).
     expect(st.tick).toBeLessThan(MAX_TICKS);
-    if (st.outcome === "victory") expect(st.units.filter((u) => u.side === "enemy" && e.isTargetable(u)).length).toBe(0);
+    if (st.outcome === "victory" && !SCRIPTED_WIN_SCENES.has(st.scene ?? ""))
+      expect(st.units.filter((u) => u.side === "enemy" && e.isTargetable(u)).length).toBe(0);
+  });
+});
+
+describe("scripted wins", () => {
+  test.each([...SCRIPTED_WIN_SCENES])("%s ends in a victory, the boss withdrawing", (scene) => {
+    const enc = encounterUnits([`@${scene}`], 0);
+    const e = new BattleEngine(createBattle({ seed: 7, party: party(30), enemies: enc.units, inventory: [], scene: enc.scene, noSurprise: true, canFlee: false }));
+    const messages: string[] = [];
+    for (let i = 0; i < 200_000 && !e.state.outcome; i++) {
+      for (const u of e.readyUnits()) if (!e.submit(autoCommand(e, u)).ok) e.submit({ actorId: u.id, kind: "defend", targetIds: [] });
+      for (const ev of e.step()) if (ev.type === "message") messages.push(ev.text);
+    }
+    expect(e.state.outcome).toBe("victory");
+    expect(messages.some((m) => m.endsWith("withdraws"))).toBe(true);
   });
 });

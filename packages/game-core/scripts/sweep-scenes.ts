@@ -10,7 +10,7 @@
 import { bestiary } from "@ffix-roguelike/game-data";
 import { loadBattleScriptCache, loadFf9Cache } from "@ffix-roguelike/game-data/cache";
 
-import { autoCommand, BattleEngine, createBattle, encounterUnits, newBuild, partyUnit, registerBattleScripts, starterGear, TICKS_PER_SECOND } from "../src/index";
+import { autoCommand, BattleEngine, createBattle, encounterUnits, newBuild, partyUnit, registerBattleScripts, SCRIPTED_WIN_SCENES, starterGear, TICKS_PER_SECOND } from "../src/index";
 
 loadFf9Cache();
 registerBattleScripts(loadBattleScriptCache());
@@ -104,7 +104,10 @@ for (const sc of scenes) {
 }
 console.warn = origWarn;
 
-const bad = (r: Row) => r.outcome === "none" || r.outcome === "error" || r.secs >= 899 || r.watchdog || r.idle >= 15 || r.paused >= 6 || r.dying >= 6 || (r.outcome === "victory" && r.standing > 0) || r.outcome === "fled";
+/** A boss FF9's script sends away (Beatrix): standing at the end is how it wins. */
+const scripted = (r: Row) => SCRIPTED_WIN_SCENES.has(r.token.replace(/^@/, "").split(/[#!]/)[0]!);
+const bad = (r: Row) =>
+  r.outcome === "none" || r.outcome === "error" || r.secs >= 899 || r.watchdog || r.idle >= 15 || r.paused >= 6 || r.dying >= 6 || (r.outcome === "victory" && r.standing > 0 && !scripted(r)) || r.outcome === "fled";
 for (const r of rows.filter(bad))
   console.log(`${r.token.padEnd(16)} ${r.outcome.padEnd(8)} ${String(r.secs).padStart(4)}s idle ${String(r.idle).padStart(3)} paused ${String(r.paused).padStart(3)} dying ${String(r.dying).padStart(2)} standing ${r.standing}${r.watchdog ? " WATCHDOG" : ""} Lv${r.level}  ${r.names}${r.warnings.length ? "  ⚠ " + r.warnings.join(" | ") : ""}`);
 console.log(`\n${rows.length} fights, ${rows.filter(bad).length} flagged`);

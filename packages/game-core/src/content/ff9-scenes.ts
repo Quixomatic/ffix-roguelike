@@ -32,6 +32,12 @@ export function getScene(id: string): FF9Scene {
   return s;
 }
 
+/**
+ * Boss fights FF9's own script ends with the boss still standing: survive it and it counts as a win (the boss
+ * withdraws). Beatrix's three duels end by script after about a minute, whatever her HP.
+ */
+export const SCRIPTED_WIN_SCENES: ReadonlySet<string> = new Set(["BU_E015", "CY_E022", "AC_E077"]);
+
 export const ff9EnemyId = (uid: number) => `ff9-${uid}`;
 export const isSceneRef = (token: string) => token.startsWith("@");
 

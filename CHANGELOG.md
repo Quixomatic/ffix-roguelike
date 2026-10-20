@@ -2,6 +2,18 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.67] - 2026-10-19
+
+Journeys groundwork, step 1 (`.plans/journeys-full-story.md`): scripted wins.
+
+### Added
+- **Scripted wins.** Some FF9 boss fights end by their own script with the boss still standing. Beatrix's three duels (Burmecia `BU_E015`, Cleyra `CY_E022`, Alexandria `AC_E077`) all end after about a minute, whatever her HP.
+  - These count as a victory: survive her and you win. The battle says "Beatrix withdraws".
+  - The scenes are listed in game-core `SCRIPTED_WIN_SCENES` (`content/ff9-scenes.ts`).
+  - The encounter test accepts such a victory for listed scenes, and so does the sweep script (all three now pass, 0 flagged).
+  - A new test plays each scene and checks it ends in a victory with the boss withdrawing.
+- Game-core: 343 pass, 0 fail.
+
 ## [0.3.66] - 2026-10-19
 
 ### Added
