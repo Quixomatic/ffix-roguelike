@@ -93,6 +93,9 @@ export interface UnlockRule {
  */
 export const UNLOCKS: UnlockRule[] = [];
 
+/** The journey whose clear is a "Terra & Memoria" clear for the party (the Legend of <hero> achievements). */
+export const LEGEND_JOURNEY = "memoria";
+
 /** Unlocked characters as they start a run (starter gear in their open slots) — what found gear compares against. */
 export function rosterAtStart(p: Pick<Profile, "unlocked" | "builds">): CharacterBuild[] {
   return p.unlocked.filter((k) => p.builds[k]).map((k) => ({ ...p.builds[k]!, equipment: starterGear(p.builds[k]!) }));
@@ -212,6 +215,9 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
     // Solo wins only count on late-game journeys (final area tier 2+) — the early story is meant to be soloable.
     const finalArea = getArea(getJourney(outcome.journey).areas.at(-1)!);
     if (outcome.builds.length === 1 && finalArea.tier >= 2) p.stats.soloWins = [...new Set([...(p.stats.soloWins ?? []), outcome.builds[0]!.key])];
+    // "Terra & Memoria with a hero" (the Legend of <hero> achievements): clearing Memoria, the journey after Terra,
+    // counts for everyone in the party.
+    if (outcome.journey === LEGEND_JOURNEY) p.stats.legendClears = [...new Set([...(p.stats.legendClears ?? []), ...outcome.builds.map((b) => b.key)])];
     if (tier === p.maxTier && p.maxTier < MAX_TIER) {
       p.maxTier++;
       tierUnlocked = p.maxTier;

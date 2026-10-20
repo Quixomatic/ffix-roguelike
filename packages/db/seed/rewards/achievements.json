@@ -235,6 +235,146 @@
     "enabled": true
   },
   {
+    "id": "story-oeilvert",
+    "name": "Where Magic Sleeps",
+    "description": "Clear Oeilvert",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "oeilvert" },
+    "reward": { "gil": 15000, "cp": 3 },
+    "sort": 14,
+    "enabled": true
+  },
+  {
+    "id": "story-desert-palace",
+    "name": "Under the Sands",
+    "description": "Clear The Desert Palace",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "desert-palace" },
+    "reward": { "gil": 16000, "cp": 3 },
+    "sort": 15,
+    "enabled": true
+  },
+  {
+    "id": "story-mount-gulug",
+    "name": "The Well of Gulug",
+    "description": "Clear Mount Gulug",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "mount-gulug" },
+    "reward": { "gil": 17000, "cp": 3 },
+    "sort": 16,
+    "enabled": true
+  },
+  {
+    "id": "story-ipsens-castle",
+    "name": "The Four Mirrors",
+    "description": "Clear Ipsen's Castle and the Shrines",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "ipsens-castle" },
+    "reward": { "gil": 18000, "cp": 5 },
+    "sort": 17,
+    "enabled": true
+  },
+  {
+    "id": "story-terra",
+    "name": "The Other World",
+    "description": "Clear Terra",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "terra" },
+    "reward": { "gil": 20000, "cp": 5 },
+    "sort": 18,
+    "enabled": true
+  },
+  {
+    "id": "story-memoria",
+    "name": "Place of Memories",
+    "description": "Clear Memoria",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "memoria" },
+    "reward": { "gil": 25000, "cp": 5 },
+    "sort": 19,
+    "enabled": true
+  },
+  {
+    "id": "story-crystal-world",
+    "name": "You're Not Alone",
+    "description": "Clear The Crystal World",
+    "category": "story",
+    "condition": { "kind": "journey", "journey": "crystal-world" },
+    "reward": { "gil": 30000, "cp": 10 },
+    "sort": 20,
+    "enabled": true
+  },
+  {
+    "id": "hidden-the-gourmand",
+    "name": "The Gourmand",
+    "description": "Clear Qu's Marsh: The Gourmand",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "the-gourmand" },
+    "reward": { "gil": 20000, "cp": 5 },
+    "sort": 40,
+    "enabled": true
+  },
+  {
+    "id": "hidden-vile-island",
+    "name": "Wisdom of the Yan",
+    "description": "Clear The Vile Island",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "vile-island" },
+    "reward": { "gil": 25000, "cp": 5 },
+    "sort": 41,
+    "enabled": true
+  },
+  {
+    "id": "hidden-dragons-breath",
+    "name": "Dragon Slayer",
+    "description": "Clear Dragon's Breath",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "dragons-breath" },
+    "reward": { "gil": 25000, "cp": 5 },
+    "sort": 42,
+    "enabled": true
+  },
+  {
+    "id": "hidden-deaths-disguise",
+    "name": "Death Wears a Mask",
+    "description": "Clear Death's Disguise",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "deaths-disguise" },
+    "reward": { "gil": 30000, "cp": 8 },
+    "sort": 43,
+    "enabled": true
+  },
+  {
+    "id": "hidden-air-garden",
+    "name": "The Floating Garden",
+    "description": "Clear Chocobo's Air Garden",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "air-garden" },
+    "reward": { "gil": 40000, "cp": 10 },
+    "sort": 44,
+    "enabled": true
+  },
+  {
+    "id": "hidden-hades-workshop",
+    "name": "The Smith Below",
+    "description": "Clear Hades' Workshop",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "hades-workshop" },
+    "reward": { "gil": 40000, "cp": 10 },
+    "sort": 45,
+    "enabled": true
+  },
+  {
+    "id": "hidden-boss-gauntlet",
+    "name": "Run the Gauntlet",
+    "description": "Clear The Boss Gauntlet",
+    "category": "challenge",
+    "condition": { "kind": "journey", "journey": "boss-gauntlet" },
+    "reward": { "gil": 50000, "cp": 15, "relicSlots": 1 },
+    "sort": 46,
+    "enabled": true
+  },
+  {
     "id": "first-victory",
     "name": "First Blood",
     "description": "Win a battle",

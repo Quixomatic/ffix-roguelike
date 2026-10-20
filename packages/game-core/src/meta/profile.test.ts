@@ -8,7 +8,7 @@ import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
 import { awardAchievements } from "./achievements";
-import { applyRunOutcome, buySupplyRank, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, buySupplyRank, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, LEGEND_JOURNEY, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -230,5 +230,21 @@ describe("training", () => {
     p.builds.zidane!.points = 999;
     p.builds.zidane!.training = { magic: 20 };
     expect(() => trainStat(p, "zidane", "magic")).toThrow("Fully trained");
+  });
+});
+
+describe("legend clears", () => {
+  test("winning Memoria (Terra & Memoria) records everyone in the party; other journeys don't", () => {
+    const p = newProfile();
+    p.unlocked.push("vivi");
+    const won = (journey: string) => {
+      const run = startRun({ seed: `legend-${journey}`, tier: 0, party: [p.builds.zidane!, p.builds.vivi!], journey });
+      run.phase = { kind: "over", won: true };
+      return runOutcome(run);
+    };
+    const other = applyRunOutcome(p, won("cleyra"), 0);
+    expect(other.profile.stats.legendClears ?? []).toEqual([]);
+    const report = applyRunOutcome(other.profile, won(LEGEND_JOURNEY), 0);
+    expect(report.profile.stats.legendClears).toEqual(["zidane", "vivi"]);
   });
 });

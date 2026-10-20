@@ -11,7 +11,8 @@
  *
  * battle / balance / run also take `--gear expected` and `--abilities expected`: the party wears the best gear the story's
  * shops sell by its level, and has mastered what that gear teaches with supports on (meta/expected.ts), instead of
- * starting gear with nothing learned. Runs refresh it at each new map.
+ * starting gear with nothing learned. Runs refresh it at each new map. `run --rest` fully heals the party before every
+ * stage (how hard each fight is, apart from the attrition between fights).
  *
  * `battle` is interactive: when a party member is ready you type a command (or pipe/script them):
  *   a <target>                attack            e.g. `a e0`
@@ -66,6 +67,7 @@ import {
   UNLOCKABLE_SLOTS,
   unlockSlot,
   WORLDS,
+  deriveStats,
   expectedBuild,
   withExpectedLoadouts,
   type BattleCommand,
@@ -338,6 +340,14 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
     switch (p.kind) {
       case "map": {
         run = optimizeParty(run);
+        // --rest: the party is fully healed before every stage, to read how hard each fight is apart from the
+        // attrition between fights (out of battle there's only items and Moogles to heal with).
+        if (args.rest)
+          for (const m of run.party) {
+            const st = deriveStats(m.build);
+            m.hp = st.maxHp;
+            m.mp = st.maxMp;
+          }
         const to = rng.pick(getNode(run.map, run.position).next);
         const node = getNode(run.map, to);
         say(c.dim(`${WORLDS[run.world]!.name} col${node.col} → ${node.kind}`));

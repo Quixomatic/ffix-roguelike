@@ -6372,6 +6372,754 @@ export const ENEMY_SPRITES: Record<string, EnemySpriteInfo> = {
   "rig": 209091,
   "src": "Zorn (FF9; unnamed rig, the blue jester of the wiki's FFRK_Thorn_&_Zorn_FFIX)"
  },
+ "ash": {
+  "url": "/sprites/enemies/enemy-109152.png",
+  "w": 80,
+  "h": 80,
+  "originX": 40,
+  "originY": 80,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Ash FFIX (unnamed sheet; matched by eye to the wiki's FFRK_Ash_FFIX)"
+ },
+ "drakan": {
+  "url": "/sprites/enemies/enemy-109110.png",
+  "w": 89,
+  "h": 89,
+  "originX": 44.5,
+  "originY": 89,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Drakan FFIX (unnamed sheet; matched by eye to the wiki's FFRK_Drakan_FFIX)"
+ },
+ "valia-pira": {
+  "url": "/sprites/enemies/boss-209021.png",
+  "w": 64,
+  "h": 137,
+  "originX": 36,
+  "originY": 148,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209021,
+  "src": "Valia Pira (FF9; unnamed rig, matched by eye to the wiki's FFRK_Valia_Pira_FFIX)"
+ },
+ "necron": {
+  "url": "/sprites/enemies/boss-209101.png",
+  "w": 184,
+  "h": 159,
+  "originX": 91,
+  "originY": 101,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     47,
+     48,
+     49,
+     50,
+     51
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     52,
+     53,
+     54,
+     55
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209101,
+  "src": "Necron (FF9; unnamed rig, matched by eye to the wiki's FFRK_Necron_Sprite)"
+ },
+ "quale": {
+  "url": "/sprites/enemies/boss-209052.png",
+  "w": 74,
+  "h": 75,
+  "originX": 37,
+  "originY": 67,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     41,
+     42,
+     43,
+     44,
+     45
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 209052,
+  "src": "Quale (FF9; unnamed rig, the giant Qu, identified by eye)"
+ },
+ "stilva": {
+  "url": "/sprites/enemies/enemy-109122.png",
+  "w": 160,
+  "h": 120,
+  "originX": 80,
+  "originY": 120,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Stilva FFIX (unnamed FF9 sheet, the orange wyvern; identified by eye)"
+ },
+ "jabberwock": {
+  "url": "/sprites/enemies/enemy-109123.png",
+  "w": 126,
+  "h": 92,
+  "originX": 63,
+  "originY": 92,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Jabberwock FFIX (unnamed FF9 sheet, the winged brown beast; identified by eye)"
+ },
+ "veteran": {
+  "url": "/sprites/enemies/enemy-109149.png",
+  "w": 112,
+  "h": 92,
+  "originX": 56,
+  "originY": 92,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "Veteran FFIX (unnamed FF9 sheet, the old maned dragon; identified by eye)"
+ },
+ "left-tentacle": {
+  "url": "/sprites/enemies/boss-206045.png",
+  "w": 47,
+  "h": 55,
+  "originX": 33,
+  "originY": 50,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     57,
+     58,
+     59,
+     60,
+     61
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     62,
+     63,
+     64,
+     65
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 206045,
+  "src": "stand-in: Tentacle (FF6): Kraken's tentacles, never drawn by FFRK"
+ },
+ "right-tentacle": {
+  "url": "/sprites/enemies/boss-206045.png",
+  "w": 47,
+  "h": 55,
+  "originX": 33,
+  "originY": 50,
+  "anims": {
+   "idle": {
+    "frames": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     20,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     27,
+     28,
+     29,
+     30,
+     31,
+     32,
+     33,
+     34,
+     35,
+     36,
+     37,
+     38,
+     39,
+     40,
+     41,
+     42,
+     43,
+     44,
+     45,
+     46,
+     47,
+     48,
+     49
+    ],
+    "fps": 20,
+    "repeat": true
+   },
+   "attack": {
+    "frames": [
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     56
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "damage": {
+    "frames": [
+     57,
+     58,
+     59,
+     60,
+     61
+    ],
+    "fps": 20,
+    "repeat": false
+   },
+   "dead": {
+    "frames": [
+     62,
+     63,
+     64,
+     65
+    ],
+    "fps": 20,
+    "repeat": false
+   }
+  },
+  "rig": 206045,
+  "src": "stand-in: Tentacle (FF6): Kraken's tentacles, never drawn by FFRK"
+ },
+ "agares": {
+  "url": "/sprites/enemies/enemy-106228.png",
+  "w": 64,
+  "h": 62,
+  "originX": 32,
+  "originY": 62,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Devil FFVI (FFRK never drew Agares)"
+ },
+ "armstrong": {
+  "url": "/sprites/enemies/enemy-104075.png",
+  "w": 64,
+  "h": 64,
+  "originX": 32,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Steel Golem FFIV (FFRK never drew Armstrong)"
+ },
+ "epitaph": {
+  "url": "/sprites/enemies/enemy-105025.png",
+  "w": 32,
+  "h": 64,
+  "originX": 16,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Headstone FFV (FFRK never drew Epitaph)"
+ },
+ "gigan-octopus": {
+  "url": "/sprites/enemies/enemy-105217.png",
+  "w": 64,
+  "h": 64,
+  "originX": 32,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Octokraken FFV (FFRK never drew Gigan Octopus)"
+ },
+ "gimme-cat": {
+  "url": "/sprites/enemies/enemy-102098.png",
+  "w": 51,
+  "h": 50,
+  "originX": 25.5,
+  "originY": 50,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Werepanther FFII (FFRK never drew Gimme Cat)"
+ },
+ "grimlock": {
+  "url": "/sprites/enemies/enemy-106175.png",
+  "w": 32,
+  "h": 30,
+  "originX": 16,
+  "originY": 30,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Seaflower FFVI (FFRK never drew Grimlock)"
+ },
+ "ring-leader": {
+  "url": "/sprites/enemies/enemy-106078.png",
+  "w": 40,
+  "h": 47,
+  "originX": 20,
+  "originY": 47,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Joker FFVI (FFRK never drew Ring Leader)"
+ },
+ "vepal": {
+  "url": "/sprites/enemies/enemy-103008.png",
+  "w": 48,
+  "h": 48,
+  "originX": 24,
+  "originY": 48,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Red Wisp FFIII (FFRK never drew Vepal)"
+ },
+ "whale-zombie": {
+  "url": "/sprites/enemies/enemy-105118.png",
+  "w": 88,
+  "h": 64,
+  "originX": 44,
+  "originY": 64,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Zombie Dragon FFV (FFRK never drew Whale Zombie)"
+ },
+ "yan": {
+  "url": "/sprites/enemies/enemy-106007.png",
+  "w": 32,
+  "h": 32,
+  "originX": 16,
+  "originY": 32,
+  "anims": {
+   "idle": {
+    "frames": [
+     0
+    ],
+    "fps": 1,
+    "repeat": true
+   }
+  },
+  "white": 1,
+  "thunder": 2,
+  "src": "stand-in: Leaf Bunny FFVI (FFRK never drew Yan)"
+ },
  "baku": {
   "url": "/sprites/enemies/enemy-109001.png",
   "w": 48,

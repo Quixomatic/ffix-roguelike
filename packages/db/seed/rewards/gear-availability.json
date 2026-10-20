@@ -90,6 +90,18 @@
       },
       {
         "area": "iifa-heart"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
       }
     ],
     "catalog": false,
@@ -182,6 +194,27 @@
       },
       {
         "area": "iifa-heart"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
       }
     ],
     "catalog": false,
@@ -274,6 +307,27 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "esto-gaza"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
       }
     ],
     "catalog": false,
@@ -318,6 +372,30 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
       }
     ],
     "catalog": false,
@@ -332,6 +410,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
       }
     ],
     "catalog": false,
@@ -346,6 +445,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -509,6 +662,15 @@
       },
       {
         "area": "qus-marsh"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -535,6 +697,9 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -589,6 +754,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -603,6 +771,9 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -617,6 +788,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -631,6 +823,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -645,6 +843,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -659,6 +863,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -683,6 +941,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -771,6 +1077,18 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "esto-gaza"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -824,6 +1142,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -847,6 +1168,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -861,6 +1185,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -875,6 +1214,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -889,6 +1234,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -903,6 +1254,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -946,6 +1351,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -996,6 +1404,18 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1010,6 +1430,24 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -1024,6 +1462,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -1048,6 +1492,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1062,6 +1512,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -1076,6 +1580,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -1193,6 +1745,18 @@
       },
       {
         "area": "iifa-heart"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1207,6 +1771,30 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -1221,6 +1809,69 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "esto-gaza"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -1323,6 +1974,18 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "esto-gaza"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1382,6 +2045,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -1405,6 +2071,24 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -1419,6 +2103,18 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1433,6 +2129,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -1495,6 +2248,18 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1509,6 +2274,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -1523,6 +2303,18 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1537,6 +2329,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -1848,6 +2697,18 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1862,6 +2723,30 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -1876,6 +2761,18 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -1890,6 +2787,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -1947,6 +2901,54 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2000,6 +3002,15 @@
       },
       {
         "area": "cleyra"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2032,6 +3043,12 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -2046,6 +3063,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -2060,6 +3098,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2111,6 +3203,24 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -2125,6 +3235,84 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2401,6 +3589,12 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2469,6 +3663,15 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "esto-gaza"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2522,6 +3725,63 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2536,6 +3796,30 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2550,6 +3834,81 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2564,6 +3923,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2578,6 +3952,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2602,6 +3991,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2616,6 +4059,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -2785,6 +4276,12 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -2838,6 +4335,15 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
       }
     ],
     "catalog": false,
@@ -2852,6 +4358,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -2866,6 +4393,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -2900,6 +4442,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3303,6 +4893,54 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3356,6 +4994,63 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3409,6 +5104,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -3432,6 +5130,15 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -3446,6 +5153,24 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -3460,6 +5185,24 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -3474,6 +5217,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -3488,6 +5246,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -3502,6 +5266,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -3516,6 +5295,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3530,6 +5366,66 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3544,6 +5440,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3558,6 +5508,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3572,6 +5576,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -3586,6 +5647,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -3811,6 +5929,12 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -3834,6 +5958,15 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
       }
     ],
     "catalog": false,
@@ -3848,6 +5981,36 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -3862,6 +6025,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -3876,6 +6048,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -3890,6 +6116,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4256,6 +6530,9 @@
       },
       {
         "area": "outer-wilds"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -4368,6 +6645,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -4412,6 +6692,9 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -4435,6 +6718,24 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
       }
     ],
     "catalog": false,
@@ -4449,6 +6750,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -4463,6 +6785,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -4477,6 +6814,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -4491,6 +6837,66 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4505,6 +6911,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4519,6 +6979,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4533,6 +7041,63 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
+      },
+      {
+        "area": "air-garden"
+      },
+      {
+        "area": "hades-workshop"
+      },
+      {
+        "area": "gauntlet-waltzes"
+      },
+      {
+        "area": "gauntlet-guardians"
+      },
+      {
+        "area": "gauntlet-end"
       }
     ],
     "catalog": false,
@@ -4731,6 +7296,9 @@
       },
       {
         "area": "gargan-roo"
+      },
+      {
+        "area": "forgotten-continent"
       }
     ],
     "catalog": false,
@@ -4834,6 +7402,12 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "esto-gaza"
       }
     ],
     "catalog": false,
@@ -4857,6 +7431,15 @@
       },
       {
         "area": "besieged-castle"
+      },
+      {
+        "area": "forgotten-continent"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
       }
     ],
     "catalog": false,
@@ -4871,6 +7454,27 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "oeilvert-halls"
+      },
+      {
+        "area": "oeilvert-depths"
+      },
+      {
+        "area": "the-desert"
+      },
+      {
+        "area": "desert-palace"
+      },
+      {
+        "area": "palace-depths"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
       }
     ],
     "catalog": false,
@@ -4885,6 +7489,21 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "mount-gulug"
+      },
+      {
+        "area": "gulug-well"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -4899,6 +7518,15 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "ipsens-castle"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -4913,6 +7541,12 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "lost-continent"
+      },
+      {
+        "area": "earth-shrine"
       }
     ],
     "catalog": false,
@@ -4927,6 +7561,60 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "terra"
+      },
+      {
+        "area": "bran-bal"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4941,6 +7629,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,
@@ -4955,6 +7691,54 @@
     "mapPools": [
       {
         "area": "ruin"
+      },
+      {
+        "area": "pandemonium"
+      },
+      {
+        "area": "pandemonium-heart"
+      },
+      {
+        "area": "memoria"
+      },
+      {
+        "area": "memoria-fire"
+      },
+      {
+        "area": "memoria-water"
+      },
+      {
+        "area": "memoria-wind"
+      },
+      {
+        "area": "memorias-end"
+      },
+      {
+        "area": "the-crystal"
+      },
+      {
+        "area": "the-end"
+      },
+      {
+        "area": "marsh-at-dusk"
+      },
+      {
+        "area": "quales-pond"
+      },
+      {
+        "area": "vile-shore"
+      },
+      {
+        "area": "vile-heights"
+      },
+      {
+        "area": "dragon-plains"
+      },
+      {
+        "area": "dragon-peak"
+      },
+      {
+        "area": "memoria-lost-hall"
       }
     ],
     "catalog": false,

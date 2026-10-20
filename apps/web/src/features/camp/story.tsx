@@ -68,6 +68,7 @@ export function StoryPage() {
 const JOURNEY_SECTIONS: { label: string; category: JourneyDef["category"] }[] = [
   { label: "The story", category: "story" },
   { label: "Side journeys", category: "echoes" },
+  { label: "Hidden bosses", category: "hidden" },
   { label: "Challenges", category: "challenge" },
 ];
 

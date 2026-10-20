@@ -54,6 +54,41 @@ export const AREA_MUSIC: Record<string, string> = {
   "mist-continent": "music045", // Crossing those Hills
   "alexandria-town": "music051", // Unfathomed Reminisce (Alexandria, later discs)
   "besieged-castle": "music051", // Unfathomed Reminisce
+  "forgotten-continent": "music045", // Crossing those Hills
+  "oeilvert-halls": "music025", // Oeilvert
+  "oeilvert-depths": "music077", // A Transient Past (Oeilvert)
+  "the-desert": "music045", // Crossing those Hills
+  "desert-palace": "music067", // Kuja's Theme Millennium (Desert Palace)
+  "palace-depths": "music067", // Kuja's Theme Millennium
+  "esto-gaza": "music045", // Crossing those Hills
+  "mount-gulug": "music081", // Mount Gulug
+  "gulug-well": "music081", // Mount Gulug
+  "lost-continent": "music045", // Crossing those Hills
+  "ipsens-castle": "music075", // Ipsen's Heritage
+  "earth-shrine": "music073", // The Four Medallions
+  terra: "music095", // Terra
+  "bran-bal": "music059", // Bran Bal
+  pandemonium: "music092", // Pandemonium
+  "pandemonium-heart": "music056", // Pandemonium (after You're Not Alone)
+  memoria: "music096", // Place of Memories
+  "memoria-fire": "music096",
+  "memoria-water": "music096",
+  "memoria-wind": "music096",
+  "memorias-end": "music087", // Crystal World
+  "the-crystal": "music087",
+  "the-end": "music087",
+  "marsh-at-dusk": "music032", // Qu's Marsh
+  "quales-pond": "music009", // Quina's Theme
+  "vile-shore": "music045", // Crossing those Hills
+  "vile-heights": "music045",
+  "dragon-plains": "music045",
+  "dragon-peak": "music045",
+  "memoria-lost-hall": "music096", // Place of Memories
+  "air-garden": "music072", // Ukulele de Chocobo
+  "hades-workshop": "music093", // Secret Library of Daguerreo
+  "gauntlet-waltzes": "music017", // Sword of Fury
+  "gauntlet-guardians": "music017",
+  "gauntlet-end": "music017",
 };
 
 /** Boss fights with their own FF9 theme, by the boss's kill key (lower-case name). */

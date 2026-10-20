@@ -31,11 +31,23 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 52.258390022675734,
   "loopEnd": 118
  },
+ "music009": {
+  "url": "/music/music009.ogg",
+  "name": "Quina's Theme (Frog Catching)",
+  "loopStart": 22.57201814058957,
+  "loopEnd": 118.57839002267573
+ },
  "music011": {
   "url": "/music/music011.ogg",
   "name": "Freya's Theme (Gizamaluke's Grotto)",
   "loopStart": 6.545691609977324,
   "loopEnd": 163.63319727891155
+ },
+ "music017": {
+  "url": "/music/music017.ogg",
+  "name": "Sword of Fury (Prima Vista first battle on stage)",
+  "loopStart": 80.04956916099773,
+  "loopEnd": 155.94403628117914
  },
  "music020": {
   "url": "/music/music020.ogg",
@@ -48,6 +60,12 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "name": "Boss Battle Theme",
   "loopStart": 2.822426303854875,
   "loopEnd": 115.76433106575963
+ },
+ "music025": {
+  "url": "/music/music025.ogg",
+  "name": "Oeilvert",
+  "loopStart": 0.007505668934240363,
+  "loopEnd": 59.07
  },
  "music030": {
   "url": "/music/music030.ogg",
@@ -121,11 +139,23 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 21.876961451247166,
   "loopEnd": 110.81448979591836
  },
+ "music056": {
+  "url": "/music/music056.ogg",
+  "name": "Pandemonium Theme (After 'You're not alone' montage fights)",
+  "loopStart": 24.50766439909297,
+  "loopEnd": 106.7909977324263
+ },
  "music057": {
   "url": "/music/music057.ogg",
   "name": "Dark City Treno",
   "loopStart": 9.599274376417233,
   "loopEnd": 153.59934240362813
+ },
+ "music059": {
+  "url": "/music/music059.ogg",
+  "name": "Bran Bal",
+  "loopStart": 88.21056689342403,
+  "loopEnd": 174.61056689342405
  },
  "music062": {
   "url": "/music/music062.ogg",
@@ -145,6 +175,36 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 0.08532879818594104,
   "loopEnd": 144.06854875283446
  },
+ "music067": {
+  "url": "/music/music067.ogg",
+  "name": "Kuja's Theme Millennium (Desert Palace)",
+  "loopStart": 0.043038548752834464,
+  "loopEnd": 67.23052154195011
+ },
+ "music072": {
+  "url": "/music/music072.ogg",
+  "name": "Ukulele de chocobo (Chocobo's Theme)",
+  "loopStart": 10.65997732426304,
+  "loopEnd": 69.32664399092971
+ },
+ "music073": {
+  "url": "/music/music073.ogg",
+  "name": "The Four medallions (After Ipsen's Castle, talk about four mirrors) Disc 3",
+  "loopStart": 2.896417233560091,
+  "loopEnd": 74.89641723356009
+ },
+ "music075": {
+  "url": "/music/music075.ogg",
+  "name": "Ipsen's Heritage (Ipsen's Castle)",
+  "loopStart": 6.247097505668934,
+  "loopEnd": 102.2465306122449
+ },
+ "music077": {
+  "url": "/music/music077.ogg",
+  "name": "A transient Past (Oeilvert- Area with the faces, speaking of Terra)",
+  "loopStart": 12.943764172335602,
+  "loopEnd": 89.74378684807256
+ },
  "music079": {
   "url": "/music/music079.ogg",
   "name": "South Border Crossing (South Gate)",
@@ -157,11 +217,23 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 4.003854875283447,
   "loopEnd": 134.00385487528345
  },
+ "music081": {
+  "url": "/music/music081.ogg",
+  "name": "Mount Gulug",
+  "loopStart": 3.9975510204081632,
+  "loopEnd": 111.99755102040817
+ },
  "music082": {
   "url": "/music/music082.ogg",
   "name": "Hunter's Chance (Festival of the hunt)",
   "loopStart": 23.07455782312925,
   "loopEnd": 185.76981859410432
+ },
+ "music087": {
+  "url": "/music/music087.ogg",
+  "name": "Crystal World",
+  "loopStart": 13.215351473922903,
+  "loopEnd": 115.6153514739229
  },
  "music091": {
   "url": "/music/music091.ogg",
@@ -169,11 +241,35 @@ export const MUSIC_TRACKS: Record<string, { url: string; name: string; loopStart
   "loopStart": 33.23512471655329,
   "loopEnd": 121.85328798185941
  },
+ "music092": {
+  "url": "/music/music092.ogg",
+  "name": "Pandemonium Theme (Before 'You're not alone' montage fights)",
+  "loopStart": 32.00528344671202,
+  "loopEnd": 104.01893424036281
+ },
+ "music093": {
+  "url": "/music/music093.ogg",
+  "name": "Secret Library of Daguerreo",
+  "loopStart": 0.006689342403628118,
+  "loopEnd": 105.1024716553288
+ },
  "music094": {
   "url": "/music/music094.ogg",
   "name": "Madian Sari Theme",
   "loopStart": 0.7933333333333333,
   "loopEnd": 104.7933560090703
+ },
+ "music095": {
+  "url": "/music/music095.ogg",
+  "name": "Terra",
+  "loopStart": 1.2035147392290249,
+  "loopEnd": 112.80342403628119
+ },
+ "music096": {
+  "url": "/music/music096.ogg",
+  "name": "Place of memories (Memoria)",
+  "loopStart": 11.903356009070295,
+  "loopEnd": 221.82387755102042
  },
  "music098": {
   "url": "/music/music098.ogg",
@@ -234,7 +330,42 @@ export const AREA_MUSIC: Record<string, string> = {
  "iifa-heart": "music080",
  "mist-continent": "music045",
  "alexandria-town": "music051",
- "besieged-castle": "music051"
+ "besieged-castle": "music051",
+ "forgotten-continent": "music045",
+ "oeilvert-halls": "music025",
+ "oeilvert-depths": "music077",
+ "the-desert": "music045",
+ "desert-palace": "music067",
+ "palace-depths": "music067",
+ "esto-gaza": "music045",
+ "mount-gulug": "music081",
+ "gulug-well": "music081",
+ "lost-continent": "music045",
+ "ipsens-castle": "music075",
+ "earth-shrine": "music073",
+ "terra": "music095",
+ "bran-bal": "music059",
+ "pandemonium": "music092",
+ "pandemonium-heart": "music056",
+ "memoria": "music096",
+ "memoria-fire": "music096",
+ "memoria-water": "music096",
+ "memoria-wind": "music096",
+ "memorias-end": "music087",
+ "the-crystal": "music087",
+ "the-end": "music087",
+ "marsh-at-dusk": "music032",
+ "quales-pond": "music009",
+ "vile-shore": "music045",
+ "vile-heights": "music045",
+ "dragon-plains": "music045",
+ "dragon-peak": "music045",
+ "memoria-lost-hall": "music096",
+ "air-garden": "music072",
+ "hades-workshop": "music093",
+ "gauntlet-waltzes": "music017",
+ "gauntlet-guardians": "music017",
+ "gauntlet-end": "music017"
 };
 export const BOSS_MUSIC: Record<string, string> = {
  "zorn": "music037",

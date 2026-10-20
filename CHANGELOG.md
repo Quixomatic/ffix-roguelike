@@ -2,6 +2,65 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.78] - 2026-10-20
+
+Journeys 15–21 and the hidden journeys (`.plans/journeys-full-story.md` Phases 3–4): the rest of FF9's story to Necron, the six hidden bosses, and the Boss Gauntlet. All fights are FF9's own.
+
+### Added
+- **Seven story journeys (Discs 3–4), each opening when the one before is cleared:**
+
+  | # | Journey | Maps → bosses |
+  |---|---|---|
+  | 15 | Oeilvert | The Forgotten Continent → Worm Hydra · Oeilvert's Halls → Epitaph · Oeilvert's Depths → **Ark** (no magic, as in FF9) |
+  | 16 | The Desert Palace | The Desert → Antlion · The Desert Palace → Catoblepas · The Palace Depths → **Valia Pira** |
+  | 17 | Mount Gulug | Esto Gaza → Garudas · Mount Gulug → **Red Dragons** · The Well of Gulug → **Meltigemini** |
+  | 18 | Ipsen's Castle and the Shrines | The Lost Continent → Malboro · Ipsen's Castle → **Taharka** (reversed weapons) · The Earth Shrine → **Earth Guardian** |
+  | 19 | Terra | Terra → **Amdusias** · Bran Bal → **Silver Dragon** · Pandemonium → **Garland** · Pandemonium's Heart → **Kuja** |
+  | 20 | Memoria | Memoria → **Lich** · Fire → **Maliris** · Water → **Kraken** · Wind → **Tiamat** (cave, volcano, coast and ice themes) |
+  | 21 | The Crystal World | Memoria's End → **Nova Dragon** · The Crystal → **Trance Kuja** · The End → **Necron** |
+
+- **Hidden bosses** (a new "Hidden bosses" section on the Story page, category `hidden`), each opening once its part of the story is cleared: **Qu's Marsh: The Gourmand** (Quale; after 13), **The Vile Island** (the Yan; after 17), **Dragon's Breath** (Grand Dragon; after 18), **Death's Disguise** (Deathguise; after 20), **Chocobo's Air Garden** (Ozma; after 21), **Hades' Workshop** (Hades; after 21).
+- **The Boss Gauntlet** (Challenges; after 21): three maps of straight roads (one stage per round) of story bosses, ending at all three Black Waltzes at once, the four Chaos guardians at once, and Necron.
+- Each area has its FF9 music (Oeilvert, Kuja's Theme Millennium, Mount Gulug, Ipsen's Heritage, The Four Medallions, Terra, Bran Bal, Pandemonium, Place of Memories, Crystal World…), its shops and synthesis (up to Hades' Workshop), and gear pools in the seed.
+- **Achievements:**
+  - Seven story achievements, 15,000–30,000 gil and 3–10 CP: Where Magic Sleeps, Under the Sands, The Well of Gulug, The Four Mirrors, The Other World, Place of Memories, You're Not Alone.
+  - Seven challenge achievements for the hidden journeys and the gauntlet, 20,000–50,000 gil and 5–15 CP. Run the Gauntlet also gives a relic slot.
+  - The legend achievements for Soulcage, Deathguise, Kuja, Hades, Ozma and Necron can now be earned in runs.
+- **FFRK art for twenty more monsters; none in the game is a placeholder now.**
+  - FFRK's own FF9 art, identified against the wiki's FFIX images: **Ash**, **Drakan**, **Valia Pira**, **Necron**, **Quale**, **Stilva**, **Jabberwock**, **Veteran**.
+  - Kraken's **tentacles**: FF6's Tentacle.
+  - Look-alikes for monsters FFRK never drew in any game:
+
+    | Monster | Look-alike |
+    |---|---|
+    | Agares | Devil (FF6) |
+    | Armstrong | Steel Golem (FF4) |
+    | Epitaph | Headstone (FF5) |
+    | Gigan Octopus | Octokraken (FF5) |
+    | Gimme Cat | Werepanther (FF2) |
+    | Grimlock | Seaflower (FF6) |
+    | Ring Leader | Joker (FF6) |
+    | Vepal | Red Wisp (FF3) |
+    | Whale Zombie | Zombie Dragon (FF5) |
+    | Yan | Leaf Bunny (FF6) |
+
+  - The packs are rebuilt and uploaded to R2.
+- `pnpm sim run --rest`: the party is fully healed before every stage, to read how hard each fight is apart from the attrition between fights.
+
+### Fixed
+- **The Legend of <hero> achievements could never be earned:** nothing recorded the "Terra & Memoria clear". Winning journey 20 (Memoria, after Terra) now records everyone in the party (`LEGEND_JOURNEY`). Test in `meta/profile.test.ts`.
+- The Fall of Burmecia's achievement badge clashed with Freya's solo badge (both 592); it's the other spear now (158). The dev database keeps 592 until the badge is changed on the admin page.
+
+### Notes
+- **Left out:** the Mover trios (Terra, Pandemonium): they have to die in the same moment or they revive each other, which auto play can't do. The Jabberwock pair `WM_1550` was also dropped (it holds its death pose too long).
+- `probe-areas` passes for every area. Game-core: 899 pass, 0 fail.
+- **The late game reads very hard in the sim.** With expected gear and abilities at the usual level, journeys 15–21 win 0–1 of 3, even fully rested. This is mostly the **auto-battle AI**:
+  - it heals 1,500-damage hits with 150-HP Potions;
+  - it casts Earth at a floating Lich;
+  - a summoner uses plain Attack.
+- **A real attrition gap:** late HP pools are around 5,000, but between fights only items and Moogles heal. Both are on the tuning list.
+- Restart `pnpm dev` (achievements, gear pools).
+
 ## [0.3.77] - 2026-10-20
 
 Journeys 9–14 (`.plans/journeys-full-story.md` Phases 1–2): the rest of FF9's Disc 2. Eiko, Amarant, Beatrix and Blank now join through the story; their interim milestone unlocks are retired. All fights are FF9's own.
