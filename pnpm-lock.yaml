@@ -6,27 +6,9 @@ settings:
 
 catalogs:
   default:
-    '@trpc/client':
-      specifier: ^11.19.0
-      version: 11.19.0
-    '@trpc/server':
-      specifier: ^11.19.0
-      version: 11.19.0
     '@types/bun':
       specifier: ^1.4.2
       version: 1.4.3
-    better-auth:
-      specifier: 1.7.7
-      version: 1.7.7
-    next-themes:
-      specifier: ^0.4.6
-      version: 0.4.6
-    sonner:
-      specifier: ^2.0.8
-      version: 2.0.8
-    tailwindcss:
-      specifier: ^4.3.3
-      version: 4.3.3
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
@@ -51,9 +33,6 @@ importers:
       '@types/bun':
         specifier: 'catalog:'
         version: 1.4.3
-      portless:
-        specifier: 0.15.8
-        version: 0.15.8
       turbo:
         specifier: ^2.11.7
         version: 2.11.8
@@ -2883,12 +2862,6 @@ packages:
   pngjs@7.0.0:
     resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
     engines: {node: '>=14.19.0'}
-
-  portless@0.15.8:
-    resolution: {integrity: sha512-kzGoG4xLsEytczl7O/COZaBwSAOKsWsZDxHv7/iFHKIC0X71OonpgbsQw58CGO29RklIHIx6yLM31TJMnTtPEw==}
-    engines: {node: '>=24'}
-    os: [darwin, linux, win32]
-    hasBin: true
 
   postcss-selector-parser@7.1.6:
     resolution: {integrity: sha512-7qASPzhKF2l2KLboRZux8CCTRMdGiV08vWmyKzPz22qZ7ZjQBOeY7rNzNoCLSUiftJ7HUq0GERHmxw/t0dCdMw==}
@@ -5864,8 +5837,6 @@ snapshots:
       find-up: 3.0.0
 
   pngjs@7.0.0: {}
-
-  portless@0.15.8: {}
 
   postcss-selector-parser@7.1.6:
     dependencies:

@@ -1,12 +1,16 @@
-import { adminClient } from "better-auth/client/plugins";
+import { adminClient, usernameClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 import { ENV } from "../env";
 
 export const authClient = createAuthClient({
   baseURL: ENV.VITE_SERVER_URL,
-  plugins: [adminClient()],
+  plugins: [adminClient(), usernameClient()],
 });
+
+/** What other players see for a user: their username as they typed it (the name only before usernames existed). */
+export const playerName = (user: { displayUsername?: string | null; username?: string | null; name?: string | null } | null | undefined) =>
+  user?.displayUsername ?? user?.username ?? user?.name ?? "";
 
 /**
  * The session, for the routes' sign-in guards, waiting out a server that's briefly unreachable. In development the API

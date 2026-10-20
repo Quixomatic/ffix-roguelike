@@ -10,7 +10,6 @@ import { Panel } from "@/features/gear/character-panels";
 import { trpc } from "@/utils/trpc";
 import { FocusItem } from "@/features/input/focus";
 
-import { AvatarPanel } from "./avatar-panel";
 import { ControllerPanel } from "./controller-panel";
 import { FONT_LEVELS, FONTS } from "./fonts";
 import { useSettings, type Settings } from "./use-settings";
@@ -59,8 +58,6 @@ function SettingsPanels() {
 
   return (
       <div className="grid gap-3 md:grid-cols-2">
-        <AvatarPanel />
-
         <ControllerPanel />
 
         <Panel title="Battle mode">

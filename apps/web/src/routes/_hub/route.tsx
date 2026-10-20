@@ -18,6 +18,8 @@ declare module "@tanstack/react-router" {
     menuButton?: "corner" | "inset";
     /** Hub pages: how dark the backdrop is (0–1; default 0.55). */
     backdropDim?: number;
+    /** Hub pages: the floating ⚙ (Settings dialog) under the menu button (the run; elsewhere Settings is in the sidebar). */
+    settingsButton?: boolean;
   }
 }
 

@@ -2,6 +2,50 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.2] - 2026-10-20
+
+Accounts get a proper front door: a game-styled login with Google / GitHub, usernames, a Profile page, a 404 in the new layout, and plain localhost in development again.
+
+### Added
+- **The login screen** (`/login`, in the hub's layout with the title screen's backdrop and music; ChannelGuide's login, in FF9's look):
+  - **Layout:** the title over an FF window with four of the cast hopping, **Sign in / Create account** tabs, and game-styled fields. Errors show in a red box inside the window, and there's a green submit.
+  - **Where you land:** the title screen, not the old dashboard. A page that sent you to sign in gets you back afterwards (`?redirect=`, local paths only, `lib/safe-redirect.ts`). Visiting `/login` signed in sends you straight on.
+  - **Wording:** "That email already has an account", "That username is taken".
+- **Google and GitHub sign-in** (ChannelGuide's pattern, but new players can sign up with them):
+  - **Server:** each provider turns on only when its client id and secret are set (`GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`, optional in `.env.schema`).
+  - **Login page:** shows a button for each one the server has (`GET /api/auth-providers`).
+  - **Linking:** signing in with one using the email of an existing account links it (`requireLocalEmailVerified: false`: the provider proving the email is enough, since our email + password accounts are never email-verified).
+  - Redirect URI: `<BETTER_AUTH_URL>/api/auth/callback/google` (or `/github`).
+- **Usernames** (better-auth's `username` plugin): what other players see.
+  - **Rules:** unique, matched without regard to case and shown as typed; 3–20 letters, numbers, `_` or `.`.
+  - **Creating an account** asks for one. Google / GitHub sign-ups get a placeholder (`user482915730`) until the player picks their own.
+  - **Signing in** takes email *or* username, plus password.
+  - **Where it shows:** the sidebar's player card, the Profile page, and the admin player list and leaderboards.
+  - Migration `usernames`. **`apps/server/scripts/backfill-usernames.ts [--apply]`** gives existing accounts one: their name when it's valid and free, else a placeholder.
+- **The Profile page** (`/profile`, from the player card at the bottom of the sidebar):
+  - **Card:** name and email, "Playing since", chips (gil, achievements, journeys cleared).
+  - **Username:** **Change username**, with format and availability checked.
+  - **Avatar:** upload / change / remove, moved out of Settings.
+  - **Sign out:** the hub layout had none.
+  - **Stats:** all your stats below. `/stats` redirects here.
+- **404 page:** a catch-all route in the hub's layout: a big 404, Vivi a little lost, "Lost in the Mist", and the way back to the title screen or camp. It used to render in the old header-bar layout.
+
+### Changed
+- **Settings:** the floating ⚙ under the menu button shows only during a run (route flag `settingsButton`). Settings is out of the sidebar: it's the round shortcut at the top right elsewhere.
+- **The round shortcuts at the top right:** Party, Supplies, Gear catalog, Settings (were Items, Achievements, Settings).
+- **Sidebar:** Stats and Legacy camp are gone; the player card at the bottom opens your Profile.
+- **The Items page needs you signed in**, like the other camp pages.
+- **Google avatars show:** images are requested without a referrer, which Google's avatar host requires.
+- **Development runs on plain localhost again:** web http://localhost:3001, API http://localhost:3000. portless is removed (dependency, scripts, turbo pass-through), and the README is updated.
+- **The server's `start` runs the source with Bun** (`bun src/index.ts`) instead of a tsdown bundle. The bundle had no output on Railway, and bundling would also have broken the boot seeding, which finds `packages/db/seed` relative to its own files.
+
+### Removed
+- The old dashboard page and the scaffold's sign-in / sign-up forms.
+
+### Notes
+- Railway (server service): root directory = the repo root; build `pnpm --filter @ffix-roguelike/db exec prisma generate`; pre-deploy `pnpm --filter @ffix-roguelike/db db:migrate:deploy`; start `pnpm --filter server start`.
+- Game-core: 987 pass, 0 fail.
+
 ## [0.4.1] - 2026-10-20
 
 ### Added

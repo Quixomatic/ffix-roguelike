@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { StatsPage } from "@/features/hub/stats-page";
-
+/** The stats live on the Profile page now; old links land there. */
 export const Route = createFileRoute("/_hub/_member/stats")({
-  staticData: { breadcrumb: "Stats" },
-  component: StatsPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/profile" });
+  },
 });

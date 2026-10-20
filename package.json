@@ -29,7 +29,6 @@
   "devDependencies": {
     "@ffix-roguelike/config": "workspace:*",
     "@types/bun": "catalog:",
-    "portless": "0.15.8",
     "turbo": "^2.11.7",
     "typescript": "catalog:",
     "varlock": "catalog:"

@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BarChart3, FlaskConical, Gamepad2, Gem, Home, Menu, Package, Settings, Sparkles, Sword, Trophy, Undo2, Wrench } from "lucide-react";
+import { BarChart3, FlaskConical, Gamepad2, Gem, Home, Menu, Package, Settings, Shield, ShoppingBag, Sparkles, Sword, Trophy, Users, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -15,7 +15,7 @@ import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, S
 import { claimInput, inputOwner } from "@/features/input/owner";
 import { Avatar } from "@/features/settings/avatar-panel";
 import { SettingsDialog } from "@/features/settings/settings-page";
-import { authClient, isAdminUser } from "@/lib/auth-client";
+import { authClient, isAdminUser, playerName } from "@/lib/auth-client";
 import { trpc } from "@/utils/trpc";
 
 import pkg from "../../../package.json";
@@ -39,8 +39,6 @@ const MORE_NAV: NavItem[] = [
   { to: "/items", label: "Items", icon: Package },
   { to: "/relics", label: "Relics", icon: Gem },
   { to: "/achievements", label: "Achievements", icon: Trophy },
-  { to: "/stats", label: "Stats", icon: BarChart3 },
-  { to: "/settings", label: "Settings", icon: Settings },
 ];
 /** Admins only (better-auth's admin role). The effects gallery needs a development server (its FFRK library). */
 const ADMIN_NAV: NavItem[] = [
@@ -122,6 +120,7 @@ export function HubShell() {
   const quickLinks = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.quickLinks != null)?.staticData.quickLinks ?? true });
   const menuInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.menuButton)?.staticData.menuButton === "inset" });
   const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
+  const settingsButton = useRouterState({ select: (s) => s.matches.some((m) => m.staticData?.settingsButton) });
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
   const { data: session } = authClient.useSession();
@@ -183,8 +182,9 @@ export function HubShell() {
             <Menu className="size-5" />
           </button>
         </FocusItem>
-        {/* Settings from anywhere (runs and battles too): a dialog, under the menu button. Signed in only. */}
-        {session && (
+        {/* Settings during a run (the map, stages, battles): a dialog, under the menu button. Elsewhere it's the round
+            shortcut at the top right. */}
+        {session && settingsButton && (
           <FocusItem>
             <button
               type="button"
@@ -253,21 +253,24 @@ function Sidebar({ open }: { open: boolean }) {
         </>
       )}
 
-      {/* The original single-page camp, tucked away while the hub grows. */}
-      <FocusItem>
-        <Link to="/legacy/camp" className="mt-auto flex items-center gap-2 px-3 text-xs text-[#c8d0ff]/70 hover:text-white">
-          <Undo2 className="size-3.5" />
-          Legacy camp
-        </Link>
-      </FocusItem>
+      {/* The footer: pushed to the bottom. */}
+      <div className="mt-auto" />
       {session ? (
-        <div className="flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2">
-          <Avatar image={session.user.image} name={session.user.name} size={32} />
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-sm">{session.user.name}</div>
-            <div className="text-xs text-yellow-200">{profile.data ? `${profile.data.gil.toLocaleString()} gil` : ""}</div>
-          </div>
-        </div>
+        // The player card: your Profile (name, avatar, sign out, all your stats).
+        <FocusItem>
+          <Link
+            to="/profile"
+            title="Your profile and stats"
+            className="flex items-center gap-2 rounded border border-white/15 bg-black/25 p-2 hover:bg-white/10 [&.active]:border-yellow-300/60"
+          >
+            <Avatar image={session.user.image} name={playerName(session.user)} size={32} />
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm">{playerName(session.user)}</div>
+              <div className="text-xs text-yellow-200">{profile.data ? `${profile.data.gil.toLocaleString()} gil` : ""}</div>
+            </div>
+            <BarChart3 className="size-4 shrink-0 opacity-60" />
+          </Link>
+        </FocusItem>
       ) : (
         <FocusItem>
           <Link to="/login" className="ff-panel ff-lift flex items-center justify-center gap-2 px-3 py-2 text-base">
@@ -317,9 +320,10 @@ function QuickLinks() {
         <span className="ff-chip">{cp} CP</span>
       </div>
       <div className="flex flex-col gap-2">
-        <RoundLink index={0} to="/items" label="Items" icon={Package} />
-        <RoundLink index={1} to="/achievements" label="Achievements" icon={Trophy} />
-        <RoundLink index={2} to="/settings" label="Settings" icon={Settings} />
+        <RoundLink index={0} to="/party" label="Party" icon={Users} />
+        <RoundLink index={1} to="/shops/supplies" label="Supplies" icon={ShoppingBag} />
+        <RoundLink index={2} to="/shops/gear" label="Gear catalog" icon={Shield} />
+        <RoundLink index={3} to="/settings" label="Settings" icon={Settings} />
       </div>
     </div>
   );

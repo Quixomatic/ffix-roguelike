@@ -1,4 +1,5 @@
 import { appRouter } from "@ffix-roguelike/api/routers/index";
+import { socialProviders } from "@ffix-roguelike/auth";
 import { seedFf9 } from "@ffix-roguelike/db/seed-ff9";
 import { seedRewards } from "@ffix-roguelike/db/seed-rewards";
 import { trpcServer } from "@hono/trpc-server";
@@ -23,6 +24,9 @@ app.use(
     credentials: true,
   }),
 );
+
+// The social sign-in providers this server has (their id and secret set): the login page shows a button for each.
+app.get("/api/auth-providers", (c) => c.json({ providers: Object.keys(socialProviders(ENV)) }));
 
 app.on(["POST", "GET"], "/api/auth/*", async (c) => auth.handler(c.req.raw));
 

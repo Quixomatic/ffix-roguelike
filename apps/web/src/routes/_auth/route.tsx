@@ -4,13 +4,10 @@ import { getSessionRetrying } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_auth")({
   component: AuthLayout,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const session = await getSessionRetrying();
-    if (!session.data) {
-      throw redirect({
-        to: "/login",
-      });
-    }
+    // Back to this page once signed in.
+    if (!session.data) throw redirect({ to: "/login", search: { redirect: location.href } });
     return { session };
   },
 });

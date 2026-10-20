@@ -102,7 +102,8 @@ export function AvatarPanel() {
 /** A user's picture, or their initial on a tile when they have none. */
 export function Avatar({ image, name, size = 24 }: { image?: string | null; name?: string; size?: number }) {
   const style = { width: size, height: size };
-  if (image) return <img src={image} alt="" style={style} className="shrink-0 rounded object-cover" />;
+  // No referrer: Google's avatar host (lh3.googleusercontent.com, from Google sign-ups) refuses requests that carry one.
+  if (image) return <img src={image} alt="" referrerPolicy="no-referrer" style={style} className="shrink-0 rounded object-cover" />;
   return (
     <span
       style={{ ...style, fontSize: size * 0.5 }}

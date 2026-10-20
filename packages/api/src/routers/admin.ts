@@ -384,10 +384,11 @@ export const adminRouter = router({
   /** Every player with a profile (for the metrics browser). */
   players: adminProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db.playerProfile.findMany({
-      select: { id: true, runs: true, user: { select: { name: true, email: true } } },
+      select: { id: true, runs: true, user: { select: { name: true, displayUsername: true, username: true, email: true } } },
       orderBy: { createdAt: "asc" },
     });
-    return rows.map((r) => ({ profileId: r.id, name: r.user.name, email: r.user.email, runs: r.runs }));
+    // Players are shown by their username.
+    return rows.map((r) => ({ profileId: r.id, name: r.user.displayUsername ?? r.user.username ?? r.user.name, email: r.user.email, runs: r.runs }));
   }),
   /** One player's lifetime metrics and recruited characters. */
   playerMetrics: adminProcedure.input(z.object({ profileId: z.string().max(40) })).query(async ({ ctx, input }) => {

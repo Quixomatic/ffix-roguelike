@@ -80,12 +80,14 @@ export async function metricLeaderboard(
   }
   const profiles = await db.playerProfile.findMany({
     where: { id: { in: rows.map((r) => r.profileId) } },
-    select: { id: true, user: { select: { name: true, email: true, image: true } } },
+    select: { id: true, user: { select: { name: true, displayUsername: true, username: true, email: true, image: true } } },
   });
   const byId = new Map(profiles.map((p) => [p.id, p.user]));
   return rows.map((r, i) => {
     const u = byId.get(r.profileId);
-    return { rank: i + 1, profileId: r.profileId, name: u?.name ?? "?", email: u?.email ?? "", image: u?.image ?? null, value: r.value, character: r.character };
+    // Players are shown by their username.
+    const name = u?.displayUsername ?? u?.username ?? u?.name ?? "?";
+    return { rank: i + 1, profileId: r.profileId, name, email: u?.email ?? "", image: u?.image ?? null, value: r.value, character: r.character };
   });
 }
 

@@ -1,21 +1,15 @@
 {
   "name": "server",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "main": "src/index.ts",
-  "portless": {
-    "name": "api.ffix",
-    "script": "dev:app",
-    "proxy": true
-  },
   "scripts": {
     "build": "tsdown",
     "check-types": "tsc --noEmit",
     "check-fast": "bun check",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "portless",
-    "dev:app": "bun ../../scripts/dev-server.ts",
-    "start": "bun run dist/index.mjs",
+    "dev": "bun ../../scripts/dev-server.ts",
+    "start": "bun src/index.ts",
     "env:generate": "varlock codegen",
     "auth:generate": "varlock run -- pnpm dlx auth@latest generate --config src/services.ts --output ../../packages/db/prisma/schema/auth.prisma --yes"
   },

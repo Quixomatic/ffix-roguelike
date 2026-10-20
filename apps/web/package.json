@@ -1,15 +1,10 @@
 {
   "name": "web",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
-  "portless": {
-    "name": "ffix",
-    "script": "dev:app"
-  },
   "scripts": {
-    "dev": "portless",
-    "dev:app": "vite dev",
+    "dev": "vite dev",
     "build": "vite build",
     "serve": "vite preview",
     "start": "vite",
