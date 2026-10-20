@@ -1,4 +1,4 @@
-import { achievements, availableJourneys, gearCatalog, JOURNEYS } from "@ffix-roguelike/game-core";
+import { achievements, availableJourneys, gearCatalog, JOURNEYS, routeOf } from "@ffix-roguelike/game-core";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
@@ -72,7 +72,7 @@ export function PlayHub() {
           lines={[
             next ? (
               <>
-                Next: <span className="text-yellow-200">{next.name}</span>
+                Next: <span className="text-yellow-200">{routeOf(next.id).name}</span>
               </>
             ) : (
               "Every journey cleared"

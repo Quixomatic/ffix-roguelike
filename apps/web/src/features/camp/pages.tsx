@@ -1,4 +1,3 @@
-import { achievements } from "@ffix-roguelike/game-core";
 import { getCharacter } from "@ffix-roguelike/game-data";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -12,7 +11,7 @@ import { FocusItem, stableFocusKey } from "@/features/input/focus";
 import { GearCatalogGrid } from "./gear-catalog";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 import { Breadcrumbs, CAMP } from "./breadcrumbs";
-import { PageTitle } from "./story";
+import { PageTitle, RouteSections } from "./story";
 
 /** The Party page: the whole roster as cards; recruited ones open their own page. */
 export function PartyPage() {
@@ -104,18 +103,20 @@ export function ShopPage({ shop }: { shop: "supplies" | "gear" }) {
   );
 }
 
-/** The Challenges page: the challenge achievements as goals, and the modes still to come. */
+/**
+ * The Challenges page: the hidden-boss journeys and challenge runs (Boss Gauntlet…) to play, and the modes still to
+ * come. What they pay is on the Achievements page.
+ */
 export function ChallengesPage() {
   const profile = useQuery(trpc.profile.get.queryOptions());
   if (!profile.data) return <div className="p-6">Loading…</div>;
-  const done = new Set(profile.data.achievements ?? []);
-  const challenges = achievements().filter((a) => a.category === "challenge");
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Challenges" }]} title="Challenges" sub="Harder ways to play, and what they pay." />
-      <div className="grid gap-3 md:grid-cols-3">
+      <RouteSections profile={profile.data} categories={["hidden", "challenge"]} />
+      <div className="ff-title px-1 text-base">Coming soon</div>
+      <div className="grid gap-3 md:grid-cols-2">
         {[
-          { title: "Boss Gauntlet", text: "Every story boss back to back, no maps in between." },
           { title: "Solo runs", text: "Clear a late-game journey with one character." },
           { title: "Higher tiers", text: "Tougher monsters and better loot, per journey." },
         ].map((m) => (
@@ -123,18 +124,6 @@ export function ChallengesPage() {
             <span className="ff-display text-xl">{m.title}</span>
             <span className="text-sm text-[#c8d0ff]">{m.text}</span>
             <span className="mt-2 text-xs text-pink-200">Coming soon</span>
-          </div>
-        ))}
-      </div>
-      <div className="ff-title px-1 text-base">Challenge goals</div>
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {challenges.map((a) => (
-          <div key={a.id} className={`ff-panel flex flex-col gap-0.5 p-3 ${done.has(a.id) ? "" : "opacity-80"}`}>
-            <div className="flex items-baseline justify-between gap-2">
-              <span className="text-base">{a.name}</span>
-              {done.has(a.id) && <PixelIcon name="check" label="Done" />}
-            </div>
-            <span className="text-xs text-[#c8d0ff]">{a.description}</span>
           </div>
         ))}
       </div>

@@ -1,1 +1,109 @@
-[]
+[
+  {
+    "id": "g-queens-war",
+    "name": "The Queen's War",
+    "subtitle": "Cleyra falls, the princess is taken, and the way out runs under the mountains.",
+    "journeys": ["cleyra", "return-to-alexandria", "fossil-roo"],
+    "sort": 1,
+    "enabled": true
+  },
+  {
+    "id": "g-outer-continent",
+    "name": "The Outer Continent",
+    "subtitle": "Conde Petie, Madain Sari, and the roots of the Mist.",
+    "journeys": ["outer-continent", "madain-sari", "iifa-tree"],
+    "sort": 2,
+    "enabled": true
+  },
+  {
+    "id": "g-after-the-fall",
+    "name": "After the Fall",
+    "subtitle": "Alexandria under siege, then the Forgotten Continent.",
+    "journeys": ["alexandria-besieged", "oeilvert", "desert-palace"],
+    "sort": 3,
+    "enabled": true
+  },
+  {
+    "id": "g-way-to-terra",
+    "name": "The Way to Terra",
+    "subtitle": "Mount Gulug, the four shrines, and another world.",
+    "journeys": ["mount-gulug", "ipsens-castle", "terra"],
+    "sort": 4,
+    "enabled": true
+  },
+  {
+    "id": "g-final-battle",
+    "name": "The Final Battle",
+    "subtitle": "Memoria, and the end of all things.",
+    "journeys": ["memoria", "crystal-world"],
+    "sort": 5,
+    "enabled": true
+  },
+  {
+    "id": "c-disc-1",
+    "name": "Disc 1",
+    "subtitle": "Alexandria to the fall of Burmecia, in one run.",
+    "category": "challenge",
+    "journeys": ["evil-forest", "ice-cavern", "dali", "lindblum", "gizamaluke", "burmecia"],
+    "sort": 1,
+    "enabled": true
+  },
+  {
+    "id": "c-disc-2",
+    "name": "Disc 2",
+    "subtitle": "Treno to Alexandria besieged, in one run.",
+    "category": "challenge",
+    "journeys": ["treno", "cleyra", "return-to-alexandria", "fossil-roo", "outer-continent", "madain-sari", "iifa-tree", "alexandria-besieged"],
+    "sort": 2,
+    "enabled": true
+  },
+  {
+    "id": "c-disc-3",
+    "name": "Disc 3",
+    "subtitle": "Oeilvert to the Earth Shrine, in one run.",
+    "category": "challenge",
+    "journeys": ["oeilvert", "desert-palace", "mount-gulug", "ipsens-castle"],
+    "sort": 3,
+    "enabled": true
+  },
+  {
+    "id": "c-disc-4",
+    "name": "Disc 4",
+    "subtitle": "Terra to the end of all things, in one run.",
+    "category": "challenge",
+    "journeys": ["terra", "memoria", "crystal-world"],
+    "sort": 4,
+    "enabled": true
+  },
+  {
+    "id": "c-whole-story",
+    "name": "The Whole Story",
+    "subtitle": "Every journey, from Alexandria to the Crystal World, in one run.",
+    "category": "challenge",
+    "journeys": [
+      "evil-forest",
+      "ice-cavern",
+      "dali",
+      "lindblum",
+      "gizamaluke",
+      "burmecia",
+      "treno",
+      "cleyra",
+      "return-to-alexandria",
+      "fossil-roo",
+      "outer-continent",
+      "madain-sari",
+      "iifa-tree",
+      "alexandria-besieged",
+      "oeilvert",
+      "desert-palace",
+      "mount-gulug",
+      "ipsens-castle",
+      "terra",
+      "memoria",
+      "crystal-world"
+    ],
+    "sort": 5,
+    "enabled": true
+  }
+]

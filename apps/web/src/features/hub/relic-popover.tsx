@@ -12,10 +12,10 @@ import { effectText, synergyChipStyle, synergyColor } from "./relic-text";
 type Side = "top" | "right" | "bottom" | "left";
 
 /**
- * The FF popover shell shared by relics and synergies (the items' look): hover, or reach it with the cursor. `cursor`
- * false: hover only, for badges inside something that's already a cursor stop (a character card).
+ * The FF popover shell shared by relics, synergies and the Story page's maps (the items' look): hover, or reach it
+ * with the cursor. `cursor` false: hover only, for things inside something that's already a cursor stop (a card).
  */
-function Pop({ side, cursor = true, children, content }: { side: Side; cursor?: boolean; children: ReactElement; content: ReactNode }) {
+export function Pop({ side, cursor = true, children, content }: { side: Side; cursor?: boolean; children: ReactElement; content: ReactNode }) {
   const trigger = <HoverCardTrigger delay={250} closeDelay={50} render={children} />;
   return (
     <HoverCard>

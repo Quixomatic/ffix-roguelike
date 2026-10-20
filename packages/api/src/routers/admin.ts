@@ -5,7 +5,7 @@
  * files (development servers only) so tuning can be committed.
  */
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
-import { JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
+import { checkJourneyGroups, JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
 import {
   ACHIEVEMENT_CATEGORIES,
   BADGE_COUNT,
@@ -20,6 +20,7 @@ import {
   REWARD_SOURCES,
   ROLE_STATS,
   STATUSES,
+  type JourneyGroupData,
 } from "@ffix-roguelike/game-data";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -106,6 +107,15 @@ export const starterInput = z.object({
 });
 
 const bad = (message: string) => new TRPCError({ code: "BAD_REQUEST", message });
+
+/** A story journey grouping as the admin page saves it (its order and enabled are set on save). */
+const journeyGroupInput = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/).max(60),
+  name: z.string().min(1).max(80),
+  subtitle: z.string().max(200).optional(),
+  journeys: z.array(z.string()).min(2).max(8),
+  notes: z.string().max(500).optional(),
+});
 
 // ── relics, synergies, character tags (`.plans/relics-and-synergies.md` phase 5) ──
 const scope = z
@@ -225,6 +235,21 @@ export const adminRouter = router({
   }),
   deleteBoon: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
     await ctx.db.rewardBoon.delete({ where: { id: input.id } });
+    return reloadRewardContent(ctx.db);
+  }),
+  /**
+   * Replace every story journey grouping (`.plans/journey-groups.md`) with this list; challenge groupings stay. Checked
+   * against the grouping rules first. Runs in progress keep the route they started with.
+   */
+  saveJourneyGroups: adminProcedure.input(z.array(journeyGroupInput).max(40)).mutation(async ({ ctx, input }) => {
+    const challenges = (await ctx.db.journeyGroup.findMany()).map((r) => r.data as unknown as JourneyGroupData).filter((g) => g.category === "challenge");
+    const groups: JourneyGroupData[] = input.map((g, i) => ({ ...g, name: g.name.trim(), sort: i + 1, enabled: true }));
+    const problems = checkJourneyGroups([...challenges, ...groups]);
+    if (problems.length) throw bad(problems.join(" · "));
+    await ctx.db.$transaction([
+      ctx.db.journeyGroup.deleteMany({ where: { id: { notIn: challenges.map((g) => g.id) } } }),
+      ...groups.map((g) => ctx.db.journeyGroup.create({ data: { id: g.id, sort: g.sort, enabled: true, data: g as object } })),
+    ]);
     return reloadRewardContent(ctx.db);
   }),
   saveGear: adminProcedure.input(gearInput).mutation(async ({ ctx, input }) => {

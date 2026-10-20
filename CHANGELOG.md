@@ -2,6 +2,58 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.3.91] - 2026-10-20
+
+Journey groupings, steps 3–4 (`.plans/journey-groups.md`): groupings are playable from the Story page, managed on an admin tab, and seeded. Hidden bosses and challenges move to the Challenges page, which gains the disc runs and The Whole Story.
+
+### Added
+- **Story groupings in the seed** (`journey-groups.json`), each played as one run:
+
+  | Grouping | Journeys | Maps |
+  |---|---|---|
+  | The Queen's War | 8 Cleyra → 9 Return to Alexandria → 10 Fossil Roo | 9 |
+  | The Outer Continent | 11 The Outer Continent → 12 Madain Sari → 13 The Iifa Tree | 9 |
+  | After the Fall | 14 Alexandria Besieged → 15 Oeilvert → 16 The Desert Palace | 9 |
+  | The Way to Terra | 17 Mount Gulug → 18 Ipsen's Castle and the Shrines → 19 Terra | 10 |
+  | The Final Battle | 20 Memoria → 21 The Crystal World | 7 |
+
+  Journeys 1–7 (the core party's recruits) stay on their own.
+- **Challenge runs** (challenge groupings, each opening once every journey in it is cleared):
+
+  | Challenge | Journeys | Maps |
+  |---|---|---|
+  | Disc 1 | 1–6 | 18 |
+  | Disc 2 | 7–14 | 24 |
+  | Disc 3 | 15–18 | 12 |
+  | Disc 4 | 19–21 | 11 |
+  | The Whole Story | 1–21 | 65 |
+
+  The run starts at the party's own start levels.
+- **Admin → Rewards & gear → Journey groupings** (the first tab):
+  - **Layout:** the story line one journey per row, with a **Join / Split here** toggle between neighbours wherever the unlock chain allows.
+  - **Groups:** a joined group is boxed, with its name and subtitle and its journey and map counts.
+  - **Saving:** problems (checked against the grouping rules) show in red. **Save** replaces every story grouping in one transaction (`admin.saveJourneyGroups`) and leaves challenge groupings alone. Runs in progress keep their route.
+- **Map track** (Story cards and the embark page):
+  - **Nodes:** each map of the run is a node, joined like the run's round track. A node shows its number in the run (a grouping's count runs on across its journeys); the map that ends a journey shows a red castle; nodes turn green once their journey is cleared.
+  - **Popover:** hover a node for the usual FF popover: the map's name and subtitle, "Map 5 of 9 · journey · Tier", its boss ("Final boss" on a journey's last map), elites and monsters.
+  - **Embark page:** one track per journey, labelled, and the nodes are cursor stops there.
+  - The popover shell is now shared (`Pop` in `relic-popover.tsx`).
+
+### Changed
+- **Story page cards:**
+  - **A grouping is one card:** its name and "One run · N maps · subtitle", with Play at the right. Its journeys sit as sections side by side underneath, divided by the window's own borders, each with its recruit (or number), title, subtitle and map track. Longer runs wrap at three sections a row.
+  - **Single journeys:** the green status column is gone. A plain right-hand aside holds a **Play** button, and "Cleared: Normal" / "Not cleared yet" are gone.
+  - **Locked cards** show everything (names, routes, bosses, recruits) under the padlock: no more "???".
+- **The Challenges page** lists the hidden-boss journeys and the challenge runs (shared `RouteSections`); the Story page keeps the story and the side journey. The "Challenge goals" list is gone: it repeated the challenge achievements. The embark page's breadcrumb leads back to Challenges for them.
+- **Elsewhere:**
+  - The embark page plays a route (a journey or a grouping), with the run's whole map count and final boss.
+  - The Play hub names the grouping when the next journey is in one.
+  - The Items page counts every map a playable grouping reaches.
+
+### Notes
+- Restart `pnpm dev`: the groupings are in the dev database (`sync-seeds` / `db:seed:rewards --reset journeyGroups`).
+- Still to come: an achievement toast; achievements for the challenge runs; shorter maps for long challenge runs.
+
 ## [0.3.90] - 2026-10-20
 
 ### Changed

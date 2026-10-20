@@ -1,4 +1,4 @@
-import { achievements, availableJourneys, getJourney, JOURNEYS, rewardItemIds, WORLDS, type Profile } from "@ffix-roguelike/game-core";
+import { achievements, availableRoutes, getRoute, JOURNEYS, rewardItemIds, WORLDS, type Profile } from "@ffix-roguelike/game-core";
 import { characters, gearAvailability, synthesis, type ItemData } from "@ffix-roguelike/game-data";
 
 /**
@@ -11,14 +11,17 @@ export type ItemStatus =
   | { open: true; kind: "consumable" | "pool" | "unlocked" | "starter"; label: string }
   | { open: false; kind: "journey" | "catalog" | "legendary" | "nowhere"; label: string };
 
+/** The areas the player can reach: every map of every journey or journey grouping they can start. */
+const playableAreas = (profile: Profile) => new Set(availableRoutes(profile).flatMap((id) => getRoute(id).areas));
+
 /** Every item's status for one player, worked out once (the playable areas are shared). */
 export function itemStatuses(items: readonly ItemData[], profile: Profile | null): Map<number, ItemStatus> {
-  const playable = profile ? new Set(availableJourneys(profile).flatMap((id) => getJourney(id).areas)) : null;
+  const playable = profile ? playableAreas(profile) : null;
   return new Map(items.map((i) => [i.id, itemStatus(i, profile, playable)]));
 }
 
-/** `playable`: the areas on journeys the player has unlocked (null = all — signed out). */
-export function itemStatus(item: ItemData, profile: Profile | null, playable: Set<string> | null = profile ? new Set(availableJourneys(profile).flatMap((id) => getJourney(id).areas)) : null): ItemStatus {
+/** `playable`: the areas on journeys the player can play (null = all — signed out). */
+export function itemStatus(item: ItemData, profile: Profile | null, playable: Set<string> | null = profile ? playableAreas(profile) : null): ItemStatus {
   if (item.kind === "item") return { open: true, kind: "consumable", label: "Shops and drops" };
   if ((profile?.gearUnlocked ?? []).includes(item.id)) return { open: true, kind: "unlocked", label: "Unlocked" };
   const a = gearAvailability(item.id);
