@@ -39,6 +39,7 @@ import {
   type SynthesisRecipe,
 } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
+import { loadContent } from "@ffix-roguelike/db/content";
 
 export interface Ff9Content {
   game: GameData;
@@ -101,7 +102,7 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges, settings] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, content, settings] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
@@ -112,14 +113,11 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       db.relic.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.synergy.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.characterTag.findMany({ orderBy: { character: "asc" }, select: { character: true, tags: true } }),
-      db.journeyGroup.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
-      db.area.findMany({ orderBy: { index: "asc" }, select: { index: true, enabled: true, data: true } }),
-      db.journey.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
-      db.challengeCategory.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
-      db.challenge.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
+      // Areas, journeys, groupings and challenges: columns + join rows, assembled into game-data's rows.
+      loadContent(db),
       db.gameSetting.findMany({ select: { key: true, value: true } }),
     ]);
-    if (!gear.length || !rarities.length || !areas.length || !journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
+    if (!gear.length || !rarities.length || !content.areas.length || !content.journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
       rarities: rows<RewardRarity>(rarities),
       roles: rows<RewardRole>(roles),
@@ -131,12 +129,11 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       relics: rows<RelicData>(relics),
       synergies: rows<SynergyData>(synergies),
       characterTags,
-      journeyGroups: rows<JourneyGroupData>(journeyGroups),
-      // The columns win over copies in `data` (the number, order and switch are set by column on the admin page).
-      areas: areas.map((r) => ({ ...(r.data as unknown as AreaData), index: r.index, enabled: r.enabled })),
-      journeys: journeys.map((r) => ({ ...(r.data as unknown as JourneyData), sort: r.sort, enabled: r.enabled })),
-      challengeCategories: challengeCategories.map((r) => ({ ...(r.data as unknown as ChallengeCategoryData), sort: r.sort, enabled: r.enabled })),
-      challenges: challenges.map((r) => ({ ...(r.data as unknown as ChallengeData), sort: r.sort, enabled: r.enabled })),
+      journeyGroups: content.journeyGroups as unknown as JourneyGroupData[],
+      areas: content.areas as unknown as AreaData[],
+      journeys: content.journeys as unknown as JourneyData[],
+      challengeCategories: content.challengeCategories as unknown as ChallengeCategoryData[],
+      challenges: content.challenges as unknown as ChallengeData[],
       // Game settings: read once here (and after admin edits), then served from memory.
       settings: settings.map((r) => ({ key: r.key, value: r.value as GameSettingData["value"] })),
     };

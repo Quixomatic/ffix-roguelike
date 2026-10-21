@@ -115,25 +115,87 @@ model CharacterTag {
 /// A journey grouping (.plans/journey-groups.md): 2+ journeys played as one run, their maps end to end. Journeys
 /// not in one have no row and play on their own. Set on the admin page. `data` is game-data's JourneyGroupData.
 model JourneyGroup {
-  id        String   @id
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id          String               @id
+  sort        Int
+  enabled     Boolean              @default(true)
+  name        String               @default("")
+  subtitle    String?
+  /// Only played through a challenge that points at it (not on the Story page).
+  isChallenge Boolean              @default(false)
+  notes       String?
+  /// Anything left that isn't a column (normally `{}`; content.ts moves known fields into columns on boot).
+  data        Json
+  members     JourneyGroupMember[]
+  challenges  Challenge[]
+  updatedAt   DateTime             @updatedAt
 
   @@map("journey_group")
+}
+
+/// A journey in a grouping, at its position (0 = first).
+model JourneyGroupMember {
+  groupId   String
+  group     JourneyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  position  Int
+  journeyId String
+  journey   Journey      @relation(fields: [journeyId], references: [id], onDelete: Restrict)
+
+  @@id([groupId, position])
+  @@index([journeyId])
+  @@map("journey_group_member")
 }
 
 /// An area: one overworld map — its look, fights, boss, shops and map shape (game-data `AreaData`).
 /// `index` is the area's permanent number (saved runs hold it); a new area takes the next free one, never a reused one.
 model Area {
-  id        String   @id
-  index     Int      @unique
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id             String          @id
+  index          Int             @unique
+  enabled        Boolean         @default(true)
+  name           String          @default("")
+  subtitle       String          @default("")
+  /// Progression tier, 0–5.
+  tier           Int             @default(0)
+  /// The look (a map theme id).
+  theme          String          @default("grassland")
+  /// Highest FF9 synthesis shop (32–39) available here.
+  synthTier      Int             @default(32)
+  /// Gear price band rewards are drawn from.
+  gearPriceLow   Int             @default(0)
+  gearPriceHigh  Int             @default(0)
+  notes          String?
+  /// Nested config: encounters, elites, semiBoss, boss (enemy ids / FF9 scenes), mapShape, shops, itemStores.
+  data           Json
+  journeyAreas   JourneyArea[]
+  challengeAreas ChallengeArea[]
+  updatedAt      DateTime        @updatedAt
 
   @@map("area")
+}
+
+/// An area a journey visits, at its position (0 = first map).
+model JourneyArea {
+  journeyId String
+  journey   Journey @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  position  Int
+  areaId    String
+  area      Area    @relation(fields: [areaId], references: [id], onDelete: Restrict)
+
+  @@id([journeyId, position])
+  @@index([areaId])
+  @@map("journey_area")
+}
+
+/// An area a challenge with its own maps visits, at its position.
+model ChallengeArea {
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  position    Int
+  areaId      String
+  area        Area      @relation(fields: [areaId], references: [id], onDelete: Restrict)
+
+  @@id([challengeId, position])
+  @@index([areaId])
+  @@map("challenge_area")
 }
 
 /// A game setting: one balance number (or list / map) of our design, by key (game-data `SETTINGS` defines each one's
@@ -148,34 +210,64 @@ model GameSetting {
 
 /// A section of the Challenges page — side journeys, hidden bosses… (game-data `ChallengeCategoryData`).
 model ChallengeCategory {
-  id        String   @id
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id          String      @id
+  sort        Int
+  enabled     Boolean     @default(true)
+  name        String      @default("")
+  description String?
+  /// Anything left that isn't a column (normally `{}`).
+  data        Json
+  challenges  Challenge[]
+  updatedAt   DateTime    @updatedAt
 
   @@map("challenge_category")
 }
 
-/// A challenge: its own maps, a journey grouping or a journey, with what opens it and its rules
-/// (game-data `ChallengeData`).
+/// A challenge: its own maps (`areas`), a journey grouping (`groupId`) or a journey (`journeyId`), with what opens it
+/// and its rules (game-data `ChallengeData`).
 model Challenge {
-  id        String   @id
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id         String             @id
+  sort       Int
+  enabled    Boolean            @default(true)
+  name       String             @default("")
+  subtitle   String             @default("")
+  categoryId String?
+  category   ChallengeCategory? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  /// "areas" | "group" | "journey".
+  routeKind  String             @default("areas")
+  groupId    String?
+  group      JourneyGroup?      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  journeyId  String?
+  journey    Journey?           @relation(fields: [journeyId], references: [id], onDelete: Restrict)
+  notes      String?
+  /// Nested config: `unlock` (cleared ids / allJourneys / achievement) and `rules` (minStartLevel, maxParty).
+  data       Json
+  areas      ChallengeArea[]
+  updatedAt  DateTime           @updatedAt
 
   @@map("challenge")
 }
 
 /// A story journey: an ordered list of areas played as a run, its unlock chain and recruits (game-data `JourneyData`).
 model Journey {
-  id        String   @id
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id            String               @id
+  sort          Int
+  enabled       Boolean              @default(true)
+  name          String               @default("")
+  subtitle      String               @default("")
+  /// The journey that must be cleared first (none: open from the start).
+  unlockAfterId String?
+  unlockAfter   Journey?             @relation("JourneyUnlock", fields: [unlockAfterId], references: [id], onDelete: SetNull)
+  unlocks       Journey[]            @relation("JourneyUnlock")
+  /// Characters who join the roster on its first clear.
+  recruits      String[]             @default([])
+  notes         String?
+  /// Anything left that isn't a column (normally `{}`).
+  data          Json
+  areas         JourneyArea[]
+  groupMembers  JourneyGroupMember[]
+  challenges    Challenge[]
+  updatedAt     DateTime             @updatedAt
 
   @@map("journey")
 }

@@ -2,6 +2,36 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.12] - 2026-10-21
+
+Content in the database, step 5 (`.plans/content-db.md`): the content tables get real columns, foreign keys and join tables instead of everything in one JSON blob. Nothing plays differently.
+
+### Changed
+- **Columns for single values:**
+  - **area:** name, subtitle, tier, theme, synthesis tier, gear price low / high, notes;
+  - **journey:** name, subtitle, recruits, notes;
+  - **journey_group:** name, subtitle, "challenge only", notes;
+  - **challenge_category:** name, description;
+  - **challenge:** name, subtitle, route kind, notes.
+- **Foreign keys for references:** a journey's unlock (`unlockAfterId` → journey), a challenge's category (→ challenge_category), grouping (→ journey_group) and journey (→ journey). The database refuses a reference to a row that doesn't exist.
+- **Join tables for lists, each ordered by position:**
+  - `journey_area` (a journey's maps);
+  - `journey_group_member` (a grouping's journeys);
+  - `challenge_area` (a one-off challenge's maps).
+
+  An area or journey still in use can't be deleted.
+- **`data` keeps only nested config:** an area's encounter groups, elites, boss, map shape and shop lists; a challenge's unlock and rules.
+- **Existing databases convert themselves:** on boot the seed moves each row's fields out of `data` into its columns and join rows (`packages/db/src/content.ts` `normalizeContent`), once per row. The dev database is converted (65 journey maps, 56 grouping members, 15 challenge maps), and every row assembled back matches its seed file exactly (`sync-seeds`: 0 differ).
+- **One loader:** `loadContent` reads the tables back as the rows the game uses, for the server, the admin export and `sync-seeds`. The admin groupings save writes columns and members (`writeJourneyGroup`).
+
+### Fixed
+- `probe-areas` accepts challenges and groupings, as well as journeys and areas, and lists one-off challenges among an area's routes.
+
+### Notes
+- Migration `content_columns` (new columns with defaults, new tables). Restart `pnpm dev`.
+- Not yet: the reward tables' references (relic rarity and unlocking achievement, gear map pools as a join table), and a themes table.
+- Game-core: 186 pass, 0 fail.
+
 ## [0.4.11] - 2026-10-21
 
 ### Fixed

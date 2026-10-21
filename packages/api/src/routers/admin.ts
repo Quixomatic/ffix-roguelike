@@ -4,6 +4,7 @@
  * drop pool and catalog use it. `preview` rolls sample offers; `exportSeeds` writes the tables back to the seed
  * files (development servers only) so tuning can be committed.
  */
+import { loadContent, writeJourneyGroup } from "@ffix-roguelike/db/content";
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
 import { checkJourneyGroups, JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
 import {
@@ -265,14 +266,15 @@ export const adminRouter = router({
    * against the grouping rules first. Runs in progress keep the route they started with.
    */
   saveJourneyGroups: adminProcedure.input(z.array(journeyGroupInput).max(40)).mutation(async ({ ctx, input }) => {
-    const challenges = (await ctx.db.journeyGroup.findMany()).map((r) => r.data as unknown as JourneyGroupData).filter((g) => g.category === "challenge");
+    const challenges = ((await loadContent(ctx.db)).journeyGroups as unknown as JourneyGroupData[]).filter((g) => g.category === "challenge");
     const groups: JourneyGroupData[] = input.map((g, i) => ({ ...g, name: g.name.trim(), sort: i + 1, enabled: true }));
     const problems = checkJourneyGroups([...challenges, ...groups]);
     if (problems.length) throw bad(problems.join(" · "));
-    await ctx.db.$transaction([
-      ctx.db.journeyGroup.deleteMany({ where: { id: { notIn: challenges.map((g) => g.id) } } }),
-      ...groups.map((g) => ctx.db.journeyGroup.create({ data: { id: g.id, sort: g.sort, enabled: true, data: g as object } })),
-    ]);
+    await ctx.db.$transaction(async (tx) => {
+      // Story groupings are replaced wholesale (members go with them); challenge groupings stay.
+      await tx.journeyGroup.deleteMany({ where: { isChallenge: false, id: { notIn: groups.map((g) => g.id) } } });
+      for (const g of groups) await writeJourneyGroup(tx, g);
+    });
     return reloadRewardContent(ctx.db);
   }),
   saveGear: adminProcedure.input(gearInput).mutation(async ({ ctx, input }) => {

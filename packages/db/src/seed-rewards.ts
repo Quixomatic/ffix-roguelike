@@ -12,7 +12,13 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadContent, normalizeContent } from "./content";
 import type { Database } from "./index";
+
+/** Tables whose rows are columns + join rows (`content.ts`): compared and exported as the rows `loadContent` builds. */
+const CONTENT_TABLES = ["areas", "journeys", "journeyGroups", "challengeCategories", "challenges"] as const;
+type ContentTable = (typeof CONTENT_TABLES)[number];
+const isContentTable = (t: string): t is ContentTable => (CONTENT_TABLES as readonly string[]).includes(t);
 
 export const REWARD_SEED_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "seed", "rewards");
 const FILES = {
@@ -140,6 +146,9 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     db.challenge.createMany({ data: rec("challenges", challenges), skipDuplicates: true }),
     db.gameSetting.createMany({ data: rec("settings", settings), skipDuplicates: true }),
   ]);
+  // Content rows inserted just now (or from before step 5) keep everything in `data`: move it into their columns
+  // and join rows (`content.ts`).
+  await normalizeContent(db);
   // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
   // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
   const badgeMap = achievementBadges(achievements);
@@ -240,7 +249,11 @@ export async function syncRewardRows(db: Database, table: Table, tokens: string[
   const m = model(db, table);
   const existing = await m.findMany({ where: { [spec.key]: { in: wanted.map((w) => w[spec.key]) } } });
   const byKey = new Map(existing.map((e) => [String(e[spec.key]), e]));
+  // Content tables: compare against the rows assembled from columns + join rows, the seed files' own shape.
+  const loaded = isContentTable(table) ? new Map(((await loadContent(db))[table] as Row[]).map((r) => [String(r.id), r])) : null;
+  const diff = (a: Row, b: Row) => [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((f) => stable(a[f]) !== stable(b[f])).sort();
   const out: SyncRow[] = [];
+  let wrote = false;
   for (const w of wanted) {
     const key = String(w[spec.key]);
     const have = byKey.get(key);
@@ -249,16 +262,18 @@ export async function syncRewardRows(db: Database, table: Table, tokens: string[
     if (have) {
       if (table === "characterTags") changed = stable(have.tags) === stable(w.tags) ? [] : ["tags"];
       else if (table === "settings") changed = stable(have.value) === stable(w.value) ? [] : ["value"];
-      else {
-        const a = (have.data ?? {}) as Row;
-        const b = w.data as Row;
-        changed = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((f) => stable(a[f]) !== stable(b[f])).sort();
-      }
+      else if (loaded) changed = diff(loaded.get(key) ?? {}, w.data as Row);
+      else changed = diff((have.data ?? {}) as Row, w.data as Row);
     }
     const action: SyncAction = !have ? "insert" : changed.length ? "overwrite" : "same";
     out.push({ key, label, action, changed });
-    if (apply && action !== "same") await m.upsert({ where: { [spec.key]: w[spec.key] }, create: w, update: w });
+    if (apply && action !== "same") {
+      await m.upsert({ where: { [spec.key]: w[spec.key] }, create: w, update: w });
+      wrote = true;
+    }
   }
+  // A content row written with everything in `data` goes to its columns and join rows.
+  if (wrote && loaded) await normalizeContent(db);
   return out;
 }
 
@@ -288,6 +303,7 @@ export async function resetRewardTable(db: Database, table: Table): Promise<numb
 
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
+  const content = loadContent(db);
   const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges, settings] = await Promise.all([
     db.rewardRarity.findMany({ orderBy: { sort: "asc" } }),
     db.rewardRole.findMany({ orderBy: { key: "asc" } }),
@@ -299,15 +315,16 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
     db.relic.findMany({ orderBy: { sort: "asc" } }),
     db.synergy.findMany({ orderBy: { id: "asc" } }),
     db.characterTag.findMany({ orderBy: { character: "asc" } }),
-    db.journeyGroup.findMany({ orderBy: { sort: "asc" } }),
-    db.area.findMany({ orderBy: { index: "asc" } }),
-    db.journey.findMany({ orderBy: { sort: "asc" } }),
-    db.challengeCategory.findMany({ orderBy: { sort: "asc" } }),
-    db.challenge.findMany({ orderBy: { sort: "asc" } }),
+    // Content tables: columns + join rows assembled back into the seed files' flat rows.
+    content.then((c) => c.journeyGroups.map((data) => ({ data }))),
+    content.then((c) => c.areas.map((data) => ({ data }))),
+    content.then((c) => c.journeys.map((data) => ({ data }))),
+    content.then((c) => c.challengeCategories.map((data) => ({ data }))),
+    content.then((c) => c.challenges.map((data) => ({ data }))),
     db.gameSetting.findMany({ orderBy: { key: "asc" } }),
   ]);
   writeFileSync(join(REWARD_SEED_DIR, FILES.settings), `${JSON.stringify(settings.map((r) => ({ key: r.key, value: r.value })), null, 2)}\n`);
-  const write =(f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
+  const write = (f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
   write(FILES.rarities, rarities);
   write(FILES.roles, roles);
   write(FILES.sources, sources);

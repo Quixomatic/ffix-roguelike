@@ -23,10 +23,13 @@ import { join } from "node:path";
 import {
   autoCommand,
   BattleEngine,
+  challengeRoutes,
   createBattle,
   encounterUnits,
+  getRoute,
   getScene,
   isGear,
+  isRoute,
   isSceneRef,
   JOURNEYS,
   MAX_TICKS,
@@ -71,12 +74,14 @@ const ids = args.filter((a) => !a.startsWith("--"));
 await ensureFf9Content(db);
 // Also the areas and journeys (WORLDS / JOURNEYS are filled from these tables).
 await ensureRewardContent(db);
+// Any area, or any route (a journey, grouping or challenge) for all of its maps.
 for (const id of ids)
-  if (!WORLDS.some((w) => w.id === id) && !JOURNEYS.some((j) => j.id === id)) {
-    console.error(`Unknown area or journey: ${id}`);
+  if (!WORLDS.some((w) => w.id === id) && !isRoute(id)) {
+    console.error(`Unknown area, journey, grouping or challenge: ${id}`);
     process.exit(1);
   }
-const areas = ids.length ? WORLDS.filter((w) => ids.includes(w.id) || JOURNEYS.some((j) => ids.includes(j.id) && j.areas.includes(w.id))) : WORLDS;
+const routeAreas = new Set(ids.filter(isRoute).flatMap((id) => getRoute(id).areas));
+const areas = ids.length ? WORLDS.filter((w) => ids.includes(w.id) || routeAreas.has(w.id)) : WORLDS;
 const gear = items.filter(isGear);
 const seededGear = JSON.parse(readFileSync(join(REWARD_CACHE_DIR, REWARD_SEED_FILES.gear), "utf8")) as GearAvailability[];
 
@@ -119,7 +124,8 @@ function playFight(group: string[]): string | null {
 const origWarn = console.warn;
 console.warn = () => {}; // the VM's notes about unsupported story opcodes
 for (const w of areas) {
-  const journeys = JOURNEYS.filter((j) => j.areas.includes(w.id)).map((j) => j.name);
+  // Journeys and one-off challenges (their own maps) that visit it.
+  const journeys = [...JOURNEYS, ...challengeRoutes().filter((r) => !r.grouped)].filter((j) => j.areas.includes(w.id)).map((j) => j.name);
   console.log(c.h(`${w.name} (${w.id})`) + c.dim(`  tier ${w.tier} · ${w.theme} · ${journeys.join(", ") || "no journey"}`));
 
   // Music
