@@ -65,7 +65,13 @@ export interface Profile {
   /** Journey groupings won at least once (content/journey-groups.ts; challenge achievements). */
   groupsCleared?: string[];
   stats: ProfileStats;
-  /** Highest difficulty tier the player may start (wins unlock the next). */
+  /**
+   * The best tier won on each journey, challenge and grouping (route id → tier, 0 = Normal). Normal is always open;
+   * tier n+1 opens on a route once tier n is won on it (`routeTiersOpen`). A journey cleared inside a grouping or
+   * challenge run counts too, at the run's tier.
+   */
+  routeTiers?: Record<string, number>;
+  /** Before tiers per route: the highest tier the player could start anywhere. Only read to carry old profiles over. */
   maxTier: number;
   /** Earned achievement ids (meta/achievements.ts). */
   achievements?: string[];
@@ -131,8 +137,37 @@ export function newProfile(): Profile {
     gearUnlocked: [],
     journeysCleared: [],
     groupsCleared: [],
+    routeTiers: {},
     maxTier: 0,
   };
+}
+
+/** The best tier won on a route (-1: never won / cleared). */
+export const bestRouteTier = (p: Pick<Profile, "routeTiers">, routeId: string): number => p.routeTiers?.[routeId] ?? -1;
+
+/** The tiers a route can be started at: Normal, and one above the best won on it (up to MAX_TIER). */
+export function routeTiersOpen(p: Pick<Profile, "routeTiers">, routeId: string): number[] {
+  const top = Math.min(MAX_TIER, bestRouteTier(p, routeId) + 1);
+  return Array.from({ length: top + 1 }, (_, i) => i);
+}
+
+/** Record a tier won on a route (keeps the best). Returns true when it's a new best. */
+function recordRouteTier(p: Profile, routeId: string, tier: number): boolean {
+  if (tier <= bestRouteTier(p, routeId)) return false;
+  p.routeTiers = { ...(p.routeTiers ?? {}), [routeId]: tier };
+  return true;
+}
+
+/**
+ * Tiers for a profile from before tiers were per route: every journey, challenge or grouping it has cleared counts as
+ * won at the tier below its old account-wide top, so each keeps exactly the tiers it could start before.
+ */
+export function carryOverRouteTiers(p: Profile): Profile {
+  if (p.routeTiers && Object.keys(p.routeTiers).length) return p;
+  const best = Math.max(0, p.maxTier - 1);
+  const routeTiers: Record<string, number> = {};
+  for (const id of [...(p.journeysCleared ?? []), ...(p.groupsCleared ?? [])]) routeTiers[id] = best;
+  return { ...p, routeTiers };
 }
 
 export class ProfileError extends Error {}
@@ -141,6 +176,7 @@ export class ProfileError extends Error {}
 export interface RunReport {
   profile: Profile;
   newlyUnlocked: string[];
+  /** The tier this run opened on the route it played (won at a new best tier), if any. */
   tierUnlocked: number | null;
   /** Completion Points earned per character this run. */
   points: Record<string, number>;
@@ -213,14 +249,17 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
   // Every journey whose final boss the run beat counts as cleared, won or lost (a grouping's run that falls in its
   // third journey keeps the first two).
   const journeysCleared = recordJourneyClears(p, outcome.cleared, outcome.builds.map((b) => b.key));
+  // Tiers per route: every journey the run cleared counts at its tier (a grouping or challenge run that falls later on
+  // keeps them), and a won run's route too. Winning a route at a new best tier opens the next one on it.
+  const route = outcome.journeyGroup ?? outcome.journey;
+  const routeBest = bestRouteTier(p, route);
+  for (const j of outcome.cleared) recordRouteTier(p, j, tier);
   if (outcome.won) {
     if (outcome.journeyGroup) p.groupsCleared = [...new Set([...(p.groupsCleared ?? []), outcome.journeyGroup])];
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
-    if (tier === p.maxTier && p.maxTier < MAX_TIER) {
-      p.maxTier++;
-      tierUnlocked = p.maxTier;
-    }
+    recordRouteTier(p, route, tier);
+    if (tier > routeBest && tier < MAX_TIER) tierUnlocked = tier + 1;
   }
   const newlyUnlocked = unlockCharacters(p, journeysCleared);
   const achievements = awardAchievements(p);

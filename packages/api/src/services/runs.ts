@@ -8,6 +8,7 @@ import {
   availableRoutes,
   challengeRuleProblem,
   getRoute,
+  routeTiersOpen,
   keepWipedClears,
   bagDelta,
   mergeBags,
@@ -52,8 +53,9 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   if (current && !replace) throw new TRPCError({ code: "CONFLICT", message: "A run is already in progress" });
   if (new Set(partyKeys).size !== partyKeys.length) throw new TRPCError({ code: "BAD_REQUEST", message: "Duplicate party member" });
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
-  if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
   if (!availableRoutes(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
+  // Tiers are per route: one above the best won on it.
+  if (!routeTiersOpen(profile, journey).includes(tier)) throw new TRPCError({ code: "BAD_REQUEST", message: "That tier isn't open on this journey yet" });
   // A challenge's rules (party size, start level): a profile build's level is the character's start level.
   const ruleProblem = challengeRuleProblem(
     getRoute(journey),

@@ -8,7 +8,7 @@ import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
 import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
 import { awardAchievements } from "./achievements";
-import { applyRunOutcome, buySupplyRank, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, LEGEND_JOURNEY, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, bestRouteTier, buySupplyRank, carryOverRouteTiers, routeTiersOpen, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, LEGEND_JOURNEY, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -230,6 +230,56 @@ describe("training", () => {
     p.builds.zidane!.points = 999;
     p.builds.zidane!.training = { magic: 20 };
     expect(() => trainStat(p, "zidane", "magic")).toThrow("Fully trained");
+  });
+});
+
+describe("tiers per route", () => {
+  const winAt = (p: ReturnType<typeof newProfile>, journey: string, tier: number) => {
+    const run = startRun({ seed: `tier-${journey}-${tier}`, tier, party: [p.builds.zidane!], journey });
+    // Won: every journey but the last beaten on the way, and the run in its last journey (that one counts by winning).
+    const legs = run.legs ?? [];
+    run.cleared = legs.slice(0, -1).map((l) => l.journey);
+    run.journey = legs.at(-1)?.journey ?? run.journey;
+    run.phase = { kind: "over", won: true };
+    return applyRunOutcome(p, runOutcome(run), tier);
+  };
+
+  test("Normal is always open; winning tier n on a route opens n+1 there only", () => {
+    let p = newProfile();
+    expect(routeTiersOpen(p, "evil-forest")).toEqual([0]);
+    let r = winAt(p, "evil-forest", 0);
+    expect(r.tierUnlocked).toBe(1);
+    p = r.profile;
+    expect(bestRouteTier(p, "evil-forest")).toBe(0);
+    expect(routeTiersOpen(p, "evil-forest")).toEqual([0, 1]);
+    // Other routes are untouched.
+    expect(routeTiersOpen(p, "ice-cavern")).toEqual([0]);
+    r = winAt(p, "evil-forest", 1);
+    expect(r.tierUnlocked).toBe(2);
+    p = r.profile;
+    expect(routeTiersOpen(p, "evil-forest")).toEqual([0, 1, 2]);
+    // Winning a lower tier again opens nothing new and keeps the best.
+    r = winAt(p, "evil-forest", 0);
+    expect(r.tierUnlocked).toBeNull();
+    expect(bestRouteTier(r.profile, "evil-forest")).toBe(1);
+  });
+
+  test("a grouping or challenge run records its own route, and each journey it cleared", () => {
+    const p = newProfile();
+    const r = winAt(p, "g-queens-war", 2);
+    expect(bestRouteTier(r.profile, "g-queens-war")).toBe(2);
+    for (const j of ["cleyra", "return-to-alexandria", "fossil-roo"]) expect(bestRouteTier(r.profile, j)).toBe(2);
+    expect(r.tierUnlocked).toBe(3);
+  });
+
+  test("a profile from before tiers per route keeps every tier it could start", () => {
+    const old = { ...newProfile(), journeysCleared: ["evil-forest", "ice-cavern"], groupsCleared: ["c-disc-1"], maxTier: 3, routeTiers: {} };
+    const p = carryOverRouteTiers(old);
+    expect(routeTiersOpen(p, "evil-forest")).toEqual([0, 1, 2, 3]);
+    expect(routeTiersOpen(p, "c-disc-1")).toEqual([0, 1, 2, 3]);
+    expect(routeTiersOpen(p, "dali")).toEqual([0]);
+    // Already carried over: left alone.
+    expect(carryOverRouteTiers({ ...p, maxTier: 5 })).toEqual({ ...p, maxTier: 5 });
   });
 });
 

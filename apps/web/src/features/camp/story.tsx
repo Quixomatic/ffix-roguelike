@@ -1,5 +1,6 @@
 import {
   availableRoutes,
+  bestRouteTier,
   challengeCategories,
   challengeRoutes,
   encounterNames,
@@ -11,6 +12,7 @@ import {
   MAX_TIER,
   partySynergies,
   routes,
+  routeTiersOpen,
   runName,
   starterRelics,
   type JourneyDef,
@@ -36,21 +38,19 @@ import { FocusItem } from "@/features/input/focus";
 import { Breadcrumbs, CAMP, type Crumb } from "./breadcrumbs";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 
-type StoryProfile = { maxTier: number; journeysCleared?: string[]; groupsCleared?: string[] } & Parameters<typeof availableRoutes>[0];
+type StoryProfile = { journeysCleared?: string[]; groupsCleared?: string[]; routeTiers?: Record<string, number> } & Parameters<typeof availableRoutes>[0];
 
-/** Whether every journey of a route (a journey, or a journey grouping) has been cleared. */
-const routeCleared = (p: StoryProfile, routeId: string) => getRoute(routeId).journeys.every((j) => (p.journeysCleared ?? []).includes(j));
-
-/**
- * The tiers a route can be played at: Tier 0 always; higher ones once it's cleared (every journey in it), capped for
- * now by the account's unlocked tier, until the rules track a tier per journey.
- */
-export function journeyTiers(p: StoryProfile, routeId: string): number[] {
-  const top = routeCleared(p, routeId) ? Math.min(MAX_TIER, p.maxTier) : 0;
-  return Array.from({ length: top + 1 }, (_, i) => i);
-}
+/** The tiers a route can be played at: Normal, and one above the best won on it (game-core `routeTiersOpen`). */
+export const journeyTiers = (p: StoryProfile, routeId: string): number[] => routeTiersOpen(p, routeId);
 
 const tierLabel = (t: number) => (t === 0 ? "Normal" : `Tier ${t}`);
+
+/** "Best: Tier 2" on a card once the route has been won (nothing before). */
+function BestTier({ p, routeId }: { p: StoryProfile; routeId: string }) {
+  const best = bestRouteTier(p, routeId);
+  if (best < 0) return null;
+  return <span className="text-sm text-[#9cf0a0]">Best: {tierLabel(best)}</span>;
+}
 
 /**
  * The Story page: what can be played as a card each (a journey, or a journey grouping played as one run), with its
@@ -81,9 +81,9 @@ export function RouteSections({ profile: p, kind }: { profile: StoryProfile; kin
         <h2 className="ff-display text-xl text-[#c8d0ff]">The story</h2>
         {routes().map((r) =>
           r.grouped ? (
-            <JourneyGroupRow key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+            <JourneyGroupRow key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} best={<BestTier p={p} routeId={r.id} />} />
           ) : (
-            <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+            <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} best={<BestTier p={p} routeId={r.id} />} />
           ),
         )}
       </section>
@@ -102,9 +102,9 @@ export function RouteSections({ profile: p, kind }: { profile: StoryProfile; kin
             </div>
             {list.map((r) =>
               r.grouped ? (
-                <ChallengeRunCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+                <ChallengeRunCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} best={<BestTier p={p} routeId={r.id} />} />
               ) : (
-                <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+                <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} best={<BestTier p={p} routeId={r.id} />} />
               ),
             )}
           </section>
@@ -156,7 +156,7 @@ function LockedCard({ className, why, children }: { className: string; why: stri
  * per journey (its number, green once cleared; hover for its maps and boss), and Play. The full route is on the embark
  * page.
  */
-function ChallengeRunCard({ route: r, unlocked, cleared }: { route: RouteDef; unlocked: boolean; cleared: string[] }) {
+function ChallengeRunCard({ route: r, unlocked, cleared, best }: { route: RouteDef; unlocked: boolean; cleared: string[]; best?: ReactNode }) {
   const journeys = r.journeys.map(getJourney);
   const numbers = journeys.map(journeyNumber).filter((n) => n != null);
   const range = numbers.length ? (numbers.length === 1 ? numbers[0]! : `${numbers[0]}–${numbers.at(-1)}`) : null;
@@ -171,7 +171,7 @@ function ChallengeRunCard({ route: r, unlocked, cleared }: { route: RouteDef; un
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 py-1">
         <div className="flex flex-wrap items-baseline gap-x-3">
           <span className="ff-display text-2xl">{r.name}</span>
-          {won && <span className="text-sm text-[#9cf0a0]">Won</span>}
+          {best}
         </div>
         <div className="text-sm text-[#c8d0ff]">
           One run · {journeys.length} journeys · {r.areas.length} maps · Final boss: {encounterNames(lastArea.boss).join(" & ")}
@@ -319,10 +319,9 @@ function MapTrack({ journey, start = 0, total, cleared, cursor = false }: { jour
  * subtitle) over its journeys as sections side by side, the window's own border above and between them, and the
  * status / Choose column down the right like a journey card's. The whole card opens the grouping's embark page.
  */
-function JourneyGroupRow({ route: r, unlocked, cleared }: { route: RouteDef; unlocked: boolean; cleared: string[] }) {
+function JourneyGroupRow({ route: r, unlocked, cleared, best }: { route: RouteDef; unlocked: boolean; cleared: string[]; best?: ReactNode }) {
   const journeys = r.journeys.map(getJourney);
-  const first = journeys[0]!;
-  // Three sections a row at most; longer runs (the disc challenges, The Whole Story) wrap.
+  // Three sections a row at most; longer runs wrap.
   const cols = Math.min(3, journeys.length);
   const body = (
     <>
@@ -333,6 +332,7 @@ function JourneyGroupRow({ route: r, unlocked, cleared }: { route: RouteDef; unl
           <span className="text-sm text-[#c8d0ff]">
             One run · {r.areas.length} maps{r.subtitle ? ` · ${r.subtitle}` : ""}
           </span>
+          {best}
         </div>
         {unlocked && <PlayButton />}
       </div>
@@ -436,7 +436,7 @@ const JOURNEY_ROW = "flex min-h-28 items-stretch gap-4 p-3 pr-0";
  * number), then its name, subtitle and map track, and Play on the right. The whole card opens the embark page (with
  * the cards' lift); locked ones are plain.
  */
-function JourneyCard({ route: r, unlocked, cleared: clearedIds }: { route: RouteDef; unlocked: boolean; cleared: string[] }) {
+function JourneyCard({ route: r, unlocked, cleared: clearedIds, best }: { route: RouteDef; unlocked: boolean; cleared: string[]; best?: ReactNode }) {
   const journeys = r.journeys.map(getJourney);
   const first = journeys[0]!;
   // A grouping's number is its journeys' range ("9–10"); its name is the grouping's.
@@ -470,6 +470,7 @@ function JourneyCard({ route: r, unlocked, cleared: clearedIds }: { route: Route
         <div className="flex flex-wrap items-baseline gap-x-3">
           <span className="ff-display text-2xl">{number ? `${number} · ${title}` : title}</span>
           {recruitLine}
+          {best}
         </div>
         <div className="text-sm text-[#c8d0ff]">{r.subtitle}</div>
         <MapTrack journey={first} total={r.areas.length} cleared={done === r.journeys.length} />

@@ -2,6 +2,25 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.9] - 2026-10-21
+
+Content in the database, step 3 (`.plans/content-db.md`): difficulty tiers are per journey and per challenge, not account-wide.
+
+### Changed
+- **Tiers open per route.** Normal is always open; winning tier n on a journey, challenge or grouping opens tier n+1 **on that route only** (game-core `routeTiersOpen`, `bestRouteTier`). The account-wide `maxTier` no longer gates anything.
+  - A grouping or challenge run records its own route's tier, and every journey it cleared on the way at the run's tier, won or lost.
+  - The server refuses a tier that isn't open on the route ("That tier isn't open on this journey yet").
+- **Your progress carries over:** a profile from before gets its tiers from its clears (`carryOverRouteTiers`). Every journey, challenge or grouping it had cleared counts as won at its old top tier minus one, so it keeps every tier it could start.
+- **Cards show the best tier won** ("Best: Normal", "Best: Tier 2") next to the name, on the Story and Challenges pages. The embark page's tier picker offers the route's open tiers.
+- **The run-over screen** says "Tier 2 opened for Cleyra!" (was "Difficulty Tier 2 unlocked!").
+
+### Added
+- **`player_route_tier`** table: one row per player and route (journey, challenge or grouping id) with the best tier won, indexed for later leaderboards. Migrations `route_tiers` and `player_route_tiers`.
+- Tests (`meta/profile.test.ts`): tiers open per route only; re-winning a lower tier keeps the best; a grouping run records its route and each journey; old profiles carry over. Game-core: 178 pass, 0 fail.
+
+### Notes
+- Restart `pnpm dev`.
+
 ## [0.4.8] - 2026-10-21
 
 Content in the database, step 2 (`.plans/content-db.md`): challenges get their own tables, in categories, and the Challenges page is built from them.

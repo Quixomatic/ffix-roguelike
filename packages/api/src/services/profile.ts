@@ -2,7 +2,7 @@
  * Maps the relational player tables to game-core's `Profile` and back. game-core owns the rules; this module
  * only loads, creates and persists.
  */
-import { bagKey, newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
+import { bagKey, carryOverRouteTiers, newProfile, type CharacterBuild, type Profile } from "@ffix-roguelike/game-core";
 import type { AbilityRef, EquipSlot } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 
@@ -13,6 +13,7 @@ const include = {
   characters: { include: { abilities: true } },
   stash: true,
   bossKills: true,
+  routeTiers: { select: { routeId: true, bestTier: true } },
   // Lifetime metrics (read-only on the profile; `services/metrics.ts` adds to them).
   metrics: { select: { character: true, key: true, subject: true, value: true } },
 } as const;
@@ -66,7 +67,8 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
   return {
     id: row.id,
     battleMode: row.battleMode,
-    profile: {
+    // A profile from before tiers per route gets them from its clears (it keeps every tier it could start).
+    profile: carryOverRouteTiers({
       gil: row.gil,
       maxTier: row.maxTier,
       achievements: row.achievements,
@@ -75,6 +77,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
       supplyRanks: (row.supplyRanks ?? {}) as Record<number, number>,
       journeysCleared: row.journeysCleared,
       groupsCleared: row.groupsCleared,
+      routeTiers: Object.fromEntries(row.routeTiers.map((t) => [t.routeId, t.bestTier])),
       unlocked: row.characters.filter((c) => c.unlocked).map((c) => c.key),
       builds,
       stash: Object.fromEntries(row.stash.filter((s) => s.count > 0).map((s) => [s.itemId, s.count])),
@@ -91,7 +94,7 @@ export async function loadProfile(db: Client, userId: string): Promise<LoadedPro
         bossKills: Object.fromEntries(row.bossKills.map((b) => [b.enemyId, b.count])),
       },
       metrics: Object.fromEntries(row.metrics.map((m) => [bagKey(m.key, m.subject, m.character), m.value])),
-    },
+    }),
   };
 }
 
@@ -146,6 +149,14 @@ export async function saveProfile(tx: Tx, profileId: string, p: Profile) {
       groupsCleared: p.groupsCleared ?? [],
     },
   });
+  // Best tier per route (only ever goes up).
+  for (const [routeId, bestTier] of Object.entries(p.routeTiers ?? {})) {
+    await tx.playerRouteTier.upsert({
+      where: { profileId_routeId: { profileId, routeId } },
+      create: { profileId, routeId, bestTier },
+      update: { bestTier },
+    });
+  }
   for (const b of Object.values(p.builds)) {
     const unlocked = p.unlocked.includes(b.key);
     const row = await tx.playerCharacter.upsert({

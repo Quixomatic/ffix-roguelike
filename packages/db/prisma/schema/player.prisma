@@ -45,6 +45,7 @@ model PlayerProfile {
   characters PlayerCharacter[]
   stash      StashItem[]
   bossKills  BossKill[]
+  routeTiers PlayerRouteTier[]
   runsList   Run[]
   metrics    PlayerMetric[]
 
@@ -86,4 +87,20 @@ model BossKill {
 
   @@unique([profileId, enemyId])
   @@map("boss_kill")
+}
+
+/// The best tier a player has won on a route: a story journey, a challenge or a grouping (game-core `routeTiers`).
+/// Tier n+1 opens on that route once tier n is won.
+model PlayerRouteTier {
+  profileId String
+  profile   PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// A journey, challenge or grouping id.
+  routeId   String
+  /// 0 = Normal.
+  bestTier  Int
+  updatedAt DateTime      @updatedAt
+
+  @@id([profileId, routeId])
+  @@index([routeId, bestTier])
+  @@map("player_route_tier")
 }

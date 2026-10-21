@@ -1,4 +1,4 @@
-import { achievement, bagValue, eventById, getArea, getJourney, JOURNEYS, metricDef, rewardItemIds, runAreas, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
+import { achievement, bagValue, eventById, getArea, getJourney, JOURNEYS, metricDef, rewardItemIds, runAreas, runName, sellPrice, WORLDS, type RunPhase, type RunState } from "@ffix-roguelike/game-core";
 import { abilityName, findItem, getCharacter, synthesis } from "@ffix-roguelike/game-data";
 import { Link } from "@tanstack/react-router";
 
@@ -321,7 +321,11 @@ export function RunOverPanel({ run, report }: { run: RunState; report: RunReport
               <HeroSprite heroKey={k} size={40} /> {name(k)} joined your roster!
             </div>
           ))}
-          {report.tierUnlocked != null && <div className="text-pink-200">Difficulty Tier {report.tierUnlocked} unlocked!</div>}
+          {report.tierUnlocked != null && (
+            <div className="text-pink-200">
+              Tier {report.tierUnlocked} opened for {runName(run)}!
+            </div>
+          )}
         </div>
       )}
 
