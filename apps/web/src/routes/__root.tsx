@@ -88,7 +88,8 @@ function RootComponent() {
             </AssetGate>
           </main>
         </div>
-        <Toaster richColors />
+        {/* Top-centre: the bottom-right is the ad's (and the run's party), the top-right the round shortcuts. */}
+        <Toaster richColors position="top-center" />
       </ThemeProvider>
     </>
   );

@@ -9,6 +9,7 @@ import type { ComponentType } from "react";
 
 import { MemoriaBackdrop } from "@/components/memoria-backdrop";
 import { PixelIcon } from "@/components/pixel-icon";
+import { AdSlot, adsShown } from "@/features/ads/ad-slot";
 import { MUSIC_SLOTS, useMusic } from "@/features/audio/music";
 import { DEFAULT_FOCUS, FocusItem, FocusSection } from "@/features/input/focus";
 import { CONTENT_FOCUS, MENU_BUTTON_FOCUS, MENU_EVENT, PAGE_FOCUS, quickFocus, SIDEBAR_FOCUS } from "@/features/input/nav";
@@ -107,6 +108,20 @@ function useSidebarOpen(): [boolean, () => void] {
   return [open, toggle];
 }
 
+/** Screens at least this wide get the corner ad (1080p and up); smaller ones don't, so it never crowds the pages. */
+const CORNER_AD_QUERY = "(min-width: 1600px)";
+
+function useWideScreen(): boolean {
+  const [wide, setWide] = useState(() => window.matchMedia(CORNER_AD_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(CORNER_AD_QUERY);
+    const on = () => setWide(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return wide;
+}
+
 export function HubShell() {
   // The page's music, backdrop and shortcuts come from its route (staticData): the title screen has its own music, the
   // run plays its own (null) and hides the shortcuts; the rest are camp.
@@ -121,6 +136,9 @@ export function HubShell() {
   const menuInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.menuButton)?.staticData.menuButton === "inset" });
   const topInset = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.topInset != null)?.staticData.topInset ?? true });
   const settingsButton = useRouterState({ select: (s) => s.matches.some((m) => m.staticData?.settingsButton) });
+  const adSpot = useRouterState({ select: (s) => s.matches.findLast((m) => m.staticData?.ad !== undefined)?.staticData.ad ?? "corner" });
+  const wideScreen = useWideScreen();
+  const cornerAd = adSpot === "corner" && wideScreen && adsShown();
   useMusic(music ? MUSIC_SLOTS[music] : undefined);
   const [open, toggle] = useSidebarOpen();
   const { data: session } = authClient.useSession();
@@ -199,6 +217,9 @@ export function HubShell() {
         )}
         {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
         {quickLinks && <QuickLinks />}
+        {/* The ad: bottom-right on every hub page but the landing page (250×250), a fresh one per page; hidden on
+            smaller screens. */}
+        {cornerAd && <AdSlot key={path} width={250} height={250} className="absolute bottom-3 right-3 z-20" />}
         {/* The content is its own section: arriving on a page lands on its first item, not the menu button. */}
         <FocusSection focusKey={CONTENT_FOCUS} preferredChild={landOn}>
           <div className="h-full min-h-0 overflow-y-auto" data-scroll-restoration-id="hub-main">

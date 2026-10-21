@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_hub/_member/admin/practice")({
   validateSearch: searchSchema,
   // In the hub layout, like the run: it plays its own battle music, keeps the shortcut stack off the field and fills
   // the window (the menu button floats in the corner).
-  staticData: { breadcrumb: "Practice Battle", music: null, quickLinks: false, topInset: false },
+  staticData: { breadcrumb: "Practice Battle", music: null, quickLinks: false, topInset: false, ad: false },
   component: BattleRoute,
 });
 

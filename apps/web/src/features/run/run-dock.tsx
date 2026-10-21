@@ -68,7 +68,7 @@ export function RunDock({
     <FocusSection key={tab} focusKey="run-dock" autoFocus>
       <div
         data-run-panel
-        className={`ff-window absolute bottom-3 top-3 z-30 flex w-80 flex-col gap-2 overflow-y-auto p-3 ${besideParty ? "right-[18.5rem]" : "right-3"}`}
+        className={`ff-window absolute bottom-3 top-3 z-30 flex w-80 flex-col gap-2 overflow-y-auto p-3 ${besideParty ? "right-[20.25rem]" : "right-3"}`}
       >
         <div className="flex items-center gap-1">
           <ButtonHint action="l1" />

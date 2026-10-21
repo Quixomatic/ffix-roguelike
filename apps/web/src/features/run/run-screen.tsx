@@ -115,14 +115,14 @@ export function RunScreen() {
     />
     {/* Fills the window with an even 1rem margin (the hub's menu button floats inside the game frame's top-left corner).
         The map / stage fills it; the party floats over its right edge, or sits in its own column beside it ("docked"). */}
-    <div className={`grid h-svh min-h-0 gap-3 p-4 ${floating ? "" : "lg:grid-cols-[1fr_17rem]"}`}>
+    <div className={`grid h-svh min-h-0 gap-3 p-4 ${floating ? "" : "lg:grid-cols-[1fr_18.75rem]"}`}>
       <main className="ff-frame relative min-h-[60vh] overflow-hidden">
         {phase.kind === "map" ? (
           <div className="absolute inset-0">
             <Overworld
               run={run}
-              // The floating sidebar (17rem + its 0.75rem margin) covers the map's right edge.
-              insetRight={floating ? 17.75 * REM : 0}
+              // The floating sidebar (18.75rem, the ad's 300px, + its 0.75rem margin) covers the map's right edge.
+              insetRight={floating ? 19.5 * REM : 0}
               busy={actions.move.isPending}
               onMove={(nodeId) => actions.move.mutate({ nodeId })}
               onAction={(a) => {
@@ -136,7 +136,7 @@ export function RunScreen() {
           // Each stage's screen is its own cursor section (inside the hub's page section — its own key, never "page"):
           // arriving on it puts the cursor on its first item.
           <FocusSection key={`${run.world}-${run.position}-${phase.kind}`} focusKey="run-stage" autoFocus>
-          <div className={`absolute inset-0 overflow-y-auto p-3 pt-14 ${floating ? "pr-[18.5rem]" : ""}`}>
+          <div className={`absolute inset-0 overflow-y-auto p-3 pt-14 ${floating ? "pr-[20.25rem]" : ""}`}>
             {/* pt-14: room for the menu button floating in the frame's corner. */}
             {phase.kind === "rewards" && <RewardsPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "treasure" && <TreasurePanel run={run} phase={phase} actions={actions} />}
@@ -151,7 +151,7 @@ export function RunScreen() {
           </FocusSection>
         )}
         <RunDock run={run} actions={actions} canManage={canManage} tab={dock} onTab={setDock} besideParty={floating} />
-        {floating && <PartySidebar {...partyProps} className="absolute bottom-3 right-3 top-3 z-20 w-[17rem]" />}
+        {floating && <PartySidebar {...partyProps} className="absolute bottom-3 right-3 top-3 z-20 w-[18.75rem]" />}
       </main>
       {!floating && <PartySidebar {...partyProps} />}
       {managing && canManage && (

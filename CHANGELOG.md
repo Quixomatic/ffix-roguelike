@@ -2,6 +2,31 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.6] - 2026-10-21
+
+Ads (Google AdSense), ready to switch on once the AdSense account exists. The plan and the research behind it are in `.plans/ads.md`.
+
+### Added
+- **Ads on every page but the home page** (`features/ads/ad-slot.tsx`), for all players:
+  - **Hub pages:** a 250×250 ad in the bottom-right corner, a fresh one per page. It shows only on screens at least 1600px wide (1080p and up), so it never crowds smaller screens (`CORNER_AD_QUERY` in `shell.tsx`).
+  - **Runs:** at the bottom of the party sidebar. It only takes the room left under the cards, which keep their size, and shows the largest ad that fits (300×250, 300×100 or 300×50), or none. A new map brings a fresh ad: AdSense allows no timed refresh.
+  - **No ads on:** the home page, sign-in, and the full-window admin pages (Practice, Effects). Route flag `staticData.ad`: "corner" (default), "page" (the page places its own, like the run) or false.
+- **Loading:** AdSense's script loads only when the first ad shows, at an idle moment, so the home page never pays for it.
+- **Switches** (remembered for the tab): `?noads` hides ads; `?adpreview=1` / `=0` shows or hides a placeholder box where ads go. Development builds without an AdSense id show the placeholder.
+- **Env (web, all optional):**
+  - `VITE_ADS_ENABLED`: ads only show when it's `true`; unset or `false` turns every ad and placeholder off.
+  - `VITE_ADSENSE_CLIENT` (`ca-pub-…`) and `VITE_ADSENSE_SLOT` (a display ad unit; the page sets each ad's size).
+- **The build** adds AdSense's site-verification tag (`google-adsense-account`) to every page and writes `ads.txt`, both from `VITE_ADSENSE_CLIENT`, whether ads are on or off.
+
+### Changed
+- **The run's party sidebar is 300px wide** (was 272px), so a standard ad fits; the map, stage screens and bag panel make room for it.
+- **Notifications show at the top-center** (were bottom-right, where the ad sits).
+
+### Notes
+- Production (Vercel, web, Production environment only): `VITE_ADS_ENABLED=true`, `VITE_ADSENSE_CLIENT`, `VITE_ADSENSE_SLOT`, then redeploy. In AdSense, turn on Privacy & messaging's EEA/UK consent message.
+- Restart `pnpm dev` (env schema changed); add `VITE_ADS_ENABLED=true` to `apps/web/.env` to see the placeholders.
+- `.refs/pokelike` (the pokelike_v2 fork) and `.refs/pokelike-live/index.html` (the live page's ad setup) for reference.
+
 ## [0.4.5] - 2026-10-20
 
 ### Added

@@ -4,6 +4,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ffix-roguelike/u
 import { ChevronsDownUp, ChevronsUpDown, PanelRight, PanelRightDashed } from "lucide-react";
 import { useState } from "react";
 
+import { FitAdSlot } from "@/features/ads/ad-slot";
 import { ItemIcon } from "@/features/items/item-icon";
 import { HeroSprite } from "@/features/sprites/hero-sprite";
 import { ButtonHint } from "@/features/input/button-hint";
@@ -142,6 +143,9 @@ export function PartySidebar({
           </button>
         </FocusItem>
       )}
+      {/* The ad, in the room left at the bottom (the cards keep their size): a fresh one on each new map (AdSense
+          allows no timed refresh). */}
+      <FitAdSlot adKey={run.stage} />
     </aside>
   );
 }

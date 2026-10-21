@@ -20,6 +20,9 @@ declare module "@tanstack/react-router" {
     backdropDim?: number;
     /** Hub pages: the floating ⚙ (Settings dialog) under the menu button (the run; elsewhere Settings is in the sidebar). */
     settingsButton?: boolean;
+    /** Hub pages: where the ad sits — "corner" (default, bottom-right), "page" (the page places its own, like the
+     *  run's party sidebar) or false (none: the landing page, sign-in, full-window admin tools). */
+    ad?: "corner" | "page" | false;
   }
 }
 

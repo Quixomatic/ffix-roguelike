@@ -87,6 +87,29 @@ function dropPackedAssets(): Plugin {
   };
 }
 
+/**
+ * AdSense, from `VITE_ADSENSE_CLIENT` (ca-pub-…): the `google-adsense-account` meta tag on every page (AdSense's site
+ * verification; the ads script itself only loads off the landing page, `features/ads/ad-slot.tsx`) and the build's
+ * `ads.txt`. Without it, neither.
+ */
+function adsense(): Plugin {
+  let client = "";
+  return {
+    name: "adsense",
+    configResolved(config) {
+      client = config.env.VITE_ADSENSE_CLIENT ?? process.env.VITE_ADSENSE_CLIENT ?? "";
+    },
+    transformIndexHtml() {
+      return client ? [{ tag: "meta", attrs: { name: "google-adsense-account", content: client }, injectTo: "head" }] : [];
+    },
+    generateBundle() {
+      if (!client) return;
+      const pub = client.replace(/^ca-/, "");
+      this.emitFile({ type: "asset", fileName: "ads.txt", source: `google.com, ${pub}, DIRECT, f08c47fec0942fa0\n` });
+    },
+  };
+}
+
 export default defineConfig({
   server: {
     port: 3001,
@@ -104,5 +127,6 @@ export default defineConfig({
     react(),
     ffrkRawEffects(),
     dropPackedAssets(),
+    adsense(),
   ],
 });

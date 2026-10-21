@@ -9,7 +9,7 @@ import { safeRedirect } from "@/lib/safe-redirect";
  * sign-in guard sent you from; signed in already (or once signed in), you go there, else home.
  */
 export const Route = createFileRoute("/_hub/login")({
-  staticData: { music: "title", backdropDim: 0.2, quickLinks: false },
+  staticData: { music: "title", backdropDim: 0.2, quickLinks: false, ad: false },
   validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
     redirect: typeof search.redirect === "string" ? search.redirect : undefined,
   }),
