@@ -123,3 +123,26 @@ model JourneyGroup {
 
   @@map("journey_group")
 }
+
+/// An area: one overworld map — its look, fights, boss, shops and map shape (game-data `AreaData`).
+/// `index` is the area's permanent number (saved runs hold it); a new area takes the next free one, never a reused one.
+model Area {
+  id        String   @id
+  index     Int      @unique
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("area")
+}
+
+/// A journey: an ordered list of areas played as a run, its unlock chain and recruits (game-data `JourneyData`).
+model Journey {
+  id        String   @id
+  sort      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("journey")
+}

@@ -9,7 +9,8 @@ import { trpc } from "@/utils/trpc";
 import { Field, SaveButton, Text, useSaved } from "./admin-fields";
 
 /** The story line, in order: the journeys groupings are made from. */
-const STORY = JOURNEYS.filter((j) => j.category === "story");
+// A function, not a constant: JOURNEYS fills in when the content tables load, after this module does.
+const storyJourneys = () => JOURNEYS.filter((j) => j.category === "story");
 
 /** A journey's title without its number ("9 · Return to Alexandria" → "Return to Alexandria"). */
 const title = (j: JourneyDef) => (j.name.includes(" · ") ? j.name.split(" · ").slice(1).join(" · ") : j.name);
@@ -32,9 +33,10 @@ export function JourneyGroupsTab({ tables }: { tables: RewardTables }) {
   const save = useMutation(trpc.admin.saveJourneyGroups.mutationOptions(useSaved("Journey groupings")));
 
   // The story line cut into runs of joined journeys.
+  const story = storyJourneys();
   const segments = useMemo(() => {
     const out: JourneyDef[][] = [];
-    for (const j of STORY) {
+    for (const j of storyJourneys()) {
       const prev = out.at(-1)?.at(-1);
       if (prev && joined.has(prev.id)) out.at(-1)!.push(j);
       else out.push([j]);
@@ -96,7 +98,7 @@ export function JourneyGroupsTab({ tables }: { tables: RewardTables }) {
           const maps = seg.reduce((n, j) => n + j.areas.length, 0);
           return (
             <div key={first.id} className="flex flex-col">
-              {si > 0 && <JoinToggle joined={false} canJoin={STORY[STORY.indexOf(first) - 1]!.id === first.unlockAfter} onClick={() => toggle(first.unlockAfter!)} />}
+              {si > 0 && <JoinToggle joined={false} canJoin={story[story.indexOf(first) - 1]?.id === first.unlockAfter} onClick={() => toggle(first.unlockAfter!)} />}
               <div className={group ? "flex flex-col gap-2 rounded border-2 border-yellow-300/50 bg-yellow-300/5 p-3" : ""}>
                 {group && (
                   <div className="grid gap-2 sm:grid-cols-[1fr_2fr_auto] sm:items-end">

@@ -66,16 +66,17 @@ const bad = (s: string) => {
 const args = process.argv.slice(2);
 const fights = !args.includes("--no-fights");
 const ids = args.filter((a) => !a.startsWith("--"));
+
+// ── load ─────────────────────────────────────────────────────────────────────
+await ensureFf9Content(db);
+// Also the areas and journeys (WORLDS / JOURNEYS are filled from these tables).
+await ensureRewardContent(db);
 for (const id of ids)
   if (!WORLDS.some((w) => w.id === id) && !JOURNEYS.some((j) => j.id === id)) {
     console.error(`Unknown area or journey: ${id}`);
     process.exit(1);
   }
 const areas = ids.length ? WORLDS.filter((w) => ids.includes(w.id) || JOURNEYS.some((j) => ids.includes(j.id) && j.areas.includes(w.id))) : WORLDS;
-
-// ── load ─────────────────────────────────────────────────────────────────────
-await ensureFf9Content(db);
-await ensureRewardContent(db);
 const gear = items.filter(isGear);
 const seededGear = JSON.parse(readFileSync(join(REWARD_CACHE_DIR, REWARD_SEED_FILES.gear), "utf8")) as GearAvailability[];
 

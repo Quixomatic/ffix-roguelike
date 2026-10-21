@@ -6,7 +6,7 @@
  * symmetrical. Each stage links to the stages one step up and one step down in the next column (its "lanes" are one
  * apart), which makes a diamond lattice: every route branches and merges the same way, and the player picks a path
  * through it. Only what the stages *are* is random. Early stages are plain battles; elites, shops and events appear
- * deeper in; the column before the castle is always Moogles (rest + mail gear home).
+ * deeper in; the column before the castle has one Moogle (rest + mail gear home) and the rest are other stages.
  */
 import { WORLDS } from "../content/worlds";
 import type { Rng } from "../rng";
@@ -68,7 +68,7 @@ export function checkMapShape(shape: readonly number[]): string | null {
 export const mapShapeOf = (world: number): readonly number[] => WORLDS[world]?.mapShape ?? MAP_SHAPE;
 
 /** What a stage is, by how far along the map it is (`last` = the boss's column): the first quarter is plain fights. */
-function pickKind(rng: Rng, col: number, last: number): NodeKind {
+function pickKind(rng: Rng, col: number, last: number, { noMoogle = false } = {}): NodeKind {
   const early = Math.round(last / 4);
   const middle = Math.floor(last / 2);
   if (col <= early) return rng.weighted([
@@ -85,7 +85,7 @@ function pickKind(rng: Rng, col: number, last: number): NodeKind {
     { weight: 0.45, value: "stiltzkin" as NodeKind },
     { weight: 0.8, value: "chocobo" as NodeKind },
     { weight: 1.5, value: "event" as NodeKind },
-    { weight: col === middle ? 1.5 : 0.3, value: "moogle" as NodeKind },
+    { weight: noMoogle ? 0 : col === middle ? 1.5 : 0.3, value: "moogle" as NodeKind },
   ]);
 }
 
@@ -100,8 +100,17 @@ export function generateWorldMap(rng: Rng, world: number, shape: readonly number
     // side join it by nearest lane.
     const fortress = col === Math.floor(last / 2) && last >= 4 && !!WORLDS[world]?.semiBoss;
     const count = col === 0 || col === last || fortress ? 1 : Math.max(1, shape[col]!);
+    // The round before the castle: one Moogle (a rest before the boss), and its other stages something else, so going
+    // in unrested for one more fight, shop or event is a choice.
+    const moogleAt = col === last - 1 ? rng.int(0, count - 1) : -1;
     const nodes = Array.from({ length: count }, (_, i): MapNode => {
-      const kind: NodeKind = col === 0 ? "start" : col === last ? "boss" : fortress ? "semiboss" : col === last - 1 ? "moogle" : pickKind(rng, col, last);
+      const kind: NodeKind =
+        col === 0 ? "start"
+        : col === last ? "boss"
+        : fortress ? "semiboss"
+        : i === moogleAt ? "moogle"
+        : col === last - 1 ? pickKind(rng, col, last, { noMoogle: true })
+        : pickKind(rng, col, last);
       const lane = 2 * i - (count - 1);
       return {
         id: `w${world}c${col}r${i}`,

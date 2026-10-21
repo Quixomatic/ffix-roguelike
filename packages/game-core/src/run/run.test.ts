@@ -35,7 +35,9 @@ describe("map", () => {
       expect(reach.size).toBe(map.nodes.length);
       expect(getNode(map, map.bossId).kind).toBe("boss");
       for (const n of map.nodes) if (n.col < MAP_COLUMNS - 1) expect(n.next.length).toBeGreaterThan(0);
-      for (const n of map.nodes.filter((x) => x.col === MAP_COLUMNS - 2)) expect(n.kind).toBe("moogle");
+      // The round before the castle: exactly one Moogle, the rest something else.
+      const beforeBoss = map.nodes.filter((x) => x.col === MAP_COLUMNS - 2);
+      expect(beforeBoss.filter((n) => n.kind === "moogle").length).toBe(1);
     }
   });
 

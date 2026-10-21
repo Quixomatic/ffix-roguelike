@@ -12,7 +12,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { REWARD_CACHE_DIR, REWARD_SEED_FILES, loadGameDataCache } from "@ffix-roguelike/game-data/cache";
+import { REWARD_CACHE_DIR, REWARD_SEED_FILES, loadGameDataCache, loadRewardCache } from "@ffix-roguelike/game-data/cache";
 import type {
   AchievementCategory,
   AchievementCondition,
@@ -33,6 +33,8 @@ import { effectivePrice, isGear } from "../src/run/loot";
 import { shops } from "@ffix-roguelike/game-data";
 
 loadGameDataCache();
+// The areas (WORLDS) come from the content seed files, loaded with the other tables.
+loadRewardCache();
 
 const args = process.argv.slice(2);
 const force = args.includes("--force");

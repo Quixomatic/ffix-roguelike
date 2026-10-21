@@ -2,7 +2,7 @@ import { Separator } from "@ffix-roguelike/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ffix-roguelike/ui/components/tooltip";
-import { BarChart3, FlaskConical, Gamepad2, Gem, Home, Menu, Package, Settings, Shield, ShoppingBag, Sparkles, Sword, Trophy, Users, Wrench } from "lucide-react";
+import { BarChart3, FlaskConical, Gamepad2, Gem, Menu, Package, Settings, Shield, ShoppingBag, Sparkles, Sword, Trophy, Users, Wrench } from "lucide-react";
 import { setFocus, type NextFocusResolver } from "@noriginmedia/norigin-spatial-navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ComponentType } from "react";
@@ -30,9 +30,8 @@ type NavItem = {
   alsoOn?: string[];
 };
 
-/** Home (the title screen) and Play (everything in the game is reached from there), then the account-wide pages. */
+/** Play (everything in the game is reached from there), then the account-wide pages. The wordmark goes home. */
 const GAME_NAV: NavItem[] = [
-  { to: "/", label: "Home", icon: Home, exact: true },
   // Story, Party, the shops and Challenges are reached from Play, like a game's own menus.
   { to: "/play", label: "Play", icon: Gamepad2, alsoOn: ["/story", "/party", "/shops", "/challenges", "/run"] },
 ];

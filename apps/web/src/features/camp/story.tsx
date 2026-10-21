@@ -61,7 +61,7 @@ export function StoryPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Story" }]} title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
-      <RouteSections profile={profile.data} categories={["story", "echoes"]} />
+      <RouteSections profile={profile.data} categories={["story"]} />
     </div>
   );
 }
@@ -551,7 +551,7 @@ export function EmbarkPage({ journeyId, tier: wantedTier }: { journeyId: string;
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       {/* Hidden bosses and challenge runs are chosen on the Challenges page. */}
-      <Breadcrumbs crumbs={[CAMP, j.category === "hidden" || j.category === "challenge" ? { label: "Challenges", to: "/challenges" } : { label: "Story", to: "/story" }, { label: j.name }]} />
+      <Breadcrumbs crumbs={[CAMP, j.category !== "story" ? { label: "Challenges", to: "/challenges" } : { label: "Story", to: "/story" }, { label: j.name }]} />
       {/* The page beside a sticky sidebar (the starting relic and the party's synergies), within the page's width. */}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start">
       <div className="flex min-w-0 flex-col gap-5">

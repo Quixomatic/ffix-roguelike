@@ -1,6 +1,7 @@
 /**
  * Seed the reward and gear-availability tables (reward_rarity, reward_role, reward_source, reward_boon,
- * gear_availability, starter_upgrade, achievement, relic, synergy, character_tag, journey_group) from packages/db/seed/rewards. **Inserts missing rows only**: rows already in the database
+ * gear_availability, starter_upgrade, achievement, relic, synergy, character_tag, journey_group) and the game's
+ * content (area, journey) from packages/db/seed/rewards. **Inserts missing rows only**: rows already in the database
  * — possibly edited on the admin page — are never overwritten, so the server can run this on every startup. New
  * rows in the seed files (a new boon, a new gear piece) appear on the next start.
  *
@@ -26,6 +27,8 @@ const FILES = {
   synergies: "synergies.json",
   characterTags: "character-tags.json",
   journeyGroups: "journey-groups.json",
+  areas: "areas.json",
+  journeys: "journeys.json",
 } as const;
 
 /** First-pass badges for the seeded achievements (id → badge number); see `seedRewards`. */
@@ -55,6 +58,8 @@ const SPECS: Record<Table, { key: string; record: (r: Row) => Row }> = {
   synergies: { key: "id", record: (r) => ({ id: String(r.id), enabled: r.enabled !== false, data: data(r) }) },
   characterTags: { key: "character", record: (r) => ({ character: String(r.character), tags: (r.tags as string[]) ?? [] }) },
   journeyGroups: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
+  areas: { key: "id", record: (r) => ({ id: String(r.id), index: Number(r.index), enabled: r.enabled !== false, data: data(r) }) },
+  journeys: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
 };
 
 /** The Prisma model behind each table, loosely typed so the sync can treat them alike. */
@@ -75,6 +80,8 @@ const model = (db: Database, table: Table): Model =>
     synergies: db.synergy,
     characterTags: db.characterTag,
     journeyGroups: db.journeyGroup,
+    areas: db.area,
+    journeys: db.journey,
   })[table] as unknown as Model;
 
 /** Achievement id → badge number: achievement-badges.json, then any `badge` in achievements.json. */
@@ -87,7 +94,7 @@ function achievementBadges(achievements: Row[]): Record<string, number> {
 
 /** Returns how many rows were inserted per table. */
 export async function seedRewards(db: Database): Promise<Record<Table, number>> {
-  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups] = [
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys] = [
     read(FILES.rarities),
     read(FILES.roles),
     read(FILES.sources),
@@ -99,6 +106,8 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     read(FILES.synergies),
     read(FILES.characterTags),
     read(FILES.journeyGroups),
+    read(FILES.areas),
+    read(FILES.journeys),
   ];
   const rec = (t: Table, rows: Row[]) => rows.map(SPECS[t].record) as never;
   const results = await db.$transaction([
@@ -113,6 +122,8 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     db.synergy.createMany({ data: rec("synergies", synergies), skipDuplicates: true }),
     db.characterTag.createMany({ data: rec("characterTags", characterTags), skipDuplicates: true }),
     db.journeyGroup.createMany({ data: rec("journeyGroups", journeyGroups), skipDuplicates: true }),
+    db.area.createMany({ data: rec("areas", areas), skipDuplicates: true }),
+    db.journey.createMany({ data: rec("journeys", journeys), skipDuplicates: true }),
   ]);
   // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
   // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
@@ -160,6 +171,8 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     synergies: results[8].count,
     characterTags: results[9].count,
     journeyGroups: results[10].count,
+    areas: results[11].count,
+    journeys: results[12].count,
   };
 }
 
@@ -244,6 +257,8 @@ export async function resetRewardTable(db: Database, table: Table): Promise<numb
     synergies: () => db.synergy.deleteMany(),
     characterTags: () => db.characterTag.deleteMany(),
     journeyGroups: () => db.journeyGroup.deleteMany(),
+    areas: () => db.area.deleteMany(),
+    journeys: () => db.journey.deleteMany(),
   }[table];
   await del();
   return (await seedRewards(db))[table];
@@ -251,7 +266,7 @@ export async function resetRewardTable(db: Database, table: Table): Promise<numb
 
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
-  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups] = await Promise.all([
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys] = await Promise.all([
     db.rewardRarity.findMany({ orderBy: { sort: "asc" } }),
     db.rewardRole.findMany({ orderBy: { key: "asc" } }),
     db.rewardSource.findMany({ orderBy: { id: "asc" } }),
@@ -263,6 +278,8 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
     db.synergy.findMany({ orderBy: { id: "asc" } }),
     db.characterTag.findMany({ orderBy: { character: "asc" } }),
     db.journeyGroup.findMany({ orderBy: { sort: "asc" } }),
+    db.area.findMany({ orderBy: { index: "asc" } }),
+    db.journey.findMany({ orderBy: { sort: "asc" } }),
   ]);
   const write = (f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
   write(FILES.rarities, rarities);
@@ -275,5 +292,7 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
   write(FILES.relics, relics);
   write(FILES.synergies, synergies);
   write(FILES.journeyGroups, journeyGroups);
+  write(FILES.areas, areas);
+  write(FILES.journeys, journeys);
   writeFileSync(join(REWARD_SEED_DIR, FILES.characterTags), `${JSON.stringify(characterTags.map((r) => ({ character: r.character, tags: r.tags })), null, 2)}\n`);
 }

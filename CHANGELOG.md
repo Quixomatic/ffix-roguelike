@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.7] - 2026-10-21
+
+Content in the database, step 1 (`.plans/content-db.md`): the game's areas and journeys move out of code into Postgres, the same way the reward tables, achievements, relics and groupings did. Nothing plays differently.
+
+### Changed
+- **Areas and journeys are database tables:** `area` (80 rows) and `journey` (29 rows), seeded from `packages/db/seed/rewards/areas.json` and `journeys.json`.
+  - **Pipeline:** they use the same one as the other tables: inserted on boot when missing (edits are never overwritten), covered by `sync-seeds`, `db:seed:rewards --reset` and the admin export, and loaded into the registry with the reward tables (`content.rewards` for the web, the seed files for tests and the sim).
+  - **An area's number** (`area.index`) is a column of its own and permanent: saved runs hold it. Areas are numbered 0, 1, 2… with no gaps; a new one takes the next number.
+  - **game-core:** `WORLDS` and `JOURNEYS` are filled from the tables whenever they load (game-data `onRewardTables`), instead of being written in `content/worlds.ts`. A disabled journey drops out of `JOURNEYS` but can still be looked up for old runs and clears.
+  - **`checkContent`** (game-core): the rules the admin page will enforce. Areas numbered with no gaps, known themes, a boss and encounters; journeys with a name, areas that exist and an unlock chain that does.
+- **The round before a boss has one Moogle**, not only Moogles: its other stages are battles, shops, events and the like, so going into the boss unrested for one more stage is a choice. On the usual map the Moogle sits on one side, so plan your route to it.
+- **The side journey (Echoes of the Past) is on the Challenges page**, as its first section; its breadcrumb leads back there.
+- **Sidebar:** the Home item is gone; the wordmark at the top still goes home.
+
+### Fixed
+- `probe-areas` checked its arguments before loading the areas, and `gen-reward-seeds` and the admin groupings tab read journeys at load time; all three now wait for the content.
+
+### Notes
+- Migration `content_tables` (new tables only). Restart `pnpm dev`; the server seeds the areas and journeys on boot.
+- Tests: `content/worlds.test.ts` (the seed passes the rules; WORLDS / JOURNEYS follow the registered tables; the rules catch gaps, unknown themes, areas and unlocks). Game-core: 167 pass, 0 fail (the encounter sweep skipped as usual).
+- Next: the `challenge_category` and `challenge` tables, then tiers per journey and challenge.
+
 ## [0.4.6] - 2026-10-21
 
 Ads (Google AdSense), ready to switch on once the AdSense account exists. The plan and the research behind it are in `.plans/ads.md`.

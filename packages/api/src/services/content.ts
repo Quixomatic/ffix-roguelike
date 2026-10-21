@@ -9,6 +9,8 @@ import {
   registerGameData,
   registerRewardTables,
   type AchievementData,
+  type AreaData,
+  type JourneyData,
   type RelicData,
   type JourneyGroupData,
   type SynergyData,
@@ -96,7 +98,7 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
@@ -108,8 +110,10 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       db.synergy.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
       db.characterTag.findMany({ orderBy: { character: "asc" }, select: { character: true, tags: true } }),
       db.journeyGroup.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
+      db.area.findMany({ orderBy: { index: "asc" }, select: { index: true, enabled: true, data: true } }),
+      db.journey.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
     ]);
-    if (!gear.length || !rarities.length) throw new Error("Reward tables missing — restart the server (it seeds them on boot)");
+    if (!gear.length || !rarities.length || !areas.length || !journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
       rarities: rows<RewardRarity>(rarities),
       roles: rows<RewardRole>(roles),
@@ -122,6 +126,9 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       synergies: rows<SynergyData>(synergies),
       characterTags,
       journeyGroups: rows<JourneyGroupData>(journeyGroups),
+      // The columns win over copies in `data` (the number, order and switch are set by column on the admin page).
+      areas: areas.map((r) => ({ ...(r.data as unknown as AreaData), index: r.index, enabled: r.enabled })),
+      journeys: journeys.map((r) => ({ ...(r.data as unknown as JourneyData), sort: r.sort, enabled: r.enabled })),
     };
     registerRewardTables(tables);
     return tables;

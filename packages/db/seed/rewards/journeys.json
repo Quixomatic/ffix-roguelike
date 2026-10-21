@@ -1,0 +1,434 @@
+[
+  {
+    "id": "evil-forest",
+    "sort": 0,
+    "enabled": true,
+    "name": "1 · The Evil Forest",
+    "subtitle": "Kidnap the princess. Escape the forest.",
+    "category": "story",
+    "areas": [
+      "alexandria",
+      "alexandria-outskirts",
+      "evil-forest"
+    ],
+    "unlockAfter": null,
+    "unlocks": [
+      "vivi"
+    ]
+  },
+  {
+    "id": "ice-cavern",
+    "sort": 1,
+    "enabled": true,
+    "name": "2 · The Ice Cavern",
+    "subtitle": "Across the Mist to a frozen cave — and a black mage.",
+    "category": "story",
+    "areas": [
+      "mist-plains",
+      "ice-cavern-entrance",
+      "ice-cavern"
+    ],
+    "unlockAfter": "evil-forest",
+    "unlocks": [
+      "steiner"
+    ]
+  },
+  {
+    "id": "dali",
+    "sort": 2,
+    "enabled": true,
+    "name": "3 · Dali",
+    "subtitle": "What's being made under the windmill?",
+    "category": "story",
+    "areas": [
+      "eunorus-plains",
+      "dali-fields",
+      "dali"
+    ],
+    "unlockAfter": "ice-cavern",
+    "unlocks": [
+      "garnet"
+    ]
+  },
+  {
+    "id": "lindblum",
+    "sort": 3,
+    "enabled": true,
+    "name": "4 · Lindblum",
+    "subtitle": "The Festival of the Hunt.",
+    "category": "story",
+    "areas": [
+      "cargo-ship",
+      "lindblum-fields",
+      "festival-of-the-hunt"
+    ],
+    "unlockAfter": "dali",
+    "unlocks": [
+      "freya"
+    ]
+  },
+  {
+    "id": "gizamaluke",
+    "sort": 4,
+    "enabled": true,
+    "name": "5 · Gizamaluke's Grotto",
+    "subtitle": "Through Qu's Marsh to the road to Burmecia.",
+    "category": "story",
+    "areas": [
+      "lindblum-plateau",
+      "qus-marsh",
+      "gizamaluke-grotto"
+    ],
+    "unlockAfter": "lindblum",
+    "unlocks": [
+      "quina"
+    ]
+  },
+  {
+    "id": "burmecia",
+    "sort": 5,
+    "enabled": true,
+    "name": "6 · The Fall of Burmecia",
+    "subtitle": "Through South Gate to the kingdom of rain, and Alexandria's general.",
+    "category": "story",
+    "areas": [
+      "south-gate",
+      "burmecian-plains",
+      "burmecia"
+    ],
+    "unlockAfter": "gizamaluke",
+    "unlocks": [
+      "eiko"
+    ]
+  },
+  {
+    "id": "treno",
+    "sort": 6,
+    "enabled": true,
+    "name": "7 · Treno and the Roo",
+    "subtitle": "South to the city of thieves, its arena, and the tunnels beneath.",
+    "category": "story",
+    "areas": [
+      "southern-plains",
+      "treno",
+      "gargan-roo"
+    ],
+    "unlockAfter": "burmecia",
+    "unlocks": [
+      "amarant"
+    ]
+  },
+  {
+    "id": "cleyra",
+    "sort": 7,
+    "enabled": true,
+    "name": "8 · Cleyra",
+    "subtitle": "Up the great tree to the city in the sandstorm, and Beatrix again.",
+    "category": "story",
+    "areas": [
+      "cleyra-trunk",
+      "trunk-heights",
+      "cleyra"
+    ],
+    "unlockAfter": "treno"
+  },
+  {
+    "id": "return-to-alexandria",
+    "sort": 8,
+    "enabled": true,
+    "name": "9 · Return to Alexandria",
+    "subtitle": "Into the castle for the princess, past Beatrix and the jesters.",
+    "category": "story",
+    "areas": [
+      "alexandria-castle",
+      "castle-tower",
+      "roo-escape"
+    ],
+    "unlockAfter": "cleyra"
+  },
+  {
+    "id": "fossil-roo",
+    "sort": 9,
+    "enabled": true,
+    "name": "10 · Fossil Roo",
+    "subtitle": "Pinnacle Rocks, then the old tunnels to the Outer Continent.",
+    "category": "story",
+    "areas": [
+      "pinnacle-rocks",
+      "fossil-roo",
+      "fossil-roo-depths"
+    ],
+    "unlockAfter": "return-to-alexandria"
+  },
+  {
+    "id": "outer-continent",
+    "sort": 10,
+    "enabled": true,
+    "name": "11 · The Outer Continent",
+    "subtitle": "Across a land without Mist to the mountain of the summoners.",
+    "category": "story",
+    "areas": [
+      "outer-continent",
+      "mountain-path",
+      "mountain-summit"
+    ],
+    "unlockAfter": "fossil-roo"
+  },
+  {
+    "id": "madain-sari",
+    "sort": 11,
+    "enabled": true,
+    "name": "12 · Madain Sari",
+    "subtitle": "The black mages' hidden village, and the summoners' lost home.",
+    "category": "story",
+    "areas": [
+      "black-mage-forest",
+      "outer-wilds",
+      "madain-sari"
+    ],
+    "unlockAfter": "outer-continent"
+  },
+  {
+    "id": "iifa-tree",
+    "sort": 12,
+    "enabled": true,
+    "name": "13 · The Iifa Tree",
+    "subtitle": "Down the great tree to the source of the Mist.",
+    "category": "story",
+    "areas": [
+      "iifa-roots",
+      "iifa-depths",
+      "iifa-heart"
+    ],
+    "unlockAfter": "madain-sari"
+  },
+  {
+    "id": "alexandria-besieged",
+    "sort": 13,
+    "enabled": true,
+    "name": "14 · Alexandria Besieged",
+    "subtitle": "The queen's city under attack, and a general's last stand.",
+    "category": "story",
+    "areas": [
+      "mist-continent",
+      "alexandria-town",
+      "besieged-castle"
+    ],
+    "unlockAfter": "iifa-tree",
+    "unlocks": [
+      "beatrix"
+    ]
+  },
+  {
+    "id": "oeilvert",
+    "sort": 14,
+    "enabled": true,
+    "name": "15 · Oeilvert",
+    "subtitle": "Across the Forgotten Continent to the hall where magic fails.",
+    "category": "story",
+    "areas": [
+      "forgotten-continent",
+      "oeilvert-halls",
+      "oeilvert-depths"
+    ],
+    "unlockAfter": "alexandria-besieged"
+  },
+  {
+    "id": "desert-palace",
+    "sort": 15,
+    "enabled": true,
+    "name": "16 · The Desert Palace",
+    "subtitle": "Through the sands to Kuja's palace, and its warden.",
+    "category": "story",
+    "areas": [
+      "the-desert",
+      "desert-palace",
+      "palace-depths"
+    ],
+    "unlockAfter": "oeilvert"
+  },
+  {
+    "id": "mount-gulug",
+    "sort": 16,
+    "enabled": true,
+    "name": "17 · Mount Gulug",
+    "subtitle": "From frozen Esto Gaza down the dead volcano's well.",
+    "category": "story",
+    "areas": [
+      "esto-gaza",
+      "mount-gulug",
+      "gulug-well"
+    ],
+    "unlockAfter": "desert-palace",
+    "unlocks": [
+      "blank"
+    ]
+  },
+  {
+    "id": "ipsens-castle",
+    "sort": 17,
+    "enabled": true,
+    "name": "18 · Ipsen's Castle and the Shrines",
+    "subtitle": "The castle where everything is reversed, then the Earth Shrine.",
+    "category": "story",
+    "areas": [
+      "lost-continent",
+      "ipsens-castle",
+      "earth-shrine"
+    ],
+    "unlockAfter": "mount-gulug"
+  },
+  {
+    "id": "terra",
+    "sort": 18,
+    "enabled": true,
+    "name": "19 · Terra",
+    "subtitle": "The other world, its silent village, and the castle of its master.",
+    "category": "story",
+    "areas": [
+      "terra",
+      "bran-bal",
+      "pandemonium",
+      "pandemonium-heart"
+    ],
+    "unlockAfter": "ipsens-castle"
+  },
+  {
+    "id": "memoria",
+    "sort": 19,
+    "enabled": true,
+    "name": "20 · Memoria",
+    "subtitle": "Through the world's memories, past the four Chaos guardians.",
+    "category": "story",
+    "areas": [
+      "memoria",
+      "memoria-fire",
+      "memoria-water",
+      "memoria-wind"
+    ],
+    "unlockAfter": "terra",
+    "unlocks": [
+      "marcus"
+    ]
+  },
+  {
+    "id": "crystal-world",
+    "sort": 20,
+    "enabled": true,
+    "name": "21 · The Crystal World",
+    "subtitle": "To the source of all life, and the end of everything.",
+    "category": "story",
+    "areas": [
+      "memorias-end",
+      "the-crystal",
+      "the-end"
+    ],
+    "unlockAfter": "memoria",
+    "unlocks": [
+      "kuja"
+    ]
+  },
+  {
+    "id": "the-gourmand",
+    "sort": 21,
+    "enabled": true,
+    "name": "Qu's Marsh: The Gourmand",
+    "subtitle": "Back to the marsh, where the master of the Qu waits.",
+    "category": "hidden",
+    "areas": [
+      "marsh-at-dusk",
+      "quales-pond"
+    ],
+    "unlockAfter": "iifa-tree"
+  },
+  {
+    "id": "vile-island",
+    "sort": 22,
+    "enabled": true,
+    "name": "The Vile Island",
+    "subtitle": "A cursed isle, and the wisest monsters in the world.",
+    "category": "hidden",
+    "areas": [
+      "vile-shore",
+      "vile-heights"
+    ],
+    "unlockAfter": "mount-gulug"
+  },
+  {
+    "id": "dragons-breath",
+    "sort": 23,
+    "enabled": true,
+    "name": "Dragon's Breath",
+    "subtitle": "The plains of the Grand Dragon.",
+    "category": "hidden",
+    "areas": [
+      "dragon-plains",
+      "dragon-peak"
+    ],
+    "unlockAfter": "ipsens-castle"
+  },
+  {
+    "id": "deaths-disguise",
+    "sort": 24,
+    "enabled": true,
+    "name": "Death's Disguise",
+    "subtitle": "A hall of Memoria that wears death's face.",
+    "category": "hidden",
+    "areas": [
+      "memoria-lost-hall"
+    ],
+    "unlockAfter": "memoria"
+  },
+  {
+    "id": "air-garden",
+    "sort": 25,
+    "enabled": true,
+    "name": "Chocobo's Air Garden",
+    "subtitle": "The floating garden, and Ozma.",
+    "category": "hidden",
+    "areas": [
+      "air-garden"
+    ],
+    "unlockAfter": "crystal-world"
+  },
+  {
+    "id": "hades-workshop",
+    "sort": 26,
+    "enabled": true,
+    "name": "Hades' Workshop",
+    "subtitle": "The lord of the dead, at his forge.",
+    "category": "hidden",
+    "areas": [
+      "hades-workshop"
+    ],
+    "unlockAfter": "crystal-world"
+  },
+  {
+    "id": "boss-gauntlet",
+    "sort": 27,
+    "enabled": true,
+    "name": "The Boss Gauntlet",
+    "subtitle": "Every story boss on straight roads, ending at Necron.",
+    "category": "challenge",
+    "areas": [
+      "gauntlet-waltzes",
+      "gauntlet-guardians",
+      "gauntlet-end"
+    ],
+    "unlockAfter": "crystal-world"
+  },
+  {
+    "id": "echoes",
+    "sort": 28,
+    "enabled": true,
+    "name": "Echoes of the Past",
+    "subtitle": "Cornelia → Baron → the World of Ruin. Kefka awaits at the end.",
+    "category": "echoes",
+    "areas": [
+      "cornelia",
+      "baron",
+      "ruin"
+    ],
+    "unlockAfter": "lindblum"
+  }
+]

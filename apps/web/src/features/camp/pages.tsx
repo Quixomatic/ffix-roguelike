@@ -113,7 +113,7 @@ export function ChallengesPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Challenges" }]} title="Challenges" sub="Harder ways to play, and what they pay." />
-      <RouteSections profile={profile.data} categories={["hidden", "challenge"]} />
+      <RouteSections profile={profile.data} categories={["echoes", "hidden", "challenge"]} />
       <div className="ff-title px-1 text-base">Coming soon</div>
       <div className="grid gap-3 md:grid-cols-2">
         {[

@@ -69,6 +69,8 @@ export const REWARD_SEED_FILES = {
   synergies: "synergies.json",
   characterTags: "character-tags.json",
   journeyGroups: "journey-groups.json",
+  areas: "areas.json",
+  journeys: "journeys.json",
 } as const;
 
 export const hasRewardCache = () => Object.values(REWARD_SEED_FILES).every((f) => existsSync(join(REWARD_CACHE_DIR, f)));
@@ -88,6 +90,8 @@ export function loadRewardCache(): RewardTables {
     synergies: read(REWARD_SEED_FILES.synergies),
     characterTags: read(REWARD_SEED_FILES.characterTags),
     journeyGroups: read(REWARD_SEED_FILES.journeyGroups),
+    areas: read(REWARD_SEED_FILES.areas),
+    journeys: read(REWARD_SEED_FILES.journeys),
   };
   registerRewardTables(tables);
   return tables;
