@@ -306,8 +306,10 @@ export const adminRouter = router({
   saveAchievement: adminProcedure.input(achievementInput).mutation(async ({ ctx, input }) => {
     const c = input.condition;
     const hero = (k: string) => characters.some((ch) => ch.key === k);
-    if (c.kind === "journey" && !JOURNEYS.some((j) => j.id === c.journey)) throw bad(`Unknown journey ${c.journey}`);
-    if (c.kind === "group" && !(rewardTables().journeyGroups ?? []).some((g) => g.id === c.group)) throw bad(`Unknown journey grouping ${c.group}`);
+    const challengeIds = (rewardTables().challenges ?? []).map((x) => x.id);
+    if (c.kind === "journey" && !JOURNEYS.some((j) => j.id === c.journey) && !challengeIds.includes(c.journey)) throw bad(`Unknown journey or challenge ${c.journey}`);
+    if (c.kind === "group" && !(rewardTables().journeyGroups ?? []).some((g) => g.id === c.group) && !challengeIds.includes(c.group))
+      throw bad(`Unknown journey grouping ${c.group}`);
     if (c.kind === "heroes" && !c.heroes.every(hero)) throw bad("Unknown character in the condition");
     if ((c.kind === "solo" || c.kind === "legendClear") && !hero(c.hero)) throw bad(`Unknown character ${c.hero}`);
     if (c.kind === "metric") {

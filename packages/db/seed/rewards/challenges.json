@@ -1,0 +1,236 @@
+[
+  {
+    "id": "the-gourmand",
+    "sort": 0,
+    "enabled": true,
+    "name": "Qu's Marsh: The Gourmand",
+    "subtitle": "Back to the marsh, where the master of the Qu waits.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "marsh-at-dusk",
+        "quales-pond"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "iifa-tree"
+      ]
+    }
+  },
+  {
+    "id": "vile-island",
+    "sort": 1,
+    "enabled": true,
+    "name": "The Vile Island",
+    "subtitle": "A cursed isle, and the wisest monsters in the world.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "vile-shore",
+        "vile-heights"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "mount-gulug"
+      ]
+    }
+  },
+  {
+    "id": "dragons-breath",
+    "sort": 2,
+    "enabled": true,
+    "name": "Dragon's Breath",
+    "subtitle": "The plains of the Grand Dragon.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "dragon-plains",
+        "dragon-peak"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "ipsens-castle"
+      ]
+    }
+  },
+  {
+    "id": "deaths-disguise",
+    "sort": 3,
+    "enabled": true,
+    "name": "Death's Disguise",
+    "subtitle": "A hall of Memoria that wears death's face.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "memoria-lost-hall"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "memoria"
+      ]
+    }
+  },
+  {
+    "id": "air-garden",
+    "sort": 4,
+    "enabled": true,
+    "name": "Chocobo's Air Garden",
+    "subtitle": "The floating garden, and Ozma.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "air-garden"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "crystal-world"
+      ]
+    }
+  },
+  {
+    "id": "hades-workshop",
+    "sort": 5,
+    "enabled": true,
+    "name": "Hades' Workshop",
+    "subtitle": "The lord of the dead, at his forge.",
+    "category": "hidden",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "hades-workshop"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "crystal-world"
+      ]
+    }
+  },
+  {
+    "id": "boss-gauntlet",
+    "sort": 0,
+    "enabled": true,
+    "name": "The Boss Gauntlet",
+    "subtitle": "Every story boss on straight roads, ending at Necron.",
+    "category": "gauntlet",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "gauntlet-waltzes",
+        "gauntlet-guardians",
+        "gauntlet-end"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "crystal-world"
+      ]
+    }
+  },
+  {
+    "id": "echoes",
+    "sort": 0,
+    "enabled": true,
+    "name": "Echoes of the Past",
+    "subtitle": "Cornelia → Baron → the World of Ruin. Kefka awaits at the end.",
+    "category": "side",
+    "route": {
+      "kind": "areas",
+      "areas": [
+        "cornelia",
+        "baron",
+        "ruin"
+      ]
+    },
+    "unlock": {
+      "cleared": [
+        "lindblum"
+      ]
+    }
+  },
+  {
+    "id": "c-disc-1",
+    "sort": 0,
+    "enabled": true,
+    "name": "Disc 1",
+    "subtitle": "Alexandria to the fall of Burmecia, in one run.",
+    "category": "story-runs",
+    "route": {
+      "kind": "group",
+      "group": "c-disc-1"
+    },
+    "unlock": {
+      "allJourneys": true
+    }
+  },
+  {
+    "id": "c-disc-2",
+    "sort": 1,
+    "enabled": true,
+    "name": "Disc 2",
+    "subtitle": "Treno to Alexandria besieged, in one run.",
+    "category": "story-runs",
+    "route": {
+      "kind": "group",
+      "group": "c-disc-2"
+    },
+    "unlock": {
+      "allJourneys": true
+    }
+  },
+  {
+    "id": "c-disc-3",
+    "sort": 2,
+    "enabled": true,
+    "name": "Disc 3",
+    "subtitle": "Oeilvert to the Earth Shrine, in one run.",
+    "category": "story-runs",
+    "route": {
+      "kind": "group",
+      "group": "c-disc-3"
+    },
+    "unlock": {
+      "allJourneys": true
+    }
+  },
+  {
+    "id": "c-disc-4",
+    "sort": 3,
+    "enabled": true,
+    "name": "Disc 4",
+    "subtitle": "Terra to the end of all things, in one run.",
+    "category": "story-runs",
+    "route": {
+      "kind": "group",
+      "group": "c-disc-4"
+    },
+    "unlock": {
+      "allJourneys": true
+    }
+  },
+  {
+    "id": "c-whole-story",
+    "sort": 4,
+    "enabled": true,
+    "name": "The Whole Story",
+    "subtitle": "Every journey, from Alexandria to the Crystal World, in one run.",
+    "category": "story-runs",
+    "route": {
+      "kind": "group",
+      "group": "c-whole-story"
+    },
+    "unlock": {
+      "allJourneys": true
+    }
+  }
+]

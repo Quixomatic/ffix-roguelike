@@ -9,7 +9,7 @@
  */
 import { getItem, itemByName, rewardTables, ROSTER, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
 
-import { challengeRoutes, routes, routeUnlocked } from "../content/journey-groups";
+import { challengeRoutes, routes, routeUnlocked, type RouteProgress } from "../content/journey-groups";
 import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
 import { effectivePrice } from "../run/loot";
 import type { RunOutcome } from "../run/run";
@@ -535,10 +535,18 @@ export function availableJourneys(profile: Profile): string[] {
 }
 
 /**
+ * What opens routes for this player: every journey and challenge cleared (journeysCleared; a challenge with its own
+ * maps clears under its id) and every grouping or challenge run won (groupsCleared), plus their achievements.
+ */
+export function routeProgress(profile: Pick<Profile, "journeysCleared" | "groupsCleared" | "achievements">): RouteProgress {
+  return { cleared: [...(profile.journeysCleared ?? []), ...(profile.groupsCleared ?? [])], achievements: profile.achievements ?? [] };
+}
+
+/**
  * What the player can start (journey-groups.ts routes), in order: ungrouped journeys and story groupings whose first
- * journey is open, then the challenge runs they've opened.
+ * journey is open, then the challenges they've opened.
  */
 export function availableRoutes(profile: Profile): string[] {
-  const cleared = profile.journeysCleared ?? [];
-  return [...routes(), ...challengeRoutes()].filter((r) => routeUnlocked(r.id, cleared)).map((r) => r.id);
+  const progress = routeProgress(profile);
+  return [...routes(), ...challengeRoutes()].filter((r) => routeUnlocked(r.id, progress)).map((r) => r.id);
 }

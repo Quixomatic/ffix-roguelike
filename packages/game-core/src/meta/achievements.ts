@@ -56,8 +56,10 @@ export function achievementMet(a: AchievementDef, p: Profile): boolean {
   switch (c.kind) {
     case "stat":
       return (p.stats[c.stat] ?? 0) >= c.min;
+    // A journey or a challenge: one with its own maps clears under its id (journeysCleared); one that plays a grouping
+    // or a journey records its win under its id (groupsCleared).
     case "journey":
-      return p.journeysCleared?.includes(c.journey) ?? false;
+      return (p.journeysCleared?.includes(c.journey) || p.groupsCleared?.includes(c.journey)) ?? false;
     case "group":
       return p.groupsCleared?.includes(c.group) ?? false;
     case "bosses":

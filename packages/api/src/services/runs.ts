@@ -6,6 +6,8 @@
 import {
   applyRunOutcome,
   availableRoutes,
+  challengeRuleProblem,
+  getRoute,
   keepWipedClears,
   bagDelta,
   mergeBags,
@@ -23,6 +25,7 @@ import {
   type InputRecord,
   type RunState,
 } from "@ffix-roguelike/game-core";
+import { getCharacter } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 import { TRPCError } from "@trpc/server";
 
@@ -51,6 +54,12 @@ export async function startRun(db: Database, userId: string, partyKeys: string[]
   for (const k of partyKeys) if (!profile.unlocked.includes(k)) throw new TRPCError({ code: "BAD_REQUEST", message: `${k} isn't unlocked yet` });
   if (tier > profile.maxTier) throw new TRPCError({ code: "BAD_REQUEST", message: "That difficulty isn't unlocked yet" });
   if (!availableRoutes(profile).includes(journey)) throw new TRPCError({ code: "BAD_REQUEST", message: "That journey isn't unlocked yet" });
+  // A challenge's rules (party size, start level): a profile build's level is the character's start level.
+  const ruleProblem = challengeRuleProblem(
+    getRoute(journey),
+    partyKeys.map((k) => ({ name: getCharacter(k).name, startLevel: profile.builds[k]!.level })),
+  );
+  if (ruleProblem) throw new TRPCError({ code: "BAD_REQUEST", message: ruleProblem });
 
   const seed = crypto.randomUUID();
   // The run starts with the starter kit plus the permanent supply ranks; one-off supplies still in the stash (bought

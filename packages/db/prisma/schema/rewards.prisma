@@ -136,7 +136,30 @@ model Area {
   @@map("area")
 }
 
-/// A journey: an ordered list of areas played as a run, its unlock chain and recruits (game-data `JourneyData`).
+/// A section of the Challenges page — side journeys, hidden bosses… (game-data `ChallengeCategoryData`).
+model ChallengeCategory {
+  id        String   @id
+  sort      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("challenge_category")
+}
+
+/// A challenge: its own maps, a journey grouping or a journey, with what opens it and its rules
+/// (game-data `ChallengeData`).
+model Challenge {
+  id        String   @id
+  sort      Int
+  enabled   Boolean  @default(true)
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("challenge")
+}
+
+/// A story journey: an ordered list of areas played as a run, its unlock chain and recruits (game-data `JourneyData`).
 model Journey {
   id        String   @id
   sort      Int

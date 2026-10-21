@@ -1,0 +1,30 @@
+[
+  {
+    "id": "side",
+    "sort": 0,
+    "enabled": true,
+    "name": "Side journeys",
+    "description": "Journeys off the main story."
+  },
+  {
+    "id": "hidden",
+    "sort": 1,
+    "enabled": true,
+    "name": "Hidden bosses",
+    "description": "FF9's optional bosses, each opening once its part of the story is cleared."
+  },
+  {
+    "id": "gauntlet",
+    "sort": 2,
+    "enabled": true,
+    "name": "Boss gauntlets",
+    "description": "Straight roads of bosses, one after another."
+  },
+  {
+    "id": "story-runs",
+    "sort": 3,
+    "enabled": true,
+    "name": "Story runs",
+    "description": "Whole stretches of the story as one run."
+  }
+]

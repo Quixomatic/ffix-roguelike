@@ -10,6 +10,8 @@ import {
   registerRewardTables,
   type AchievementData,
   type AreaData,
+  type ChallengeCategoryData,
+  type ChallengeData,
   type JourneyData,
   type RelicData,
   type JourneyGroupData,
@@ -98,7 +100,7 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
@@ -112,6 +114,8 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       db.journeyGroup.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.area.findMany({ orderBy: { index: "asc" }, select: { index: true, enabled: true, data: true } }),
       db.journey.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
+      db.challengeCategory.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
+      db.challenge.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
     ]);
     if (!gear.length || !rarities.length || !areas.length || !journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
@@ -129,6 +133,8 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       // The columns win over copies in `data` (the number, order and switch are set by column on the admin page).
       areas: areas.map((r) => ({ ...(r.data as unknown as AreaData), index: r.index, enabled: r.enabled })),
       journeys: journeys.map((r) => ({ ...(r.data as unknown as JourneyData), sort: r.sort, enabled: r.enabled })),
+      challengeCategories: challengeCategories.map((r) => ({ ...(r.data as unknown as ChallengeCategoryData), sort: r.sort, enabled: r.enabled })),
+      challenges: challenges.map((r) => ({ ...(r.data as unknown as ChallengeData), sort: r.sort, enabled: r.enabled })),
     };
     registerRewardTables(tables);
     return tables;

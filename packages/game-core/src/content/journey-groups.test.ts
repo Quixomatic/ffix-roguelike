@@ -4,7 +4,7 @@
  */
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { registerRewardTables, rewardTables, type JourneyGroupData } from "@ffix-roguelike/game-data";
+import { registerRewardTables, rewardTables, type ChallengeData, type JourneyGroupData } from "@ffix-roguelike/game-data";
 
 import { challengeRoutes, checkJourneyGroups, getRoute, routeOf, routes, routeUnlocked } from "./journey-groups";
 import { getJourney, JOURNEYS } from "./worlds";
@@ -46,27 +46,34 @@ describe("journey groupings", () => {
 
   test("a grouping opens with its first journey; its journeys aren't started on their own", () => {
     withGroupings([escape]);
-    expect(routeUnlocked("escape", [])).toBe(false);
-    expect(routeUnlocked("escape", ["cleyra"])).toBe(true);
-    expect(routeUnlocked("return-to-alexandria", ["cleyra"])).toBe(false);
+    expect(routeUnlocked("escape", { cleared: [] })).toBe(false);
+    expect(routeUnlocked("escape", { cleared: ["cleyra"] })).toBe(true);
+    expect(routeUnlocked("return-to-alexandria", { cleared: ["cleyra"] })).toBe(false);
     // Ungrouped journeys unlock as before.
-    expect(routeUnlocked("cleyra", ["treno"])).toBe(true);
+    expect(routeUnlocked("cleyra", { cleared: ["treno"] })).toBe(true);
   });
 
   test("breaking a grouping out (deleting it) gives the journeys back", () => {
     withGroupings([]);
     expect(routeOf("fossil-roo").id).toBe("fossil-roo");
-    expect(routeUnlocked("return-to-alexandria", ["cleyra"])).toBe(true);
+    expect(routeUnlocked("return-to-alexandria", { cleared: ["cleyra"] })).toBe(true);
   });
 
-  test("a challenge run needs every journey in it cleared, and leaves the story alone", () => {
+  test("a challenge grouping leaves the story alone and is only played through its challenge", () => {
     expect(checkJourneyGroups([escape, disc4])).toEqual([]);
-    withGroupings([disc4]);
+    const challenge: ChallengeData = {
+      id: "disc-4", sort: 0, enabled: true, name: "Disc 4", subtitle: "", category: "story-runs",
+      route: { kind: "group", group: "disc-4" }, unlock: { allJourneys: true },
+    };
+    registerRewardTables({ ...seeded, journeyGroups: [disc4], challenges: [challenge] });
     expect(challengeRoutes().map((c) => c.id)).toEqual(["disc-4"]);
     expect(routes().some((c) => c.id === "disc-4")).toBe(false);
-    expect(routeUnlocked("disc-4", ["ipsens-castle", "terra", "memoria"])).toBe(false);
-    expect(routeUnlocked("disc-4", ["ipsens-castle", "terra", "memoria", "crystal-world"])).toBe(true);
+    expect(routeUnlocked("disc-4", { cleared: ["ipsens-castle", "terra", "memoria"] })).toBe(false);
+    expect(routeUnlocked("disc-4", { cleared: ["ipsens-castle", "terra", "memoria", "crystal-world"] })).toBe(true);
     expect(routeOf("terra").id).toBe("terra");
+    // Without a challenge pointing at it, the grouping can't be started at all.
+    registerRewardTables({ ...seeded, journeyGroups: [disc4], challenges: [] });
+    expect(routeUnlocked("disc-4", { cleared: ["ipsens-castle", "terra", "memoria", "crystal-world"] })).toBe(false);
   });
 
   test("the rules catch bad groupings", () => {

@@ -2,6 +2,34 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.8] - 2026-10-21
+
+Content in the database, step 2 (`.plans/content-db.md`): challenges get their own tables, in categories, and the Challenges page is built from them.
+
+### Added
+- **`challenge_category`** (Side journeys, Hidden bosses, Boss gauntlets, Story runs): the Challenges page's sections, each with a name, description and order.
+- **`challenge`**: everything on the Challenges page, each in a category, with:
+  - **a route:** its own maps (Echoes of the Past, the six hidden bosses, the Boss Gauntlet), a journey grouping (Disc 1–4 and The Whole Story point at their `c-disc-*` / `c-whole-story` groupings), or one story journey;
+  - **an unlock:** journeys or challenges cleared, every journey in it cleared, an achievement; any mix, or none (open from the start);
+  - **rules** (optional): party size (1 = solo) and a minimum start level. The server refuses a run that breaks them (`challengeRuleProblem`).
+- Seeded from `challenge-categories.json` and `challenges.json` like the other tables (boot seed, `sync-seeds`, reset, export). Every id is the same as before, so clears, achievements and runs in progress carry over.
+- **`checkChallenges`** (game-core): the rules the admin page will enforce. Unique ids (never a story journey's, and a grouping's only when the challenge plays it), a known category, a route that resolves, unlocks that name things that exist, sensible rules.
+- **The Challenges page:**
+  - **A section per challenge category,** with its description.
+  - **A compact card for challenges that play several journeys** (Disc 1–4, The Whole Story), instead of every journey's section: the journey range, "One run · N journeys · M maps · Final boss", and a numbered pip per journey (green once cleared; hover for its maps and boss), with "n/N cleared". The full route stays on the embark page.
+  - **Locked cards say what opens them,** from the challenge's unlock ("Clear 13 · The Iifa Tree to unlock", "Clear every journey in it to unlock").
+
+### Changed
+- **The `journey` table is story journeys only** (21). The side and hidden journeys and the Boss Gauntlet are challenges with their own maps; a run plays, clears and names them as before.
+- **Journey groupings:** a grouping marked as a challenge is only played through the challenge that points at it.
+- **Achievements:** the "cleared" condition takes a journey or a challenge (the admin picker lists both); "won in one run" picks a challenge.
+- **What opens a route** counts journeys and challenges cleared and groupings won (`routeProgress`), plus achievements.
+
+### Notes
+- Migration `challenge_tables` (new tables only). The dev database's `journey` table was reloaded from the seed (21 rows). Restart `pnpm dev`.
+- Tests: `content/challenges.test.ts` (the seed passes the rules and lists in category order; story journeys are story only; each kind of route; unlocks; disabled challenges and categories; rules; bad challenges). Game-core: 175 pass, 0 fail.
+- Next: tiers per journey and challenge, then the admin tabs.
+
 ## [0.4.7] - 2026-10-21
 
 Content in the database, step 1 (`.plans/content-db.md`): the game's areas and journeys move out of code into Postgres, the same way the reward tables, achievements, relics and groupings did. Nothing plays differently.

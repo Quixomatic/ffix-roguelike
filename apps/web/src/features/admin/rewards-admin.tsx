@@ -864,7 +864,7 @@ function conditionText(c: AchievementCondition): string {
     case "stat":
       return `${STAT_LABEL[c.stat]} ≥ ${c.min}`;
     case "journey":
-      return `Clear ${JOURNEYS.find((j) => j.id === c.journey)?.name ?? c.journey}`;
+      return `Clear ${isRoute(c.journey) ? getRoute(c.journey).name : c.journey}`;
     case "group":
       return `Win ${isRoute(c.group) ? getRoute(c.group).name : c.group} in one run`;
     case "bosses":
@@ -1109,13 +1109,13 @@ function AchievementEditor({
           </Field>
         )}
         {c.kind === "journey" && (
-          <Field label="Journey">
-            <Select value={c.journey} options={JOURNEYS.map((j) => j.id)} onChange={(journey) => setC({ ...c, journey })} />
+          <Field label="Journey or challenge">
+            <Select value={c.journey} options={[...JOURNEYS.map((j) => j.id), ...challengeRoutes().map((r) => r.id)]} onChange={(journey) => setC({ ...c, journey })} />
           </Field>
         )}
         {c.kind === "group" && (
-          <Field label="Journey grouping (won in one run)">
-            <Select value={c.group} options={challengeRoutes().map((g) => g.id)} onChange={(group) => setC({ ...c, group })} />
+          <Field label="Challenge (won in one run)">
+            <Select value={c.group} options={challengeRoutes().filter((r) => r.grouped).map((g) => g.id)} onChange={(group) => setC({ ...c, group })} />
           </Field>
         )}
         {c.kind === "bosses" && (

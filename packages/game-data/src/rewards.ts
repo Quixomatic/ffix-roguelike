@@ -4,7 +4,7 @@
  * runtime registry: the server registers them from the DB, the web app from `content.rewards`, tests and the sim
  * from the seed files (`loadRewardCache` in ./cache). Never read at module load.
  */
-import type { AreaData, JourneyData } from "./content";
+import type { AreaData, ChallengeCategoryData, ChallengeData, JourneyData } from "./content";
 import type { JourneyGroupData } from "./journey-groups";
 import type { CharacterTags, RelicData, SynergyData } from "./relics";
 
@@ -245,9 +245,11 @@ export interface RewardTables {
   characterTags?: CharacterTags[];
   /** Journey groupings: journeys played as one run (journey-groups.ts). */
   journeyGroups?: JourneyGroupData[];
-  /** The game's areas (maps) and journeys (content.ts). */
+  /** The game's areas (maps), story journeys, challenges and challenge categories (content.ts). */
   areas?: AreaData[];
   journeys?: JourneyData[];
+  challengeCategories?: ChallengeCategoryData[];
+  challenges?: ChallengeData[];
 }
 
 let tables: RewardTables | null = null;

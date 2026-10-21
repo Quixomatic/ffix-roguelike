@@ -25,14 +25,20 @@ export interface WorldDef extends Omit<AreaData, "enabled" | "notes" | "theme"> 
 /**
  * Journeys — what you pick at camp. Like pokelike.xyz: a journey is a series of overworld maps (areas); each map ends
  * at a castle with a "gym leader" boss, and the last map's castle holds the journey's final boss.
+ *
+ * `category` "story": a story journey (the `journey` table). "challenge": a challenge that plays its own maps (the
+ * `challenge` table, route kind `areas`), shaped like a journey so a run plays, clears and names it the same way. It
+ * isn't in `JOURNEYS` (the Story page's list) but `getJourney` finds it.
  */
-export type JourneyDef = Omit<JourneyData, "sort" | "enabled" | "notes">;
+export interface JourneyDef extends Omit<JourneyData, "sort" | "enabled" | "notes"> {
+  category: "story" | "challenge";
+}
 
 /** Every area, by `index` (a run's `world` is an index into it). */
 export const WORLDS: WorldDef[] = [];
-/** Enabled journeys, in order. */
+/** Enabled story journeys, in order. */
 export const JOURNEYS: JourneyDef[] = [];
-/** Every journey, disabled ones too (a saved run or a clear can still name one). */
+/** Every journey, disabled ones too (a saved run or a clear can still name one), and challenges that play their own maps. */
 let allJourneys: JourneyDef[] = [];
 
 function toWorld(a: AreaData): WorldDef {
@@ -42,15 +48,24 @@ function toWorld(a: AreaData): WorldDef {
 
 function toJourney(j: JourneyData): JourneyDef {
   const { sort: _s, enabled: _e, notes: _n, ...rest } = j;
-  return rest;
+  return { ...rest, category: "story" };
 }
 
 onRewardTables(() => {
   const t = rewardTables();
   const areas = [...(t.areas ?? [])].sort((a, b) => a.index - b.index);
   WORLDS.splice(0, WORLDS.length, ...areas.map(toWorld));
-  const journeys = [...(t.journeys ?? [])].sort((a, b) => a.sort - b.sort);
-  allJourneys = journeys.map(toJourney);
+  const challenges = t.challenges ?? [];
+  const challengeIds = new Set(challenges.map((c) => c.id));
+  // Story journeys only: a row left from before challenges had their own table (a side or hidden journey, now a
+  // challenge with the same id) is skipped.
+  const journeys = [...(t.journeys ?? [])]
+    .filter((j) => !challengeIds.has(j.id) && ((j as { category?: string }).category ?? "story") === "story")
+    .sort((a, b) => a.sort - b.sort);
+  const ownMaps: JourneyDef[] = challenges.flatMap((c) =>
+    c.route.kind === "areas" ? [{ id: c.id, name: c.name, subtitle: c.subtitle, category: "challenge" as const, areas: [...c.route.areas], unlockAfter: null }] : [],
+  );
+  allJourneys = [...journeys.map(toJourney), ...ownMaps];
   JOURNEYS.splice(0, JOURNEYS.length, ...journeys.filter((j) => j.enabled).map(toJourney));
 });
 

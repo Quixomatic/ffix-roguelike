@@ -1,5 +1,6 @@
 import {
   availableRoutes,
+  challengeCategories,
   challengeRoutes,
   encounterNames,
   getArea,
@@ -16,11 +17,11 @@ import {
   type Profile,
   type RouteDef,
 } from "@ffix-roguelike/game-core";
-import { getCharacter } from "@ffix-roguelike/game-data";
+import { achievementTable, getCharacter } from "@ffix-roguelike/game-data";
 import { Castle } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
@@ -35,7 +36,7 @@ import { FocusItem } from "@/features/input/focus";
 import { Breadcrumbs, CAMP, type Crumb } from "./breadcrumbs";
 import { CARD_CELL, CARD_GRID, CharacterCard, rosterEntries } from "./roster";
 
-type StoryProfile = { maxTier: number; journeysCleared?: string[] } & Parameters<typeof availableRoutes>[0];
+type StoryProfile = { maxTier: number; journeysCleared?: string[]; groupsCleared?: string[] } & Parameters<typeof availableRoutes>[0];
 
 /** Whether every journey of a route (a journey, or a journey grouping) has been cleared. */
 const routeCleared = (p: StoryProfile, routeId: string) => getRoute(routeId).journeys.every((j) => (p.journeysCleared ?? []).includes(j));
@@ -61,37 +62,171 @@ export function StoryPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-5 px-6 pb-10 pt-6">
       <PageTitle crumbs={[CAMP, { label: "Story" }]} title="Journeys" sub="Each journey is a campaign of overworld maps ending in a boss. Clear one to recruit its hero and open the next — and its higher tiers." />
-      <RouteSections profile={profile.data} categories={["story"]} />
+      <RouteSections profile={profile.data} kind="story" />
     </div>
   );
 }
 
 /**
- * What can be played, in sections by category (the Story page: the story and side journeys; the Challenges page:
- * hidden bosses and challenge runs): full-width cards, one per row; a journey grouping as one card.
+ * What can be played, as full-width cards one per row. The Story page: the story (a story grouping as one card). The
+ * Challenges page: a section per challenge category (the `challenge_category` table, in its order), a challenge that
+ * plays several journeys as a compact card (`ChallengeRunCard`).
  */
-export function RouteSections({ profile: p, categories }: { profile: StoryProfile; categories: JourneyDef["category"][] }) {
+export function RouteSections({ profile: p, kind }: { profile: StoryProfile; kind: "story" | "challenge" }) {
   const open = availableRoutes(p);
-  const all = [...routes(), ...challengeRoutes()];
+  const cleared = [...(p.journeysCleared ?? []), ...(p.groupsCleared ?? [])];
+  if (kind === "story")
+    return (
+      <section className="flex flex-col gap-3">
+        <h2 className="ff-display text-xl text-[#c8d0ff]">The story</h2>
+        {routes().map((r) =>
+          r.grouped ? (
+            <JourneyGroupRow key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+          ) : (
+            <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
+          ),
+        )}
+      </section>
+    );
+  const all = challengeRoutes();
   return (
     <>
-      {JOURNEY_SECTIONS.filter((s) => categories.includes(s.category)).map(({ label, category }) => {
-        const list = all.filter((r) => r.category === category);
+      {challengeCategories().map((cat) => {
+        const list = all.filter((r) => r.challengeCategory === cat.id);
         if (!list.length) return null;
         return (
-          <section key={category} className="flex flex-col gap-3">
-            <h2 className="ff-display text-xl text-[#c8d0ff]">{label}</h2>
+          <section key={cat.id} className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-baseline gap-x-3">
+              <h2 className="ff-display text-xl text-[#c8d0ff]">{cat.name}</h2>
+              {cat.description && <span className="text-sm opacity-70">{cat.description}</span>}
+            </div>
             {list.map((r) =>
               r.grouped ? (
-                <JourneyGroupRow key={r.id} route={r} unlocked={open.includes(r.id)} cleared={p.journeysCleared ?? []} />
+                <ChallengeRunCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
               ) : (
-                <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={p.journeysCleared ?? []} />
+                <JourneyCard key={r.id} route={r} unlocked={open.includes(r.id)} cleared={cleared} />
               ),
             )}
           </section>
         );
       })}
     </>
+  );
+}
+
+/** Why a route is locked, in words: a challenge's unlock conditions, else the journey it opens after. */
+function lockedWhy(r: RouteDef): string {
+  const name = (id: string) => (isRoute(id) ? getRoute(id).name : id);
+  if (r.category === "challenge") {
+    const parts: string[] = [];
+    if (r.unlock?.cleared?.length) parts.push(`Clear ${r.unlock.cleared.map(name).join(", ")}`);
+    if (r.unlock?.allJourneys) parts.push("Clear every journey in it");
+    if (r.unlock?.achievement) parts.push(`Earn "${achievementName(r.unlock.achievement)}"`);
+    return parts.length ? `${parts.join(" and ")} to unlock` : "Locked";
+  }
+  const first = getJourney(r.journeys[0]!);
+  return `Clear ${JOURNEYS.find((x) => x.id === first.unlockAfter)?.name ?? "the previous journey"} to unlock`;
+}
+
+const achievementName = (id: string) => achievementTable().find((a) => a.id === id)?.name ?? id;
+
+/**
+ * The lock over a card: dimmed, with a big padlock centred over it. Hovering blurs the card, raises the padlock and
+ * brings in why it's locked beneath it.
+ */
+function LockedCard({ className, why, children }: { className: string; why: string; children: ReactNode }) {
+  return (
+    <div className={`group ff-panel relative ${className}`}>
+      {/* `contents` keeps the columns direct children of the card's layout; they're dimmed one by one. */}
+      <div className="contents [&>*]:opacity-60">{children}</div>
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <PixelIcon name="lock" size={64} label="Locked" className="translate-y-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:-translate-y-1" />
+        <span className="ff-display translate-y-3 px-4 text-center text-lg text-white opacity-0 transition duration-300 [text-shadow:2px_2px_0_#000] group-hover:translate-y-0 group-hover:opacity-100">
+          {why}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A challenge that plays several journeys (Disc 1, The Whole Story) as a compact card, instead of every journey's
+ * section: the journeys' range on the left, then the name, "N journeys · M maps · Final boss", the subtitle and a pip
+ * per journey (its number, green once cleared; hover for its maps and boss), and Play. The full route is on the embark
+ * page.
+ */
+function ChallengeRunCard({ route: r, unlocked, cleared }: { route: RouteDef; unlocked: boolean; cleared: string[] }) {
+  const journeys = r.journeys.map(getJourney);
+  const numbers = journeys.map(journeyNumber).filter((n) => n != null);
+  const range = numbers.length ? (numbers.length === 1 ? numbers[0]! : `${numbers[0]}–${numbers.at(-1)}`) : null;
+  const lastArea = getArea(r.areas.at(-1)!);
+  const done = journeys.filter((j) => cleared.includes(j.id)).length;
+  const won = cleared.includes(r.id);
+  const body = (
+    <>
+      <div className="flex min-w-24 shrink-0 items-center justify-center">
+        {range ? <span className="ff-display text-4xl text-white/30 [text-shadow:3px_3px_0_#000]">{range}</span> : <PixelIcon name="star" size={48} className="opacity-40" />}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 py-1">
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <span className="ff-display text-2xl">{r.name}</span>
+          {won && <span className="text-sm text-[#9cf0a0]">Won</span>}
+        </div>
+        <div className="text-sm text-[#c8d0ff]">
+          One run · {journeys.length} journeys · {r.areas.length} maps · Final boss: {encounterNames(lastArea.boss).join(" & ")}
+          {r.subtitle ? ` · ${r.subtitle}` : ""}
+        </div>
+        <div className="flex flex-wrap items-center gap-1">
+          {journeys.map((j) => {
+            const isCleared = cleared.includes(j.id);
+            const boss = getArea(j.areas.at(-1)!).boss;
+            return (
+              <Pop
+                key={j.id}
+                side="top"
+                cursor={false}
+                content={
+                  <>
+                    <span className="ff-display text-lg">{j.name}</span>
+                    <span className="opacity-80">{j.subtitle}</span>
+                    <span>
+                      {j.areas.length} maps · <span className="text-red-200">Final boss:</span> {encounterNames(boss).join(" & ")}
+                    </span>
+                    <span className={isCleared ? "text-[#9cf0a0]" : "opacity-70"}>{isCleared ? "Cleared" : "Not cleared yet"}</span>
+                  </>
+                }
+              >
+                <span
+                  className={`flex h-7 min-w-7 items-center justify-center rounded border px-1 text-xs tabular-nums ${
+                    isCleared ? "border-[#9cf0a0]/70 bg-[#1f5a2c] text-[#d8ffd8]" : "border-white/30 bg-black/40 text-white/80"
+                  }`}
+                >
+                  {journeyNumber(j) ?? "•"}
+                </span>
+              </Pop>
+            );
+          })}
+          <span className="ml-2 text-xs opacity-70">
+            {done}/{journeys.length} cleared
+          </span>
+        </div>
+      </div>
+      <div className="flex w-40 shrink-0 items-center justify-center pr-3">{unlocked && <PlayButton />}</div>
+    </>
+  );
+  if (!unlocked)
+    return (
+      <LockedCard className={JOURNEY_ROW} why={lockedWhy(r)}>
+        {body}
+      </LockedCard>
+    );
+  return (
+    <FocusItem>
+      <Link to="/story/$journey" params={{ journey: r.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_ROW}`}>
+        {body}
+      </Link>
+    </FocusItem>
   );
 }
 
@@ -217,21 +352,12 @@ function JourneyGroupRow({ route: r, unlocked, cleared }: { route: RouteDef; unl
       </div>
     </>
   );
-  if (!unlocked) {
-    const why = `Clear ${JOURNEYS.find((x) => x.id === first.unlockAfter)?.name ?? "the previous journey"} to unlock`;
+  if (!unlocked)
     return (
-      <div className={`group ff-panel relative ${GROUP_CARD}`}>
-        <div className="contents [&>*]:opacity-60">{body}</div>
-        <div className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <PixelIcon name="lock" size={64} label="Locked" className="translate-y-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:-translate-y-1" />
-          <span className="ff-display translate-y-3 px-4 text-center text-lg text-white opacity-0 transition duration-300 [text-shadow:2px_2px_0_#000] group-hover:translate-y-0 group-hover:opacity-100">
-            {why}
-          </span>
-        </div>
-      </div>
+      <LockedCard className={GROUP_CARD} why={lockedWhy(r)}>
+        {body}
+      </LockedCard>
     );
-  }
   return (
     <FocusItem>
       <Link to="/story/$journey" params={{ journey: r.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${GROUP_CARD}`}>
@@ -302,13 +428,6 @@ function GroupedJourney({
 const journeyNumber = (j: JourneyDef) => (j.name.includes(" · ") ? j.name.split(" · ")[0]! : null);
 const journeyTitle = (j: JourneyDef) => (j.name.includes(" · ") ? j.name.split(" · ").slice(1).join(" · ") : j.name);
 
-const JOURNEY_SECTIONS: { label: string; category: JourneyDef["category"] }[] = [
-  { label: "The story", category: "story" },
-  { label: "Side journeys", category: "echoes" },
-  { label: "Hidden bosses", category: "hidden" },
-  { label: "Challenges", category: "challenge" },
-];
-
 /** A journey card's layout: the hero (or number) column, the journey and its route, then the status / Choose column. */
 const JOURNEY_ROW = "flex min-h-28 items-stretch gap-4 p-3 pr-0";
 
@@ -359,29 +478,12 @@ function JourneyCard({ route: r, unlocked, cleared: clearedIds }: { route: Route
       <div className="flex w-40 shrink-0 items-center justify-center pr-3">{unlocked && <PlayButton />}</div>
     </>
   );
-  // Locked: the card dimmed, with a big padlock centred over it. Hovering blurs the card, raises the padlock and
-  // brings in why it's locked beneath it.
-  if (!unlocked) {
-    const why = r.challengeRun ? "Clear every journey in it to unlock" : `Clear ${JOURNEYS.find((x) => x.id === first.unlockAfter)?.name ?? "the previous journey"} to unlock`;
+  if (!unlocked)
     return (
-      <div className={`group ff-panel relative ${JOURNEY_ROW}`}>
-        {/* `contents` keeps the columns direct children of the card's row; they're dimmed one by one. */}
-        <div className="contents [&>*]:opacity-60">{body}</div>
-        <div className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 backdrop-blur-md transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <PixelIcon
-            name="lock"
-            size={64}
-            label="Locked"
-            className="translate-y-4 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:-translate-y-1"
-          />
-          <span className="ff-display translate-y-3 px-4 text-center text-lg text-white opacity-0 transition duration-300 [text-shadow:2px_2px_0_#000] group-hover:translate-y-0 group-hover:opacity-100">
-            {why}
-          </span>
-        </div>
-      </div>
+      <LockedCard className={JOURNEY_ROW} why={lockedWhy(r)}>
+        {body}
+      </LockedCard>
     );
-  }
   return (
     <FocusItem>
       <Link to="/story/$journey" params={{ journey: r.id }} search={{ tier: 0 }} className={`ff-panel ff-lift ${JOURNEY_ROW}`}>

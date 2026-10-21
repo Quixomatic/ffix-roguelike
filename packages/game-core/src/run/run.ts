@@ -308,7 +308,8 @@ export function startRun(input: StartRunInput): RunState {
     tier: input.tier,
     journey: legs[0]!.journey,
     stage: 0,
-    ...(route.grouped ? { journeyGroup: route.id } : {}),
+    // The route played, when it's more than one journey on its own (a grouping or a challenge), so its clear is recorded.
+    ...(route.grouped || route.id !== legs[0]!.journey ? { journeyGroup: route.id } : {}),
     areas: route.areas,
     legs,
     cleared: [],
