@@ -142,11 +142,20 @@ onRewardTables(() => {
   values = new Map((rewardTables().settings ?? []).map((s) => [s.key, s.value]));
 });
 
-/** A setting's value: the stored one when it's valid, else its default. */
+/**
+ * A setting's value: the stored one when it's valid, else its default. A name → number table with fixed keys comes
+ * back in its definition's key order whatever order it was stored in (Postgres reorders JSON object keys), so code
+ * that walks it — weighted picks — behaves the same with values from the database, the seed file or the defaults.
+ */
 export function setting<K extends SettingKey>(key: K): ValueOf<K> {
   const stored = hasRewardTables() ? values?.get(key) : undefined;
-  if (stored !== undefined && checkSetting(key, stored) === null) return stored as ValueOf<K>;
-  return SETTINGS[key].default as ValueOf<K>;
+  const value = stored !== undefined && checkSetting(key, stored) === null ? stored : SETTINGS[key].default;
+  const def: SettingDef = SETTINGS[key];
+  if (def.kind === "weights" && def.keys) {
+    const table = value as Record<string, number>;
+    return Object.fromEntries(def.keys.filter((k) => k in table).map((k) => [k, table[k]!])) as ValueOf<K>;
+  }
+  return value as ValueOf<K>;
 }
 
 export const isSettingKey = (key: string): key is SettingKey => key in SETTINGS;
@@ -192,10 +201,17 @@ export function checkSetting(key: string, value: unknown): string | null {
   }
 }
 
+/** JSON with object keys sorted: Postgres's jsonb stores keys in its own order, so plain JSON text can't compare them. */
+const stableJson = (v: unknown): string =>
+  JSON.stringify(v, (_k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => a.localeCompare(b))) : x));
+
+/** Whether two setting values are the same (object key order doesn't count). */
+export const sameSettingValue = (a: unknown, b: unknown): boolean => stableJson(a) === stableJson(b);
+
 /** Every setting with its definition and current value, by group (the admin page). */
 export function settingsList(): { key: SettingKey; def: SettingDef; value: SettingValue; isDefault: boolean }[] {
   return (Object.keys(SETTINGS) as SettingKey[]).map((key) => {
     const value = setting(key) as SettingValue;
-    return { key, def: SETTINGS[key], value, isDefault: JSON.stringify(value) === JSON.stringify(SETTINGS[key].default) };
+    return { key, def: SETTINGS[key], value, isDefault: sameSettingValue(value, SETTINGS[key].default) };
   });
 }

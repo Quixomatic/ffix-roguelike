@@ -1,4 +1,4 @@
-import { checkSetting, SETTINGS, type RewardTables, type SettingDef, type SettingKey, type SettingValue } from "@ffix-roguelike/game-data";
+import { checkSetting, sameSettingValue, SETTINGS, type RewardTables, type SettingDef, type SettingKey, type SettingValue } from "@ffix-roguelike/game-data";
 import { useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
@@ -46,7 +46,8 @@ export function SettingsTab({ tables }: { tables: RewardTables }) {
   );
 }
 
-const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+// Object key order doesn't count (Postgres stores JSON objects with its own key order).
+const same = sameSettingValue;
 
 /** One setting: label and description, its editor, Save and Default. */
 function SettingRow({ settingKey, stored }: { settingKey: SettingKey; stored: SettingValue | undefined }) {

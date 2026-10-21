@@ -2,6 +2,13 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.11] - 2026-10-21
+
+### Fixed
+- **Admin → Settings showed "changed" on settings nobody touched:** gain per rank, starter kit, the early and later stage weights, rank caps by item. These are name → number tables, and Postgres stores JSON objects with its own key order, so comparing the JSON text counted a reordering as a change. Values now compare regardless of key order (game-data `sameSettingValue`).
+- **Tables with fixed keys come back in their definition's key order** (`setting()`), whatever order they were stored in. The map's stage picks walk the weights in order, so the same seed now gives the same map whether the values come from the database, the seed file or the defaults.
+- Test: key order doesn't matter (order and equality). Game-core: 186 pass, 0 fail.
+
 ## [0.4.10] - 2026-10-21
 
 Game settings (`.plans/content-db.md` step 4): every balance number of our design is a database setting, editable on the admin page and live at once. Nothing plays differently: every setting starts at the value the code had.

@@ -5,7 +5,7 @@
  */
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { checkSetting, registerRewardTables, rewardTables, setting, SETTINGS, type SettingKey } from "@ffix-roguelike/game-data";
+import { checkSetting, registerRewardTables, rewardTables, sameSettingValue, setting, SETTINGS, type SettingKey } from "@ffix-roguelike/game-data";
 
 import { startRun } from "../run/run";
 import { deriveStats, trainBonus, trainMax, trainRank } from "../stats";
@@ -32,6 +32,14 @@ describe("game settings", () => {
     expect(checkSetting("slots.starterArmor", "some")).toContain("one of");
     expect(checkSetting("training.perRank", { luck: 1 })).toContain("unknown key luck");
     expect(checkSetting("nope", 1)).toContain("Unknown setting");
+  });
+
+  test("key order doesn't matter: tables come back in their definition's order and compare equal", () => {
+    const reordered = Object.fromEntries(Object.entries(SETTINGS["map.weights"].default).reverse());
+    withSettings({ "map.weights": reordered });
+    expect(Object.keys(setting("map.weights"))).toEqual(Object.keys(SETTINGS["map.weights"].default));
+    expect(sameSettingValue(reordered, SETTINGS["map.weights"].default)).toBe(true);
+    expect(sameSettingValue({ a: 1 }, { a: 2 })).toBe(false);
   });
 
   test("a stored value is used; a missing or invalid one falls back to the default", () => {
