@@ -1,5 +1,5 @@
 import { apCost, gearChange, type RewardCard, type RewardOffer, type RunState, type ShopWares } from "@ffix-roguelike/game-core";
-import { abilityName, BASE_RELIC_SLOTS, getCharacter, getItem, RARITIES, rarityOf, relicById, type RarityId } from "@ffix-roguelike/game-data";
+import { abilityName, baseRelicSlots, getCharacter, getItem, RARITIES, rarityOf, relicById, type RarityId } from "@ffix-roguelike/game-data";
 import { useState } from "react";
 
 import { Badge } from "@/features/hub/badge";
@@ -67,7 +67,7 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
   const pending = actions.claim.isPending;
   /** A relic card picked while the rack is full: which held relic to give up for it. */
   const [swapFor, setSwapFor] = useState<number | null>(null);
-  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? BASE_RELIC_SLOTS);
+  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? baseRelicSlots());
   const take = (i: number) => {
     if (offer.cards[i]?.kind === "relic" && rackFull) setSwapFor(i);
     else actions.claim.mutate({ choice: i });
@@ -139,7 +139,7 @@ function RelicSwap({ run, incoming, pending, onPick, onBack }: { run: RunState; 
 export function ShopWaresView({ run, wares, actions }: { run: RunState; wares: ShopWares; actions: RunActions }) {
   const pending = actions.buyWare.isPending;
   const [swapFor, setSwapFor] = useState<number | null>(null);
-  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? BASE_RELIC_SLOTS);
+  const rackFull = (run.relics ?? []).length >= (run.relicSlots ?? baseRelicSlots());
   const buy = (i: number) => {
     if (wares.cards[i]?.kind === "relic" && rackFull) setSwapFor(i);
     else actions.buyWare.mutate({ index: i });

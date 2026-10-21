@@ -4,7 +4,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { BASE_RELIC_SLOTS, findItem, getItem, rarityOf, shopMarkupOf, shopPriceOf } from "@ffix-roguelike/game-data";
+import { baseRelicSlots, findItem, getItem, rarityOf, shopMarkupOf, shopPriceOf } from "@ffix-roguelike/game-data";
 
 import { newProfile } from "../meta/profile";
 import { bagValue } from "../metrics/collect";
@@ -19,7 +19,7 @@ const profile = newProfile();
 
 /** A run standing in a shop: its first stage is turned into a shop and walked onto. */
 function inShop(seed = "shop", gil = 100_000): RunState {
-  const run = startRun({ seed, tier: 0, party: [profile.builds.zidane!, profile.builds.vivi!], unlockedRelics: RELICS, relicSlots: BASE_RELIC_SLOTS });
+  const run = startRun({ seed, tier: 0, party: [profile.builds.zidane!, profile.builds.vivi!], unlockedRelics: RELICS, relicSlots: baseRelicSlots() });
   const id = getNode(run.map, run.position).next[0]!;
   run.map.nodes.find((n) => n.id === id)!.kind = "shop";
   run.gil = gil;

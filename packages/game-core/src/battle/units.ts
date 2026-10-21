@@ -1,5 +1,5 @@
 /** Build battle units from character builds (party) and bestiary entries (enemies). */
-import { getAction, getCharacter, getItem, type Status } from "@ffix-roguelike/game-data";
+import { getAction, getCharacter, getItem, setting, type Status } from "@ffix-roguelike/game-data";
 
 import { baseStats, enemyItemId, getEnemy, type EnemyDef } from "../content/enemies";
 import { ff9 } from "../content/enemy-actions";
@@ -117,10 +117,17 @@ const FAMILY_CATEGORY: Record<EnemyFamily, number> = {
 /** FF9 steal rates by slot (common → rare). */
 const STEAL_RATES = [256, 64, 16, 1];
 
-/** FF9 monster → battle unit with its exact stats (tier/ascension scales HP and attack power). */
+/** HP and attack multipliers for a difficulty tier (settings `tiers.enemyHpPerTier`, `tiers.enemyAttackPerTier`). */
+export const tierHpMult = (tier: number) => 1 + tier * setting("tiers.enemyHpPerTier");
+export const tierAttackMult = (tier: number) => 1 + tier * setting("tiers.enemyAttackPerTier");
+
+/**
+ * FF9 monster → battle unit with its exact stats (tier/ascension scales HP and attack power). A battle stores its
+ * units when it starts, so retuning the tier settings never changes a fight in progress or a replay.
+ */
 function ff9Unit(def: EnemyDef, slot: number, tier: number): BattleUnit {
   const f = def.ff9!;
-  const t = 1 + tier * 0.2;
+  const t = tierHpMult(tier);
   const hp = Math.round(f.hp * t);
   return {
     id: `e${slot}`,
@@ -137,7 +144,7 @@ function ff9Unit(def: EnemyDef, slot: number, tier: number): BattleUnit {
     strength: f.strength,
     magic: f.magic,
     spirit: f.spirit,
-    attack: Math.round(ff9AttackPower(f) * (1 + tier * 0.1)),
+    attack: Math.round(ff9AttackPower(f) * tierAttackMult(tier)),
     defence: f.defence,
     evade: f.evade,
     magicDefence: f.magicDefence,
@@ -184,7 +191,7 @@ export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
   if (def.ff9) return ff9Unit(def, slot, tier);
   const b = def.stats ?? baseStats(def.level, tier);
   const m = (k: keyof NonNullable<EnemyDef["mult"]>) => (def.stats ? 1 : (def.mult?.[k] ?? 1));
-  const t = def.stats ? 1 + tier * 0.2 : 1;
+  const t = def.stats ? tierHpMult(tier) : 1;
   const hp = Math.round(b.hp * m("hp") * t);
   const mp = Math.round(b.mp * m("mp"));
   const speed = Math.round(b.speed * m("spd"));
@@ -203,7 +210,7 @@ export function enemyUnit(def: EnemyDef, slot: number, tier = 0): BattleUnit {
     strength: Math.round(b.strength * m("str")),
     magic: Math.round(b.magic * m("mag")),
     spirit: b.spirit,
-    attack: Math.round(b.attack * m("atk") * (def.stats ? 1 + tier * 0.1 : 1)),
+    attack: Math.round(b.attack * m("atk") * (def.stats ? tierAttackMult(tier) : 1)),
     defence: Math.round(b.defence * m("def")),
     evade: Math.min(90, Math.round(b.evade * m("eva"))),
     magicDefence: Math.round(b.magicDefence * m("mdef")),

@@ -3,7 +3,7 @@
  * Raw stats come from one level curve (`baseStats`) times per-monster multipliers, so global difficulty can be
  * tuned in one place.
  */
-import { bestiary, bestiaryVersion, itemByName, type Element, type FF9Enemy, type Status } from "@ffix-roguelike/game-data";
+import { bestiary, bestiaryVersion, itemByName, setting, type Element, type FF9Enemy, type Status } from "@ffix-roguelike/game-data";
 
 import type { AiRule, EnemyFamily } from "../battle/types";
 import { ff9 } from "./enemy-actions";
@@ -70,14 +70,14 @@ export interface EnemyStats {
  * attack power ≈ 6 + 1.3·Lv, HP ≈ 4·Lv² + 20·Lv. Tier (ascension) scales HP and damage on top.
  */
 export function baseStats(level: number, tier = 0): EnemyStats {
-  const t = 1 + tier * 0.2;
+  const t = 1 + tier * setting("tiers.enemyHpPerTier");
   return {
     hp: Math.round((40 + level * 20 + level * level * 4) * t),
     mp: 30 + level * 6,
     strength: Math.round(8 + level * 0.3),
     magic: Math.round(8 + level * 0.3),
     spirit: Math.round(11 + level * 0.5),
-    attack: Math.round((6 + level * 1.3) * (1 + tier * 0.1)),
+    attack: Math.round((6 + level * 1.3) * (1 + tier * setting("tiers.enemyAttackPerTier"))),
     defence: Math.round(12 + level / 20),
     magicDefence: Math.round(12 + level / 15),
     speed: Math.min(50, Math.round(23 + level * 0.35)),

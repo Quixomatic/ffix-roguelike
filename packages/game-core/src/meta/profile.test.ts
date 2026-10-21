@@ -6,9 +6,11 @@ import { getItem } from "@ffix-roguelike/game-data";
 
 import { gearPool } from "../run/loot";
 import { abandonRun, equip, runOutcome, startRun } from "../run/run";
-import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear, STARTER_ARMOR } from "../stats";
+import { setting } from "@ffix-roguelike/game-data";
+
+import { accrueGrowth, deriveStats, gearChange, gemsMax, newBuild, starterGear } from "../stats";
 import { awardAchievements } from "./achievements";
-import { applyRunOutcome, bestRouteTier, buySupplyRank, carryOverRouteTiers, routeTiersOpen, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, LEGEND_JOURNEY, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, SUPPLY_MAX, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
+import { applyRunOutcome, bestRouteTier, buySupplyRank, carryOverRouteTiers, routeTiersOpen, campSupplyCatalog, campSupplyStock, completionPoints, gearCatalog, LEGEND_JOURNEY, lockedCharacters, newProfile, raiseStartLevel, startingSupplies, supplyMax, supplyRankCost, trainStat, unlockGear, unlockSlot } from "./profile";
 
 const mythril = itemByName("Mythril Dagger").id;
 const shirt = itemByName("Leather Shirt").id;
@@ -75,10 +77,10 @@ describe("Completion Points", () => {
 });
 
 describe("gear slots & unlocks", () => {
-  test("runs start in FF9 starter gear (per STARTER_ARMOR); locked slots can't be changed", () => {
+  test("runs start in FF9 starter gear (per the slots.starterArmor setting); locked slots can't be changed", () => {
     const p = newProfile();
     let run = startRun({ seed: "x", tier: 0, party: [p.builds.zidane!] });
-    expect(run.party[0]!.build.equipment.armor).toBe(STARTER_ARMOR === "none" ? null : shirt);
+    expect(run.party[0]!.build.equipment.armor).toBe(setting("slots.starterArmor") === "none" ? null : shirt);
     const unlocked = { ...p.builds.zidane!, unlockedSlots: ["armor" as const] };
     run = startRun({ seed: "x", tier: 0, party: [unlocked] });
     expect(run.party[0]!.build.equipment.armor).toBe(shirt); // Zidane's FF9 Leather Shirt
@@ -129,7 +131,7 @@ describe("camp", () => {
     expect(startingSupplies(p)[potion]).toBe(2);
     const run = startRun({ seed: "kit", tier: 0, party: [p.builds.zidane!], supplies: startingSupplies(p) });
     expect(run.consumables.find((c) => c.itemId === potion)!.count).toBe(4 + 2);
-    for (let i = 2; i < SUPPLY_MAX; i++) p = buySupplyRank(p, potion);
+    for (let i = 2; i < supplyMax("Potion"); i++) p = buySupplyRank(p, potion);
     expect(supplyRankCost(p, potion)).toBeNull();
     expect(() => buySupplyRank(p, potion)).toThrow();
   });

@@ -43,14 +43,16 @@ import { trpc } from "@/utils/trpc";
 import { BadgePicker, Check, Field, inputCls, Num, SaveButton, Select, Text, useSaved } from "./admin-fields";
 import { JourneyGroupsTab } from "./journey-groups-admin";
 import { RelicsTab, SynergiesTab } from "./relics-admin";
+import { SettingsTab } from "./settings-admin";
 
 /**
  * Admin: the reward and gear-availability tables (`.plans/rewards.md` §4) — what drops where, the gear catalog, the
  * reward cards' rules, the boons, the rarities, and what each character values. Every save goes live at once (the
  * next offer, drop pool and catalog use it). Export writes the tables into the repo's seed files to commit them.
  */
-type Tab = "journeys" | "gear" | "starter" | "achievements" | "relics" | "synergies" | "boons" | "sources" | "rarities" | "roles" | "preview";
+type Tab = "settings" | "journeys" | "gear" | "starter" | "achievements" | "relics" | "synergies" | "boons" | "sources" | "rarities" | "roles" | "preview";
 const TABS: { id: Tab; label: string }[] = [
+  { id: "settings", label: "Settings" },
   { id: "journeys", label: "Journey groupings" },
   { id: "gear", label: "Gear availability" },
   { id: "starter", label: "Starter gear" },
@@ -101,6 +103,8 @@ export function RewardsAdminPage() {
       </div>
       {!tables.data ? (
         <div className="ff-window p-4">{tables.error ? tables.error.message : "Loading…"}</div>
+      ) : tab === "settings" ? (
+        <SettingsTab tables={tables.data} />
       ) : tab === "journeys" ? (
         <JourneyGroupsTab tables={tables.data} />
       ) : tab === "gear" ? (

@@ -5,6 +5,7 @@
  * from the seed files (`loadRewardCache` in ./cache). Never read at module load.
  */
 import type { AreaData, ChallengeCategoryData, ChallengeData, JourneyData } from "./content";
+import type { GameSettingData } from "./settings";
 import type { JourneyGroupData } from "./journey-groups";
 import type { CharacterTags, RelicData, SynergyData } from "./relics";
 
@@ -250,6 +251,8 @@ export interface RewardTables {
   journeys?: JourneyData[];
   challengeCategories?: ChallengeCategoryData[];
   challenges?: ChallengeData[];
+  /** Game settings: our balance numbers (settings.ts). */
+  settings?: GameSettingData[];
 }
 
 let tables: RewardTables | null = null;

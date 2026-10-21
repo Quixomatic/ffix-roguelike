@@ -1,5 +1,5 @@
 import { partySynergies, type RunState } from "@ffix-roguelike/game-core";
-import { BASE_RELIC_SLOTS, relicById } from "@ffix-roguelike/game-data";
+import { baseRelicSlots, relicById } from "@ffix-roguelike/game-data";
 
 import { Badge } from "@/features/hub/badge";
 import { RelicPopover, SynergyChip } from "@/features/hub/relic-popover";
@@ -13,7 +13,7 @@ export function RelicRack({ run, compact = false }: { run: RunState; compact?: b
     const r = relicById(id);
     return r ? [r] : [];
   });
-  const slots = run.relicSlots ?? BASE_RELIC_SLOTS;
+  const slots = run.relicSlots ?? baseRelicSlots();
   const party = run.party.map((m) => m.build.key);
   // Only the active synergies during a run (the embark page also shows the ones the party is short of).
   const synergies = partySynergies(party).filter((s) => s.tier);

@@ -31,6 +31,7 @@ const FILES = {
   journeys: "journeys.json",
   challengeCategories: "challenge-categories.json",
   challenges: "challenges.json",
+  settings: "game-settings.json",
 } as const;
 
 /** First-pass badges for the seeded achievements (id → badge number); see `seedRewards`. */
@@ -64,6 +65,7 @@ const SPECS: Record<Table, { key: string; record: (r: Row) => Row }> = {
   journeys: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
   challengeCategories: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
   challenges: { key: "id", record: (r) => ({ id: String(r.id), sort: Number(r.sort), enabled: r.enabled !== false, data: data(r) }) },
+  settings: { key: "key", record: (r) => ({ key: String(r.key), value: r.value as object }) },
 };
 
 /** The Prisma model behind each table, loosely typed so the sync can treat them alike. */
@@ -88,6 +90,7 @@ const model = (db: Database, table: Table): Model =>
     journeys: db.journey,
     challengeCategories: db.challengeCategory,
     challenges: db.challenge,
+    settings: db.gameSetting,
   })[table] as unknown as Model;
 
 /** Achievement id → badge number: achievement-badges.json, then any `badge` in achievements.json. */
@@ -100,7 +103,7 @@ function achievementBadges(achievements: Row[]): Record<string, number> {
 
 /** Returns how many rows were inserted per table. */
 export async function seedRewards(db: Database): Promise<Record<Table, number>> {
-  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges] = [
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges, settings] = [
     read(FILES.rarities),
     read(FILES.roles),
     read(FILES.sources),
@@ -116,6 +119,7 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     read(FILES.journeys),
     read(FILES.challengeCategories),
     read(FILES.challenges),
+    read(FILES.settings),
   ];
   const rec = (t: Table, rows: Row[]) => rows.map(SPECS[t].record) as never;
   const results = await db.$transaction([
@@ -134,6 +138,7 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     db.journey.createMany({ data: rec("journeys", journeys), skipDuplicates: true }),
     db.challengeCategory.createMany({ data: rec("challengeCategories", challengeCategories), skipDuplicates: true }),
     db.challenge.createMany({ data: rec("challenges", challenges), skipDuplicates: true }),
+    db.gameSetting.createMany({ data: rec("settings", settings), skipDuplicates: true }),
   ]);
   // Badges (achievement-badges.json: achievement id → badge number, and any `badge` in achievements.json) fill in
   // rows that have none, including rows that existed before badges did. A badge picked on the admin page stays.
@@ -185,6 +190,7 @@ export async function seedRewards(db: Database): Promise<Record<Table, number>> 
     journeys: results[12].count,
     challengeCategories: results[13].count,
     challenges: results[14].count,
+    settings: results[15].count,
   };
 }
 
@@ -242,6 +248,7 @@ export async function syncRewardRows(db: Database, table: Table, tokens: string[
     let changed: string[] = [];
     if (have) {
       if (table === "characterTags") changed = stable(have.tags) === stable(w.tags) ? [] : ["tags"];
+      else if (table === "settings") changed = stable(have.value) === stable(w.value) ? [] : ["value"];
       else {
         const a = (have.data ?? {}) as Row;
         const b = w.data as Row;
@@ -273,6 +280,7 @@ export async function resetRewardTable(db: Database, table: Table): Promise<numb
     journeys: () => db.journey.deleteMany(),
     challengeCategories: () => db.challengeCategory.deleteMany(),
     challenges: () => db.challenge.deleteMany(),
+    settings: () => db.gameSetting.deleteMany(),
   }[table];
   await del();
   return (await seedRewards(db))[table];
@@ -280,7 +288,7 @@ export async function resetRewardTable(db: Database, table: Table): Promise<numb
 
 /** Write the database's reward tables back to the seed files (dev: commit tuning done on the admin page). */
 export async function exportRewardSeeds(db: Database): Promise<void> {
-  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges] = await Promise.all([
+  const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges, settings] = await Promise.all([
     db.rewardRarity.findMany({ orderBy: { sort: "asc" } }),
     db.rewardRole.findMany({ orderBy: { key: "asc" } }),
     db.rewardSource.findMany({ orderBy: { id: "asc" } }),
@@ -296,8 +304,10 @@ export async function exportRewardSeeds(db: Database): Promise<void> {
     db.journey.findMany({ orderBy: { sort: "asc" } }),
     db.challengeCategory.findMany({ orderBy: { sort: "asc" } }),
     db.challenge.findMany({ orderBy: { sort: "asc" } }),
+    db.gameSetting.findMany({ orderBy: { key: "asc" } }),
   ]);
-  const write = (f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
+  writeFileSync(join(REWARD_SEED_DIR, FILES.settings), `${JSON.stringify(settings.map((r) => ({ key: r.key, value: r.value })), null, 2)}\n`);
+  const write =(f: string, rows: { data: unknown }[]) => writeFileSync(join(REWARD_SEED_DIR, f), `${JSON.stringify(rows.map((r) => r.data), null, 2)}\n`);
   write(FILES.rarities, rarities);
   write(FILES.roles, roles);
   write(FILES.sources, sources);

@@ -2,6 +2,45 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.10] - 2026-10-21
+
+Game settings (`.plans/content-db.md` step 4): every balance number of our design is a database setting, editable on the admin page and live at once. Nothing plays differently: every setting starts at the value the code had.
+
+### Added
+- **`game_setting`** table (key → value), seeded from `game-settings.json` (insert-missing), loaded with the other content tables. The server reads it once at boot and after an admin save, then serves it from memory; the web gets it once with the rest of the content. The server checks every action with its own copy.
+- **42 settings** (game-data `SETTINGS`: each one's type, range, default and what it does, so a value is checked on save and a missing row uses its default):
+  - **Training:** ranks per stat (20), gain per rank per stat, cost of rank 1 and the increase per rank.
+  - **Start level:** the highest (21) and CP per level.
+  - **Gear slots:** unlock costs (5 / 10 / 20 / 35) and the starting outfit in locked slots.
+  - **Completion Points:** per level gained, battles per point, per boss, for a win.
+  - **Tiers:** the highest tier (5), enemy HP and attack per tier, rewards per tier.
+  - **Supplies:** always stocked, every supply, ranks per supply (5), rank caps by item (Elixir 2), cost factor.
+  - **Relics:** slots per run (3).
+  - **Runs:** starting gil, starter kit, gil kept on a loss, treasure gil, sell price, never-sold item price, Chocobo digs.
+  - **Encounters:** monsters over party size, the encounter window.
+  - **Maps:** the default map shape, early and later stage weights, the middle round's Moogle weight.
+  - **Reward cards:** gear reach by rarity, member spread, boon affinity, ability value, preferred ability ×, lost ability cost.
+- **Admin → Rewards & gear → Settings** (the first tab): every setting by group, searchable, with what it does, an editor for its kind (numbers, lists, choices, name → number tables), its default, Save and Default. API `admin.saveSetting` / `admin.resetSetting`, checked against the definition.
+- **Caps never take anything away:** a lowered cap keeps what players bought and counts at most the cap; raising it again gives it back:
+  - training ranks (already clamped);
+  - start level: runs start at most at the cap, and the bought level stays on the profile (new);
+  - supply ranks: run kits pack at most the cap (new).
+- Tests (`meta/settings.test.ts`): the seed has a valid row for every setting; the checks; stored, missing and invalid values; lowering and raising caps (training, start level, supplies); tiers, Completion Points and starting gil follow their settings. Game-core: 185 pass, 0 fail.
+
+### Changed
+- The constants `TRAIN_MAX`, `TRAIN_EFFECT`, `START_LEVEL_MAX`, `MAX_TIER`, `SUPPLY_MAX`, `SUPPLY_COST_FACTOR`, `SLOT_UNLOCK_COSTS`, `STARTER_ARMOR`, `RARE_PRICE`, `BASE_RELIC_SLOTS`, `MAP_SHAPE`, `CHOCOBO_DIGS` are now functions reading their settings (`trainMax()`, `trainPerRank()`, `startLevelMax()`, `tierCap()`, `supplyMax()`, `baseRelicSlots()`, `defaultMapShape()`, `chocoboDigs()`…).
+- The run API no longer hard-codes the top tier (5): the tiers open on the route are checked against the setting.
+
+### Removed
+- Dead constants `UNLOCK_PRICE_MULT` and `SEMIBOSS_COLUMN`.
+
+### Fixed
+- `sync-seeds` crashed comparing a table whose rows keep their value outside `data` (game settings).
+
+### Notes
+- Migration `game_settings` (a new table). Restart `pnpm dev`.
+- Not settings yet: the Stiltzkin and Chocobo deal tables, the supply-card pools per tier, and the five ? events (planned as an `event` table).
+
 ## [0.4.9] - 2026-10-21
 
 Content in the database, step 3 (`.plans/content-db.md`): difficulty tiers are per journey and per challenge, not account-wide.

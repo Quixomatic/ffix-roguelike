@@ -60,7 +60,8 @@ export const runRouter = router({
     .input(
       z.object({
         party: z.array(z.string()).min(1).max(4),
-        tier: z.number().int().min(0).max(5),
+        // Only a sane bound here: the tiers open on the route (up to the `tiers.max` setting) are checked in startRun.
+        tier: z.number().int().min(0).max(99),
         journey: z.string().default("evil-forest"),
         /** Wipe the run in progress (if any) and start this one. */
         replace: z.boolean().default(false),

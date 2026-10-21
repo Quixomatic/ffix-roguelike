@@ -15,6 +15,7 @@ import {
   leveling,
   MAX_LEVEL,
   parseAbilityRef,
+  setting,
   starterUpgradesFor,
   type AbilityRef,
   type BoonStat,
@@ -60,7 +61,7 @@ export interface CharacterBuild {
   points?: number;
   /** Equipment slots unlocked with Completion Points (the weapon slot is always open). */
   unlockedSlots?: EquipSlot[];
-  /** Training ranks bought with Completion Points (0–TRAIN_MAX per stat), raising base stats for every run. */
+  /** Training ranks bought with Completion Points (0–the `training.maxRanks` setting per stat), raising base stats for every run. */
   training?: Partial<Record<TrainStat, number>>;
   /** Starting-gear upgrade tiers bought per slot (the starter_upgrade table): the highest owned tier is worn at the start. */
   starterTiers?: Partial<Record<EquipSlot, number>>;
@@ -163,30 +164,31 @@ export const emptyRecord = (): CharacterRecord => ({ runs: 0, wins: 0, bossKills
  * Each unlock costs more than the last; the player chooses which slot to open.
  */
 export const UNLOCKABLE_SLOTS: EquipSlot[] = ["armor", "head", "wrist", "accessory"];
-export const SLOT_UNLOCK_COSTS = [5, 10, 20, 35];
 
 export function slotUnlocked(build: CharacterBuild, slot: EquipSlot): boolean {
   return slot === "weapon" || (build.unlockedSlots ?? []).includes(slot);
 }
 
-/** CP cost of the next slot unlock, or null when all four are open. */
+/** CP cost of the next slot unlock (setting `slots.unlockCosts`), or null when all four are open. */
 export function nextSlotCost(build: CharacterBuild): number | null {
-  return SLOT_UNLOCK_COSTS[(build.unlockedSlots ?? []).length] ?? null;
+  const opened = (build.unlockedSlots ?? []).length;
+  if (opened >= UNLOCKABLE_SLOTS.length) return null;
+  const costs = setting("slots.unlockCosts");
+  return costs[opened] ?? costs.at(-1) ?? null;
 }
 
 /**
- * Balance switch — which FF9 starting gear characters wear in slots they haven't unlocked yet.
- * FF9's monster stats assume armour: a Goblin's Knife hits Zidane for ~18 in his starting gear, ~72 without.
+ * Which FF9 starting gear characters wear in slots they haven't unlocked yet (setting `slots.starterArmor`). FF9's
+ * monster stats assume armour: a Goblin's Knife hits Zidane for ~18 in his starting gear, ~72 without.
  *   "all"  — full FF9 starting outfit (head, arm, body, accessory) every run
  *   "body" — starting body armour only
  *   "none" — nothing until the slot is unlocked with Completion Points
  * Locked slots can't be changed either way: unlocking a slot is what lets found gear go there.
  */
-export const STARTER_ARMOR: "all" | "body" | "none" = "all";
-
 function wearsStarter(slot: EquipSlot): boolean {
-  if (STARTER_ARMOR === "all") return true;
-  if (STARTER_ARMOR === "body") return slot === "armor";
+  const mode = setting("slots.starterArmor");
+  if (mode === "all") return true;
+  if (mode === "body") return slot === "armor";
   return false;
 }
 
@@ -209,7 +211,7 @@ export function starterUpgradeItem(build: CharacterBuild, slot: EquipSlot): numb
 
 /**
  * What a character starts every run wearing: their FF9 starting weapon, their FF9 starting gear in each slot
- * they've unlocked, and in locked slots whatever STARTER_ARMOR allows. Some characters have no starting piece
+ * they've unlocked, and in locked slots whatever the `slots.starterArmor` setting allows. Some characters have no starting piece
  * for a slot. Starting-gear upgrades (bought at camp) replace the FF9 piece in unlocked slots.
  */
 export function starterGear(build: CharacterBuild): Equipment {
@@ -340,25 +342,28 @@ const uniq = <T>(xs: T[]) => [...new Set(xs)];
 
 export const TRAIN_STATS = ["strength", "magic", "spirit", "speed", "hp", "mp"] as const;
 export type TrainStat = (typeof TRAIN_STATS)[number];
-/** Ranks per stat. */
-export const TRAIN_MAX = 20;
-/**
- * What each rank adds. Strength/Magic raise the "basis" stats (so HP/MP follow, as in FF9); Speed is FF9's
- * strongest stat, so it takes two ranks per point; HP/MP are percentages. Tuning lives here.
- */
-export const TRAIN_EFFECT: Record<TrainStat, { per: number; unit: "point" | "percent"; label: string }> = {
-  strength: { per: 1, unit: "point", label: "Strength" },
-  magic: { per: 1, unit: "point", label: "Magic" },
-  spirit: { per: 1, unit: "point", label: "Spirit" },
-  speed: { per: 0.5, unit: "point", label: "Speed" },
-  hp: { per: 2, unit: "percent", label: "HP" },
-  mp: { per: 2, unit: "percent", label: "MP" },
+/** Ranks per stat (setting `training.maxRanks`). */
+export const trainMax = () => setting("training.maxRanks");
+/** How a stat's training shows: points or percent of max (HP / MP), and its name. */
+export const TRAIN_STAT_INFO: Record<TrainStat, { unit: "point" | "percent"; label: string }> = {
+  strength: { unit: "point", label: "Strength" },
+  magic: { unit: "point", label: "Magic" },
+  spirit: { unit: "point", label: "Spirit" },
+  speed: { unit: "point", label: "Speed" },
+  hp: { unit: "percent", label: "HP" },
+  mp: { unit: "percent", label: "MP" },
 };
-/** CP for the next rank: rank n costs n (a full stat is 210 CP). */
-export const trainCost = (rank: number) => rank + 1;
-export const trainRank = (build: CharacterBuild, stat: TrainStat) => Math.max(0, Math.min(TRAIN_MAX, build.training?.[stat] ?? 0));
+/**
+ * What one rank adds (setting `training.perRank`). Strength/Magic raise the "basis" stats (so HP/MP follow, as in
+ * FF9); Speed is FF9's strongest stat, so it starts at half a point a rank; HP/MP are percentages.
+ */
+export const trainPerRank = (stat: TrainStat): number => setting("training.perRank")[stat] ?? 0;
+/** CP for the next rank (settings `training.costBase` + `training.costStep` × rank: by default rank n costs n). */
+export const trainCost = (rank: number) => setting("training.costBase") + setting("training.costStep") * rank;
+/** Ranks that count: what the character bought, up to today's cap (a lowered cap keeps the ranks but counts fewer). */
+export const trainRank = (build: CharacterBuild, stat: TrainStat) => Math.max(0, Math.min(trainMax(), build.training?.[stat] ?? 0));
 /** The bonus a stat gets from its ranks (points, or percent for HP/MP). */
-export const trainBonus = (build: CharacterBuild, stat: TrainStat) => Math.floor(trainRank(build, stat) * TRAIN_EFFECT[stat].per);
+export const trainBonus = (build: CharacterBuild, stat: TrainStat) => Math.floor(trainRank(build, stat) * trainPerRank(stat));
 
 export function deriveStats(build: CharacterBuild): DerivedStats {
   const data = getCharacter(build.key);

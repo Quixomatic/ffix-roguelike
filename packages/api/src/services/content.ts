@@ -12,6 +12,7 @@ import {
   type AreaData,
   type ChallengeCategoryData,
   type ChallengeData,
+  type GameSettingData,
   type JourneyData,
   type RelicData,
   type JourneyGroupData,
@@ -100,7 +101,7 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges] = await Promise.all([
+    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, journeyGroups, areas, journeys, challengeCategories, challenges, settings] = await Promise.all([
       db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
       db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
       db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
@@ -116,6 +117,7 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       db.journey.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
       db.challengeCategory.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
       db.challenge.findMany({ orderBy: { sort: "asc" }, select: { sort: true, enabled: true, data: true } }),
+      db.gameSetting.findMany({ select: { key: true, value: true } }),
     ]);
     if (!gear.length || !rarities.length || !areas.length || !journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
@@ -135,6 +137,8 @@ export function ensureRewardContent(db: Database): Promise<RewardTables> {
       journeys: journeys.map((r) => ({ ...(r.data as unknown as JourneyData), sort: r.sort, enabled: r.enabled })),
       challengeCategories: challengeCategories.map((r) => ({ ...(r.data as unknown as ChallengeCategoryData), sort: r.sort, enabled: r.enabled })),
       challenges: challenges.map((r) => ({ ...(r.data as unknown as ChallengeData), sort: r.sort, enabled: r.enabled })),
+      // Game settings: read once here (and after admin edits), then served from memory.
+      settings: settings.map((r) => ({ key: r.key, value: r.value as GameSettingData["value"] })),
     };
     registerRewardTables(tables);
     return tables;

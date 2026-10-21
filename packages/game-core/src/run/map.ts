@@ -2,12 +2,14 @@
  * Overworld map generation — a Super Mario World–style path of stages from the start to the boss castle.
  *
  * Every map has the same shape, like Pokelike's: columns run left→right with a fixed number of stages each
- * (`MAP_SHAPE`: start → 2 → 3 → 4 → 3 → 4 → 3 → 2 → boss), centred on the map's middle line so the whole map is
+ * (setting `map.defaultShape`: start → 2 → 3 → 4 → 3 → 4 → 3 → 2 → boss), centred on the map's middle line so the whole map is
  * symmetrical. Each stage links to the stages one step up and one step down in the next column (its "lanes" are one
  * apart), which makes a diamond lattice: every route branches and merges the same way, and the player picks a path
  * through it. Only what the stages *are* is random. Early stages are plain battles; elites, shops and events appear
  * deeper in; the column before the castle has one Moogle (rest + mail gear home) and the rest are other stages.
  */
+import { setting, SETTINGS } from "@ffix-roguelike/game-data";
+
 import { WORLDS } from "../content/worlds";
 import type { Rng } from "../rng";
 
@@ -36,7 +38,7 @@ export interface WorldMap {
   nodes: MapNode[];
   startId: string;
   bossId: string;
-  /** Generated with the fixed symmetrical shape (`MAP_SHAPE`); saved maps from before it don't have this. */
+  /** Generated with a symmetrical lattice shape (`mapShapeOf`); saved maps from before it don't have this. */
   lattice?: boolean;
 }
 
@@ -44,10 +46,11 @@ export interface WorldMap {
  * Stages per round (column), start to boss — the default for every area (an area can set its own, `mapShape`). Any
  * round can have any number of stages, 1 included, as long as the shape is valid (`checkMapShape`).
  */
-export const MAP_SHAPE = [1, 2, 3, 4, 3, 4, 3, 2, 1];
-export const MAP_COLUMNS = MAP_SHAPE.length;
-/** The column that becomes a single semi-boss fortress (every path crosses it) when the area has a semi-boss. */
-export const SEMIBOSS_COLUMN = 4;
+export const defaultMapShape = (): readonly number[] => {
+  const shape = setting("map.defaultShape");
+  // A shape that breaks the rules (`checkMapShape`) would fail every map: fall back to the built-in one.
+  return checkMapShape(shape) ? SETTINGS["map.defaultShape"].default : shape;
+};
 
 /**
  * Why a map shape can't be used, or null when it's fine: the start and the boss are one stage each, every round has
@@ -65,28 +68,23 @@ export function checkMapShape(shape: readonly number[]): string | null {
 }
 
 /** The shape an area's maps use. */
-export const mapShapeOf = (world: number): readonly number[] => WORLDS[world]?.mapShape ?? MAP_SHAPE;
+export const mapShapeOf = (world: number): readonly number[] => WORLDS[world]?.mapShape ?? defaultMapShape();
 
-/** What a stage is, by how far along the map it is (`last` = the boss's column): the first quarter is plain fights. */
+/**
+ * What a stage is, by how far along the map it is (`last` = the boss's column). The first quarter is plain fights, with
+ * treasure and events only at its end (setting `map.earlyWeights`); after that, the setting `map.weights`, with the
+ * Moogle likelier in the middle round (`map.middleMoogleWeight`).
+ */
 function pickKind(rng: Rng, col: number, last: number, { noMoogle = false } = {}): NodeKind {
   const early = Math.round(last / 4);
   const middle = Math.floor(last / 2);
-  if (col <= early) return rng.weighted([
-    { weight: 8, value: "battle" as NodeKind },
-    { weight: col === early ? 2 : 0, value: "treasure" as NodeKind },
-    { weight: col === early ? 1 : 0, value: "event" as NodeKind },
-  ]);
-  return rng.weighted([
-    { weight: 6, value: "battle" as NodeKind },
-    { weight: 2, value: "elite" as NodeKind },
-    { weight: 1.5, value: "treasure" as NodeKind },
-    { weight: 1.2, value: "shop" as NodeKind },
-    { weight: 1, value: "synth" as NodeKind },
-    { weight: 0.45, value: "stiltzkin" as NodeKind },
-    { weight: 0.8, value: "chocobo" as NodeKind },
-    { weight: 1.5, value: "event" as NodeKind },
-    { weight: noMoogle ? 0 : col === middle ? 1.5 : 0.3, value: "moogle" as NodeKind },
-  ]);
+  const pick = (weights: Record<string, number>, weightOf: (kind: string, w: number) => number): NodeKind => {
+    const options = Object.entries(weights).map(([kind, w]) => ({ weight: Math.max(0, weightOf(kind, w)), value: kind as NodeKind }));
+    // Every weight zero (a setting turned everything off): a plain fight.
+    return options.some((o) => o.weight > 0) ? rng.weighted(options) : "battle";
+  };
+  if (col <= early) return pick(setting("map.earlyWeights"), (kind, w) => (kind === "battle" || col === early ? w : 0));
+  return pick(setting("map.weights"), (kind, w) => (kind !== "moogle" ? w : noMoogle ? 0 : col === middle ? setting("map.middleMoogleWeight") : w));
 }
 
 export function generateWorldMap(rng: Rng, world: number, shape: readonly number[] = mapShapeOf(world)): WorldMap {

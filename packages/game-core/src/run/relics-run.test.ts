@@ -4,7 +4,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { BASE_RELIC_SLOTS } from "@ffix-roguelike/game-data";
+import { baseRelicSlots } from "@ffix-roguelike/game-data";
 
 import { newProfile } from "../meta/profile";
 import { bagValue } from "../metrics/collect";
@@ -16,7 +16,7 @@ import { applyCard, moveTo, startRun, type RunState } from "./run";
 const ALL = ["thiefs-gloves", "ether-pouch", "power-wrist", "rosetta-ring", "protect-ring", "blood-fang", "tantalus-bandana", "hermes-sandals", "pumice-piece", "kujas-mirror"];
 const profile = newProfile();
 const start = (o: Partial<Parameters<typeof startRun>[0]> = {}) =>
-  startRun({ seed: "relic", tier: 0, party: [profile.builds.zidane!, profile.builds.vivi!], unlockedRelics: ALL, relicSlots: BASE_RELIC_SLOTS, ...o });
+  startRun({ seed: "relic", tier: 0, party: [profile.builds.zidane!, profile.builds.vivi!], unlockedRelics: ALL, relicSlots: baseRelicSlots(), ...o });
 const relicCard = (id: string): RewardCard => ({ kind: "relic", rarity: "common", relicId: id, name: id });
 
 describe("starting a run with a relic", () => {

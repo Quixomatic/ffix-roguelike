@@ -6,7 +6,7 @@
  * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
  * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
-import { BASE_RELIC_SLOTS, findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, relicById, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
+import { baseRelicSlots, findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, relicById, setting, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
 import { relicModifiers, synergyModifiers } from "../battle/modifiers";
@@ -38,7 +38,7 @@ import { EVENTS, eventAt, eventById, type EventOutcome } from "./events";
 import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
 import { rollOffer, warePrice, type RewardCard, type RewardOffer } from "../rewards/cards";
-import { CHOCOBO_DIGS, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
+import { chocoboDigs, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
 export class RunError extends Error {}
 
@@ -217,7 +217,7 @@ export interface StartRunInput {
   relic?: string;
   /** Relics the player has unlocked (game-core meta/relics `unlockedRelics`). */
   unlockedRelics?: string[];
-  /** Relic rack size (meta/relics `relicSlotCount`; default BASE_RELIC_SLOTS). */
+  /** Relic rack size (meta/relics `relicSlotCount`; default the `relics.baseSlots` setting). */
   relicSlots?: number;
 }
 
@@ -285,7 +285,9 @@ export function startRun(input: StartRunInput): RunState {
   let uid = 1;
   const party = input.party.map((b) => {
     const build = structuredClone(b);
-    // Every run starts at the character's start level, with exactly that level's EXP.
+    // Every run starts at the character's start level (up to today's cap: a lowered cap counts less, the bought level
+    // is kept on the profile), with exactly that level's EXP.
+    build.level = Math.max(1, Math.min(setting("startLevel.max"), build.level));
     build.exp = expForLevel(build.level);
     build.equipment = starterGear(build);
     for (const slot of EQUIP_SLOTS) {
@@ -321,13 +323,13 @@ export function startRun(input: StartRunInput): RunState {
     consumables: withSupplies(starterKit(), input.supplies ?? {}),
     gear,
     nextUid: uid,
-    gil: 300,
+    gil: setting("run.startingGil"),
     phase: { kind: "map" },
     stats: { battles: 0, bossKills: [], eaten: 0, steals: 0 },
     unlockedGear: [...(input.unlockedGear ?? [])],
     battleMode: input.battleMode ?? "wait",
     relics: input.relic ? [input.relic] : [],
-    relicSlots: Math.max(1, input.relicSlots ?? BASE_RELIC_SLOTS),
+    relicSlots: Math.max(1, input.relicSlots ?? baseRelicSlots()),
     unlockedRelics,
   };
   if (input.relic) track(run, "relics.taken", 1, { subject: input.relic });
@@ -378,9 +380,11 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
     case "semiboss":
     case "boss":
       return startBattle(run, nodeId, kind, pickEncounter(rng, run.world, depth, kind, run.party.length), rng);
-    case "treasure":
-      run.phase = { kind: "treasure", gearChoices: [], gil: rng.int(80, 160) * (tierOf(run) + 1), offer: rollOffer(run, "treasure", rng) };
+    case "treasure": {
+      const [lo, hi] = setting("run.treasureGil");
+      run.phase = { kind: "treasure", gearChoices: [], gil: rng.int(lo ?? 80, hi ?? lo ?? 160) * (tierOf(run) + 1), offer: rollOffer(run, "treasure", rng) };
       return;
+    }
     case "shop": {
       // The shelf: the area's consumables (unlimited). The rest of the counter is six wares: reward cards for one
       // member each, bought rather than picked (`buyWare`).
@@ -402,7 +406,7 @@ function enterNode(run: RunState, kind: NodeKind, depth: number, nodeId: string,
       run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(rng, run.world, partyKeys(run), run.unlockedGear), bought: [] };
       return;
     case "chocobo":
-      run.phase = { kind: "chocobo", spots: chocoboSpots(rng, run.world, partyKeys(run), run.unlockedGear), digsLeft: CHOCOBO_DIGS, dug: [] };
+      run.phase = { kind: "chocobo", spots: chocoboSpots(rng, run.world, partyKeys(run), run.unlockedGear), digsLeft: chocoboDigs(), dug: [] };
       return;
     case "moogle":
       healParty(run, 100, true);
@@ -662,7 +666,7 @@ export function applyCard(run: RunState, card: RewardCard, replace?: string): Ru
       // Into a free slot, or in place of the held relic the player gave up for it (swap only: no selling).
       const rack = (next.relics ??= []);
       if (rack.includes(card.relicId)) throw new RunError("You already have that relic");
-      if (rack.length < (next.relicSlots ?? BASE_RELIC_SLOTS)) rack.push(card.relicId);
+      if (rack.length < (next.relicSlots ?? baseRelicSlots())) rack.push(card.relicId);
       else {
         const at = replace ? rack.indexOf(replace) : -1;
         if (at < 0) throw new RunError("Your relics are full: choose one to give up");
@@ -1043,7 +1047,7 @@ export function runOutcome(run: RunState): RunOutcome {
     builds,
     foundGear: [...new Set(run.gear.filter((g) => !g.secured).map((g) => g.itemId))],
     synthesized: run.synthesized ?? [],
-    gilEarned: won ? run.gil : Math.floor(run.gil / 2),
+    gilEarned: won ? run.gil : Math.floor(run.gil * setting("run.lossGilKept")),
     stats: run.stats,
     worldReached: WORLDS[run.world]?.tier ?? 0,
     journey: run.journey,

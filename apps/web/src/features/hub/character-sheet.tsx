@@ -9,7 +9,7 @@ import {
   nextSlotCost,
   slotUnlocked,
   starterGear,
-  START_LEVEL_MAX,
+  startLevelMax,
   startLevelCost,
   starterTierPicked,
   type CharacterBuild,
@@ -158,7 +158,7 @@ export function CharacterSheet({
                   points={points}
                   busy={train.isPending || raise.isPending}
                   onTrain={(stat) => train.mutate({ key: build.key, stat })}
-                  level={{ value: build.level, max: START_LEVEL_MAX, cost: levelCost, onRaise: () => raise.mutate({ key: build.key }) }}
+                  level={{ value: build.level, max: startLevelMax(), cost: levelCost, onRaise: () => raise.mutate({ key: build.key }) }}
                 />
                 <div className="text-xs opacity-70">
                   CP from runs: +1 per level gained, +1 per 3 battles won, +3 per boss, +10 for a win. Levels reset every run. Locked gear slots unlock from the

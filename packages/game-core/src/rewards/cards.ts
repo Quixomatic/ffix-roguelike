@@ -16,6 +16,7 @@ import {
   relicById,
   relicChanceOf,
   rewardTables,
+  setting,
   shopMarkupOf,
   shopPriceOf,
   sourceOf,
@@ -95,7 +96,7 @@ export function learning(build: CharacterBuild): AbilityRef[] {
 export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): RewardOffer {
   const src = sourceOf(source);
   const tier = WORLDS[run.world]!.tier;
-  const mult = run.tier + 1;
+  const mult = 1 + run.tier * setting("tiers.rewardPerTier");
   const keys = run.party.map((m) => m.build.key);
   const boss = source === "boss" || source === "semiboss";
 
@@ -125,7 +126,11 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
   const pickMember = (candidates: RunMember[]) => {
     if (!candidates.length) return null;
     // Spread across the party, and lean toward whoever has the most room to improve (the most upgrades waiting).
-    return rng.weighted(candidates.map((m) => ({ weight: (1 + upgradesFor(m.build, here, src.upgradeThreshold).length * 0.2) / (1 + 3 * (used.get(m.build.key) ?? 0)), value: m })));
+    const perUpgrade = setting("cards.spreadPerUpgrade");
+    const perCard = setting("cards.spreadPerCard");
+    return rng.weighted(
+      candidates.map((m) => ({ weight: (1 + upgradesFor(m.build, here, src.upgradeThreshold).length * perUpgrade) / (1 + perCard * (used.get(m.build.key) ?? 0)), value: m })),
+    );
   };
   const note = (key: string | null) => key && used.set(key, (used.get(key) ?? 0) + 1);
 
@@ -143,7 +148,7 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     const list = upgrades(m, rarity).filter((u) => !taken.has(`${m.build.key}:${u.change.slot}`) && !taken.has(`item:${u.itemId}`));
     if (!list.length) return null;
     // Rarer cards pick from nearer the top of the list.
-    const reach = Math.max(1, Math.ceil(list.length / (1 + rarityRank(rarity) * 1.5)));
+    const reach = Math.max(1, Math.ceil(list.length / (1 + rarityRank(rarity) * setting("cards.gearReach"))));
     const pick: UpgradeEval = rng.pick(list.slice(0, reach));
     note(m.build.key);
     return { kind: "gear", rarity, key: m.build.key, itemId: pick.itemId, slot: pick.change.slot, score: pick.score, teaches: pick.teaches, stopsLearning: pick.stopsLearning };
@@ -154,7 +159,7 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     const options = rewardTables().boons.filter((b) => b.enabled && b.minTier <= tier && b.amounts[rarity] != null && !takenBoons.has(b.id) && !(run.rewardBans ?? []).includes(b.id));
     if (!options.length) return null;
     const m = pickMember(run.party)!;
-    const weightFor = (b: RewardBoon) => b.weight * (b.affinity?.includes(m.build.key) ? 2 : 1);
+    const weightFor = (b: RewardBoon) => b.weight * (b.affinity?.includes(m.build.key) ? setting("cards.boonAffinity") : 1);
     const b = rng.weighted(options.map((x) => ({ weight: weightFor(x), value: x })));
     const key = b.scope === "party" ? null : m.build.key;
     note(key);
@@ -175,7 +180,7 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     const name = rng.pick(SUPPLIES[Math.min(tier, SUPPLIES.length - 1)]!);
     return { kind: "supplies", rarity, itemId: itemByName(name).id, count: rarityOf(rarity).supplies };
   };
-  const gilCard = (rarity: RarityId): RewardCard => ({ kind: "gil", rarity, amount: rarityOf(rarity).gil * mult });
+  const gilCard = (rarity: RarityId): RewardCard => ({ kind: "gil", rarity, amount: Math.round(rarityOf(rarity).gil * mult) });
 
   const make = (type: CardType, rarity: RarityId): RewardCard | null =>
     type === "gear" ? gearCard(rarity) : type === "boon" ? boonCard(rarity) : type === "ap" ? apCard(rarity) : type === "supplies" ? suppliesCard(rarity) : gilCard(rarity);
@@ -203,7 +208,7 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     const relic = rollRelicCard(run, rng);
     if (relic) cards[cards.length - 1] = relic;
   }
-  return { source, cards, skipGil: src.skipGil * mult };
+  return { source, cards, skipGil: Math.round(src.skipGil * mult) };
 }
 
 /** The rarer cards first is how they read best; keep the roll order (the offer shows them as rolled). */
@@ -216,5 +221,5 @@ export const cardRarityRank = (c: RewardCard) => rarityRank(c.rarity);
 export function warePrice(card: RewardCard, runTier: number): number {
   const r = rarityOf(card.rarity);
   if (card.kind === "gear") return Math.round((effectivePrice(getItem(card.itemId)) * shopMarkupOf(r)) / 10) * 10;
-  return shopPriceOf(r) * (runTier + 1);
+  return Math.round(shopPriceOf(r) * (1 + runTier * setting("tiers.rewardPerTier")));
 }

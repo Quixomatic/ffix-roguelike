@@ -1,5 +1,5 @@
 /** Encounter selection, battle rewards, treasure and shop stock. */
-import { findItem, gearAvailability, items, itemByName, rewardTables, shops, synthesis, type ItemData, type SynthesisRecipe } from "@ffix-roguelike/game-data";
+import { findItem, gearAvailability, items, itemByName, rewardTables, setting, shops, synthesis, type ItemData, type SynthesisRecipe } from "@ffix-roguelike/game-data";
 
 import type { BattleState } from "../battle/types";
 import { baseStats, getEnemy } from "../content/enemies";
@@ -15,8 +15,7 @@ export const isGear = (item: ItemData) => GEAR_KINDS.has(item.kind) && !item.eff
  * Price used for loot bands and unlock costs. FF9 lists never-sold rarities (Ribbon, Genji gear, Pumice…) at a
  * token 2 gil; treat those as late-game treasure instead.
  */
-export const RARE_PRICE = 20000;
-export const effectivePrice = (item: ItemData) => (item.price < 10 ? RARE_PRICE : item.price);
+export const effectivePrice = (item: ItemData) => (item.price < 10 ? setting("run.rarePrice") : item.price);
 
 /**
  * Rough threat of a group: sum of level × HP multiplier. Used to order encounters by difficulty. An FF9 scene
@@ -41,8 +40,9 @@ function rollScenes(rng: Rng, group: string[], cap: number): string[] {
  */
 export function pickEncounter(rng: Rng, world: number, depth: number, kind: BattleNodeKind, partySize = 4): string[] {
   const w = WORLDS[world]!;
-  // Small parties meet smaller groups: a lone hero fights one monster, a full party up to five.
-  const cap = partySize <= 1 ? 1 : partySize + 1;
+  // Small parties meet smaller groups: a lone hero fights one monster, others up to party size + the setting
+  // `encounters.extraOverParty` (a full party meets up to five by default).
+  const cap = partySize <= 1 ? 1 : partySize + setting("encounters.extraOverParty");
   if (kind === "boss") return rollScenes(rng, w.boss, 8);
   if (kind === "semiboss") return rollScenes(rng, w.semiBoss ?? w.elites[0] ?? w.boss, 8);
   return rollScenes(rng, pickGroup(rng, w, depth, kind, cap), cap);
@@ -51,7 +51,7 @@ export function pickEncounter(rng: Rng, world: number, depth: number, kind: Batt
 function pickGroup(rng: Rng, w: (typeof WORLDS)[number], depth: number, kind: "battle" | "elite", cap: number): string[] {
   // Trim each group to the party-size cap first, then order by the threat of what will actually be fought.
   const pool = (kind === "elite" ? w.elites : w.encounters).map((g) => (g.some(isSceneRef) ? g : g.slice(0, cap))).sort((a, b) => threat(a) - threat(b));
-  const span = Math.min(pool.length, kind === "elite" ? pool.length : 4);
+  const span = Math.min(pool.length, kind === "elite" ? pool.length : setting("encounters.window"));
   const start = Math.round(depth * (pool.length - span));
   return pool[Math.min(pool.length - 1, start + rng.int(0, span - 1))]!;
 }
@@ -197,14 +197,13 @@ export function synthShopName(world: number): string {
   return SYNTH_NAMES[WORLDS[world]!.synthTier] ?? "Synthesis Shop";
 }
 
-/** Half the shop price, as in FF9. */
-export const sellPrice = (itemId: number) => Math.floor((findItem(itemId)?.price ?? 0) / 2);
+/** The shop price × the setting `run.sellFraction` (half, as in FF9). */
+export const sellPrice = (itemId: number) => Math.floor((findItem(itemId)?.price ?? 0) * setting("run.sellFraction"));
 
-/** Starter consumables for every run. */
+/** Starter consumables for every run (setting `run.starterKit`: item name → count; unknown names are skipped). */
 export function starterKit(): { itemId: number; count: number }[] {
-  return [
-    { itemId: itemByName("Potion").id, count: 4 },
-    { itemId: itemByName("Phoenix Down").id, count: 1 },
-    { itemId: itemByName("Antidote").id, count: 1 },
-  ];
+  return Object.entries(setting("run.starterKit")).flatMap(([name, count]) => {
+    const item = items.find((i) => i.name === name);
+    return item && count > 0 ? [{ itemId: item.id, count }] : [];
+  });
 }

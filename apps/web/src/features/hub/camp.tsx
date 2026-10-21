@@ -5,7 +5,7 @@ import {
   getArea,
   encounterNames,
   JOURNEYS,
-  MAX_TIER,
+  tierCap,
   nextSlotCost,
   starterGear,
   startLevelCost,
@@ -91,7 +91,7 @@ export function Camp() {
               <label className="flex items-center gap-2">
                 Tier
                 <select className="rounded bg-[#0c1238] px-2 py-1" value={tier} onChange={(e) => setTier(Number(e.target.value))}>
-                  {Array.from({ length: Math.min(MAX_TIER, p.maxTier) + 1 }, (_, i) => (
+                  {Array.from({ length: Math.min(tierCap(), p.maxTier) + 1 }, (_, i) => (
                     <option key={i} value={i}>
                       {i === 0 ? "Tier 0 (Normal)" : `Tier ${i}`}
                     </option>

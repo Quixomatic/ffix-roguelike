@@ -7,6 +7,7 @@
  * implements (battle/modifiers.ts), with the numbers here. A new relic needs code only if it needs a new primitive.
  */
 import type { RarityId } from "./rewards";
+import { setting } from "./settings";
 import type { Status } from "./types";
 
 /** Battle stats a `stat` effect can raise (by percent). Max HP / MP come later, through builds like boons. */
@@ -85,5 +86,5 @@ export interface CharacterTags {
   tags: string[];
 }
 
-/** Relic slots every run has; achievements add more (`reward.relicSlots`). */
-export const BASE_RELIC_SLOTS = 3;
+/** Relic slots every run has (setting `relics.baseSlots`); achievements add more (`reward.relicSlots`). */
+export const baseRelicSlots = () => setting("relics.baseSlots");

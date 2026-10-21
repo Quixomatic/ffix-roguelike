@@ -3,10 +3,11 @@ import {
   apCost,
   availableAbilities,
   isMastered,
-  TRAIN_EFFECT,
-  TRAIN_MAX,
+  TRAIN_STAT_INFO,
   TRAIN_STATS,
   trainCost,
+  trainMax,
+  trainPerRank,
   trainRank,
   type CharacterBuild,
   type DerivedStats,
@@ -187,7 +188,7 @@ const TRAIN_VALUE: Record<TrainStat, (s: DerivedStats) => number> = {
 };
 
 /**
- * Training: one row per stat — name, TRAIN_MAX tick boxes for the ranks bought, "5/20", the stat's resulting
+ * Training: one row per stat — name, a tick box per rank (the `training.maxRanks` setting) for the ranks bought, "5/20", the stat's resulting
  * value, and a + button (with the next rank's CP cost) when `onTrain` is given; read-only otherwise.
  */
 export function TrainingRows({
@@ -222,15 +223,15 @@ export function TrainingRows({
       )}
       {TRAIN_STATS.map((stat) => {
         const rank = trainRank(build, stat);
-        const fx = TRAIN_EFFECT[stat];
+        const fx = TRAIN_STAT_INFO[stat];
         const cost = trainCost(rank);
         return (
           <TrainRow
             key={stat}
             label={fx.label}
-            hint={`+${fx.per}${fx.unit === "percent" ? "%" : ""} per rank`}
+            hint={`+${trainPerRank(stat)}${fx.unit === "percent" ? "%" : ""} per rank`}
             rank={rank}
-            max={TRAIN_MAX}
+            max={trainMax()}
             value={TRAIN_VALUE[stat](stats)}
             cost={cost}
             canBuy={!!onTrain && !busy && (points ?? 0) >= cost}

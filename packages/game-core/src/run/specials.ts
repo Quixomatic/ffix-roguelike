@@ -1,5 +1,5 @@
 /** Special stages: Stiltzkin's traveling deals and Chocobo Hot & Cold. */
-import { findItem, itemByName } from "@ffix-roguelike/game-data";
+import { findItem, itemByName, setting } from "@ffix-roguelike/game-data";
 
 import type { Rng } from "../rng";
 import { WORLDS } from "../content/worlds";
@@ -32,7 +32,8 @@ export function stiltzkinOffers(rng: Rng, world: number, partyKeys: string[], un
 
 export type ChocoboSpot = { type: "gil"; amount: number } | { type: "item"; itemId: number } | { type: "nothing" };
 
-export const CHOCOBO_DIGS = 3;
+/** Digs at a Chocobo stage (setting `run.chocoboDigs`). */
+export const chocoboDigs = () => setting("run.chocoboDigs");
 
 /** Nine dig spots: one buried gear piece, two gil caches, three consumables, three duds. */
 export function chocoboSpots(rng: Rng, world: number, partyKeys: string[], unlocked: readonly number[] = []): ChocoboSpot[] {

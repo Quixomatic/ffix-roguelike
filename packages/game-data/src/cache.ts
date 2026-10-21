@@ -73,6 +73,7 @@ export const REWARD_SEED_FILES = {
   journeys: "journeys.json",
   challengeCategories: "challenge-categories.json",
   challenges: "challenges.json",
+  settings: "game-settings.json",
 } as const;
 
 export const hasRewardCache = () => Object.values(REWARD_SEED_FILES).every((f) => existsSync(join(REWARD_CACHE_DIR, f)));
@@ -96,6 +97,7 @@ export function loadRewardCache(): RewardTables {
     journeys: read(REWARD_SEED_FILES.journeys),
     challengeCategories: read(REWARD_SEED_FILES.challengeCategories),
     challenges: read(REWARD_SEED_FILES.challenges),
+    settings: read(REWARD_SEED_FILES.settings),
   };
   registerRewardTables(tables);
   return tables;

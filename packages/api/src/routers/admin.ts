@@ -13,7 +13,10 @@ import {
   BOON_STATS,
   CARD_TYPES,
   characters,
+  checkSetting,
+  isSettingKey,
   items,
+  SETTINGS,
   MODIFIER_STATS,
   RARITIES,
   rewardTables,
@@ -213,6 +216,25 @@ export const achievementInput = z.object({
 export const adminRouter = router({
   /** All the reward tables as they are in the database. */
   rewardTables: adminProcedure.query(({ ctx }) => ensureRewardContent(ctx.db)),
+
+  /**
+   * Game settings (game-data `SETTINGS`): save one, checked against its definition (type, range, keys). Live at once:
+   * the server reloads its in-memory copy.
+   */
+  saveSetting: adminProcedure.input(z.object({ key: z.string().max(80), value: z.unknown() })).mutation(async ({ ctx, input }) => {
+    const problem = checkSetting(input.key, input.value);
+    if (problem) throw bad(problem);
+    const value = input.value as object;
+    await ctx.db.gameSetting.upsert({ where: { key: input.key }, create: { key: input.key, value }, update: { value } });
+    return reloadRewardContent(ctx.db);
+  }),
+  /** Put a setting back to its built-in default. */
+  resetSetting: adminProcedure.input(z.object({ key: z.string().max(80) })).mutation(async ({ ctx, input }) => {
+    if (!isSettingKey(input.key)) throw bad(`Unknown setting ${input.key}`);
+    const value = SETTINGS[input.key].default as object;
+    await ctx.db.gameSetting.upsert({ where: { key: input.key }, create: { key: input.key, value }, update: { value } });
+    return reloadRewardContent(ctx.db);
+  }),
 
   saveRarity: adminProcedure.input(rarityInput).mutation(async ({ ctx, input }) => {
     await ctx.db.rewardRarity.upsert({ where: { id: input.id }, create: { id: input.id, sort: input.sort, data: input }, update: { sort: input.sort, data: input } });

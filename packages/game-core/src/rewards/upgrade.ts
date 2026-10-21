@@ -8,7 +8,7 @@
  *
  * Roles live in the reward_role table (`roleOf`); a character without a row weighs every stat 1.
  */
-import { getCharacter, getItem, roleOf, ROLE_STATS, type AbilityRef, type RoleStat } from "@ffix-roguelike/game-data";
+import { getCharacter, getItem, roleOf, ROLE_STATS, setting, type AbilityRef, type RoleStat } from "@ffix-roguelike/game-data";
 
 import { apCost, gearAbilities, gearChange, isMastered, type CharacterBuild, type GearChange } from "../stats";
 
@@ -30,8 +30,6 @@ export interface UpgradeEval {
 
 /** Weight per stat when a character has no role row. */
 const FLAT: Partial<Record<RoleStat, number>> = Object.fromEntries(ROLE_STATS.map((s) => [s, s === "maxHp" || s === "maxMp" ? 0.05 : 1]));
-/** A lost ability costs this share of a taught one (the old piece goes to the bag, so it can be swapped back). */
-const LOSS_SHARE = 0.6;
 
 /** How good `itemId` would be for this character in its slot (null: they can't wear it, the slot is locked, or it's what they wear). */
 export function upgradeScore(build: CharacterBuild, itemId: number): UpgradeEval | null {
@@ -39,7 +37,11 @@ export function upgradeScore(build: CharacterBuild, itemId: number): UpgradeEval
   if (!change || !change.canEquip || change.slotLocked || change.same) return null;
   const role = roleOf(build.key);
   const weights = role?.weights ?? FLAT;
-  const abilityWeight = role?.abilityWeight ?? 6;
+  // Settings: a taught ability's default worth, the preferred-ability multiplier, and the share a lost ability costs
+  // (the old piece goes to the bag, so it can be swapped back).
+  const abilityWeight = role?.abilityWeight ?? setting("upgrade.abilityWeight");
+  const preferredMult = setting("upgrade.preferredAbilityMult");
+  const lossShare = setting("upgrade.lossShare");
   const preferred = new Set(role?.preferredAbilities ?? []);
 
   let statScore = 0;
@@ -54,8 +56,8 @@ export function upgradeScore(build: CharacterBuild, itemId: number): UpgradeEval
     .filter((r) => !taughtAfter.has(r) && !isMastered(build, r))
     .map((ref) => ({ ref, ap: build.ap[ref] ?? 0, cost: apCost(character, ref) }));
 
-  const abilityScore = teaches.reduce((sum, r) => sum + abilityWeight * (preferred.has(r) ? 2 : 1), 0);
-  const lossScore = stopsLearning.reduce((sum, l) => sum + abilityWeight * LOSS_SHARE * (preferred.has(l.ref) ? 2 : 1), 0);
+  const abilityScore = teaches.reduce((sum, r) => sum + abilityWeight * (preferred.has(r) ? preferredMult : 1), 0);
+  const lossScore = stopsLearning.reduce((sum, l) => sum + abilityWeight * lossShare * (preferred.has(l.ref) ? preferredMult : 1), 0);
   const score = Math.round((statScore + abilityScore - lossScore) * 100) / 100;
   return { itemId, score, statScore, abilityScore, lossScore, change, teaches, stopsLearning };
 }

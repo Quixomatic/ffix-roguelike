@@ -1,0 +1,236 @@
+[
+  {
+    "key": "training.maxRanks",
+    "value": 20
+  },
+  {
+    "key": "training.perRank",
+    "value": {
+      "strength": 1,
+      "magic": 1,
+      "spirit": 1,
+      "speed": 0.5,
+      "hp": 2,
+      "mp": 2
+    }
+  },
+  {
+    "key": "training.costBase",
+    "value": 1
+  },
+  {
+    "key": "training.costStep",
+    "value": 1
+  },
+  {
+    "key": "startLevel.max",
+    "value": 21
+  },
+  {
+    "key": "startLevel.costPerLevel",
+    "value": 1
+  },
+  {
+    "key": "slots.unlockCosts",
+    "value": [
+      5,
+      10,
+      20,
+      35
+    ]
+  },
+  {
+    "key": "slots.starterArmor",
+    "value": "all"
+  },
+  {
+    "key": "cp.perLevel",
+    "value": 1
+  },
+  {
+    "key": "cp.battlesPerPoint",
+    "value": 3
+  },
+  {
+    "key": "cp.perBoss",
+    "value": 3
+  },
+  {
+    "key": "cp.perWin",
+    "value": 10
+  },
+  {
+    "key": "tiers.max",
+    "value": 5
+  },
+  {
+    "key": "tiers.enemyHpPerTier",
+    "value": 0.2
+  },
+  {
+    "key": "tiers.enemyAttackPerTier",
+    "value": 0.1
+  },
+  {
+    "key": "tiers.rewardPerTier",
+    "value": 1
+  },
+  {
+    "key": "supplies.basic",
+    "value": [
+      "Potion",
+      "Phoenix Down",
+      "Antidote",
+      "Eye Drops",
+      "Echo Screen"
+    ]
+  },
+  {
+    "key": "supplies.all",
+    "value": [
+      "Potion",
+      "Phoenix Down",
+      "Antidote",
+      "Eye Drops",
+      "Echo Screen",
+      "Hi-Potion",
+      "Soft",
+      "Magic Tag",
+      "Vaccine",
+      "Tent",
+      "Annoyntment",
+      "Ether",
+      "Remedy",
+      "Elixir"
+    ]
+  },
+  {
+    "key": "supplies.maxRanks",
+    "value": 5
+  },
+  {
+    "key": "supplies.maxRanksByItem",
+    "value": {
+      "Elixir": 2
+    }
+  },
+  {
+    "key": "supplies.costFactor",
+    "value": 10
+  },
+  {
+    "key": "relics.baseSlots",
+    "value": 3
+  },
+  {
+    "key": "run.startingGil",
+    "value": 300
+  },
+  {
+    "key": "run.starterKit",
+    "value": {
+      "Potion": 4,
+      "Phoenix Down": 1,
+      "Antidote": 1
+    }
+  },
+  {
+    "key": "run.lossGilKept",
+    "value": 0.5
+  },
+  {
+    "key": "run.treasureGil",
+    "value": [
+      80,
+      160
+    ]
+  },
+  {
+    "key": "run.sellFraction",
+    "value": 0.5
+  },
+  {
+    "key": "run.rarePrice",
+    "value": 20000
+  },
+  {
+    "key": "run.chocoboDigs",
+    "value": 3
+  },
+  {
+    "key": "encounters.extraOverParty",
+    "value": 1
+  },
+  {
+    "key": "encounters.window",
+    "value": 4
+  },
+  {
+    "key": "map.defaultShape",
+    "value": [
+      1,
+      2,
+      3,
+      4,
+      3,
+      4,
+      3,
+      2,
+      1
+    ]
+  },
+  {
+    "key": "map.earlyWeights",
+    "value": {
+      "battle": 8,
+      "treasure": 2,
+      "event": 1
+    }
+  },
+  {
+    "key": "map.weights",
+    "value": {
+      "battle": 6,
+      "elite": 2,
+      "treasure": 1.5,
+      "shop": 1.2,
+      "synth": 1,
+      "stiltzkin": 0.45,
+      "chocobo": 0.8,
+      "event": 1.5,
+      "moogle": 0.3
+    }
+  },
+  {
+    "key": "map.middleMoogleWeight",
+    "value": 1.5
+  },
+  {
+    "key": "cards.gearReach",
+    "value": 1.5
+  },
+  {
+    "key": "cards.spreadPerUpgrade",
+    "value": 0.2
+  },
+  {
+    "key": "cards.spreadPerCard",
+    "value": 3
+  },
+  {
+    "key": "cards.boonAffinity",
+    "value": 2
+  },
+  {
+    "key": "upgrade.abilityWeight",
+    "value": 6
+  },
+  {
+    "key": "upgrade.preferredAbilityMult",
+    "value": 2
+  },
+  {
+    "key": "upgrade.lossShare",
+    "value": 0.6
+  }
+]

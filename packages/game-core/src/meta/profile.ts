@@ -7,7 +7,7 @@
  * reset and each party member earns Completion Points (CP), spent before the next run on a higher start level or
  * a loadout gear slot. Gear found in a run is only kept if the run is won.
  */
-import { getItem, itemByName, rewardTables, ROSTER, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
+import { getItem, itemByName, rewardTables, ROSTER, setting, starterUpgradesFor, type AbilityRef, type EquipSlot, type StarterUpgrade } from "@ffix-roguelike/game-data";
 
 import { challengeRoutes, routes, routeUnlocked, type RouteProgress } from "../content/journey-groups";
 import { getArea, getJourney, JOURNEYS, journeyUnlocked } from "../content/worlds";
@@ -21,9 +21,9 @@ import {
   nextSlotCost,
   slotUnlocked,
   starterGear,
-  TRAIN_MAX,
   TRAIN_STATS,
   trainCost,
+  trainMax,
   trainRank,
   UNLOCKABLE_SLOTS,
   type CharacterBuild,
@@ -54,7 +54,7 @@ export interface Profile {
   builds: Record<string, CharacterBuild>;
   /** One-off supplies bought at camp before supply ranks existed, packed into the next run (then gone). */
   stash: Record<number, number>;
-  /** Permanent starting-kit upgrades: item id → extra copies every run starts with (0–SUPPLY_MAX). */
+  /** Permanent starting-kit upgrades: item id → extra copies every run starts with (0–its cap, `supplyMax`). */
   supplyRanks?: Record<number, number>;
   /** Gear unlocked into run drop pools (catalog, achievements, won runs). */
   gearUnlocked?: number[];
@@ -83,7 +83,8 @@ export interface Profile {
 }
 
 export const STARTING_CAST = ["zidane"];
-export const MAX_TIER = 5;
+/** The highest difficulty tier (setting `tiers.max`; 0 = Normal). */
+export const tierCap = () => setting("tiers.max");
 
 export interface UnlockRule {
   key: string;
@@ -145,9 +146,9 @@ export function newProfile(): Profile {
 /** The best tier won on a route (-1: never won / cleared). */
 export const bestRouteTier = (p: Pick<Profile, "routeTiers">, routeId: string): number => p.routeTiers?.[routeId] ?? -1;
 
-/** The tiers a route can be started at: Normal, and one above the best won on it (up to MAX_TIER). */
+/** The tiers a route can be started at: Normal, and one above the best won on it (up to the tier cap). */
 export function routeTiersOpen(p: Pick<Profile, "routeTiers">, routeId: string): number[] {
-  const top = Math.min(MAX_TIER, bestRouteTier(p, routeId) + 1);
+  const top = Math.min(tierCap(), bestRouteTier(p, routeId) + 1);
   return Array.from({ length: top + 1 }, (_, i) => i);
 }
 
@@ -189,11 +190,14 @@ export interface RunReport {
 }
 
 /**
- * Completion Points for one character at the end of a run: +1 per level gained, +1 per 3 battles won (so a run
- * that hits a wall still moves you forward), +3 per boss, +10 for a win.
+ * Completion Points for one character at the end of a run (the `cp.*` settings; by default +1 per level gained, +1
+ * per 3 battles won so a run that hits a wall still moves you forward, +3 per boss, +10 for a win).
  */
 export function completionPoints(levelsGained: number, bossesDefeated: number, won: boolean, battlesWon = 0): number {
-  return levelsGained + Math.floor(battlesWon / 3) + bossesDefeated * 3 + (won ? 10 : 0);
+  const per = setting("cp.battlesPerPoint");
+  return Math.floor(
+    levelsGained * setting("cp.perLevel") + (per > 0 ? Math.floor(battlesWon / per) : 0) + bossesDefeated * setting("cp.perBoss") + (won ? setting("cp.perWin") : 0),
+  );
 }
 
 /** Fold a finished run into the profile. */
@@ -259,7 +263,7 @@ export function applyRunOutcome(profile: Profile, outcome: RunOutcome, tier: num
     p.stats.wins++;
     p.stats.highestTierWon = Math.max(p.stats.highestTierWon, tier);
     recordRouteTier(p, route, tier);
-    if (tier > routeBest && tier < MAX_TIER) tierUnlocked = tier + 1;
+    if (tier > routeBest && tier < tierCap()) tierUnlocked = tier + 1;
   }
   const newlyUnlocked = unlockCharacters(p, journeysCleared);
   const achievements = awardAchievements(p);
@@ -308,10 +312,12 @@ export function keepWipedClears(profile: Profile, cleared: readonly string[], pa
 }
 
 // ── spending Completion Points ───────────────────────────────────────────────
-/** CP needed to raise a start level from `level` to `level + 1`. */
-export const startLevelCost = (level: number) => level;
-/** Start level is trained like a stat: 20 ranks above Lv 1 (Lv 21), level n costing n CP (210 CP in all). */
-export const START_LEVEL_MAX = 21;
+/** CP needed to raise a start level from `level` to `level + 1` (setting `startLevel.costPerLevel`: level n costs n). */
+export const startLevelCost = (level: number) => Math.ceil(level * setting("startLevel.costPerLevel"));
+/** The highest start level (setting `startLevel.max`; Lv 21 by default, 20 ranks above Lv 1). */
+export const startLevelMax = () => setting("startLevel.max");
+/** A character's start level as runs use it: what they bought, up to today's cap (a lowered cap counts less). */
+export const effectiveStartLevel = (build: Pick<CharacterBuild, "level">) => Math.max(1, Math.min(startLevelMax(), build.level));
 
 function editable(profile: Profile, key: string) {
   const p = structuredClone(profile);
@@ -323,7 +329,7 @@ function editable(profile: Profile, key: string) {
 /** Spend CP to raise a character's start level by one. */
 export function raiseStartLevel(profile: Profile, key: string): Profile {
   const { p, b } = editable(profile, key);
-  if (b.level >= START_LEVEL_MAX) throw new ProfileError(`Start level is capped at Lv ${START_LEVEL_MAX}`);
+  if (b.level >= startLevelMax()) throw new ProfileError(`Start level is capped at Lv ${startLevelMax()}`);
   const cost = startLevelCost(b.level);
   if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
   b.points = (b.points ?? 0) - cost;
@@ -337,7 +343,7 @@ export function trainStat(profile: Profile, key: string, stat: TrainStat): Profi
   const { p, b } = editable(profile, key);
   if (!TRAIN_STATS.includes(stat)) throw new ProfileError("Unknown stat");
   const rank = trainRank(b, stat);
-  if (rank >= TRAIN_MAX) throw new ProfileError("Fully trained");
+  if (rank >= trainMax()) throw new ProfileError("Fully trained");
   const cost = trainCost(rank);
   if ((b.points ?? 0) < cost) throw new ProfileError(`Need ${cost} CP`);
   b.points = (b.points ?? 0) - cost;
@@ -462,9 +468,6 @@ export function setProfileSupports(profile: Profile, key: string, supports: numb
 }
 
 // ── camp: gear catalog & supplies (banked gil) ───────────────────────────────
-/** Unlocking gear costs more than its FF9 shop price — it's permanent. */
-export const UNLOCK_PRICE_MULT = 2;
-
 /**
  * The gear catalog: gear that isn't already in a reached world's drop pool, isn't legendary (achievements only)
  * and isn't unlocked yet. Unlocking puts it into future runs' drops, shops and treasure for its world.
@@ -488,16 +491,13 @@ export function unlockGear(profile: Profile, itemId: number): Profile {
   return p;
 }
 
-/** Supplies every camp has from the start; the rest are unlocked by achievements (their `reward.supplies`). */
-const BASIC_SUPPLIES = ["Potion", "Phoenix Down", "Antidote", "Eye Drops", "Echo Screen"];
-/** Every supply the camp can stock, in display order. */
-const ALL_SUPPLIES = [...BASIC_SUPPLIES, "Hi-Potion", "Soft", "Magic Tag", "Vaccine", "Tent", "Annoyntment", "Ether", "Remedy", "Elixir"];
-
-/** Most extra copies of one supply a run can start with (Elixir is capped lower). */
-export const SUPPLY_MAX = 5;
-const SUPPLY_MAX_BY_NAME: Record<string, number> = { Elixir: 2 };
-/** Rank n of a supply costs this many times the item's FF9 price × n — far above buying it in a run. */
-export const SUPPLY_COST_FACTOR = 10;
+/**
+ * Camp supplies (settings): `supplies.basic` are stocked from the start, the rest of `supplies.all` are unlocked by
+ * achievements (their `reward.supplies`). A run starts with at most `supplies.maxRanks` extra copies of one
+ * (`supplies.maxRanksByItem` caps some lower), and rank n costs the FF9 price × `supplies.costFactor` × n — far
+ * above buying it in a run.
+ */
+export const supplyMax = (name: string) => setting("supplies.maxRanksByItem")[name] ?? setting("supplies.maxRanks");
 
 export interface SupplyEntry {
   itemId: number;
@@ -512,14 +512,15 @@ export interface SupplyEntry {
 /** Every camp supply with whether it's unlocked yet (basic ones always; others by an achievement). */
 export function campSupplyCatalog(profile: Profile): SupplyEntry[] {
   const earned = new Set(profile.achievements ?? []);
-  return ALL_SUPPLIES.map((name) => {
+  const basic = setting("supplies.basic");
+  return setting("supplies.all").map((name) => {
     const item = getItem(itemByName(name).id);
     const by = achievements().find((a) => a.reward.supplies?.includes(name));
     return {
       itemId: item.id,
       price: effectivePrice(item),
-      max: SUPPLY_MAX_BY_NAME[name] ?? SUPPLY_MAX,
-      unlocked: BASIC_SUPPLIES.includes(name) || (!!by && earned.has(by.id)),
+      max: supplyMax(name),
+      unlocked: basic.includes(name) || (!!by && earned.has(by.id)),
       unlockedBy: by ? { id: by.id, name: by.name, description: by.description } : undefined,
     };
   });
@@ -538,7 +539,7 @@ export function supplyRankCost(profile: Profile, itemId: number): number | null 
   const entry = campSupplyStock(profile).find((e) => e.itemId === itemId);
   const rank = supplyRank(profile, itemId);
   if (!entry || rank >= entry.max) return null;
-  return entry.price * SUPPLY_COST_FACTOR * (rank + 1);
+  return Math.round(entry.price * setting("supplies.costFactor") * (rank + 1));
 }
 
 /** Buy the next rank of a supply: every run from now on starts with one more. */
@@ -558,7 +559,11 @@ export function buySupplyRank(profile: Profile, itemId: number): Profile {
  * bought before ranks existed (packed once, then gone — see `campSupplies`).
  */
 export function startingSupplies(profile: Profile): Record<number, number> {
-  const out: Record<number, number> = { ...(profile.supplyRanks ?? {}) };
+  // Ranks count up to today's cap (a lowered cap keeps the bought ranks but packs fewer).
+  const caps = new Map(campSupplyCatalog(profile).map((e) => [e.itemId, e.max]));
+  const out: Record<number, number> = Object.fromEntries(
+    Object.entries(profile.supplyRanks ?? {}).map(([id, n]) => [Number(id), Math.min(n, caps.get(Number(id)) ?? n)]),
+  );
   for (const [id, n] of Object.entries(campSupplies(profile))) out[Number(id)] = (out[Number(id)] ?? 0) + n;
   return out;
 }

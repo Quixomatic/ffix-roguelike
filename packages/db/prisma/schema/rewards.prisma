@@ -136,6 +136,16 @@ model Area {
   @@map("area")
 }
 
+/// A game setting: one balance number (or list / map) of our design, by key (game-data `SETTINGS` defines each one's
+/// type, range and default). Loaded into memory at boot and after admin edits, never read per request.
+model GameSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("game_setting")
+}
+
 /// A section of the Challenges page — side journeys, hidden bosses… (game-data `ChallengeCategoryData`).
 model ChallengeCategory {
   id        String   @id

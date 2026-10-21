@@ -22,6 +22,7 @@ export * from "./rewards";
 export * from "./relics";
 export * from "./journey-groups";
 export * from "./content";
+export * from "./settings";
 
 /** FF9's character, ability, item and system tables (Memoria CSV import, scripts/import-memoria.ts). */
 export interface GameData {

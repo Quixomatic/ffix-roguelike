@@ -6,7 +6,7 @@ import { registerRewardTables, rewardTables } from "@ffix-roguelike/game-data";
 
 import { applyRunOutcome, availableRoutes, keepWipedClears, newProfile } from "../meta/profile";
 import { Rng } from "../rng";
-import { generateWorldMap, getNode, MAP_COLUMNS, MAP_SHAPE } from "./map";
+import { defaultMapShape, generateWorldMap, getNode, mapShapeOf } from "./map";
 import { optimizeParty } from "./optimize";
 import {
   buy,
@@ -34,9 +34,10 @@ describe("map", () => {
       while (queue.length) for (const n of getNode(map, queue.shift()!).next) if (!reach.has(n)) (reach.add(n), queue.push(n));
       expect(reach.size).toBe(map.nodes.length);
       expect(getNode(map, map.bossId).kind).toBe("boss");
-      for (const n of map.nodes) if (n.col < MAP_COLUMNS - 1) expect(n.next.length).toBeGreaterThan(0);
+      const columns = mapShapeOf(s % 3).length;
+      for (const n of map.nodes) if (n.col < columns - 1) expect(n.next.length).toBeGreaterThan(0);
       // The round before the castle: exactly one Moogle, the rest something else.
-      const beforeBoss = map.nodes.filter((x) => x.col === MAP_COLUMNS - 2);
+      const beforeBoss = map.nodes.filter((x) => x.col === columns - 2);
       expect(beforeBoss.filter((n) => n.kind === "moogle").length).toBe(1);
     }
   });
@@ -48,7 +49,7 @@ describe("map", () => {
       const shapeKey = (m: typeof map) => m.nodes.map((n) => `${n.col}:${n.row}>${n.next.map((id) => getNode(m, id).row).join(",")}`).join(" ");
       // Same structure whatever the seed (only the stage kinds differ).
       expect(shapeKey(map)).toBe(shapeKey(generateWorldMap(Rng.fromSeed("other"), s % 3)));
-      MAP_SHAPE.forEach((count, col) => {
+      defaultMapShape().forEach((count, col) => {
         const lanes = map.nodes.filter((n) => n.col === col).map((n) => n.row);
         expect(lanes.length).toBe(count);
         // Centred: mirrored around 0.
@@ -269,14 +270,14 @@ describe("bound gear", () => {
 describe("special stages & supplies", () => {
   test("Stiltzkin sells each deal once; Chocobo digs 3 of 9 spots", async () => {
     const { buyOffer, dig } = await import("./run");
-    const { stiltzkinOffers, chocoboSpots, CHOCOBO_DIGS } = await import("./specials");
+    const { stiltzkinOffers, chocoboSpots, chocoboDigs } = await import("./specials");
     const profile = newProfile();
     let run = startRun({ seed: "sp", tier: 0, party: [profile.builds.zidane!] });
     run.gil = 99999;
     run.phase = { kind: "stiltzkin", offers: stiltzkinOffers(Rng.fromSeed("s"), 0, ["zidane"]), bought: [] };
     run = buyOffer(run, 0);
     expect(() => buyOffer(run, 0)).toThrow(/Already/);
-    run.phase = { kind: "chocobo", spots: chocoboSpots(Rng.fromSeed("c"), 0, ["zidane"]), digsLeft: CHOCOBO_DIGS, dug: [] };
+    run.phase = { kind: "chocobo", spots: chocoboSpots(Rng.fromSeed("c"), 0, ["zidane"]), digsLeft: chocoboDigs(), dug: [] };
     for (let i = 0; i < 3; i++) run = dig(run, i);
     expect(() => dig(run, 3)).toThrow(/no digs left/);
   });
@@ -290,8 +291,9 @@ describe("special stages & supplies", () => {
 
 describe("journeys", () => {
   test("an area with a semi-boss puts a single fortress stage mid-map that every path crosses", async () => {
-    const { SEMIBOSS_COLUMN } = await import("./map");
     const { WORLDS } = await import("../content/worlds");
+    // The fortress is the middle round.
+    const SEMIBOSS_COLUMN = Math.floor((mapShapeOf(0).length - 1) / 2);
     WORLDS[0]!.semiBoss = ["gigas-worm"];
     for (let s = 0; s < 20; s++) {
       const map = generateWorldMap(Rng.fromSeed(`j${s}`), 0);

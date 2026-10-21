@@ -9,7 +9,6 @@ import {
   getRoute,
   isRoute,
   JOURNEYS,
-  MAX_TIER,
   partySynergies,
   routes,
   routeTiersOpen,

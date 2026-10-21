@@ -2,7 +2,7 @@
  * The player's relic collection (`.plans/relics-and-synergies.md` §3): which relics are unlocked, which can start a run,
  * and how many relic slots runs get. Relics themselves are data (game-data `relicTable`).
  */
-import { achievementTable, BASE_RELIC_SLOTS, relicTable, type RelicData } from "@ffix-roguelike/game-data";
+import { achievementTable, baseRelicSlots, relicTable, type RelicData } from "@ffix-roguelike/game-data";
 
 import type { Profile } from "./profile";
 
@@ -23,5 +23,5 @@ export const starterRelics = (p: Pick<Profile, "achievements" | "relicsUnlocked"
 /** Relic slots a run gets: the base three plus every earned achievement's `reward.relicSlots`. */
 export function relicSlotCount(p: Pick<Profile, "achievements">): number {
   const earned = new Set(p.achievements ?? []);
-  return BASE_RELIC_SLOTS + achievementTable().reduce((n, a) => n + (earned.has(a.id) ? (a.reward.relicSlots ?? 0) : 0), 0);
+  return baseRelicSlots() + achievementTable().reduce((n, a) => n + (earned.has(a.id) ? (a.reward.relicSlots ?? 0) : 0), 0);
 }
