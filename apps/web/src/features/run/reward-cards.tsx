@@ -3,7 +3,7 @@ import { abilityName, baseRelicSlots, getCharacter, getItem, RARITIES, rarityOf,
 import { useState } from "react";
 
 import { Badge } from "@/features/hub/badge";
-import { RelicPopover } from "@/features/hub/relic-popover";
+import { RelicDetails, RelicPopover } from "@/features/hub/relic-popover";
 import { effectText } from "@/features/hub/relic-text";
 import { FocusItem } from "@/features/input/focus";
 import { DeltaChips } from "@/features/gear/gear-delta";
@@ -73,7 +73,15 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
     else actions.claim.mutate({ choice: i });
   };
   if (swapFor != null)
-    return <RelicSwap run={run} incoming={offer.cards[swapFor]} pending={pending} onPick={(id) => actions.claim.mutate({ choice: swapFor, replace: id })} onBack={() => setSwapFor(null)} />;
+    return (
+      <RelicSwap
+        run={run}
+        incomingName={relicCardName(offer.cards[swapFor])}
+        pending={pending}
+        onPick={(id) => actions.claim.mutate({ choice: swapFor, replace: id })}
+        onBack={() => setSwapFor(null)}
+      />
+    );
   return (
     <div className="flex flex-col gap-3">
       <div className="ff-title text-center text-base">Choose one</div>
@@ -101,11 +109,86 @@ export function RewardOfferView({ run, offer, actions }: { run: RunState; offer:
   );
 }
 
-/** A relic card taken (or bought) while the rack is full: which held relic to give up for it (swap only). */
-function RelicSwap({ run, incoming, pending, onPick, onBack }: { run: RunState; incoming: RewardCard | undefined; pending: boolean; onPick(id: string): void; onBack(): void }) {
+/**
+ * The relic pick after a won fight (pokelike's): the relics side by side, each with its badge, rarity, effects and
+ * flavour. Take one (with the rack full, then choose which held relic to give it up for), or skip and keep the rack.
+ */
+export function RelicPickView({ run, choices, actions }: { run: RunState; choices: string[]; actions: RunActions }) {
+  const pending = actions.chooseRelic.isPending;
+  const [swapFor, setSwapFor] = useState<number | null>(null);
+  const slots = run.relicSlots ?? baseRelicSlots();
+  const held = (run.relics ?? []).length;
+  if (swapFor != null) {
+    const r = relicById(choices[swapFor] ?? "");
+    return (
+      <RelicSwap
+        run={run}
+        incomingName={r?.name ?? "it"}
+        pending={pending}
+        onPick={(id) => actions.chooseRelic.mutate({ choice: swapFor, replace: id })}
+        onBack={() => setSwapFor(null)}
+        backLabel="Back to the relics"
+      />
+    );
+  }
   return (
-    <div className="flex flex-col gap-3">
-      <div className="ff-title text-center text-base">Your relics are full: give one up for {incoming?.kind === "relic" ? incoming.name : "it"}</div>
+    // The rewards screen's centred column (stage-panels' RewardsPanel).
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="ff-display text-2xl">Choose a relic</div>
+        <div className="text-sm opacity-70">
+          Relics: {held} / {slots}
+          {held >= slots ? " — full: taking one means giving one up" : ""}
+        </div>
+      </div>
+      <div className={`grid gap-3 ${choices.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+        {choices.map((id, i) => {
+          const r = relicById(id);
+          return (
+            <FocusItem key={id}>
+              <button
+                className="ff-window ff-lift flex flex-col gap-2 border-2 p-3 text-left disabled:opacity-60"
+                style={{ borderColor: r ? rarityOf(r.rarity).color : undefined }}
+                disabled={pending}
+                data-sound="purchase"
+                onClick={() => (held >= slots ? setSwapFor(i) : actions.chooseRelic.mutate({ choice: i }))}
+              >
+                <RelicDetails relicId={id} />
+              </button>
+            </FocusItem>
+          );
+        })}
+      </div>
+      <FocusItem>
+        <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={() => actions.chooseRelic.mutate({ choice: null })}>
+          Skip — keep your relics
+        </button>
+      </FocusItem>
+    </div>
+  );
+}
+
+const relicCardName = (card: RewardCard | undefined) => (card?.kind === "relic" ? card.name : "it");
+
+/** A relic taken (or bought) while the rack is full: which held relic to give up for it (swap only). */
+function RelicSwap({
+  run,
+  incomingName,
+  pending,
+  onPick,
+  onBack,
+  backLabel = "Back to the cards",
+}: {
+  run: RunState;
+  incomingName: string;
+  pending: boolean;
+  onPick(id: string): void;
+  onBack(): void;
+  backLabel?: string;
+}) {
+  return (
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
+      <div className="ff-title text-center text-base">Your relics are full: give one up for {incomingName}</div>
       <div className="grid gap-2 sm:grid-cols-3">
         {(run.relics ?? []).map((id) => {
           const r = relicById(id);
@@ -124,7 +207,7 @@ function RelicSwap({ run, incoming, pending, onPick, onBack }: { run: RunState; 
       </div>
       <FocusItem>
         <button className="ff-window mx-auto px-4 py-1" disabled={pending} onClick={onBack}>
-          Back to the cards
+          {backLabel}
         </button>
       </FocusItem>
     </div>
@@ -148,7 +231,7 @@ export function ShopWaresView({ run, wares, actions }: { run: RunState; wares: S
     return (
       <RelicSwap
         run={run}
-        incoming={wares.cards[swapFor]}
+        incomingName={relicCardName(wares.cards[swapFor])}
         pending={pending}
         onPick={(id) => actions.buyWare.mutate({ index: swapFor, replace: id }, { onSuccess: () => setSwapFor(null) })}
         onBack={() => setSwapFor(null)}

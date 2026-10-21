@@ -4,6 +4,7 @@ import {
   buyOffer,
   buyWare,
   chooseEvent,
+  chooseRelic,
   claimReward,
   dig,
   equip,
@@ -85,6 +86,10 @@ export const runRouter = router({
   claim: protectedProcedure
     .input(z.object({ choice: z.number().int().min(0).nullable(), replace: z.string().max(60).optional() }))
     .mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => claimReward(r, input.choice, input.replace))),
+  /** The relic pick after a fight: take one (`replace`: the held relic it takes the place of when the rack is full) or skip (null). */
+  chooseRelic: protectedProcedure
+    .input(z.object({ choice: z.number().int().min(0).nullable(), replace: z.string().max(60).optional() }))
+    .mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => chooseRelic(r, input.choice, input.replace))),
   buy: protectedProcedure.input(z.object({ index: z.number().int().min(0) })).mutation(({ ctx, input }) => act(ctx.db, ctx.session.user.id, (r) => buy(r, input.index))),
   /** Buy one of the shop's wares (a reward card); `replace`: the relic a relic ware takes the place of when the rack is full. */
   buyWare: protectedProcedure

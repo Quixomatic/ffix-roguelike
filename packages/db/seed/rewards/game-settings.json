@@ -123,6 +123,10 @@
     "value": 3
   },
   {
+    "key": "relics.choices",
+    "value": 3
+  },
+  {
     "key": "run.startingGil",
     "value": 300
   },

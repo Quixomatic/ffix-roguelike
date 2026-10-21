@@ -4,14 +4,14 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { baseRelicSlots } from "@ffix-roguelike/game-data";
+import { baseRelicSlots, setting } from "@ffix-roguelike/game-data";
 
 import { newProfile } from "../meta/profile";
 import { bagValue } from "../metrics/collect";
-import { rollOffer, rollRelicCard, type RewardCard } from "../rewards/cards";
+import { rollOffer, rollRelicCard, rollRelicChoices, type RewardCard } from "../rewards/cards";
 import { Rng } from "../rng";
 import { getNode } from "./map";
-import { applyCard, moveTo, startRun, type RunState } from "./run";
+import { applyCard, chooseRelic, claimReward, moveTo, startRun, type RunState } from "./run";
 
 const ALL = ["thiefs-gloves", "ether-pouch", "power-wrist", "rosetta-ring", "protect-ring", "blood-fang", "tantalus-bandana", "hermes-sandals", "pumice-piece", "kujas-mirror"];
 const profile = newProfile();
@@ -63,11 +63,40 @@ describe("relic cards and the rack", () => {
     expect(rollRelicCard({ ...run, relics: ["power-wrist", "ether-pouch"] }, new Rng(1))).toBeNull();
   });
 
-  test("a boss reward offer includes a relic card", () => {
+  test("fight reward offers never hold a relic: relics come on their own screen", () => {
     const run = start();
-    const offer = rollOffer(run, "boss", new Rng(5));
-    expect(offer.cards.some((c) => c.kind === "relic")).toBe(true);
-    const none = rollOffer({ ...run, unlockedRelics: [] }, "boss", new Rng(5));
-    expect(none.cards.some((c) => c.kind === "relic")).toBe(false);
+    for (let i = 0; i < 20; i++) for (const source of ["boss", "semiboss", "elite"] as const) expect(rollOffer(run, source, new Rng(i + 1)).cards.some((c) => c.kind === "relic")).toBe(false);
+  });
+
+  test("the relic pick offers different relics the run doesn't hold, as many as are left (up to the setting)", () => {
+    const run = start({ relic: "power-wrist" });
+    const choices = rollRelicChoices(run, new Rng(3));
+    expect(choices.length).toBeLessThanOrEqual(setting("relics.choices"));
+    expect(choices.length).toBeGreaterThan(0);
+    expect(new Set(choices).size).toBe(choices.length);
+    expect(choices).not.toContain("power-wrist");
+    expect(rollRelicChoices({ ...run, unlockedRelics: [] }, new Rng(3))).toEqual([]);
+  });
+
+  test("claiming a fight's reward leads to its relic pick; take one, swap when full, or skip", () => {
+    const base = start();
+    const pick = (run: RunState, relics: string[]): RunState =>
+      claimReward({ ...run, phase: { kind: "rewards", summary: {} as never, gearChoices: [], boss: false, relics } }, null);
+    // Into a free slot, then on to the map.
+    let run = pick(base, ["ether-pouch", "protect-ring"]);
+    expect(run.phase).toEqual({ kind: "relics", choices: ["ether-pouch", "protect-ring"], then: { kind: "map" } });
+    run = chooseRelic(run, 1);
+    expect(run.relics).toContain("protect-ring");
+    expect(run.phase.kind).toBe("map");
+    // A full rack: taking one needs the relic to give up; skipping keeps the rack as it was.
+    const full = { ...base, relics: ["power-wrist", "ether-pouch", "thiefs-gloves"], relicSlots: 3 };
+    const atPick = pick(full, ["protect-ring"]);
+    expect(() => chooseRelic(atPick, 0)).toThrow("choose one to give up");
+    expect(chooseRelic(atPick, 0, "ether-pouch").relics).toEqual(["power-wrist", "protect-ring", "thiefs-gloves"]);
+    const skipped = chooseRelic(atPick, null);
+    expect(skipped.relics).toEqual(full.relics);
+    expect(skipped.phase.kind).toBe("map");
+    // No pick rolled: straight on.
+    expect(pick(base, []).phase.kind).toBe("map");
   });
 });

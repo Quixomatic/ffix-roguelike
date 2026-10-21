@@ -70,6 +70,20 @@ export function rollRelicCard(run: RunState, rng: Rng): RewardCard | null {
   return { kind: "relic", rarity: r.rarity, relicId: r.id, name: r.name };
 }
 
+/**
+ * The relics a won fight offers on its own screen after the reward (pokelike's relic pick): up to `count` different
+ * ones (setting `relics.choices`), each drawn like `rollRelicCard`. Fewer when the run has fewer left to find.
+ */
+export function rollRelicChoices(run: RunState, rng: Rng, count = setting("relics.choices")): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const card = rollRelicCard({ ...run, relics: [...(run.relics ?? []), ...out] }, rng);
+    if (!card || card.kind !== "relic") break;
+    out.push(card.relicId);
+  }
+  return out;
+}
+
 export interface RewardOffer {
   source: RewardSourceId;
   cards: RewardCard[];
@@ -202,9 +216,9 @@ export function rollOffer(run: RunState, source: RewardSourceId, rng: Rng): Rewa
     }
     cards.push(card ?? gilCard(rarity));
   }
-  // A relic too, by the source's relic chance (bosses always, fortresses half the time, the shop now and then; 0 =
-  // never): it takes the last card's place.
-  if (cards.length && rng.chance(relicChanceOf(src))) {
+  // The shop's wares can include a relic, by its relic chance (it takes the last card's place). Fights offer relics on
+  // their own screen after the reward instead (`rollRelicChoices`), never as a reward card.
+  if (source === "shop" && cards.length && rng.chance(relicChanceOf(src))) {
     const relic = rollRelicCard(run, rng);
     if (relic) cards[cards.length - 1] = relic;
   }

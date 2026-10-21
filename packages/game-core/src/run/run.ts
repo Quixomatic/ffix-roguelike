@@ -6,7 +6,7 @@
  * Permanence: AP (mastered abilities) and FF9's growth pool are kept; levels reset and become Completion Points
  * (meta/profile.ts). Gear found in a run is kept only if the run is won; loadout gear you brought is always kept.
  */
-import { baseRelicSlots, findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, relicById, setting, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
+import { baseRelicSlots, findItem, getCharacter, getItem, itemByName, MAX_LEVEL, parseAbilityRef, relicById, relicChanceOf, setting, sourceOf, synthesis, type AbilityRef, type EquipSlot, type Status } from "@ffix-roguelike/game-data";
 
 import { BATTLE_RULES, createBattle, isThrowable, replayBattle } from "../battle/engine";
 import { relicModifiers, synergyModifiers } from "../battle/modifiers";
@@ -37,7 +37,7 @@ import {
 import { EVENTS, eventAt, eventById, type EventOutcome } from "./events";
 import { battleRewards, type BattleNodeKind, pickEncounter, recipesUpTo, sellPrice, shopStock, starterKit, synthShopName, type ShopEntry } from "./loot";
 import { generateWorldMap, getNode, type NodeKind, type WorldMap } from "./map";
-import { rollOffer, warePrice, type RewardCard, type RewardOffer } from "../rewards/cards";
+import { rollOffer, rollRelicChoices, warePrice, type RewardCard, type RewardOffer } from "../rewards/cards";
 import { chocoboDigs, chocoboSpots, stiltzkinOffers, type ChocoboSpot, type StiltzkinOffer } from "./specials";
 
 export class RunError extends Error {}
@@ -92,7 +92,13 @@ export type RunPhase =
   | { kind: "map" }
   | { kind: "battle"; nodeId: string; nodeKind: BattleNodeKind; enemies: string[]; battle: BattleState }
   /** `offer`: the reward cards (pick one). `gearChoices`: the old pick-a-gear rewards (saved runs from before cards). */
-  | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean; offer?: RewardOffer }
+  /** `relics`: the relic pick that follows the reward (relic ids), when the fight rolled one. */
+  | { kind: "rewards"; summary: RewardSummary; gearChoices: number[]; boss: boolean; offer?: RewardOffer; relics?: string[] }
+  /**
+   * The relic pick after a won fight's reward (pokelike's): take one of `choices` (giving a held one up when the rack is
+   * full) or skip. `then`: where the run goes next.
+   */
+  | { kind: "relics"; choices: string[]; then: { kind: "map" } | { kind: "worldClear"; cleared: number } }
   | { kind: "treasure"; gearChoices: number[]; gil: number; offer?: RewardOffer }
   /**
    * `stock`: the shelf (consumables; gear too in shops entered before wares). `wares`: reward cards for sale, each
@@ -532,7 +538,12 @@ export function finishBattle(run: RunState, inputs: InputRecord[]): RunState {
   // Reward cards: elites, the semi-boss and bosses always; a plain battle now and then (a surprise).
   const source = phase.nodeKind === "battle" ? (rng.chance(sourceOf("surprise").chance ?? 0) ? "surprise" : null) : phase.nodeKind;
   const offer = source ? rollOffer(next, source, rng) : undefined;
-  next.phase = { kind: "rewards", summary, gearChoices: [], boss, offer };
+  // A relic pick on its own screen after the reward, by the fight's relic chance (bosses always, fortresses half the
+  // time by default) — except the run's final boss, where the run ends.
+  const finalBoss = boss && next.stage >= runAreas(next).length - 1;
+  const relicChance = phase.nodeKind === "battle" ? 0 : relicChanceOf(sourceOf(phase.nodeKind));
+  const relics = !finalBoss && rng.chance(relicChance) ? rollRelicChoices(next, rng) : [];
+  next.phase = { kind: "rewards", summary, gearChoices: [], boss, offer, ...(relics.length ? { relics } : {}) };
   next.rng = rng.state;
   return next;
 }
@@ -636,6 +647,27 @@ export function claimReward(run: RunState, choice: number | null, replace?: stri
     if (next.stage >= runAreas(next).length - 1) next.phase = { kind: "over", won: true };
     else next.phase = { kind: "worldClear", cleared: next.world };
   } else next.phase = { kind: "map" };
+  // The fight's relic pick comes next, on its own screen (never before the run's end).
+  if (p.kind === "rewards" && p.relics?.length && (next.phase.kind === "map" || next.phase.kind === "worldClear")) {
+    next.phase = { kind: "relics", choices: p.relics, then: next.phase };
+  }
+  return next;
+}
+
+/**
+ * The relic pick after a fight: take `choice` (an index into the choices) — into a free slot, or in place of
+ * `replace` when the rack is full — or skip (null) and keep the rack as it is. Then on to where the run was going.
+ */
+export function chooseRelic(run: RunState, choice: number | null, replace?: string): RunState {
+  const p = run.phase;
+  if (p.kind !== "relics") throw new RunError("No relic to choose");
+  let next = structuredClone(run);
+  if (choice != null) {
+    const relic = relicById(p.choices[choice] ?? "");
+    if (!relic) throw new RunError("Invalid choice");
+    next = applyCard(next, { kind: "relic", rarity: relic.rarity, relicId: relic.id, name: relic.name }, replace);
+  }
+  next.phase = p.then;
   return next;
 }
 

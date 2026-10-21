@@ -91,6 +91,7 @@ export const SETTINGS = {
 
   // ── Relics ──
   "relics.baseSlots": num({ group: "Relics", label: "Relic slots", description: "Relic slots a run has before achievements add more.", default: 3, min: 1, max: 12, integer: true }),
+  "relics.choices": num({ group: "Relics", label: "Relics to pick from", description: "How many relics the relic screen after a won fight offers (by the fight's relic chance).", default: 3, min: 1, max: 6, integer: true }),
 
   // ── Runs ──
   "run.startingGil": num({ group: "Runs", label: "Starting gil", description: "Gil a run starts with.", default: 300, min: 0, integer: true }),

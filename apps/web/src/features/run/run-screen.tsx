@@ -15,6 +15,7 @@ import { PartySidebar, type PartyLayout } from "./party-sidebar";
 import { RunCharacterSheet } from "./run-character-sheet";
 import { RunDock, type DockTab } from "./run-dock";
 import { ChocoboPanel, StiltzkinPanel } from "./special-panels";
+import { RelicPickView } from "./reward-cards";
 import { EventPanel, MooglePanel, RewardsPanel, RunOverPanel, ShopPanel, SynthPanel, TreasurePanel, WorldClearPanel } from "./stage-panels";
 import { useActiveRun, useRunActions } from "./use-run";
 
@@ -62,7 +63,7 @@ export function RunScreen() {
   }
 
   const phase = run.phase;
-  const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "treasure", "worldClear"].includes(phase.kind);
+  const canManage = ["map", "moogle", "shop", "synth", "stiltzkin", "chocobo", "rewards", "relics", "treasure", "worldClear"].includes(phase.kind);
 
   if (phase.kind === "battle")
     return (
@@ -147,6 +148,7 @@ export function RunScreen() {
             {phase.kind === "moogle" && <MooglePanel run={run} actions={actions} />}
             {phase.kind === "event" && <EventPanel run={run} phase={phase} actions={actions} />}
             {phase.kind === "worldClear" && <WorldClearPanel run={run} actions={actions} />}
+            {phase.kind === "relics" && <RelicPickView run={run} choices={phase.choices} actions={actions} />}
           </div>
           </FocusSection>
         )}

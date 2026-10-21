@@ -50,6 +50,7 @@ import {
   BattleEngine,
   buy,
   chooseEvent,
+  chooseRelic,
   claimReward,
   createBattle,
   dig,
@@ -379,6 +380,13 @@ function playRun(start: RunState, seed: string, log: boolean): RunState {
           say(c.dim(`   ${p.offer!.source} reward (${card.rarity}): ${card.kind === "gear" ? `${getItem(card.itemId).name} for ${card.key}` : card.kind === "boon" ? `${card.name} +${card.amount} ${card.stat} for ${card.key ?? "party"}` : card.kind}`));
           run = claimReward(run, i);
         } else run = claimReward(run, p.gearChoices.length ? 0 : null);
+        break;
+      }
+      case "relics": {
+        // A simple player: the first relic into a free slot; skip when the rack is full.
+        const full = (run.relics ?? []).length >= (run.relicSlots ?? 3);
+        say(c.dim(`   relic pick: ${p.choices.join(", ")} → ${full ? "skip (rack full)" : p.choices[0]}`));
+        run = chooseRelic(run, full ? null : 0);
         break;
       }
       case "shop": {

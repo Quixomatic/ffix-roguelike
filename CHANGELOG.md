@@ -2,6 +2,28 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.13] - 2026-10-21
+
+Relics get their own screen after a fight's reward, like pokelike's relic pick, instead of being one of the reward cards (which you'd nearly always take).
+
+### Added
+- **Choose a relic:** after you claim a won fight's reward, a screen offers relics you don't hold yet, side by side. Each shows its badge, rarity colour, effects and flavour; the header shows your rack ("Relics: 2 / 3").
+  - **A free slot:** take one and it goes on the rack.
+  - **The rack full:** take one, then choose which held relic to give up (or go back to the choices).
+  - **Skip — keep your relics:** the rack stays as it is.
+  - Then on to the map, or the next area after a boss.
+- **When:** by each fight's relic chance, as before (every boss, half the fortresses by default; set per source on the admin page). Not after the run's final boss, where the run ends.
+- **How many:** the setting `relics.choices` (3; Admin → Settings → Relics). Fewer when fewer unlocked relics are left to find.
+- game-core `rollRelicChoices`, `chooseRelic`, run phase `relics`; API `run.chooseRelic`. The sim takes the first relic into a free slot, else skips.
+
+### Changed
+- **Fight reward cards no longer include a relic.** The shop's wares still can (buying one is its own choice).
+- The "give one up" chooser shows the incoming relic's name and sits in the stage screens' centred column.
+
+### Notes
+- Tests (`run/relics-run.test.ts`): fight offers never hold a relic; the pick offers different relics not held; claiming leads to the pick; take into a free slot, swap when full, skip keeps the rack, no pick goes straight on. Game-core: 188 pass, 0 fail.
+- Restart `pnpm dev` (a new setting row is seeded on boot).
+
 ## [0.4.12] - 2026-10-21
 
 Content in the database, step 5 (`.plans/content-db.md`): the content tables get real columns, foreign keys and join tables instead of everything in one JSON blob. Nothing plays differently.
