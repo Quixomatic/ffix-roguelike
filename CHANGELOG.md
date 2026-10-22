@@ -2,6 +2,11 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.14] - 2026-10-22
+
+### Notes
+- No code changes: a version bump to trigger fresh Railway builds of the server and web.
+
 ## [0.4.13] - 2026-10-21
 
 Relics get their own screen after a fight's reward, like pokelike's relic pick, instead of being one of the reward cards (which you'd nearly always take).
