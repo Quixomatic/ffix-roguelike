@@ -5,6 +5,7 @@
  * files (development servers only) so tuning can be committed.
  */
 import { loadContent, writeJourneyGroup } from "@ffix-roguelike/db/content";
+import { itemIdsByName, writeAchievement, writeBoon, writeGear, writeRarity, writeRelic, writeRole, writeSource, writeStarter, writeSynergy } from "@ffix-roguelike/db/rewards";
 import { exportRewardSeeds } from "@ffix-roguelike/db/seed-rewards";
 import { checkJourneyGroups, JOURNEYS, metricDef, newBuild, Rng, rollOffer, startRun, WORLDS, type CharacterBuild, type RunState } from "@ffix-roguelike/game-core";
 import {
@@ -237,24 +238,21 @@ export const adminRouter = router({
     return reloadRewardContent(ctx.db);
   }),
 
+  // Reward rows are written into their columns and join rows (`@ffix-roguelike/db/rewards`).
   saveRarity: adminProcedure.input(rarityInput).mutation(async ({ ctx, input }) => {
-    await ctx.db.rewardRarity.upsert({ where: { id: input.id }, create: { id: input.id, sort: input.sort, data: input }, update: { sort: input.sort, data: input } });
+    await ctx.db.$transaction((tx) => writeRarity(tx, input));
     return reloadRewardContent(ctx.db);
   }),
   saveRole: adminProcedure.input(roleInput).mutation(async ({ ctx, input }) => {
-    await ctx.db.rewardRole.upsert({ where: { key: input.key }, create: { key: input.key, data: input }, update: { data: input } });
+    await ctx.db.$transaction((tx) => writeRole(tx, input));
     return reloadRewardContent(ctx.db);
   }),
   saveSource: adminProcedure.input(sourceInput).mutation(async ({ ctx, input }) => {
-    await ctx.db.rewardSource.upsert({ where: { id: input.id }, create: { id: input.id, data: input }, update: { data: input } });
+    await ctx.db.$transaction((tx) => writeSource(tx, input));
     return reloadRewardContent(ctx.db);
   }),
   saveBoon: adminProcedure.input(boonInput).mutation(async ({ ctx, input }) => {
-    await ctx.db.rewardBoon.upsert({
-      where: { id: input.id },
-      create: { id: input.id, name: input.name, enabled: input.enabled, data: input },
-      update: { name: input.name, enabled: input.enabled, data: input },
-    });
+    await ctx.db.$transaction((tx) => writeBoon(tx, input));
     return reloadRewardContent(ctx.db);
   }),
   deleteBoon: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
@@ -281,11 +279,8 @@ export const adminRouter = router({
     const known = new Set(WORLDS.map((w) => w.id));
     const bad = input.mapPools.find((p) => !known.has(p.area));
     if (bad) throw new TRPCError({ code: "BAD_REQUEST", message: `Unknown area ${bad.area}` });
-    await ctx.db.gearAvailability.upsert({
-      where: { itemId: input.itemId },
-      create: { itemId: input.itemId, name: input.name, enabled: input.enabled, data: input },
-      update: { name: input.name, enabled: input.enabled, data: input },
-    });
+    // The piece's row and its map pools (gear_map_pool), together.
+    await ctx.db.$transaction((tx) => writeGear(tx, input));
     return reloadRewardContent(ctx.db);
   }),
 
@@ -305,12 +300,7 @@ export const adminRouter = router({
     if (input.requires?.achievement && !(rewardTables().achievements ?? []).some((a) => a.id === input.requires!.achievement)) throw bad("Unknown achievement");
     const id = `${input.character}:${input.slot}:${input.tier}`;
     const requires = input.requires?.journey || input.requires?.achievement ? input.requires : null;
-    const data = { ...input, id, name: item.name, requires };
-    await ctx.db.starterUpgrade.upsert({
-      where: { id },
-      create: { id, character: input.character, slot: input.slot, tier: input.tier, enabled: input.enabled, data },
-      update: { enabled: input.enabled, data },
-    });
+    await ctx.db.$transaction((tx) => writeStarter(tx, { ...input, id, name: item.name, requires }));
     return reloadRewardContent(ctx.db);
   }),
   /** Remove a chain's last tier (only the last, so tiers stay 1..n; players who owned it keep their tier count, capped by the chain). */
@@ -348,12 +338,9 @@ export const adminRouter = router({
     if (missing) throw bad(`Unknown item ${missing}`);
     // Drop empty reward fields, so the record stays tidy.
     const reward = Object.fromEntries(Object.entries(r).filter(([, v]) => v !== undefined && v !== 0 && !(Array.isArray(v) && !v.length) && v !== ""));
-    const data = { ...input, reward };
-    await ctx.db.achievement.upsert({
-      where: { id: input.id },
-      create: { id: input.id, category: input.category, sort: input.sort, enabled: input.enabled, data },
-      update: { category: input.category, sort: input.sort, enabled: input.enabled, data },
-    });
+    // Reward items and supplies are stored as FF9 item ids.
+    const itemIds = await itemIdsByName(ctx.db);
+    await ctx.db.$transaction((tx) => writeAchievement(tx, { ...input, reward }, itemIds));
     return reloadRewardContent(ctx.db);
   }),
   /** Delete an achievement. Players who earned it keep the id in their profile (it simply isn't listed any more). */
@@ -371,11 +358,7 @@ export const adminRouter = router({
     checkScopes(input.effects, knownTags());
     // Drop empty optional fields, so the record stays tidy.
     const data = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined && v !== ""));
-    await ctx.db.relic.upsert({
-      where: { id: input.id },
-      create: { id: input.id, sort: input.sort, enabled: input.enabled, data },
-      update: { sort: input.sort, enabled: input.enabled, data },
-    });
+    await ctx.db.$transaction((tx) => writeRelic(tx, data));
     return reloadRewardContent(ctx.db);
   }),
   /** Delete a relic. Runs holding it simply lose its effects; players' collections keep the id (unlisted). */
@@ -390,7 +373,7 @@ export const adminRouter = router({
     const tags = knownTags().add(input.tag);
     for (const t of input.tiers) checkScopes(t.effects, tags);
     const data = Object.fromEntries(Object.entries(input).filter(([, v]) => v !== undefined && v !== ""));
-    await ctx.db.synergy.upsert({ where: { id: input.id }, create: { id: input.id, enabled: input.enabled, data }, update: { enabled: input.enabled, data } });
+    await ctx.db.$transaction((tx) => writeSynergy(tx, data));
     return reloadRewardContent(ctx.db);
   }),
   /** Set a character's synergy tags (each must be a synergy's tag). */

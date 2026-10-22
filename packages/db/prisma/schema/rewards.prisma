@@ -1,104 +1,225 @@
 /// Reward and gear-availability tables: our own game design (.plans/rewards.md), not FF9 data. Seeded from
 /// packages/db/seed/rewards on server startup — missing rows only, so edits from the admin page are never
-/// overwritten — and loaded into game-data's reward registry (`registerRewardTables`). `data` holds the whole
-/// game-data record (RewardRarity, RewardRole, RewardSource, RewardBoon, GearAvailability).
+/// overwritten — and loaded into game-data's reward registry (`registerRewardTables`).
+///
+/// Like the content tables (.plans/content-db.md R1): single values are columns, references to our own tables are
+/// foreign keys, lists of references are join tables, and `data` keeps only nested config edited as a whole.
+/// `packages/db/src/rewards.ts` moves seeded fields out of `data` (`normalizeRewards`) and builds game-data's flat
+/// rows back (`loadRewards`). Item ids (gear, starter tiers, achievement rewards) are plain ints, checked on save:
+/// ff9_item is wiped and reloaded whenever FF9's seed changes, so nothing can hold a foreign key into it.
 
-/// A reward rarity (common … legendary): colour, AP surge, gil, supplies, next-band chance.
+/// A reward rarity (common … legendary): colour, AP surge, gil, supplies, next-band chance, shop prices.
 model RewardRarity {
-  id        String   @id
-  sort      Int
-  data      Json
-  updatedAt DateTime @updatedAt
+  id         String   @id
+  sort       Int
+  name       String   @default("")
+  /// CSS colour for the card frame.
+  color      String   @default("#ffffff")
+  apSurge    Int      @default(0)
+  gil        Int      @default(0)
+  supplies   Int      @default(0)
+  /// Chance (0–100) a gear card comes from a higher area's band, and how many areas up.
+  nextBand   Float    @default(0)
+  bandSteps  Int?
+  /// Shop wares: gear markup (× FF9 price) and the flat price of other cards (× tier + 1). Null: game-data's defaults.
+  shopMarkup Float?
+  shopPrice  Int?
+  /// Anything left that isn't a column (normally `{}`).
+  data       Json
+  relics     Relic[]
+  updatedAt  DateTime @updatedAt
 
   @@map("reward_rarity")
 }
 
-/// What a character values when judging gear upgrades (stat weights, ability weight).
+/// What a character values when judging gear upgrades.
 model RewardRole {
-  key       String   @id
-  data      Json
-  updatedAt DateTime @updatedAt
+  key                String   @id
+  abilityWeight      Float    @default(0)
+  /// Abilities (refs, e.g. "action:Fira") worth extra.
+  preferredAbilities String[] @default([])
+  notes              String?
+  /// Nested config: `weights` (stat → weight).
+  data               Json
+  updatedAt          DateTime @updatedAt
 
   @@map("reward_role")
 }
 
-/// Rules per reward source (surprise, elite, treasure, semiboss, boss): cards, weights, guarantee, skip gil.
+/// Rules per reward source (surprise, elite, treasure, semiboss, boss, shop).
 model RewardSource {
-  id        String   @id
-  data      Json
-  updatedAt DateTime @updatedAt
+  id               String   @id
+  cards            Int      @default(1)
+  upgradeThreshold Float    @default(0)
+  /// "none" | "oneGear" | "allGear".
+  guarantee        String   @default("none")
+  minRarity        String   @default("common")
+  /// Surprise only: chance (0–100) after a plain battle.
+  chance           Float?
+  skipGil          Int      @default(0)
+  /// Null: game-data's default per source.
+  relicChance      Float?
+  /// Nested config: `rarityWeights`, `typeWeights`.
+  data             Json
+  updatedAt        DateTime @updatedAt
 
   @@map("reward_source")
 }
 
 /// A named run-long boon (stat, scope, amount per rarity).
 model RewardBoon {
-  id        String   @id
-  name      String
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  name        String
+  enabled     Boolean  @default(true)
+  description String   @default("")
+  /// "member" | "party".
+  scope       String   @default("member")
+  stat        String   @default("strength")
+  weight      Float    @default(1)
+  minTier     Int      @default(0)
+  /// Characters who roll it more.
+  affinity    String[] @default([])
+  /// Nested config: `amounts` (rarity → amount).
+  data        Json
+  updatedAt   DateTime @updatedAt
 
   @@map("reward_boon")
 }
 
 /// How one gear piece can show up in runs: map pools per area, catalog, legendary. Every gear piece has a row.
 model GearAvailability {
-  itemId    Int      @id
-  name      String
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  itemId          Int           @id
+  name            String
+  enabled         Boolean       @default(true)
+  /// Buyable at camp, at this price, once the player has reached this progression tier.
+  catalog         Boolean       @default(false)
+  catalogPrice    Int?
+  catalogFromTier Int           @default(0)
+  /// Achievements only: never drops, never sold.
+  legendary       Boolean       @default(false)
+  notes           String?
+  /// Anything left that isn't a column (normally `{}`).
+  data            Json
+  mapPools        GearMapPool[]
+  updatedAt       DateTime      @updatedAt
 
   @@map("gear_availability")
 }
 
-/// An achievement: its condition (as data), its one-time reward, category, order. `data` is game-data's AchievementData.
-/// Which ones a player has earned is player_profile.achievements (ids).
+/// An area where a gear piece drops without being unlocked, at its position in the piece's list.
+model GearMapPool {
+  itemId   Int
+  gear     GearAvailability @relation(fields: [itemId], references: [itemId], onDelete: Cascade)
+  areaId   String
+  area     Area             @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  /// Only from that area's boss rewards.
+  bossOnly Boolean          @default(false)
+  position Int
+
+  @@id([itemId, areaId])
+  @@index([areaId])
+  @@map("gear_map_pool")
+}
+
+/// An achievement: its condition (as data), its one-time reward, category, order. Which ones a player has earned is
+/// player_profile.achievements (ids).
 model Achievement {
-  id        String   @id
-  category  String
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id              String           @id
+  category        String
+  sort            Int
+  enabled         Boolean          @default(true)
+  name            String           @default("")
+  description     String           @default("")
+  /// Hidden until earned.
+  secret          Boolean          @default(false)
+  /// A number in the achievement badge set.
+  badge           Int?
+  /// Reward: gear unlocked into run drop pools, and camp supplies unlocked (FF9 item ids).
+  rewardItemIds   Int[]            @default([])
+  rewardSupplyIds Int[]            @default([])
+  notes           String?
+  /// Nested config: `condition`, and the rest of `reward` (gil, CP, best-in-slot, relic slots).
+  data            Json
+  relics          Relic[]
+  starterUpgrades StarterUpgrade[]
+  updatedAt       DateTime         @updatedAt
 
   @@map("achievement")
 }
 
 /// One tier of a character's starting-gear upgrade chain (.plans/starter-upgrades.md): item, gil + CP cost, minimum
-/// start level, optional journey / achievement requirement. `data` is game-data's StarterUpgrade.
+/// start level, optional journey / achievement requirement.
 model StarterUpgrade {
-  id        String   @id
-  character String
-  slot      String
-  tier      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id                    String       @id
+  character             String
+  slot                  String
+  tier                  Int
+  enabled               Boolean      @default(true)
+  /// The FF9 item, and its name (for reading the table).
+  itemId                Int          @default(0)
+  name                  String       @default("")
+  gil                   Int          @default(0)
+  cp                    Int          @default(0)
+  minStartLevel         Int          @default(1)
+  /// Extra requirements: a journey cleared, an achievement earned.
+  requiresJourneyId     String?
+  requiresJourney       Journey?     @relation(fields: [requiresJourneyId], references: [id], onDelete: Restrict)
+  requiresAchievementId String?
+  requiresAchievement   Achievement? @relation(fields: [requiresAchievementId], references: [id], onDelete: SetNull)
+  notes                 String?
+  /// Anything left that isn't a column (normally `{}`).
+  data                  Json
+  updatedAt             DateTime     @updatedAt
 
   @@index([character])
   @@map("starter_upgrade")
 }
 
-/// A relic (.plans/relics-and-synergies.md): run-long passive with effects as data. `data` is game-data's RelicData.
-/// Which ones a player has unlocked is player_profile.relicsUnlocked (plus relics flagged `free`).
+/// A relic (.plans/relics-and-synergies.md): a run-long passive. Which ones a player has unlocked is
+/// player_profile.relicsUnlocked (plus relics flagged `free`, and those whose achievement they have).
 model Relic {
-  id        String   @id
-  sort      Int
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id           String       @id
+  sort         Int
+  enabled      Boolean      @default(true)
+  name         String       @default("")
+  description  String       @default("")
+  flavor       String?
+  rarityId     String       @default("common")
+  rarity       RewardRarity @relation(fields: [rarityId], references: [id], onDelete: Restrict)
+  cursed       Boolean      @default(false)
+  /// Can be the starting relic; unlocked for everyone from the start.
+  starter      Boolean      @default(false)
+  free         Boolean      @default(false)
+  /// The achievement that unlocks it.
+  unlockedById String?
+  unlockedBy   Achievement? @relation(fields: [unlockedById], references: [id], onDelete: SetNull)
+  badge        Int?
+  /// Offer weight among relics of its rarity, and the lowest tier it's offered in.
+  weight       Float        @default(0)
+  minTier      Int          @default(0)
+  notes        String?
+  /// Nested config: `effects`.
+  data         Json
+  updatedAt    DateTime     @updatedAt
 
+  @@index([rarityId])
+  @@index([unlockedById])
   @@map("relic")
 }
 
-/// A party synergy: tiers by how many active party members share its tag. `data` is game-data's SynergyData.
+/// A party synergy: tiers by how many active party members share its tag.
 model Synergy {
-  id        String   @id
-  enabled   Boolean  @default(true)
-  data      Json
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  enabled     Boolean  @default(true)
+  name        String   @default("")
+  tag         String   @default("")
+  description String?
+  badge       Int?
+  /// CSS colour its chips are tinted with.
+  color       String?
+  /// Nested config: `tiers` (count, text, effects).
+  data        Json
+  updatedAt   DateTime @updatedAt
 
   @@map("synergy")
 }
@@ -167,6 +288,7 @@ model Area {
   data           Json
   journeyAreas   JourneyArea[]
   challengeAreas ChallengeArea[]
+  gearPools      GearMapPool[]
   updatedAt      DateTime        @updatedAt
 
   @@map("area")
@@ -267,6 +389,7 @@ model Journey {
   areas         JourneyArea[]
   groupMembers  JourneyGroupMember[]
   challenges    Challenge[]
+  starterTiers  StarterUpgrade[]
   updatedAt     DateTime             @updatedAt
 
   @@map("journey")

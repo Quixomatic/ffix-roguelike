@@ -2,6 +2,45 @@
 
 All notable changes to ffix-roguelike are documented here.
 
+## [0.4.15] - 2026-10-22
+
+Content in the database, R1 (`.plans/content-db.md`): the reward tables get real columns, foreign keys and a join table for gear map pools, the same way the content tables did in v0.4.12. Nothing plays differently.
+
+### Changed
+- **Columns for single values:**
+  - **reward_rarity:** name, colour, AP surge, gil, supplies, next-band chance and steps, shop markup and price (nothing left in JSON);
+  - **relic:** name, description, flavour, rarity, cursed / starter / free, badge, weight, minimum tier, notes;
+  - **gear_availability:** catalog, catalog price and tier, legendary, notes;
+  - **starter_upgrade:** item, item name, gil, CP, minimum start level, notes;
+  - **achievement:** name, description, secret, badge, notes, and the reward's gear and camp supplies as FF9 item ids;
+  - **reward_boon:** description, scope, stat, weight, minimum tier, affinity;
+  - **reward_source:** cards, upgrade threshold, guarantee, lowest rarity, surprise chance, skip gil, relic chance;
+  - **synergy:** tag, description, badge, colour;
+  - **reward_role:** ability weight, preferred abilities, notes.
+- **Foreign keys for references:**
+  - a relic's rarity (→ reward_rarity) and its unlocking achievement (→ achievement);
+  - a starting-gear tier's required journey (→ journey) and achievement (→ achievement).
+
+  The database refuses a reference to a row that doesn't exist, and a rarity still in use can't be deleted. Deleting an achievement clears it from relics and tiers that named it.
+- **`gear_map_pool`, a join table:** each area a gear piece drops in (→ area; an area still in a pool can't be deleted), with boss-only, in order. It replaces the pool list in JSON (2,011 rows).
+- **`data` keeps only nested config:** relic effects, synergy tiers, boon amounts, source and role weight maps, and an achievement's condition and the rest of its reward.
+- **Item ids stay plain numbers, checked on save.** FF9's item table is wiped and reloaded whenever FF9's seed changes, so nothing can hold a foreign key into it.
+- **Existing databases convert themselves** on boot (`packages/db/src/rewards.ts` `normalizeRewards`, after the content tables). The dev database is converted, and every row assembled back matches its seed file exactly (`sync-seeds`: 0 differ, apart from Legend of Eiko's badge, edited on the admin page before this).
+- **One loader, one set of writers:** `loadRewards` reads the tables back as the rows the game uses (server, admin export, `sync-seeds`). Every admin save (rarities, roles, sources, boons, gear, starting gear, achievements, relics, synergies) writes columns and joins through `write*` functions, which the boot conversion uses too.
+- **Seeding:**
+  - Gear pools added to the seed later are inserted as missing `gear_map_pool` rows.
+  - Seeded achievement badges and synergy colours fill their columns.
+  - `db:seed:rewards --reset <table>` now writes the seed's rows over in place and deletes the rest, instead of emptying the table, which would cascade through the new foreign keys.
+
+### Added
+- **`apps/server/scripts/check-reward-writers.ts`** (read-only; everything in a rolled-back transaction):
+  - writes every reward row back through its writer and reloads it: all 9 tables read back the same;
+  - checks that the foreign keys refuse bad references (an unknown area, rarity, achievement or journey) and in-use deletes.
+
+### Notes
+- Migration `reward_columns` (new columns with defaults, a new table, foreign keys). Restart `pnpm dev`.
+- `probe-gear` and `probe-areas` pass against the converted tables. Game-core: 188 pass, 0 fail.
+
 ## [0.4.14] - 2026-10-22
 
 ### Notes

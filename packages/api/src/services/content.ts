@@ -40,6 +40,7 @@ import {
 } from "@ffix-roguelike/game-data";
 import type { Database } from "@ffix-roguelike/db";
 import { loadContent } from "@ffix-roguelike/db/content";
+import { loadRewards } from "@ffix-roguelike/db/rewards";
 
 export interface Ff9Content {
   game: GameData;
@@ -102,32 +103,25 @@ let rewardsLoading: Promise<RewardTables> | null = null;
  */
 export function ensureRewardContent(db: Database): Promise<RewardTables> {
   rewardsLoading ??= (async () => {
-    const [rarities, roles, sources, boons, gear, starter, achievements, relics, synergies, characterTags, content, settings] = await Promise.all([
-      db.rewardRarity.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
-      db.rewardRole.findMany({ orderBy: { key: "asc" }, select: { data: true } }),
-      db.rewardSource.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
-      db.rewardBoon.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
-      db.gearAvailability.findMany({ orderBy: { itemId: "asc" }, select: { data: true } }),
-      db.starterUpgrade.findMany({ orderBy: [{ character: "asc" }, { slot: "asc" }, { tier: "asc" }], select: { data: true } }),
-      db.achievement.findMany({ orderBy: [{ category: "asc" }, { sort: "asc" }], select: { data: true } }),
-      db.relic.findMany({ orderBy: { sort: "asc" }, select: { data: true } }),
-      db.synergy.findMany({ orderBy: { id: "asc" }, select: { data: true } }),
+    const [rewards, characterTags, content, settings] = await Promise.all([
+      // Reward tables, areas, journeys, groupings and challenges: columns + join rows, assembled into game-data's rows.
+      loadRewards(db),
       db.characterTag.findMany({ orderBy: { character: "asc" }, select: { character: true, tags: true } }),
-      // Areas, journeys, groupings and challenges: columns + join rows, assembled into game-data's rows.
       loadContent(db),
       db.gameSetting.findMany({ select: { key: true, value: true } }),
     ]);
-    if (!gear.length || !rarities.length || !content.areas.length || !content.journeys.length) throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
+    if (!rewards.gear.length || !rewards.rarities.length || !content.areas.length || !content.journeys.length)
+      throw new Error("Reward / content tables missing — restart the server (it seeds them on boot)");
     const tables: RewardTables = {
-      rarities: rows<RewardRarity>(rarities),
-      roles: rows<RewardRole>(roles),
-      sources: rows<RewardSource>(sources),
-      boons: rows<RewardBoon>(boons),
-      gear: rows<GearAvailability>(gear),
-      starter: rows<StarterUpgrade>(starter),
-      achievements: rows<AchievementData>(achievements),
-      relics: rows<RelicData>(relics),
-      synergies: rows<SynergyData>(synergies),
+      rarities: rewards.rarities as unknown as RewardRarity[],
+      roles: rewards.roles as unknown as RewardRole[],
+      sources: rewards.sources as unknown as RewardSource[],
+      boons: rewards.boons as unknown as RewardBoon[],
+      gear: rewards.gear as unknown as GearAvailability[],
+      starter: rewards.starter as unknown as StarterUpgrade[],
+      achievements: rewards.achievements as unknown as AchievementData[],
+      relics: rewards.relics as unknown as RelicData[],
+      synergies: rewards.synergies as unknown as SynergyData[],
       characterTags,
       journeyGroups: content.journeyGroups as unknown as JourneyGroupData[],
       areas: content.areas as unknown as AreaData[],

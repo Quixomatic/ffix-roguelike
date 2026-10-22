@@ -6,8 +6,10 @@
  *                                                          the server also does this on startup)
  *   pnpm -F @ffix-roguelike/db db:seed:rewards --export   write the database back into the seed files (commit the
  *                                                          tuning done on the admin page)
- *   pnpm -F @ffix-roguelike/db db:seed:rewards --reset <table>   reload one table from its seed file, discarding its
- *                                                          edits (rarities, roles, sources, boons, gear, starter)
+ *   pnpm -F @ffix-roguelike/db db:seed:rewards --reset <table>   make one table match its seed file, discarding its
+ *                                                          edits: seed rows are written over in place (so foreign
+ *                                                          keys pointing at them survive), rows not in the seed
+ *                                                          are deleted
  */
 import "varlock/auto-load";
 
